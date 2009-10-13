@@ -47,7 +47,7 @@ $engine['service_housing'] = array(
 					     'enable_staff_alerts_view'=>true,
 					     'perm'=>'service_housing',
 					     'singular'=>'Housing Service',
-					     'subtitle_eval_code'=>'link_multi_add("service_housing","Add Housing Service(s)",array("client_id"=>$id,"service_by"=>$GLOBALS["UID"]))." ".link_report("housing/housing_service.cfg","Print Housing Service Notes",array("cid"=>$id))',
+//					     'subtitle_eval_code'=>'link_multi_add("service_housing","Add Housing Service(s)",array("client_id"=>$id,"service_by"=>$GLOBALS["UID"]))." ".link_report("housing/housing_service.cfg","Print Housing Service Notes",array("cid"=>$id))',
 					  'list_fields'=>array('service_date','contact_type_code','service_code','service_minutes','service_by'),
 					  'fields'=>array(
 								'contact_type_code' => array('default' => 'FACE2FACE'),
