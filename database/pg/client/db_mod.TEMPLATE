@@ -1,0 +1,17 @@
+BEGIN;
+
+/*
+ * db_mod.TEMPLATE
+ */
+ 
+
+INSERT INTO db_revision_history 
+	 VALUES (UNIQUE_DB_MOD_NAME,
+		  '' /* cvs/coderelease, if applicable */,
+		  CURRENT_TIMESTAMP,
+		  'added_by',
+		  '' /*comments*/,
+		  '' /* sys_log */
+		  );
+
+COMMIT;

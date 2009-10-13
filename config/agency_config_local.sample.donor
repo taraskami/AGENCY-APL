@@ -1,0 +1,128 @@
+<?php
+/*
+<LICENSE>
+
+This file is part of AGENCY.
+
+AGENCY is Copyright (c) 2003-2009 by Ken Tanzer and Downtown Emergency
+Service Center (DESC).
+
+All rights reserved.
+
+For more information about AGENCY, see http://agency.sourceforge.net/
+For more information about DESC, see http://www.desc.org/.
+
+AGENCY is free software: you can redistribute it and/or modify
+it under the terms of version 3 of the GNU General Public License
+as published by the Free Software Foundation.
+
+AGENCY is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with CHASERS.  If not, see <http://www.gnu.org/licenses/>.
+
+For additional information, see the README.copyright file that
+should be included in this distribution.
+
+</LICENSE>
+*/
+
+/*
+ * This sample file is for the donor database version of AGENCY.
+ *
+ * This file should be copied to agency_config_local.php and
+ * modified as needed for the local environment
+ *
+ * Don't check agency_config_local.php into CVS or Git!
+ */
+
+//Postgres:
+$db_server["pg"]    = 'localhost';
+$db_user_name["pg"] = 'agency_donor';
+$db_password["pg"]  = ''; /** *** Add your Password here *** */
+$database["pg"]     = 'agency_donor';
+$db_port['pg']      = '5432';
+
+
+/*
+ * Currently the MySQL settings are only used for access to Bugzilla.
+ * You probably don't need to change them.
+ */
+
+//MYSQL:
+$db_server["my"]    = 'localhost';
+$db_user_name["my"] = 'Agency';
+$db_password["my"]  = '';
+$database["my"]     = 'Agency';
+$db_port['my']      = null;
+
+/*
+ * Read-Only DB Access - used for DB maintenance
+ *
+ *    Set to true and then define a read-only user and password.
+ *
+ *    Note: User should be set up in PostgreSQL as read-only by using the 
+ *          plpgsql function grant_read_permissions_all().
+ */
+define('AG_READ_ONLY_MODE',false);
+if (AG_READ_ONLY_MODE) {
+	// these must be set in order to connect in read-only mode
+	$db_user_name['pg'] = '';
+	$db_password['pg']  = '';
+}
+
+/*
+ * this is the _display_ term
+ */
+define('AG_MAIN_OBJECT','donor'); 
+
+/*
+ * this refers to the db tables and code functions (currently donor and client are supported)
+ * and is much more difficult to change.
+ */
+define('AG_MAIN_OBJECT_DB','donor'); 
+
+/*
+ * Error Logging
+ */
+define('AG_ERROR_LOG_FILE','/var/log/agency/agency_error.log');
+
+//enter email address(es) here to receive error notices.
+$mail_errors_to = '';
+
+/*
+ * system user for AGENCY -- currently used in re-registration
+ * of bednights for priority clients.  Also to determine manually-added charges.
+ */
+$sys_user = 1; 
+
+/*
+ * engine configuration array name stored in tbl_engine_config
+ */
+define('AG_ENGINE_CONFIG_ARRAY','engine');
+
+/*
+ * Uncomment this to use custom error_handler
+ */
+// set_error_handler('agency_error_handler');
+
+/*
+ * Paths and URLs
+ */
+
+// Base install
+$AG_HOME_BY_FILE = '/var/www/html/agency_donor';
+$AG_HOME_BY_URL =  '/agency_donor';
+
+// Client photos
+$AG_CLIENT_PHOTO_BY_FILE  = $AG_HOME_BY_FILE . '/photos';
+$AG_CLIENT_PHOTO_BY_URL = $AG_HOME_BY_URL . '/photos';
+
+// Stafff photos
+$AG_STAFF_PHOTO_BY_FILE = $AG_HOME_BY_FILE . '/photos/staff';
+$AG_STAFF_PHOTO_BY_URL = $AG_HOME_BY_URL . '/photos/staff';
+
+?>
