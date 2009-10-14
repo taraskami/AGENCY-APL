@@ -1717,14 +1717,7 @@ function assignments_f($staff_id, $my=false) {
 			     : 'Assignments ('.orr($cnt,'0').') for ' . staff_link($staff_id)).$show_hide_link
 			    ,' style="color: red; " class="staff boxHeader'.$width.'"'));
 	$out = table($title . $out,null,' bgcolor="" cellspacing="0" cellpadding="0" style=" border: 1px solid black;"');
-/*
-	$dal_extra_hack = has_perm('dal_dropin') 
-		? div(link_quick_dal('Add Drop-In DALs',
-					   array('dal_code'=>'618','contact_type_code'=>'FACE2FACE','dal_location_code'=>'2')
-					   ,'class="fancyLink"'))
-		: '';
-*/
-	return $out . $dal_extra_hack;
+	return $out;
 }
 
 function staff_links()
