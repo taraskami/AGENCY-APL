@@ -3331,7 +3331,7 @@ function build_lookup_query($field_def,$action)
 	$show_value = $field_def['show_lookup_code_'.$action];
 	$look_label=$look['label_field'];
 	$tmp_order = orr($field_def['lookup_order'],'LABEL');
-	switch ($tmp_order) {
+	switch (strtoupper($tmp_order)) {
 	case 'TABLE_ORDER':
 		$look_order = null;
 		break;
