@@ -1,5 +1,4 @@
 <?php
-$engine['education_level'] =
 /*
 <LICENSE>
 
@@ -31,17 +30,13 @@ should be included in this distribution.
 </LICENSE>
 */
 
-
+$engine['education_level'] =
 	  array(
-		  
 		  'rec_init_from_previous' => true,
 		  'fields'=>array(
 					'education_level_date'=>array('default'=>'NOW'),
-					'highest_grade_code'=>array('label'=>'Highest Grade Completed',
-									    
-									    'lookup_order'=>'king_cty_code')
-					
-						     )
+					'grade_level_current_code'=>array('label'=>'Current Grade Level or Activity','lookup_order'=>'table_order'),
+					'highest_education_code'=>array('label'=>'Highest Education Level Completed','lookup_order'=>'table_order'))
 		  );
 
 

@@ -158,6 +158,12 @@
 /* CALENDAR SYSTEM */
 \i install.calendar.sql
 
+/* Education Level */
+
+\i create.l_grade_level.sql
+\i create.l_highest_education.sql
+\i create.tbl_education_level.sql
+
 /* Enable Alert Notification for client objects */
 select
     alert_notify_enable('tbl_client'),

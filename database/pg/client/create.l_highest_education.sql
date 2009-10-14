@@ -1,6 +1,6 @@
 CREATE TABLE tbl_l_highest_education (
-        highest_education_code		VARCHAR(10) PRIMARY KEY,
-        description			VARCHAR(30) NOT NULL UNIQUE,
+    highest_education_code		VARCHAR(10) PRIMARY KEY,
+    description			VARCHAR(30) NOT NULL UNIQUE,
     --system fields
     added_by                        INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
     added_at                        TIMESTAMP(0)     NOT NULL DEFAULT CURRENT_TIMESTAMP,
