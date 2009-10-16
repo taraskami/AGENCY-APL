@@ -29,4 +29,10 @@ BEGIN;
 \i install.calendar.sql
 \cd ..
 
+/* Make sure the wrong db_mods are not applied. */
+ALTER TABLE tbl_db_revision_history
+    ADD CONSTRAINT reject_wrong_flavor_mods CHECK
+        (agency_flavor_code IS NULL OR
+        agency_flavor_code IN ('AGENCY_CORE','DONOR',''));
+
 COMMIT;
