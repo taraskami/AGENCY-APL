@@ -49,7 +49,7 @@ CREATE TRIGGER tbl_calendar_appointment_insert_update
     BEFORE INSERT OR UPDATE ON tbl_calendar_appointment FOR EACH ROW
     EXECUTE PROCEDURE calendar_appointment_date_sanity();
 
-CREATE OR REPLACE FUNCTION make_repeating_calendar_events ( integer, timestamp, time, date, interval,varchar,integer,boolean) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION make_repeating_calendar_events ( integer, timestamp, time, date, interval,varchar,integer,integer,boolean) RETURNS VOID AS $$
 DECLARE
 	cal_id ALIAS FOR $1;
 	start ALIAS FOR $2;
@@ -57,8 +57,9 @@ DECLARE
 	enddate ALIAS FOR $4;
 	recurrence ALIAS FOR $5;
 	descript	ALIAS FOR $6;
-	staff		ALIAS FOR $7;
-	overlap	ALIAS FOR $8;
+	donor	ALIAS FOR $7;
+	staff		ALIAS FOR $8;
+	overlap	ALIAS FOR $9;
 	
 	cur TIMESTAMP;
 	aoverlap BOOLEAN;
@@ -74,6 +75,7 @@ BEGIN
 				event_start,
 				event_end,
 				description,
+				donor_id,
 				added_by,	
 				changed_by,
 				allow_overlap,
@@ -83,6 +85,7 @@ BEGIN
 				cur,
 				cur+length,
 				descript,
+				donor,
 				staff,
 				staff,
 				aoverlap,
