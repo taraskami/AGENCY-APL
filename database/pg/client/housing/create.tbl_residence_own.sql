@@ -1,7 +1,7 @@
 CREATE TABLE tbl_residence_own (
 	residence_own_id 		SERIAL PRIMARY KEY,
 	client_id 				INTEGER NOT NULL REFERENCES tbl_client (client_id),
-	housing_project_code 	VARCHAR(10) NOT NULL REFERENCES tbl_l_agency_project(agency_project_code),
+	housing_project_code 	VARCHAR(10) NOT NULL REFERENCES tbl_l_housing_project (housing_project_code),
 	housing_unit_code			VARCHAR(10) NOT NULL REFERENCES tbl_housing_unit(housing_unit_code),
 	residence_date 			DATE NOT NULL ,
 	residence_date_end 		DATE,
