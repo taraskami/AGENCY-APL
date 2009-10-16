@@ -1660,30 +1660,19 @@ function assignments_f($staff_id, $my=false) {
 															,'class="fancyLink"'),2);
 */
 						break;
-					case 'CSS':
-					case 'CM_CD':
-						//hacky little workaround for bug 16284
-						if ($t_type=='CSS' || $proj == '1811') {
-							$t_add_links[$t_type] = link_engine(array('object'=>'service_housing','action'=>'add',
-														'rec_init'=>client_filter($client)),
-													smaller('Add Housing Service',2),'','class="fancyLink"');
-						} else {
-							$t_add_links[$t_type] = link_engine(array('object'=>'service_cd','action'=>'add',
-														'rec_init'=>client_filter($client)),
-													smaller('Add CD Service',2),'','class="fancyLink"');
-						}
-						break;
 					case 'CM_IR':
-						$t_add_links[$t_type] = link_multi_add('service_ir',
+/*						$t_add_links[$t_type] = link_multi_add('service_ir',
 												   smaller('Add I&R Service(s)',2),
 												   array('client_id'=>$client,'service_by'=>$UID),'class="fancyLink"');
+*/
 						break;
                                         case 'CM_CRP':
+/*
                                                 $t_add_links[$t_type] = link_multi_add('service_crp',
                                                                                                    smaller('Add CRP Service(s)',2),
                                                                                                    array('client_id'=>$client,'service_by'=>$UID),'class="fancyLink"');
                                                 break;
-						
+*/						
 					default:
 					}
 				}
