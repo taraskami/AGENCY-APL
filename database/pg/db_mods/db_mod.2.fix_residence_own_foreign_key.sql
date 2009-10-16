@@ -1,12 +1,5 @@
 BEGIN;
 
-/*
- * db_mod.TEMPLATE
- */
- 
-
-BEGIN;
-
 INSERT INTO tbl_db_revision_history 
 	(db_revision_code,
 	db_revision_description,
