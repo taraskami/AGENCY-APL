@@ -108,7 +108,27 @@ if (sql_num_rows($res) < 1) {
 	exit;
 }
 
-$enable_query = "INSERT INTO db_revision_history VALUES ('Enabling table logging'||CURRENT_TIMESTAMP::timestamp(0),'',CURRENT_TIMESTAMP,sys_user(),'',''); ";
+$enable_query="INSERT INTO tbl_db_revision_history
+    (db_revision_code,
+    db_revision_description,
+    agency_flavor_code,
+    git_sha,
+    git_tag,
+    applied_at,
+    comment,
+    added_by,
+    changed_by)
+
+     VALUES ('ENABLING_TABLE_LOG_TRIGGERS'||current_timestamp, /*UNIQUE_DB_MOD_NAME */
+            'Enabling Table Log triggers', /* DESCRIPTION */
+            '" . strtoupper(AG_MAIN_OBJECT) ."',
+            '', /* git SHA ID, if applicable */
+            '', /* git tag, if applicable */
+            current_timestamp, /* Applied at */
+            '', /* comment */
+            sys_user(),
+            sys_user()
+          );";
 while ($a = sql_fetch_assoc($res)) {
 	$table = $a['relname'];
 	$verbose && outline('Enabling table logging for '.bold($table));

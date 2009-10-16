@@ -103,11 +103,30 @@ ALTER TABLE tbl_staff ADD FOREIGN KEY (gender_code) REFERENCES tbl_l_gender (gen
 
 
 /* db_revision_history */
+\i create.l_agency_flavor.sql
+\i create.tbl_db_revision_history.sql
 
-\i create.db_revision_history.sql
+INSERT INTO tbl_db_revision_history 
+	(db_revision_code,
+	db_revision_description,
+	agency_flavor_code,
+	git_sha,
+	git_tag,
+	applied_at,
+	comment,
+	added_by,
+	changed_by)
 
-INSERT INTO db_revision_history 
-	 VALUES ('Initial AGENCY Install','',CURRENT_TIMESTAMP,sys_user(),'Initial Install','');
+	 VALUES ('INITIAL_INSTALL', /*UNIQUE_DB_MOD_NAME */
+			'Initial install of AGENCY', /* DESCRIPTION */
+			'AGENCY_CORE', /* Which flavor of AGENCY.  AGENCY_CORE applies to all installations */
+			'', /* git SHA ID, if applicable */
+			'', /* git tag, if applicable */
+			current_timestamp, /* Applied at */
+			'', /* comment */
+			sys_user(),
+			sys_user()
+		  );
 
 /* known db list */
 \i create.db_list.sql
