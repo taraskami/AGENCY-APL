@@ -76,12 +76,12 @@ function report_parse_var_text( $text ) {
 		}
 		$var=array();
 		$ex = explot($line);
-		if (!in_array($ex[0],$vartypes)) {	
+		if (!in_array(strtoupper($ex[0]),$vartypes)) {	
 			//fixme:  make me a pretty warning
 			outline('Warning:  Unknown variable type ' .$ex[0]);
 			continue;
 		}
-		$var['type']    = $ex[0];
+		$var['type']    = strtoupper($ex[0]);
         $var['name']    = $ex[1];
         $var['prompt']  = $ex[2];
         $var['default'] = $ex[3];
@@ -566,14 +566,18 @@ function list_report($control,$def,$control_array_variable='',&$REC_NUM)
 		if (($REC_NUM=sql_num_rows($result)) == 0 ) {
 			$out = oline('No reports found');
 		} else {
-			$reports = sql_fetch_to_array($result);
-			foreach ($reports as $rep) {
+			for ($count=1;$count<=$REC_NUM;$count++) {
+				$rep=sql_fetch_assoc($result);
 				$sortkey = orr($rep['report_category_code'],'General');
 				if ($sortkey <> $old_sortkey) {
+					$out .= $li ? html_list($li) : '';
 					$out .= oline() . oline(bigger(bold($sortkey)),2);
+					$li = '';
 				}
-				$out .= oline(link_report($rep['report_id'],$rep['report_title']));
+				//$out .= oline(link_report($rep['report_id'],$rep['report_title']));
+				$li .= html_list_item(link_report($rep['report_id'],$rep['report_title']));
 				$old_sortkey=$sortkey;
+				$out .= ($REC_NUM==$count) ? html_list($li) : '';
 			}
 		}
 		$out .= oline() . smaller(italic(link_engine(array('action'=>'add','object'=>'report'),'Add a new report')));
