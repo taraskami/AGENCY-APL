@@ -73,6 +73,7 @@ $engine["staff"] = array(
 								 'valid'=>array('be_null($x) || $x !== $rec["username"]'=>'Only set {$Y} if different from username.') ),
 */
 				'username_unix' => array( 'display' => 'hide'),
+				'kc_staff_id' => array( 'display' => 'hide'),
 				'name_last'=>array('label'=>'Last Name'),
 				'name_first'=>array('label'=>'First Name'),
 				'name_first_legal'=>array('label'=>'Legal First Name',
