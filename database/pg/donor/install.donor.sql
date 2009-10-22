@@ -103,3 +103,7 @@
 
 /* PROPOSALS */
 \i install.proposal.sql
+
+/* Add sample/provided client report(s) */
+\i add.report.donor.sql
+

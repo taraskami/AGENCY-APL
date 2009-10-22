@@ -11,6 +11,8 @@
 \i create.tbl_report_usage.sql
 \i create.view.report.sql
 
+/* Add core/sample reports */
+\i add.report.agency_core.sql
 
 /*
  * This code could be used to delete the same items
