@@ -266,23 +266,6 @@ function div($content, $id="", $options="" )
         . ">\n".$content.'</div>'."\n";
 }
 
-function goto( $id, $label="" )
-{
-// jump to a section identified by $id
-    if (is_array( $id ) )
-    {
-        foreach ($id as $sec=>$label)
-        {
-            $result .= seclink( $sec, $label ) . " | ";
-        }
-    }
-    else
-    {
-        $result .= seclink( $id, $label );
-    }
-    return $result;
-}
-
 function alt($text=null,$title=null) {
 // 	return '<alt title="'.$title.'">'.$text.'</alt>';
 	//this wasn't really a valid use (there is no alt tag in xhtml anyway)

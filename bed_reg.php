@@ -256,7 +256,7 @@ foreach ($bed_groups as $bed_group ) {
 	 */
 	if ($$bed_group->view == 'on') {
 
-		$group_links .= ' ' . goto($bed_group);
+		$group_links .= ' ' . seclink($bed_group);
 		$beds_show .= anchor($bed_group);
 
 		//check for lock flag
@@ -285,7 +285,7 @@ foreach ($bed_groups as $bed_group ) {
 
 		}
 
-		$beds_show .= goto('top','Return to Top');
+		$beds_show .= seclink('top','Return to Top');
 	}
 
 } //end foreach bed group
