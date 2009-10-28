@@ -88,16 +88,6 @@ function sql_abort()
 	return sql_query('ABORT');
 }
 
-function sql_commit()
-{
-	return sql_query('COMMIT');
-}
-
-function sql_rollback()
-{
-	return sql_query('ROLLBACK');
-}
-
 function sql_escape_string($s)
 {
 	switch ( $GLOBALS['WHICH_DB'] ) {

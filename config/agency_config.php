@@ -63,7 +63,7 @@ array(
       'LINK_BUGZILLA'=>'Bugzilla',
       'LINK_REPORT_BUG'=>'Report a Bug',
       'CLIENT_QUICK_SEARCH'=>ucfirst(AG_MAIN_OBJECT).' Quick Search',
-      'CLIENT_SEARCH_RESULTS'=>'DESC '.ucfirst(AG_MAIN_OBJECT).' Search Results',
+      'CLIENT_SEARCH_RESULTS'=>ucfirst(AG_MAIN_OBJECT).' Search Results',
 
       //client display stuff
       'LINK_VIEW_EDIT'=>'View/edit data record',

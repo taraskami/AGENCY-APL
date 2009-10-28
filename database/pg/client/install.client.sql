@@ -164,6 +164,9 @@
 \i create.l_highest_education.sql
 \i create.tbl_education_level.sql
 
+/* Add sample/provided client report(s) */
+\i add.report.client.sql
+
 /* Enable Alert Notification for client objects */
 select
     alert_notify_enable('tbl_client'),

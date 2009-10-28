@@ -7,13 +7,13 @@ CREATE TABLE tbl_report (
 	report_comment	TEXT,
 	client_page	VARCHAR (255),
 	
-	allow_output_screen	BOOLEAN,
-	allow_output_spreadsheet	BOOLEAN,
-	override_sql_security	BOOLEAN,
+	allow_output_screen	BOOLEAN DEFAULT TRUE,
+	allow_output_spreadsheet	BOOLEAN DEFAULT TRUE,
+	override_sql_security	BOOLEAN DEFAULT FALSE,
 	rows_per_page	INTEGER,
 	output		TEXT,
 	report_permission VARCHAR(80),
-	sql		TEXT,
+	sql		TEXT NOT NULL,
 	variables	TEXT,
 
         --system fields
