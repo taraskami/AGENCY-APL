@@ -2511,9 +2511,21 @@ function human_readable_size($size)
 }
 
 function org_name($format='') {
-	return ( strtolower($format) == 'short' )
-	? $GLOBALS['AG_TEXT']['ORGANIZATION_SHORT']
-	: $GLOBALS['AG_TEXT']['ORGANIZATION'];
+	switch( strtolower($format)) {
+		case 'short' :
+			$x =  $GLOBALS['AG_TEXT']['ORGANIZATION_SHORT'];
+			break;
+		case 'long' :
+		case '' :
+		case NULL :
+			$x = $GLOBALS['AG_TEXT']['ORGANIZATION'];
+			break;
+		case 'full' :
+			$x = $GLOBALS['AG_TEXT']['ORGANIZATION']
+				 . ' (' . $GLOBALS['AG_TEXT']['ORGANIZATION_SHORT'] .')';
+			break;
+	}
+	return $x;
 }
 
 ?>

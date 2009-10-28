@@ -45,7 +45,6 @@ if ($id) {
 	$out = $cal->display();
 	$commands = $cal->commands;
 } else {
-// 	$out = alert_mark('No Calendar ID');
 	$out = Calendar::default_menu();
 }
 
