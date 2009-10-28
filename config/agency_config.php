@@ -50,8 +50,8 @@ $agency_wiki_public_url='http://sourceforge.net/apps/mediawiki/agency/index.php?
 $AG_TEXT=//General Text Array - this is a first step, the next step would be to move this into the db...
 array(
       //general display...
-	'ORGANIZATION_SHORT' => 'Sample',
-	'ORGANIZATION' => 'Sample Organization',
+	'ORGANIZATION_SHORT' => 'GSSO',
+	'ORGANIZATION' => 'Generic Social Service Organization',
       'AGENCY_HOME_TITLE' => 'AGENCY Home Page',
 	'CONFIDENTIAL_STATEMENT'=>'Add your confidentiality statement in agency_config.php',
 	'COPYRIGHT_STATEMENT'=> link_agency_public_home() . ' is copyright (c) 2003-2009, by Ken Tanzer and <a href="http://www.desc.org">DESC</a>. <a href="license_info.php">More information</a>',
