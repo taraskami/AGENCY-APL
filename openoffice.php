@@ -39,9 +39,9 @@ $AG_OPENOFFICE_SYS_VARS = array(
     'confidential' => confidential('',0,'TEXT'),
     'staff_id'=>$GLOBALS['UID'],
 	"today"=>dateof('now'),
-	'USER'=>$GLOBALS['NICK']);
+	'USER'=>$GLOBALS['NICK'],
 	'now'=>datetimeof(''), 
-	'UID'=>$GLOBALS['UID'],
+	'UID'=>$GLOBALS['UID']);
 
 function ooify($value)
 {
@@ -229,7 +229,7 @@ function oowriter_merge_new( $data_recs, $template, $data_eval="",$file_replace=
 		$sets=count($data_recs);
 		// Unpack file
         $file_replace=orr($file_replace,array());
-        $zip_files=unzip($template);
+        $zip_files=unzip(AG_TEMPLATE_DIRECTORY . "/$template");
         $contents=$zip_files["content.xml"];
 		// Look for start and end tags
         if ( ! preg_match('/^(.*?)(\$START)(.*)(\$END)(.*?)$/s',$contents,$matches))
