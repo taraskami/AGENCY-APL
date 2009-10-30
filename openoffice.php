@@ -37,7 +37,11 @@ should be included in this distribution.
 
 $AG_OPENOFFICE_SYS_VARS = array(
     'confidential' => confidential('',0,'TEXT'),
-    'staff_id'=>$GLOBALS['UID']);
+    'staff_id'=>$GLOBALS['UID'],
+	"today"=>dateof('now'),
+	'USER'=>$GLOBALS['NICK']);
+	'now'=>datetimeof(''), 
+	'UID'=>$GLOBALS['UID'],
 
 function ooify($value)
 {
@@ -163,11 +167,7 @@ function oo_merge_set( $data_recs, $template_strings, $group_field="" )
 {
 		global $DEBUG;
 		$result=array();
-        $sys_vars=array("now"=>dateof("now") . " " . timeof("now"), 
-						"today"=>dateof("now"),
-						'confidential'=>confidential(),
-						'UID'=>$GLOBALS['UID'],
-						'USER'=>$GLOBALS['NICK']);
+        $sys_vars=$GLOBALS['AG_OPENOFFICE_SYS_VARS'];
         $tot_recs=is_array($data_recs) ? count($data_recs) : sql_num_rows($data_recs);
         for ($count=0; $count < $tot_recs; $count++)
         {
