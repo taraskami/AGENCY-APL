@@ -125,7 +125,7 @@ $client_search_fields= array(
 
 //OpenOffice Stuff Here:
 $donor_profile_template  = 'donor_profile.sxw';
-$donor_envelope_template = 'envelope_new.sxw';
+$donor_envelope_template = 'envelope_plain.sxw';
 
 $donor_data_merge_templates = array($donor_profile_template=>'Print Donor Profile',
 						$donor_envelope_template=>'Print Donor Envelope');

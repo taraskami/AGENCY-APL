@@ -92,8 +92,7 @@ function generate_donor_profile( $filter, $order="" )
 
 	$gift=agency_query($gift_sql,client_filter($id));
 */
-//	$repo=oowriter_merge_new(array($donor,$gift_cash,$gift_inkind,$donor_profile_template);
-	$repo=oowriter_merge_new(array($donor,$gift_cash,$gift_inkind,$notes),AG_TEMPLATE_DIRECTORY."/ootest.sxw");
+	$repo=oowriter_merge_new(array($donor,$gift_cash,$gift_inkind,$notes),$donor_profile_template);
 	return $repo;
 }
 

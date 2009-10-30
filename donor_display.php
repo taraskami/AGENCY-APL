@@ -74,7 +74,7 @@ if ($action=="print_donor_profile")
 */
 		// using this instead, for now:
 		$addr=agency_query("SELECT address_mail AS _address FROM address_mail(address($ID))");
-		$env=oowriter_merge_new($addr,AG_TEMPLATE_DIRECTORY.'/'.$template);
+		$env=oowriter_merge_new($addr,$template);
 		office_mime_header("writer");
 		echo($env->data());
 		page_close($silent=true);
