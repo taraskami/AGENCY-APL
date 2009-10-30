@@ -245,7 +245,7 @@ $income_table="income";
 $subsidy_table = 'housing_unit_subsidy';
 $subsidy_select_sql = "SELECT * FROM $subsidy_table ";
 
-// NOTE:  residency refers to DESC housing, residency_other refers to non-DESC Housing
+// NOTE:  residency refers to own org housing, residency_other refers to non-org Housing
 $residency_table="residence_own";
 $residency_other_table="residence_other";
 $residency_table_id="OccupancyID";
