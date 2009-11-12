@@ -545,7 +545,7 @@ function office_merge( $data_recs, $template="",$extra_vars=array())
 	}
 	$template = orr($template,AG_OPEN_OFFICE_CALC_TEMPLATE);
 	$default_template = preg_match('/'. AG_OPEN_OFFICE_CALC_TEMPLATE.'/',$template);
-	$zip_files=unzip($template);
+	$zip_files=unzip(AG_TEMPLATE_DIRECTORY . '/'. $template);
 	$contents=$zip_files["content.xml"];
 $DEBUG && outline("contents before: " . webify($contents));
 	

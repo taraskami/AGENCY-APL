@@ -329,8 +329,8 @@ function report_generate_openoffice($report,$template)
 function report_generate_from_posted()
 {
 	$report = array();
-	$report['sql'] = $_REQUEST['sql1'];
-	$report['report_header'] = $_REQUEST["report_header"];
+	$report['sql'] = dewebify($_REQUEST['sql1']);
+	$report['report_header'] = dewebify($_REQUEST["report_header"]);
 
 	//fixme: this still relies on sql being acquired from the browser. even though it is checked
 	//       it is still a dangerous idea.
