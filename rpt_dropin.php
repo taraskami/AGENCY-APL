@@ -37,7 +37,7 @@ include "openoffice.php";
 include "zipclass.php";
 $sdate=$_REQUEST["sdate"];
 $edate=$_REQUEST["edate"];
-$template = AG_TEMPLATE_DIRECTORY.'/rpt_dropin.sxw';
+$template = 'rpt_dropin.sxw';
 
 $out .= 
 		formto()

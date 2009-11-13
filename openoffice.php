@@ -320,7 +320,7 @@ function oowriter_merge( $data_recs, $template, $data_eval="",$file_replace="",$
 	// and replace $field with value, a la the current report writer
 
 	$file_replace=orr($file_replace,array());
-	$zip_files=unzip($template);
+	$zip_files=unzip(AG_TEMPLATE_DIRECTORY . '/' . $template);
 	$contents=$zip_files['content.xml'];
 	$styles=$zip_files['styles.xml'];
 

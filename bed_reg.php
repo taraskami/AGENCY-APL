@@ -322,7 +322,7 @@ if ($print_sheet) {
                                          FROM generate_series($start,$end)
                                                LEFT JOIN bed_reg b ON (b.bed_no = generate_series AND $filter)
                                                LEFT JOIN client c ON (b.client::text=c.client_id::text)",
-								   '','bed_no'),AG_TEMPLATE_DIRECTORY."/bednight_sheet_$print_format.sxw");
+								   '','bed_no'),"bednight_sheet_$print_format.sxw");
 		}
 
 	} else {
@@ -337,7 +337,7 @@ if ($print_sheet) {
                                                                  ,1,22) AS client_name,
                                            b.bed_group,b.bed_no,b.comments
                                          FROM bed_reg b LEFT JOIN tbl_client c ON (b.client::text=c.client_id::text)",
-							   $filter,'bed_group, bed_no'),AG_TEMPLATE_DIRECTORY."/bednight_sheet_$print_format.sxw");
+							   $filter,'bed_group, bed_no'),"bednight_sheet_$print_format.sxw");
 	}
 
 	office_mime_header('writer');

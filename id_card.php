@@ -79,7 +79,7 @@ function generate_client_card($id)
 // 	image_grayscale($source,$new);
 // 	$pic = file_get_contents_url($new);
 	
-	$file=oowriter_merge($rec,AG_TEMPLATE_DIRECTORY.'/'.AG_CLIENT_CARD_TEMPLATE,"",array("Pictures/photo.jpg"=>$pic));
+	$file=oowriter_merge($rec,AG_CLIENT_CARD_TEMPLATE,"",array("Pictures/photo.jpg"=>$pic));
 	return $file;
 }
 
@@ -95,7 +95,7 @@ function generate_staff_card($id)
 	
 	$rec=agency_query($query,array("staff_id"=>"$id"));
 	$pic=file_get_contents_url(staff_photo_url($id,4,true));
-	$file=oowriter_merge($rec,AG_TEMPLATE_DIRECTORY.'/'.AG_STAFF_CARD_TEMPLATE,'',array("Pictures/photo.jpg"=>$pic));
+	$file=oowriter_merge($rec,AG_STAFF_CARD_TEMPLATE,'',array("Pictures/photo.jpg"=>$pic));
 	return $file;
 }
 

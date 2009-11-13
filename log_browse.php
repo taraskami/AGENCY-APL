@@ -265,7 +265,7 @@ switch( $action ) {
 	 $a = get_log( $id );
 	 
 	 office_mime_header('writer');
-	 $x=oowriter_merge($a,AG_TEMPLATE_DIRECTORY.'/log_print.sxw');
+	 $x=oowriter_merge($a,'log_print.sxw');
 	 out($x->data());
 	 page_close($silent=true); //no footer on oo files
 	 exit;

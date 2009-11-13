@@ -142,7 +142,7 @@ function show_mail_list($format="")
 //$GLOBALS["query_display"]="Y";
 */
 		$set = get_mails_waiting();
-		$template_file=AG_TEMPLATE_DIRECTORY.'/mail_signout.sxw';
+		$template_file='mail_signout.sxw';
 		$merged_file=oowriter_merge($set,$template_file);
 		office_mime_header("writer");
 		out($merged_file->data());
@@ -154,7 +154,7 @@ function show_mail_list($format="")
 	    $sql = "SELECT DISTINCT $mail_table.client_id,name_full,name_last from $mail_table
 				LEFT JOIN $client_table USING (client_id)";
 		$set=agency_query($sql,array("delivery_code"=>"WAITING"),"name_last");
-		$template_file=AG_TEMPLATE_DIRECTORY.'/mail_list.sxw';
+		$template_file='mail_list.sxw';
 		$merged_file=oowriter_merge($set,$template_file,'ucwords(strtolower($x["name_full"])) . " (" . $x["client_id"] . ")"');
 //		$set=get_mails(array("delivery_code"=>"WAITING"));
 //		$merged_file=oowriter_merge($set,$template_file,'$x["name_full"]');

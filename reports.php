@@ -308,10 +308,10 @@ function report_generate_openoffice($report,$template)
 
 	if ($type = is_oo_writer_doc($template)) {
 		// oo writer document
-        	$oofile=oowriter_merge($result,AG_TEMPLATE_DIRECTORY.'/'.$template,NULL,NULL,$group_by);
+        	$oofile=oowriter_merge($result,$template,NULL,NULL,$group_by);
 	} elseif ($type = is_oo_calc_doc($template)) {
 		// oo calc document
-        	$oofile=office_merge($result,AG_TEMPLATE_DIRECTORY.'/'.$template,
+        	$oofile=office_merge($result,$template,
 					   //fixme: report header has changed
 					   array("HEADER-LABEL"=>dewebify($report['report_header']
 										    . "\nGenerated at " . datetimeof("now","US"))));
