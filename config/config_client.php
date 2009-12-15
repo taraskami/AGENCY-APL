@@ -56,6 +56,7 @@ $engine["client"] = array(
 //						'criminal_history'    => 'general',
 						'bar'                 => 'general',
 						'entry'               => 'general',
+						'reg_program'               => 'general',
 //						'medical_health'      => 'general',
 //						'nicotine_distribution' => 'general',
 //						'application_housing_other' => 'general',
