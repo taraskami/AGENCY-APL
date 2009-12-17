@@ -45,7 +45,10 @@ $engine['contact_information']=array(
 								     'contact_summary'=>array(
 													'value_format'=>'smaller($x)'),
 								     'zipcode'=>array(
-											    'label'=>'ZIP code')
+											    'label'=>'ZIP code'),
+									'phone_1'=>array( 'data_type' => 'phone' ),
+									'phone_2'=>array( 'data_type' => 'phone' )
+
 								     )
 						 );
 ?>
