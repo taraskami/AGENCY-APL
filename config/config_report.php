@@ -32,6 +32,7 @@ should be included in this distribution.
 $engine['report'] = array(
 					'perm'=>'reports',
 					'perm_add'=>'admin',
+					'perm_edit'=>'admin',
 					'add_link_show'=>true,
 					'list_fields' => array( 'report_id','report_title','report_category_code','report_comment'),
 
