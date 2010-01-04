@@ -29,4 +29,4 @@ UPDATE tbl_client_death SET client_death_data_source_code = 'STAFF',changed_by=s
 UPDATE tbl_l_client_death_data_source SET is_deleted=true,deleted_by=sys_user(),deleted_at=current_timestamp,deleted_comment='Retired for more generic Staff option' WHERE client_death_data_source_code = 'DESC';
 
 
---COMMIT;
+COMMIT;
