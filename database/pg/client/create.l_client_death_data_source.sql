@@ -15,7 +15,7 @@ CREATE TABLE tbl_l_client_death_data_source (
     sys_log                 TEXT
 );
 
-INSERT INTO tbl_l_client_death_data_source VALUES ('DESC','DESC Staff',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_client_death_data_source VALUES ('STAFF','Agency Staff',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_client_death_data_source VALUES ('MED','Medical Personnel',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_client_death_data_source VALUES ('NEWS','News/Public Information',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_client_death_data_source VALUES ('RELATIVE','Relative',sys_user(),current_timestamp,sys_user(),current_timestamp);
