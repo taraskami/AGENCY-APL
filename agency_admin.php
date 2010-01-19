@@ -73,6 +73,12 @@ function agency_menu_admin()
 	$menu['Update Engine Array Stored in DB'] = para('This should be run after any code or database update.')
 		. hlink('update_engine_config.php','Update Engine Array');
 
+
+	//DB-mod information
+	$menu['Database Modifications'] = 
+	para('These modifications have been applied to the database.  Database modification files are located in the \'database/pg/db_mods\' directory.')
+	. call_engine(array('object'=>'db_revision_history','action'=>'list','format'=>''),'',true,true,$perm,$tot_recs);
+
 	//Browse AGENCY tables via Engine
 	$menu['Browse AGENCY Tables via Engine'] = para(oline(link_all_db_views())
 									 .link_all_db_tables())
