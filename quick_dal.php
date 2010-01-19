@@ -102,6 +102,12 @@ if ($reset or be_null($qdid)) {
 	$_SESSION['qDAL_rec_init'.$qdid] = $rec_init = orr(array_filter(orr($rec_init,array())),$_SESSION['qDAL_rec_init'.$qdid],array());
 	
 	$def = call_user_func($def['fn']['multi_hide_fields'],$def,$rec_init);
+ 	$m_add = $def['multi_add'];
+ 	if ($m_add['common_fields_required']) {
+ 		foreach ($m_add['common_fields'] as $f ) {
+ 			$def['fields'][$f]['null_ok']=false;
+ 			}
+ 		}
 
 	/*
 	 * Merge working versions

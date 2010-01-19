@@ -1461,7 +1461,6 @@ function form_list_row_generic($number,$rec,$def,$control)
 	 * Generate a row for the given record, complete with form variables and any
 	 * necessary hidden variables.
 	 */
-
 	$fields = array_keys($def['fields']);
 	$action = $control['action'];
 
@@ -1476,7 +1475,6 @@ function form_list_row_generic($number,$rec,$def,$control)
 			}
 			continue;
 		}
-
 		$cell = form_field_generic($field,$rec[$field],&$def,$control,&$Java_Engine,'RECS['.$number.']');
 		
 		$row .= cell($cell);
@@ -1553,14 +1551,14 @@ function multi_record_passed_generic($rec,$rec_init,$def)
 
 	$check_fields = array_merge($missing,$def['multi_add']['common_fields']);
 	foreach ($rec as $key => $value) {
-		if (in_array($key,$check_fields) && !be_null($value)) {
+		if (in_array($key,$check_fields) && (!be_null($value)) && ($value<>$def[$key]['default'])) {
 			$passed = true;
 		}
 	}
 	return $passed;
 }
 
-function valid_multi_record_generic($records,&$def,&$message,&$errors,$rec_init)
+function valid_multi_record_generic(&$records,&$def,&$message,&$errors,$rec_init)
 {
 	/*
 	 * Wrapper function for valid_generic, to determine if a set of records
@@ -1570,11 +1568,12 @@ function valid_multi_record_generic($records,&$def,&$message,&$errors,$rec_init)
 	$i = 0;
 	$tmp = array();
 	foreach ($records as $number => $rec) {
-		if ($i==0 && $def['multi_add']['common_fields_required']) {
+		if ($i++==0 && $def['multi_add']['common_fields_required']) {
 			// require common fields for first record, retain default in $tmp array
 			foreach ($def['multi_add']['common_fields'] as $field) {
 				$tmp[$field] = $def['fields'][$field]['null_ok'];
 				$def['fields'][$field]['null_ok'] = false;
+				$common_val[$field]=$rec[$field];
 			}
 			$restore = true;
 		} elseif ($restore) {
@@ -1584,13 +1583,19 @@ function valid_multi_record_generic($records,&$def,&$message,&$errors,$rec_init)
 			}
 		}
 		if (call_user_func($def['fn']['multi_record_passed'],$rec,$rec_init,$def)) {
+			foreach ($def['multi_add']['common_fields'] as $field) {
+				$rec[$field]=$common_val[$field]; // tack common vals on to each record
+			}
 			$t_v = valid_generic($rec,&$def,&$message,'add');
 			$valid = $t_v ? orrn($valid,$t_v) : $t_v;
 			if (!$t_v) {
 				array_push($errors,$number);
 			}
+		} else {
+			if ($skip++ > 1) {
+				unset($records[$number]); // save two extra rows, the discard rest of recs
+			}
 		}
-		$i ++;
 	}
 
 	return $valid;
@@ -1711,6 +1716,10 @@ function view_list_row_generic($number,$rec,$def,$control)
 
 	$i = 0;
 	foreach ($fields as $field) {
+		$m_add=$def['multi_add'];
+		if ($m_add['common_fields_required'] and in_array($field,$m_add['common_fields'])) {
+			$def[$field]['null_ok']=false;
+		}
 		$f_def = $def['fields'][$field];
 		if ($f_def['display_'.$action]=='hide') {
 			continue;
@@ -1734,8 +1743,16 @@ function multi_add_blank_generic($def,$rec_init)
 	/*
 	 * Wrapper function for blank_generic to gather a set of blank records
 	 */
+
+	// First, wipe out default values for visible fields
+	$n_def=$def;
+	foreach($def['fields'] as $f=>$d) {
+		if (($d['display_add']<>'hide')) {
+			$n_def['fields'][$f]['default']=NULL;
+		}
+	}
 	for ($i=0; $i < $def['multi_add']['number_of_records']; $i++) {
-		$tm_r[$i] = blank_generic($def,$rec_init);
+		$tm_r[$i] = blank_generic($n_def,$rec_init);
 	}
 	return $tm_r;
 }
@@ -1771,6 +1788,7 @@ function multi_hide_fields_generic($def,$rec_init)
 	foreach (array_keys($def['fields']) as $f) {
 		if ($def['fields'][$f]['null_ok'] 
 		    or $def['fields'][$f]['system_field']
+			or in_array($f,$def['multi_add']['common_fields'])
 		    or in_array($f,array_keys($rec_init))) {
 			$def['fields'][$f]['display_add'] = 'hide';
 		}
