@@ -516,7 +516,11 @@ function link_report($report_id,$label,$init=array())
 	 * Generate link to a report options page, with optional $init
 	 * values pre-filled 
 	 */
-	if (!be_null($init) && is_assoc_array($init)) {
+	if (!is_int($report_id)) { 
+		out(div("warning: bad report ID $report_id passed to link_report",'','class="warning"'));
+		return false; }
+	
+if (!be_null($init) && is_assoc_array($init)) {
 		foreach ($init as $var => $val) {
 			$url .= '&'.AG_REPORTS_VARIABLE_PREFIX.$var.'='.$val;
 		}
