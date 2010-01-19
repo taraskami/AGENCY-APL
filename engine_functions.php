@@ -2800,7 +2800,9 @@ function title_generic($action,$rec,$def)
 			 : bigger(bold($x)))
 		. $required_note
 		. (sql_true($rec['is_deleted'])
-		   ? $GLOBALS['NL'] . italic(bold(red('(this record has been marked deleted)')))
+			? $GLOBALS['NL'] . italic(bold(red('(this record was deleted by '
+				. staff_link($rec['deleted_by']) . ' at ' . datetimeof($rec['deleted_at'],'US') 
+				. $GLOBALS['NL'] . ' with this comment: ' . underline($rec['deleted_comment']) . ')')))
 		   : '');
 }
 
