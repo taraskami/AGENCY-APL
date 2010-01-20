@@ -34,3 +34,23 @@ should be included in this distribution.
    files later.
  */
 
+/* Datepicker for date fields */
+$(function() {
+	var today='<a href=# class="calTodayLink fancyLink">today</a>';
+	$(".field_date").after(today);
+	$(".calTodayLink").click( function(event) {
+		event.preventDefault();
+		var tmp=new Date();
+		var tmp2=1+tmp.getMonth()+'/'+tmp.getDate()+'/'+tmp.getFullYear();
+		$(event.target).prev().prev().val(tmp2);
+	});
+
+	$('.field_date').datepick( {
+			showOn: 'button',
+			buttonImageOnly: true,
+			buttonImage: 'images/calendar.png',
+			numberOfMonths: 2,
+			firstDay: 1,
+			yearRange: '-100:+10'
+	});
+});

@@ -1379,35 +1379,13 @@ function formfile( $varname, $options="" )
 }
 
 function formdate( $varname, $default="", $button_text="Calendar" ,$options='')
-// Put a text entry field, with a button for calendar lookup
-// this is tied in with date_select.js, which must be included,
-// and cal.htm (subject to rename) which must be available.
 {
-    if ($default == "now")
-    {
-        $default = dateof(time() );
-    }
-    else
-    {
-        $default = dateof($default );
-    }
-
-    //send js and tags to page
-    static $sent;
-    if (!$sent) {
-	    $sent = true;
-	    global $AG_PAGE_FOOTER;
-	    $AG_PAGE_FOOTER .= div('','mainCalendar'); //this is where the calendar is created
-    }
-
-    global $off,$form_name;
-    $onclick = 'tmp=new Date(); '
-	    . 'document.'.$form_name.'.elements[&quot;'.$varname.'&quot;].value=(1+tmp.getMonth())+\'/\'+tmp.getDate()+\'/\'+tmp.getFullYear(); '
-	    . 'return false;';
-    return span(formvartext( $varname, $default, $options )
- 	    . '<input type="button" value="" style="background: url('.$off.'images/calendar.png) no-repeat; width: 25px; height: 25px; border: none;" '
-	    . 'onclick="javascript:makeCalendar(\''.$form_name.'.elements[&quot;'.$varname.'&quot;]\',this);" />'
-		    . hlink('#','today','',' class="fancyLink" style="font-size: 65%;" onclick="'.$onclick.'"') ,' style="white-space: nowrap;"');
+	$default = dateof($default );
+	$class='class="field_date"';
+	if (!stristr($options,$class)) {
+		$options .= "$options $class ";
+	}
+	return formvartext( $varname, $default, $options );
 }
 
 function formdate_range($varname,$default='')
