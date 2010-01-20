@@ -84,7 +84,6 @@ link_style_sheet('print.css','print',' class="styleSheetPrint"');
 link_style_sheet(AG_MAIN_OBJECT_DB.'.css','screen',' class="styleSheetScreen"');
 
 link_javascript('agency.js');
-link_javascript('calendar.js');
 
 require_once('jquery_includes.php');  //all the jquery stuff
 

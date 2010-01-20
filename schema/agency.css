@@ -161,21 +161,7 @@ table.engineForm { background-color: #ffffee; }
 #agencyTopLoginBox input[type=text], #agencyTopLoginBox input[type=password] {  width: 65px; }
 #agencyTopLoginBox input[type=hidden] { display: none; }
 
-td.jsCalendar { border-right: solid 1px black; 
-	border-bottom: solid 1px black;
-	background-color: #fff;
-      text-align: center;
-	font-size: 75%;
-}
-th.jsCalendar { font-size: 85%; text-align: center;
-	color: #fff; background-color: #0000bc;
-}
-table.jsCalendar { border: outset 2px black;}
-a.jsCalendar { text-decoration: none; display: block; padding: 2px;}
-a.jsCalendarToday {color: red;}
-a.jsCalendar:hover, a.jsCalendar:active { font-weight: bold; color: #fff; background-color: #ff6d12;}
-
-.jsCalendarForm { font-size: 65%; }
+a.calTodayLink { font-size: 65%; }
 
 #mainCalendar {
 	border: solid 2px #0f0f00;
