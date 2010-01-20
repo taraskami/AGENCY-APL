@@ -54,3 +54,8 @@ $(function() {
 			yearRange: '-100:+10'
 	});
 });
+
+/* TimePicker for time fields */
+$(function() {
+	$(".field_time").timeEntry();
+});

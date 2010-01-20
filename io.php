@@ -1409,7 +1409,7 @@ function formdate_range($varname,$default='')
 	return $out;
 }
 
-function formtime($varname, $default="")
+function formtime($varname, $default="",$options=NULL)
 {
     //  Generates a drop-down list of times.
     //  Send the string "now" for current time
@@ -1423,8 +1423,11 @@ function formtime($varname, $default="")
     {
         $default = timeof($default);
     }
-
-    return formvartext($varname, $default);
+	$class='class="field_time"';
+	if (!stristr($options,$class)) {
+		$options .= " $class ";
+	}
+    return formvartext($varname, $default,$options);
 }
 
 function formtextarea( $varname, $default="", $options="", $x=60, $y=10 )

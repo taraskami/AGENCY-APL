@@ -108,9 +108,7 @@ function eventtime_box()
 			  . bold("Event Date:")
 			  . oline(formdate("edate", dateof($occurred_at)),2 )
 			  . bold("Event Time:")
-			  // user must specify am or pm
 			  . formtime("etime", orr(timeof($occurred_at,"ampm"),$_REQUEST["etime"]))
-			  . smaller("(HH:MM  am/pm)",2)  
 			  ,$colors["addl"] );
 	return $output;
 }

@@ -1801,13 +1801,7 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 			$time_field = Calendar::generate_time_list($formvar.'['.$key.'_time_]',timeof($value,'SQL'));
 			break;
 		default :
-			global $form_name;
-			$onclick = 'tmp=new Date(); '
-				. 'document.'.$form_name.'.elements[&quot;'.$formvar.'['.$key.'_time_]&quot;].value=tmp.toLocaleTimeString(); '
-				. 'return false;';
-			$now_time = hlink('#','now','',' onclick="'.$onclick.'"') ;
-			$time_field = formvartext($formvar.'['.$key.'_time_]',timeof($value),$element_options) 
-				. smaller(' (hh:mm am/pm)' . $now_time);
+            $time_field = formtime($formvar.'['.$key.'_time_]',timeof($value),$element_options) ;
 		}
 		
 		$field = hiddenvar($formvar.'['.$key.']',$value)

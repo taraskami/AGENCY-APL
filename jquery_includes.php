@@ -32,10 +32,12 @@ should be included in this distribution.
 
 link_style_sheet('pepper-grinder/jquery-ui.css','screen',' class="styleSheetScreen"');
 link_style_sheet('jquery.datepick.css','screen',' class="styleSheetScreen"');
+link_style_sheet('jquery.timeentry.css','screen',' class="styleSheetScreen"');
 
 link_javascript('jquery-1.4.min.js');
 link_javascript('jquery-ui-1.7.2.custom.min.js');
 link_javascript('jquery.datepick.pack.js');
+link_javascript('jquery.timeentry.pack.js');
 link_javascript('jquery_agency.js');
 
 ?>
