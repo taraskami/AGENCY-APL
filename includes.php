@@ -85,6 +85,9 @@ link_style_sheet(AG_MAIN_OBJECT_DB.'.css','screen',' class="styleSheetScreen"');
 
 link_javascript('agency.js');
 link_javascript('calendar.js');
+
+require_once('jquery_includes.php');  //all the jquery stuff
+
 // if the user has requested refreshing, then set the meta tag here
 // Not sure what this is all about. As far as I know, we never pass a refresh variable... - JH 5/2/05
 if ($refresh) {
