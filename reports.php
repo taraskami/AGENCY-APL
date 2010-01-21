@@ -516,7 +516,7 @@ function link_report($report_id,$label,$init=array())
 	 * Generate link to a report options page, with optional $init
 	 * values pre-filled 
 	 */
-	if (!is_int($report_id)) { 
+	if (!(is_numeric($report_id) and (intval($report_id)==$report_id))) { 
 		out(div("warning: bad report ID $report_id passed to link_report",'','class="warning"'));
 		return false; }
 	
