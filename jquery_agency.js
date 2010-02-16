@@ -57,5 +57,34 @@ $(function() {
 
 /* TimePicker for time fields */
 $(function() {
-	$(".field_time").timeEntry();
+	var clock_button='<img src="images/clock.gif" class="clockButton" />';
+	var now=' <a href=# class="calNowLink fancyLink">now</a>';
+	$(".field_time").after(now).after(clock_button);
+	$(".clockButton").clockpick( {
+		starthour: 0,
+		endhour: 23,
+		minutedivisions: 12
+	},
+	function( ntime ) {
+		$(this).prev().val(ntime);
+	});
+
+	$(".calNowLink").click( function(event) {
+		event.preventDefault();
+		var tmp=new Date();
+		var hours=tmp.getHours();
+		if ( hours >= 12 ) {
+			var ampm = "pm";
+			hours = hours - 12;
+		} else {
+			var ampm = "am";
+		}
+		var min = tmp.getMinutes();
+		if (min < 10) {
+			min = '0' + min;
+		}
+		var tmp2= hours + ':' + min + ' ' + ampm;
+		$(event.target).prev().prev().val(tmp2);
+	});
 });
+

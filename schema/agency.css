@@ -161,7 +161,8 @@ table.engineForm { background-color: #ffffee; }
 #agencyTopLoginBox input[type=text], #agencyTopLoginBox input[type=password] {  width: 65px; }
 #agencyTopLoginBox input[type=hidden] { display: none; }
 
-a.calTodayLink { font-size: 65%; }
+a.calTodayLink,a.calNowLink { font-size: 65%; vertical-align: bottom; }
+.clockButton { vertical-align: text-bottom; }
 
 #mainCalendar {
 	border: solid 2px #0f0f00;
