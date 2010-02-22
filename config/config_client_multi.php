@@ -31,32 +31,26 @@ should be included in this distribution.
 </LICENSE>
 */
 
-$engine['disability'] = array(
-		'list_fields' => array('disability_code','disability_date','disability_date_end','added_by'),
-		'widget'=>array(
-				    'add'=>true,
-				    'edit'=>true,
-				    'style'=>'one_of_each',
-				    'key'=>'disability_code',
-				    'fixed'=>array('client_id'),
-				    'required_fields'=>array('disability_date'),
-				    'optional_fields'=>array('comment')
-				    ),
-		'fields' => array(
-					'disability_date'=>array(
-									 'default'=>'NOW'),
-					'disability_date_end'=>array(
-									     'label'=>'Disability End Date',
-									     'label_list'=>'End Date',
-									     'display_add'=>'hide'),
-					'disability_code' => array(
-									'require_comment_codes' => array('9','44','45'),
-									   'display' => 'display',
-									   'display_add' => 'regular',
-									   ),
-					'source'=>array(
-							    'display'=>'display',
-							    'post'=>false),
-					)
-		);
+$engine['client']['multi_records'] = true;
+$engine['client']['multi'] = array(
+	'disability' => array(
+    	'sub_title' => 'Disabilities',
+	    'sub_sub_title'=>smaller('Check appropriate disabilities based on '.AG_MAIN_OBJECT.' self-report or staff observation'),
+		'multi_fields'=>'disability_date',
+		'object' => 'disability',
+		'field' => 'disability_code',
+		'other_codes'=> array('9','44','45'),
+		'allow_none'=>true,
+		'confirm_none'=>true
+),
+	'ethnicity' => array(
+		'sub_title' => 'Ethnicities',
+		'sub_sub_title'=>smaller('Check appropriate ethnicities based on '.AG_MAIN_OBJECT.' self-report'),
+		'object' => 'ethnicity',
+		'field' => 'ethnicity_code',
+		'multi_fields'=>'ethnicity_date',
+		'other_codes' => array('13','11','0'), // put at end of otherwise alpha-sorted list
+		'allow_none' => false
+));
+
 ?>

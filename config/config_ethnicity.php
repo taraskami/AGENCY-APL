@@ -31,32 +31,17 @@ should be included in this distribution.
 </LICENSE>
 */
 
-$engine['disability'] = array(
-		'list_fields' => array('disability_code','disability_date','disability_date_end','added_by'),
-		'widget'=>array(
-				    'add'=>true,
-				    'edit'=>true,
-				    'style'=>'one_of_each',
-				    'key'=>'disability_code',
-				    'fixed'=>array('client_id'),
-				    'required_fields'=>array('disability_date'),
-				    'optional_fields'=>array('comment')
-				    ),
-		'fields' => array(
-					'disability_date'=>array(
-									 'default'=>'NOW'),
-					'disability_date_end'=>array(
-									     'label'=>'Disability End Date',
-									     'label_list'=>'End Date',
-									     'display_add'=>'hide'),
-					'disability_code' => array(
-									'require_comment_codes' => array('9','44','45'),
-									   'display' => 'display',
-									   'display_add' => 'regular',
-									   ),
-					'source'=>array(
-							    'display'=>'display',
-							    'post'=>false),
-					)
-		);
+$engine['ethnicity'] = array(
+	'list_fields' => array('ethnicity_code','ethnicity_date','added_by'),
+	'fields' => array(
+		'ethnicity_date'=>array(
+			 'default'=>'NOW'),
+		'source'=>array(
+		    'display'=>'display',
+		    'post'=>false),
+		'ethnicity_code'=>array(
+			'require_comment_codes' => array('13','11'))
+		)
+);
+
 ?>

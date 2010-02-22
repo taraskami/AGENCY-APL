@@ -317,7 +317,6 @@ $client_search_fields= array(
 				     "name_full",
 				     "name_alias",
 				     "name_full_alias",
-				     "ethnicity_code",
 				     "gender_code",
 				     "dob",
 				     "ssn",

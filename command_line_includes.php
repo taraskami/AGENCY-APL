@@ -100,6 +100,7 @@ include $off . 'image.php';
 include $off . 'reports.php';
 include $off . 'attachments.php';
 include $off . 'link.php';
+include $off . 'multi_generics.php';
 
 
 /* read configuration */

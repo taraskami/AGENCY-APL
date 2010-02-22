@@ -9,7 +9,6 @@ SELECT
 	COALESCE(prot.dob, tbl_client.dob) AS dob,
 	COALESCE(prot.ssn, tbl_client.ssn) AS ssn,
 	tbl_client.gender_code,
-	tbl_client.ethnicity_code,
 	tbl_client.hispanic_origin_code,
 	tbl_client.needs_interpreter_code,
 	tbl_client.language_code,

@@ -88,3 +88,16 @@ $(function() {
 	});
 });
 
+/* Highlight errors and selected checkboxes on Engine forms */
+$(function() {
+	$(".engineFormError").closest("tr").addClass("engineFormError"); 
+	$(".engineFormError").closest("tr").click( function() { 
+		$(this).find(".engineFormError").removeClass("engineFormError");
+		$(this).removeClass("engineFormError");
+	});
+	$(".engineForm input:checkbox:checked").closest('tr').addClass("engineFormSelected");
+
+	$(".engineForm input:checkbox").change( function() {
+		$(this).closest('tr').toggleClass('engineFormSelected');
+	});
+});

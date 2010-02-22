@@ -125,16 +125,21 @@ $sql['bednights']="SELECT description,
                    GROUP BY description";
 
 //ethnic breakdown
+
+/*
+ * Warning:  With implementation of multiple ethnicities, may total over 100%
+ */
+
 $sql['ethnicity']="SELECT COUNT(id.client_id), eth.description
          FROM id_list id
-              LEFT JOIN client c ON (c.client_id=id.client_id)
+              LEFT JOIN ethnicity c ON (c.client_id=id.client_id)
               LEFT JOIN l_ethnicity eth ON (c.ethnicity_code=eth.ethnicity_code)
               GROUP BY eth.description
               ORDER BY eth.description";
 
 $sql['Ethnicity (Simple)'] = "SELECT COUNT(id.client_id), ethnicity_simple(ethnicity_code) AS description
                           FROM id_list id
-                                LEFT JOIN client c USING (client_id)
+                                LEFT JOIN ethnicity c USING (client_id)
                           GROUP BY 2 ORDER BY 2";
 
 //gender breakdown

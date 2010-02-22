@@ -21,8 +21,6 @@
 \**********************************************************/
 
 /* basic lookups */
-\i create.l_ethnicity_simple.sql
-\i create.l_ethnicity.sql
 \i create.l_language.sql
 \i create.l_veteran_status.sql
 \i create.l_name_suffix.sql
@@ -62,6 +60,10 @@
 
 \i create.l_disability.sql
 \i create.tbl_disability.sql
+
+\i create.l_ethnicity_simple.sql
+\i create.l_ethnicity.sql
+\i create.tbl_ethnicity.sql
 
 \i create.tbl_client_note.sql
 

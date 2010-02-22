@@ -45,6 +45,7 @@ $engine["client"] = array(
 						'staff_assign'        => 'general',
 						'immigrant'           => 'general',
 						'disability'          => 'general',
+						'ethnicity'			  => 'general',
 						'hiv'                 => 'general',
 						'income'              => 'general',
 						'contact_information' => 'general',
@@ -131,19 +132,7 @@ $engine["client"] = array(
 						//-----Deceased-----//
 						'client_death'             => 'general'
 						),
-		"multi_records" => true,
-		"multi" => array(
-				     "sub_title" => "Disabilities",
-				     'sub_sub_title'=>smaller('Shelter Staff: check appropriate disabilities based on '.AG_MAIN_OBJECT.' self-report or staff observation'),
-				 "table"=>"disability",
-				 "table_post"=>"tbl_disability",
-				 "sel_sql"=>"SELECT * FROM disability",
-				 "blank_fn" => "blank_disabs_add",
-				 "add_fields_fn" => "add_disabs_fields",
-				 "form_row_fn" => "form_disabs_row",
-				 'valid_fn'=>'valid_disabs',
-				 "post_fn" => "post_disabs"),
-
+		/* Multi configuration moved to config_client_multi.php.  Included at end. */
 
 		"title" => 'ucwords($action) . "ing '.AG_MAIN_OBJECT.' record for " . client_link($rec["client_id"])',
 		"title_add"=>'ucwords($action) . "ing a new '.AG_MAIN_OBJECT.' record."',
@@ -240,4 +229,5 @@ $engine["client"] = array(
 										    =>'This {$Y} already exists'))
 				  )
 		);
+include 'config_client_multi.php'; // Configure multi--ethnicity & disability
 ?>

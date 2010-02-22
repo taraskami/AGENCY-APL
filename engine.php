@@ -148,9 +148,13 @@ function engine($control='',$control_array_variable='control')
       $read_perm       = engine_perm($control,'R') or $super_perm or $any_perm;
       $write_perm      = engine_perm($control,'W') or $any_perm or $super_perm;
 
-
+	/*
+	 * Multi-records
+	 */
       if ( ($def['multi_records']) and ($action=='add') ) {
-		$def=call_user_func($def["multi"]["add_fields_fn"],$def);
+		foreach( $def['multi'] as $m=>$opts ) {
+			$def=call_user_func($opts["add_fields_fn"],$def,$m);
+		}
       }
 
 	/*

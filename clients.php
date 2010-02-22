@@ -68,9 +68,12 @@ function show_query_row_client($fields,$position,$rec,$control,$def,$control_arr
 		
             . cell( last_entry_f($id),'class="generalData1"')
             . cell( bar_status_f($rec,'',$is_provisional ),'class="generalData1"')
-            . cell( '&nbsp;','class="generalData1"')
+//            . cell( '&nbsp;','class="generalData1"')
             . cell( smaller(oline(value_generic($rec['gender_code'],$def,'gender_code','list'))
-				    . oline(value_generic($rec['ethnicity_code'],$def,'ethnicity_code','list'))
+
+		   			. oline(multi_objects_f( 
+								 get_generic(client_filter($id),'','','ethnicity')
+								 ,'ethnicity','ethnicity_code'))
 				    . oline(dateof($rec['dob']))
 				    . oline($rec['ssn'])) ,'class="generalData1"')
             . cell( client_photo( sql_true($rec['is_protected_id']) ? 0 : $id, 0.5 ),'class="generalData1"'); //passing 0 for protected 
@@ -211,7 +214,6 @@ function client_show( $id )
 			);
 */	
 	// Disability Information
-	$str="";
 	$disab_filt = client_filter($id);
 	$disab_filt[] = array('NULL:disability_date_end'=>true,
 				    'FIELD>=:disability_date_end'=>'CURRENT_DATE');
@@ -220,8 +222,8 @@ function client_show( $id )
 												     "action"=>"add",
 												     "rec_init"=>array($ID_FIELD=>$client[$ID_FIELD])),
 											     "Add a disability record") )))
-		   . leftcell( $str . disabilities_f( 
-								 get_generic($disab_filt,'','','disability'), ',<br>'
+		   . leftcell( multi_objects_f( 
+								 get_generic($disab_filt,'','','disability'), 'disability','disability_code','<br>'
 								 ) 
 				   ));
 
@@ -259,7 +261,9 @@ function client_show( $id )
 
 						) 
 					. blue(value_generic($client['gender_code'],$def,'gender_code','list')) . green("  |  ")
-					. blue(value_generic($client['ethnicity_code'],$def,'ethnicity_code','list')) . green("  |  ")
+		   			. multi_objects_f( 
+								 get_generic(client_filter($id),'','','ethnicity')
+								 ,'ethnicity','ethnicity_code') . green("  |  ")
 					. blue($client["ssn"]) . green("  |  ") 
 					. blue(value_generic($client['veteran_status_code'],$def,'veteran_status_code','list'))) );
 	//ids
@@ -493,9 +497,10 @@ function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
  				   . cell( last_entry_f($info[AG_MAIN_OBJECT_DB."_id"]))
 				   . cell(bar_status_f($info,'',$is_provisional ))
 				   . cell( smaller(oline(value_generic($info['gender_code'],$def,'gender_code','list'))
-							 . oline(value_generic($info['ethnicity_code'],$def,'ethnicity_code','list'))
-							 . oline(dateof($info["dob"]))
-							 . $info['ssn']))
+		   			. oline(multi_objects_f( 
+								 get_generic(client_filter($info[AG_MAIN_OBJECT_DB.'_id']),'','','ethnicity')
+								 ,'ethnicity','ethnicity_code'))
+					 . oline(dateof($info["dob"]) . green(' | ') . $info['ssn'])))
 				   . cell( client_photo( $info[AG_MAIN_OBJECT_DB."_id"], 0.5 )), $opts);
 	}
 	$result .= tableend();
@@ -511,25 +516,25 @@ function get_clients( $filter, $order="name_full" )
 	return agency_query($fixed_sql,$filter,$order);
 }
 
-function disabilities_f( $disabs, $sep=", " )
+function multi_objects_f( $recs, $object, $field, $sep=", " )
 {
-	// Returns formatted disability info, passed array of disabs (from get_disabilities)
-	$def = get_def('disability');
-
+	// Returns formatted object info, passed array of records (from get_generic.  Genericized from disabilities_f())
+	$def = get_def($object);
+	$c_def = get_def(AG_MAIN_OBJECT_DB);
 	$output = array();
-	$count = sql_num_rows( $disabs);
+	$count = sql_num_rows( $recs );
 	if ($count == 0)
 	{
-		return (smaller("(no disabilities)"));
+		return (smaller("(no {$def['plural']})"));
 	}
 	else
 	{
-		while ($y=sql_fetch_assoc($disabs)) {
-			$link_text= value_generic($y['disability_code'],$def,'disability_code','list');
-			$add_on = $y['disability_code']==9 
+		while ($y=sql_fetch_assoc($recs)) {
+			$link_text= value_generic($y[$field],$def,$field,'list');
+			$add_on = in_array($y[$field],$def[$field]['require_comment_codes']) 
 				? smaller(' ('.$y['comment'].')',2)
 				: '';
-			array_push($output,elink('disability',$y['disability_id'],$link_text).$add_on);
+			array_push($output,elink($object,$y[$def['id_field']],$link_text).$add_on);
 		}
 		$output = implode($sep,$output);
 	}
@@ -934,210 +939,6 @@ function income_f($client_id, &$has_inc) {
 	}
 
 	return $output;
-}
-
-function blank_disabs_add($rec,$def)
-{
-	global $disability_lookup_table;
-      
-	$table = $def["multi"]["table"];
-
-	$d_def = get_def('disability');
-	//      $a=sql_fetch_assoc(agency_query("SELECT * FROM $table limit 1"));
-	$a = array_keys($d_def['fields']);
-	$codes=agency_query("SELECT * FROM $disability_lookup_table");
-	while ($disab=sql_fetch_assoc($codes))
-	{
-		$code=$disab["disability_code"];
-		foreach($a as $field)
-		{
-			// 			      if (substr($key,-3) == "_at")
-			// 				    {
-			// 					  $rec[$code][$key] = datetimeof($current);
-			// 				    }
-			if ($field=="added_by" || $field == "changed_by")
-			{
-				$rec[$code][$field]=$GLOBALS["UID"];
-			}
-			elseif($field=="disability_code")
-			{
-				$rec[$code][$field] = $code;
-			}
-			else
-			{
-				$rec[$code][$field] = null;
-			}
-		}
-	}
-	$rec['NoDisabilities'] = array('disability_code'=>'NoDisabilities',
-						 'disability_date'=>false);
-	return $rec;
-}
-
-function add_disabs_fields($def)
-{
-	global $disability_lookup_table;
-	$codes=agency_query("SELECT * FROM $disability_lookup_table");
-	while($rec=sql_fetch_assoc($codes))
-	{
-		$code=$rec["disability_code"];
-		$label=$rec["description"];
-		$def["fields"][$code]=array("data_type"=>"multi_rec",
-						    "display_add"=>"multi_disp",
-						    "label_add"=>$label,
-						    "multi_field"=>"disability_date",
-						    "multi_type"=>"boolean");
-	}
-	$def['fields']['NoDisabilities'] = array("data_type"=>"multi_rec",
-						    "display_add"=>"multi_disp",
-						    "label_add"=>'Check this box ONLY if the '.AG_MAIN_OBJECT.' has no disabilities',
-						    "multi_field"=>"disability_date",
-						    "multi_type"=>"boolean");
-	return $def;
-}
-
-function valid_disabs($action,$big_rec,&$def,&$mesg,&$valid)
-{
-	if ($action !=='add') { return; }
-	$subdef = get_def('disability');
-	$any_disabs = false;
-	foreach($big_rec as $key=>$rec) {
-		if (is_array($rec) && $key !== 'NoDisabilities') {
-			$any_disabs = $any_disabs ? true : sql_true($rec['disability_date']);
-			foreach($rec as $skey=>$value) {
-				if ( ($val=$subdef['fields'][$skey]['valid']) && sql_true($rec['disability_date'])) {
-					$x=$value;  
-					// field can have multiple tests and multiple messages to display
-					foreach ($val as $test => $msg)  
-					{
-						if (!eval( "return $test;" ))
-						{
-							$mesg .= empty($msg) 
-								? oline("Field $label has an invalid value.")
-								: oline(str_replace('{$Y}',$label,$msg));
-							$valid=false;
-							$def['fields'][$key]['not_valid_flag']=true;
-						}
-					}
-				}
-			}
-		}
-	}
-	if (!$any_disabs && !sql_true($big_rec['NoDisabilities']['disability_date'])) {
-		$def['fields']['NoDisabilities']['not_valid_flag']=true;
-		$valid = false;
-		$mesg .= oline('Choose disabilities or specify "No Disabilities"');
-	} elseif ($any_disabs && sql_true($big_rec['NoDisabilities']['disability_date'])) {
-		$def['fields']['NoDisabilities']['not_valid_flag']=true;
-		$valid = false;
-		$mesg .= oline('You can\'t specify "No Disabilities" in addition to another disability!');
-	}
-}
-
-function form_disabs_row($key,$rec,$def)
-{
-	$disab = $rec["disability_code"];
-	$label = $def["fields"][$disab]["label_add"];
-	if ($def['fields'][$disab]['not_valid_flag']) { 
-		$label = red($label);
-	}
-	if ($disab=='9') {
-		foreach($rec as $key=>$value) {
-			if (in_array($key,array('disability_date','comment'))) {
-				continue;
-			}
-			$out .= hiddenvar("rec[$disab][$key]",$value);
-		}
-		$out .= rowrlcell(formcheck("rec[$disab][disability_date]",sql_true($rec['disability_date']))
-					.formvartext("rec[$disab][comment]",$rec['comment'])
-					,$label.smaller(' (please describe)'));
-	} else {
-		foreach($rec as $key=>$value)
-		{
-			if ($key=='disability_date') {
-				$out .= rowrlcell(formcheck("rec[$disab][$key]",sql_true($value)),"$label");
-			} else {
-				$out .= hiddenvar("rec[$disab][$key]",$value);
-			}
-		}
-	}
-	return $out;
-}
-
-function post_disabs($multi_records,$new_rec,$def,&$mesg)
-{
-	$table=$def["multi"]["table_post"];
-	$cid=$new_rec[AG_MAIN_OBJECT_DB."_id"];
-	//      echo "cid = " . $cid;
-	if (!(is_numeric($cid)))
-	{
-		$mesg .=oline("Error: Cannot post Disability records, no ".AG_MAIN_OBJECT." ID given to post_disabs");
-		return false;
-	}
-	$count=0;
-	foreach($multi_records as $disab=>$rec)
-	{
-		if (sql_true($rec['disability_date']) && $disab !== 'NoDisabilities')
-		{
-			$fields=$def["fields"][$disab];
-			$label=$fields["label"];
-			
-			$rec[AG_MAIN_OBJECT_DB."_id"]=$cid;
-			unset($rec["disability_id"]);
-			unset($rec['source']);
-			unset($rec['is_deleted']);
-			
-			foreach($rec as $key=>$value)
-			{
-				if ($key=="added_at" || $key=="changed_at" || $key=='disability_date')
-				{
-					unset($rec[$key]);
-					$rec["FIELD:$key"]="CURRENT_TIMESTAMP";
-				}
-			}			
-			$result=agency_query(sql_insert($table,$rec));
-			if (!$result)
-			{
-				$mesg .= oline("Your attempt to {$action} a {$label} record failed.");
-				log_error("Error in {$action}ing, using post_generic(). Here was the record: " 
-					    . dump_array($rec));
-				continue;
-			}
-			$test_rec=array();
-			foreach($rec as $key=>$value)
-			{
-				if (be_null($value))
-				{
-					$test_rec["FIELD:BE_NULL($key)"]="true";
-				}
-				
-				elseif(substr($key,0,6) == "FIELD:")
-				{
-					continue;// skip fields like added_at, changed_at
-				}
-				else
-				{
-					$test_rec[$key]=$value;
-				}
-			}
-			//outline("new $label rec: " . dump_array($test_rec));
-			$new_disab_rec=agency_query($def["multi"]["sel_sql"],$test_rec);
-			if (!$new_disab_rec)
-			{
-				$mesg .= oline("The database accepted your {$action}ing of a {$label} disability, but I was unable to find the record.");
-				log_error("The database accepted your $action, but I was unable to find the record.");
-				continue;
-			}
-			$count++;
-		}
-		else
-		{
-			//don't post a new record if there isn't a disability
-		}
-	}
-	
-	$mesg .= oline("You succesfully {$action}ed {$count} disability records.");
-	return true;
 }
 
 function client_note_f ($id)

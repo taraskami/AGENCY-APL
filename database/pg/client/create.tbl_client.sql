@@ -11,7 +11,6 @@ CREATE TABLE tbl_client (
 	dob 				DATE NOT NULL CHECK (dob <= CURRENT_DATE),
 	ssn 				CHARACTER(11) NOT NULL,
 	gender_code 			VARCHAR(10) NOT NULL REFERENCES tbl_l_gender ( gender_code ),
-	ethnicity_code 			VARCHAR(10) NOT NULL REFERENCES tbl_l_ethnicity ( ethnicity_code ),
 	hispanic_origin_code		VARCHAR(10) NOT NULL REFERENCES tbl_l_hispanic_origin,
 	needs_interpreter_code 		VARCHAR(10) NOT NULL REFERENCES tbl_l_yes_no ( yes_no_code ),
 	language_code 			VARCHAR(10) REFERENCES tbl_l_language ( language_code ),

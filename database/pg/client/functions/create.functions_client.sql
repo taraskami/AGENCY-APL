@@ -93,18 +93,41 @@ BEGIN
 END; $$ LANGUAGE plpgsql STABLE;
 
 CREATE OR REPLACE FUNCTION client_ethnicity( cid INT ) RETURNS TEXT AS $$
-
-     SELECT l.description::text FROM client LEFT JOIN l_ethnicity l USING (ethnicity_code)
-          WHERE client_id = $1;
+     SELECT
+		CASE WHEN
+			(SELECT COUNT(*) 
+			FROM ethnicity
+			WHERE client_id=$1
+			AND COALESCE(ethnicity_date_end,current_date) >= current_date
+			) > 1 THEN 'Multi-ethnic'
+		ELSE
+			(SELECT l.description::text
+			FROM ethnicity LEFT JOIN l_ethnicity l USING (ethnicity_code)
+			WHERE client_id = $1
+			AND COALESCE(ethnicity_date_end,current_date) >= current_date)
+		END;
 
 $$ LANGUAGE sql STABLE;
 
 CREATE OR REPLACE FUNCTION client_ethnicity_simple( cid INT ) RETURNS TEXT AS $$
 
-     SELECT les.description FROM client
-          LEFT JOIN l_ethnicity l USING (ethnicity_code)
-          LEFT JOIN l_ethnicity_simple les USING (ethnicity_simple_code)
-     WHERE client_id = $1;
+     SELECT
+		CASE WHEN
+			(SELECT COUNT(distinct les.description) 
+			FROM ethnicity
+          	LEFT JOIN l_ethnicity l USING (ethnicity_code)
+          	LEFT JOIN l_ethnicity_simple les USING (ethnicity_simple_code)
+			WHERE client_id=$1
+			AND COALESCE(ethnicity_date_end,current_date) >= current_date
+			) > 1 THEN 'Multi-ethnic'
+		ELSE
+			(SELECT les.description::text
+			FROM ethnicity
+          	LEFT JOIN l_ethnicity l USING (ethnicity_code)
+          	LEFT JOIN l_ethnicity_simple les USING (ethnicity_simple_code)
+			WHERE client_id=$1
+			AND COALESCE(ethnicity_date_end,current_date) >= current_date)
+		END;
 
 $$ LANGUAGE sql STABLE;
 

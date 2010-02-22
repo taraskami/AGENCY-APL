@@ -540,6 +540,18 @@ function config_object($object)
 
       }
 
+	  // MULTI-ADD FUNCTIONS
+	  if ($OBJECT['multi_records']) {
+		$m = $OBJECT['multi'];
+		foreach ($m as $k=>$v) {
+				$OBJECT['multi'][$k]['blank_fn']=orr($v['blank_fn'],'blank_generics_add');
+				$OBJECT['multi'][$k]['add_fields_fn']=orr($v['add_fields_fn'],'add_generics_fields');
+				$OBJECT['multi'][$k]['form_row_fn']=orr($v['form_row_fn'],'form_generics_row');
+				$OBJECT['multi'][$k]['valid_fn']=orr($v['valid_fn'],'valid_generics');
+				$OBJECT['multi'][$k]['post_fn']=orr($v['post_fn'],'post_generics');
+		}
+	  }	
+
       // FIELDS NOT IN POST TABLE
       $fields_db       = array_keys(array_merge($fields_view,$fields_table));
       $FIELDS_NOT_DB   = array_diff(array_keys($fields_config_file),$fields_db);
@@ -1333,11 +1345,10 @@ function blank_generic(&$def, &$rec_init)
       }
 
       if ($def['multi_records']) {
-
-		$rec=call_user_func($def['multi']['blank_fn'],$rec,$def);
-
+		foreach ($def['multi'] as $m=>$opts) {
+			$rec=call_user_func($opts['blank_fn'],$rec,$def,$m);
+		}
       }
-	
       return $rec;
 
 }
@@ -1585,7 +1596,8 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 		  //$multi_out .= view_generic_row($key,$sub_value,$def,$action); //SAVE FOR THE END
 		  //this stuff is so far removed from engine now, it is becoming a pain to keep it in sync w/ functionality
 		  //thus I am de-genericizing it:
-		  $multi_out .= rowrlcell($fields[$key]['label_add'],$sub_value);
+		  preg_match('/^multi_(.*)_multi_(.*)$/',$key,$matches);
+          $multi_out[$matches[1]] .= be_null($sub_value) ? '' : rowrlcell($fields[$key]['label_add'],$sub_value);
 	    } else {
 		  // EVALUATE $value
 		  $x=$value;
@@ -1641,14 +1653,17 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
       }
       
       $out .= row(cell($system,'class="systemField" colspan="2"'));
-      $out .= tableend()
-	    . ($multi_out       // TACK ON MULTI RECORDS
-	       ? ( oline() . bigger(bold(oline(orr($def['multi']['sub_title'],'')))) . $def['multi']['sub_sub_title']
-		   . tablestart('','class="engineForm"')
-		   . $multi_out
-		   . tableend()
-		   )
-	       : '');
+      $out .= tableend();
+		// TACK ON MULTI RECORDS
+		if (is_array($multi_out)) {   
+			foreach($multi_out as $k=>$v) {
+	    		$out .= oline() . bigger(bold(oline(orr($def['multi'][$k]['sub_title'],''))))
+						. $def['multi'][$k]['sub_sub_title']
+						. tablestart('','class="engineForm"')
+					   . $v
+					   . tableend();
+			}
+		}
       return $out;
 }
 
@@ -1968,7 +1983,7 @@ function form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec,$formvar
       $not_valid_flag=$pr['not_valid_flag'];
       $type=$pr['data_type'];
       $label=label_generic($key,$def,$action);
-      $label = $not_valid_flag ? red($label) : $label; //display in red invalid fields
+      $label = $not_valid_flag ? span($label,'class=engineFormError') : $label; //display in red invalid fields
 
 	$label .= ($pr['comment'] && $pr['comment_show_'.$action])
 		? div(webify($pr['comment']),'',' class="generalComment"')
@@ -2027,7 +2042,6 @@ function form_generic($rec,$def,$control)
 
 		if ($fields[$key]['never_to_form']) { continue; }
 		$disp = $fields[$key]["display_$action"];
-
 		if ($disp=='edit') { unset($disp); }
 
 		if ($key=='sys_log' && has_perm('system_log_field','W')) {
@@ -2045,21 +2059,23 @@ function form_generic($rec,$def,$control)
 			$value = eval('return '. $fields[$key]['value_'.$action].';');
 			$out .= call_user_func($def['fn']['view_row'],$key,$value,$def,$action,$rec);
 		} elseif ($disp=='multi_disp') {
-			$multi_out .= call_user_func($def['multi']['form_row_fn'],$key,$value,$def);
-
+			preg_match('/^multi_(.*?)_multi_(.*)$/',$key,$matches);
+			$multi_out[$matches[1]] .= call_user_func($def['multi'][$matches[1]]['form_row_fn'],$key,$value,$def,$matches[1]);
 		} else {
 			$out .= call_user_func($def['fn']['form_row'],$key,$value,$def,$control,$Java_Engine,$rec);
 		}
       }
-      $out .= tableend() .
-		( $multi_out
-		  ? (oline() . bigger(bold(oline(orr($def['multi']['sub_title'],'')))) . $def['multi']['sub_sub_title']
+	  $out .= tableend();
+		if ($multi_out) {
+			foreach($multi_out as $key=>$multi) {
+				$out .= oline() . bigger(bold(oline(orr($def['multi'][$key]['sub_title'],'')))) . $def['multi'][$key]['sub_sub_title']
 		     . tablestart('','class="engineForm"')
-		     . $multi_out
-		     . tableend())
-		  : '');
-	$GLOBALS['AG_HEAD_TAG'].=$Java_Engine->get_javascript();
-      return $out;
+		     . $multi
+		     . tableend();
+			}
+		}
+		$GLOBALS['AG_HEAD_TAG'].=$Java_Engine->get_javascript();
+		return $out;
 }
 
 function get_generic($filter,$order='',$limit='',$def,$table_post=false,$group='')
@@ -2130,7 +2146,9 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 		}
 	}
 	if ($def['multi_records']) { //horrid 'generic' multi-record hack
-		call_user_func($def['multi']['valid_fn'],$action,$rec,&$def,&$mesg,&$VALID);  
+		foreach ($def['multi'] as $c_obj=>$opts) {
+			call_user_func($opts['valid_fn'],$action,$rec,&$def,&$mesg,&$VALID,$c_obj);  
+		}
 	}
 	foreach ($rec as $key=>$value) {
 	    $type=$fields[$key]['data_type'];
@@ -2213,7 +2231,7 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 
 	    } elseif ( $type == 'lookup_multi'
 			   and !sql_lookup_value_exists($value,$pr['lookup']['table'],$pr['lookup']['value_field']) and !be_null($value)) {
-		    $mesg .= oline("Field $lable has an unknown value");
+		    $mesg .= oline("Field $label has an unknown value");
 		    $valid = false;
 	    } 
 
@@ -2223,6 +2241,14 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 		    $mesg .= oline('Field '.$label.' has exceeded the maximum length ('.AG_MAXIMUM_STRING_LENGTH
 					 .'). Contact your system administrator if this is valid data.');
 	    }
+
+		//require comments on specific values
+		if (in_array($value,$pr['require_comment_codes']) and be_null($rec['comment'])) {
+			$def['fields']['comment']['not_valid_flag']=true;
+			$VALID=false;
+			//$valid=false;
+			$mesg .= oline("Comment required for $label of " . value_generic($value,$def,$key,'view'));
+		}
 
 	    //manual validity definitions
 	    if ($val = $fields[$key]['valid']) {
@@ -2238,7 +2264,7 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 			    }
 		    }
 	    }
-	    $def['fields'][$key]['not_valid_flag']= $valid ? false : true;
+	    $def['fields'][$key]['not_valid_flag']= orr($def['fields'][$key]['not_valid_flag'],$valid ? false : true);
 	    $VALID = $valid ? $VALID : $valid;
       }
       return $VALID;
@@ -2392,9 +2418,11 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
 	    //detach multiple records into a separate array for easier manipulation
 	    $type=$fields[$key]['data_type'];
 	    if ($type=='multi_rec') {
-		  $multi_records[$key]=$value; 
-		  unset($rec[$key]);
-		  continue;
+			if (!strstr($key,'no_multi_records')) {
+			  $multi_records[$key]=$value; 
+			}
+			unset($rec[$key]);
+			continue;
 	    }
 	    if ($type=='attachment') {
 		    $posted_new_attachment = false;
@@ -2602,12 +2630,12 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
 
       if (isset($multi_records)) {
 
-	    if (!(call_user_func($def['multi']['post_fn'],$multi_records,$NEW_REC,$def,$mesg))) {
-
-		  $mesg .= oline("You attempted to {$action} multiple child records failed.");
-
-	    }
-
+	    foreach ($def['multi'] as $m=>$opts) {
+			if (!(call_user_func($opts['post_fn'],$multi_records,$NEW_REC,$def,$mesg,$m))) {
+				$mesg .= oline("You attempted to {$action} multiple $m records failed.");
+				return false;
+	    	}
+		}
       }
 
       if (!$NEW_REC) {

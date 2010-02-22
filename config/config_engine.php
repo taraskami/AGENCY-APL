@@ -210,6 +210,7 @@ $engine['field_default'] = array(
 				//post set below
 				//'show_lookup_code'=>null, set below
 				'rec_init_from_previous_f'=>null,
+				'require_comment_codes'=>array(),
 				'staff_subset' => null, //defined subsets currently include staff_cm, staff_rc
 				'staff_inactive_add' => null, //default is to hide inactive staff on adds, set this to true to get all staff
 				'system_field' => null,

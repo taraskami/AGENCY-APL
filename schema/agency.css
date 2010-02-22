@@ -117,6 +117,9 @@ tr.generalDataError,td.generalDataError {  color: #fff; background-color: #f00; 
 tr.listTotals {background-color :#9a9bc0; color:#fff; }
 
 table.engineForm { background-color: #ffffee; }
+tr.engineFormSelected { background-color: #1BEDDF; }
+.engineFormError { background-color: #ffbbbb; color: red; font-weight: bold; }
+
 #engineMenu { background-color: #fff; }
 #engineMenu span { background-color: #bebebe; }
 
