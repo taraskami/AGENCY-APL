@@ -531,7 +531,7 @@ function multi_objects_f( $recs, $object, $field, $sep=", " )
 	{
 		while ($y=sql_fetch_assoc($recs)) {
 			$link_text= value_generic($y[$field],$def,$field,'list');
-			$add_on = in_array($y[$field],$def[$field]['require_comment_codes']) 
+			$add_on = in_array($y[$field],$def['fields'][$field]['require_comment_codes']) 
 				? smaller(' ('.$y['comment'].')',2)
 				: '';
 			array_push($output,elink($object,$y[$def['id_field']],$link_text).$add_on);
