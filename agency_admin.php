@@ -70,9 +70,8 @@ function agency_menu_admin()
 	$button = button('Go','','','','',' class="agencyForm"');
 
 	//Update Engine Config options
-	$menu['Update Engine Array Stored in DB'] = para('This should be run after any code or database update.')
-		. hlink('update_engine_config.php','Update Engine Array');
-
+	$menu['Update Engine Array Stored in DB'] = para('This should be run after any database or configuration update.')
+		. update_engine_control();
 
 	//DB-mod information
 	$menu['Database Modifications'] = 

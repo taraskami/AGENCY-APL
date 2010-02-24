@@ -2239,25 +2239,13 @@ function agency_top_header($commands="")
 	global $UID, $title, $database,$WHICH_DB,$testing_area_message,$db_server;
 	global $AUID, $AG_AUTH;
 	if (is_test_db()) {
-		$update_list = update_engine_object_list();
-/*
-		$test_db_warning = div(center(bold(white(bigger(
-								 "WARNING: Test Database $database[$WHICH_DB]",3)) .white('('.$db_server[$WHICH_DB].')'))
-					     . bold(help('test_database','',smaller('tell me more',2),' class="fancyLink"',false,true))) .
-					     (has_perm("super") ? 
-						smaller( formto('update_engine_config.php','',' target="_blank"')  
-						. 'Update Engine Object: ' . $update_list) : "")
-					     ,
-					     '',' style="background-color: red; text-align: center; width:100%; padding: 10px;" id="agencyTestWarningBox"');
-*/
-		$update_engine = (has_perm("super") 
-						?  smaller( formto('update_engine_config.php','',' target="_blank"')  
-						. oline('Update Engine Object') . $update_list) : '');
-		$test_db_warning = div(table(row(cell($update_engine,'class="updateEngine"')
-								. cell(center(bold(white(bigger("WARNING: Test Database in use",3) 
-									. oline() . smaller( 'Database: ' . $database[$WHICH_DB] . ', server: ' .$db_server[$WHICH_DB]))
-					     			. bold(help('test_database','',smaller('tell me more',2),' class="fancyLink"',false,true)))), 
-					     		' class="agencyTestWarning"'))),'agencyTestWarningBox');
+		$test_db_warning = div(table(row(
+			cell(update_engine_control(),'class="updateEngine"')
+			. cell(center(bold(white(bigger("WARNING: Test Database in use",3) 
+			. oline()
+			. smaller( 'Database: ' . $database[$WHICH_DB] . ', server: ' .$db_server[$WHICH_DB]))
+			. bold(help('test_database','',smaller('tell me more',2),' class="fancyLink"',false,true)))), 
+     		' class="agencyTestWarning"'))),'agencyTestWarningBox');
 		$test_hide_link = Java_Engine::toggle_id_display(' +/- Test DB Warning box','agencyTestWarningBox','block');
 	}
 	if (AG_SHOW_AUTH_TOP_LOGIN_BOX) {

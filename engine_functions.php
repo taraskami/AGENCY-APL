@@ -380,7 +380,8 @@ function get_engine_config_array()
       $res=agency_query('SELECT * FROM '.AG_ENGINE_CONFIG_TABLE,$filter);
       if (sql_num_rows($res) < 1) {
 	    outline('Unable to read engine configuration from '.AG_ENGINE_CONFIG_TABLE.' for '.AG_ENGINE_CONFIG_ARRAY);
-	    out(hlink('update_engine_config.php?noexists','Create '.AG_ENGINE_CONFIG_ARRAY.' Engine Config Array'));
+	    outline('You can try updating it now');
+	    out(update_engine_control('noexists'));
 	    exit;
       }
       $tmp=sql_fetch_assoc($res);
@@ -3761,13 +3762,15 @@ function grab_append_only_fields($rec,$def)
 	return $rec;
 }
 
-function update_engine_object_list()
+function update_engine_control($noexists=false)
 {
 	/*
-	 * Create a pick list for updating individual engine items
+	 * Control for updating engine items
  	*/
 
-	// copy to var, so sort() doesn't change the global var.
+	// can't check perms without engine array, hence $noexists
+
+	// copy, so sort() doesn't change global.
 	$tables=$GLOBALS['AG_ENGINE_TABLES'];
 	sort($tables);
 
@@ -3778,6 +3781,10 @@ function update_engine_object_list()
 						$_SESSION['UPDATE_ENGINE_OBJECT'])==$table);
 	}
 	$update_list .= selectend() . oline() . button('update!') . formend();
-	return $update_list;
+
+	return ( ($noexists or has_perm('update_engine'))
+	?  smaller( formto('update_engine_config.php','',' target="_blank"')
+	. oline('Update Engine Object') . $update_list)
+	: '');
 }
 ?>
