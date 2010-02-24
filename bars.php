@@ -177,7 +177,7 @@ function gatemail_status_f($client)
 function form_row_bar($key,$value,&$def,$control,&$Java_Engine,$rec)
 {
 	if (!in_array($key,array('client_id','non_client_name_last','non_client_name_first','non_client_description'))) {
-		return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec);
+		return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
 	}
 
 	if (!be_null($rec['client_id'])) { //client bar
@@ -185,13 +185,13 @@ function form_row_bar($key,$value,&$def,$control,&$Java_Engine,$rec)
 		if ($key !== 'client_id') {
 			return false;
 		}
-		return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec);
+		return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
 	} else { //non-client bar
 		//hide client id
 		if ($key == 'client_id') {
 			return false;
 		}
-		return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec);
+		return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
 	}
 }
 

@@ -384,7 +384,7 @@ function client_reg_search_verify()
 	global $rec,$def;
 
 	$def['multi_records'] = null;
-	$valid = call_user_func($def['fn']['valid'],$rec,&$def,&$out,'add');
+	$valid = call_user_func($def['fn']['valid'],$rec,$def,$out,'add');
 	$out = $out ? red($out) : '';
 	if (!$valid) {
 		$out .= client_reg_form();

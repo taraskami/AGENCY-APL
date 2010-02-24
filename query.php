@@ -353,7 +353,7 @@ function log_search()
 						'page'=>'display.php'
 						),
 				     orr($_REQUEST['control'],array()));
-	$result = call_engine($control,'control',true,true,&$TOTAL,&$PERM);
+	$result = call_engine($control,'control',true,true,$TOTAL,$PERM);
 	if (!$PERM) { return 'No Permissions'; }
 	$sub = oline('Found '.$TOTAL.' results for '.bold($query_string),2);
 	return $sub . $result;
@@ -384,7 +384,7 @@ function staff_search()
 						'page'=>'display.php'
 						),
 				     orr($_REQUEST['control'],array()));
-	$result = call_engine($control,'control',true,true,&$TOTAL,&$PERM);
+	$result = call_engine($control,'control',true,true,$TOTAL,$PERM);
 	if (!$PERM) { return 'No Permissions'; }
 	$sub = oline('Found '.$TOTAL.' results for '.bold($s),2);
 	return $sub . $result;

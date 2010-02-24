@@ -1976,7 +1976,7 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 function form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec,$formvar='rec')
 {
 
-	$field = form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar);
+	$field = form_field_generic($key,$value,$def,$control,$Java_Engine,$formvar);
 
       //FORMAT LABEL
 	$action = $control['action'];
@@ -2148,7 +2148,7 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 	}
 	if ($def['multi_records']) { //horrid 'generic' multi-record hack
 		foreach ($def['multi'] as $c_obj=>$opts) {
-			call_user_func($opts['valid_fn'],$action,$rec,&$def,&$mesg,&$VALID,$c_obj);  
+			call_user_func($opts['valid_fn'],$action,$rec,$def,$mesg,$VALID,$c_obj);  
 		}
 	}
 	foreach ($rec as $key=>$value) {
@@ -3021,7 +3021,7 @@ function add_staff_alert_form_generic($def,$rec,$control)
 
 	$alert['staff_id'] = $alert['staff_id']=='-1' ? '' : $alert['staff_id'];
 	
-	if (!be_null(array_filter($alert)) and !call_user_func($adef['fn']['valid'],$alert,&$adef,&$mesg,'add',$rec_last=array())) {
+	if (!be_null(array_filter($alert)) and !call_user_func($adef['fn']['valid'],$alert,$adef,$mesg,'add',$rec_last=array())) {
 		$error = red($mesg);
 	}
  	$multi = oline() . js_link(smaller('(multiple)'),'document.getElementById(\'engineStaffAlertFormStaff\').multiple="multiple";document.getElementById(\'engineStaffAlertFormStaff\').size=8;document.getElementById(\'engineStaffAlertFormStaff\').name=document.getElementById(\'engineStaffAlertFormStaff\').name+"[]"');
@@ -3104,7 +3104,7 @@ function process_staff_alert_generic($def,$rec,&$control)
 	    or $alert['ref_table'] != $def['object']) {
 		return 'Error: ID or OBJECT mismatch. Couldn\'t add alert';
 	}
-	if (!call_user_func($adef['fn']['valid'],$alert,&$adef,&$mesg,'add',$rec_last=array())) {
+	if (!call_user_func($adef['fn']['valid'],$alert,$adef,$mesg,'add',$rec_last=array())) {
 		return 'Couldn\'t add alert. Validity Problems: ' . oline() . $mesg;
 	}
 	foreach( $alerts as $alert_staff )
@@ -3125,7 +3125,7 @@ function process_staff_alert_generic($def,$rec,&$control)
 		else
 		{
 	//post alert
-	$n_alert = post_generic($alert,$adef,&$mesg,$filter='');
+	$n_alert = post_generic($alert,$adef,$mesg,$filter='');
 	if (!$n_alert) {
 		return 'Failed to post alert: '.$mesg;
 	}
@@ -3485,12 +3485,12 @@ function auto_close_generic($def,$action,$id,$date)
 	$rec[$end] = $close_date;
 
 	//verify record
-	if (!call_user_func($def['fn']['valid'],$rec,&$def,&$message,$action,$rec_last)) {
+	if (!call_user_func($def['fn']['valid'],$rec,$def,$message,$action,$rec_last)) {
 		return bold('This record couldn\'t be closed due to the following errors (it might need to be edited manually):')
 			. div($message,'','class="indent"');
 	} 
 
-	$a      = call_user_func($def['fn']['post'],$rec,$def,&$message,$filter);
+	$a      = call_user_func($def['fn']['post'],$rec,$def,$message,$filter);
 
 	$_SESSION['approved_auto_close_'.md5($object . $id)] = null; //unset authorization
 

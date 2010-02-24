@@ -190,7 +190,7 @@ class Widget {
 			if ($this->step !== 'new') { //work with form
 				$REC = $RECS[$val];
 				$rec = $formrecs[$val];
-				call_user_func($this->def['fn']['process'],&$REC,&$rec,$this->def);
+				call_user_func($this->def['fn']['process'],$REC,$rec,$this->def);
 				$recs[$val] = $REC;
 			} else {
 				$active_filter = $this->get_active_filter($val);
@@ -246,14 +246,14 @@ class Widget {
 			$interim_record = sql_num_rows(call_user_func($this->def['fn']['get_active'],$active_filter,$rec=array(),$this->def)); 
 			$success = true;
 			$errors = $mesg = '';
-			if ( ($rec_last and ($old = rec_collision_generic($rec,$rec_last,$this->def,'edit',&$errors)))
+			if ( ($rec_last and ($old = rec_collision_generic($rec,$rec_last,$this->def,'edit',$errors)))
 			     or (!$rec_last and $interim_record>0)) {
 				$this->errors[$key] .= orr($errors,'A record has been added since starting this process');
 				$success = false;
 			} elseif ($rec_last and rec_changed_generic($rec,$rec_last) and $this->record_passed($rec)) {
 				//update
 				$filter = array($this->def['id_field']=>$rec[$this->def['id_field']]);
-				$success = call_user_func($this->def['fn']['post'],$rec,$this->def,&$mesg,$filter);
+				$success = call_user_func($this->def['fn']['post'],$rec,$this->def,$mesg,$filter);
 				if ($success) {
 					$returned_recs[$key] = $success;
 					$this->messages[$key] .= $mesg;
@@ -274,7 +274,7 @@ class Widget {
 					$mesg = $success ? 'Deleted record' : 'Failed to delete record';
 					$success = $success ? $rec : false;
 				} else { //update
-					$success = call_user_func($this->def['fn']['post'],$rec,$this->def,&$mesg,$filter);
+					$success = call_user_func($this->def['fn']['post'],$rec,$this->def,$mesg,$filter);
 				}
 				if ($success) {
 					$returned_recs[$key] = $success;
@@ -287,7 +287,7 @@ class Widget {
 				$returned_recs[$key] = $rec;
 			} elseif ($this->record_passed($rec)) {
 				//insert
-				$success = call_user_func($this->def['fn']['post'],$rec,$this->def,&$mesg);
+				$success = call_user_func($this->def['fn']['post'],$rec,$this->def,$mesg);
 				if ($success) {
 					$returned_recs[$key] = $success;
 					$this->messages[$key] .= $mesg;
@@ -417,14 +417,14 @@ class Widget {
 				
 			} elseif (in_array($key,$this->required_fields)) {
 				//to form
-				$out .= cell(form_field_generic($key,$value,&$this->def,$this->control,&$Java_Engine,'rec['.$rec[$this->key].']'));
+				$out .= cell(form_field_generic($key,$value,$this->def,$this->control,$Java_Engine,'rec['.$rec[$this->key].']'));
 			} elseif (isset($this->recs_last[$rec[$this->key]]) and in_array($key,$this->required_fields_end)) {
-				$out .= cell(form_field_generic($key,$value,&$this->def,$this->control,&$Java_Engine,'rec['.$rec[$this->key].']'));
+				$out .= cell(form_field_generic($key,$value,$this->def,$this->control,$Java_Engine,'rec['.$rec[$this->key].']'));
 			} elseif (in_array($key,$this->required_fields_end)) {
 				$out .= cell('');
 				$hidden_vars .= hiddenvar('rec['.$rec[$this->key].']['.$key.']',$value);
 			} elseif (in_array($key,$this->optional_fields)) {
-				$out .= cell(form_field_generic($key,$value,&$this->def,$this->control,&$Java_Engine,'rec['.$rec[$this->key].']')
+				$out .= cell(form_field_generic($key,$value,$this->def,$this->control,$Java_Engine,'rec['.$rec[$this->key].']')
 						 ,'class="widgetOptField'.$key.'" style="display: none;"');
 			} else {
 				$hidden_vars .= hiddenvar('rec['.$rec[$this->key].']['.$key.']',$value);
@@ -552,7 +552,7 @@ class Widget {
 					$ov = $def['fields'][$field]['valid'];
 					$def['fields'][$field]['valid'] = array_merge($ov,array('be_null($x)'=>'{$Y} must be blank if leaving record open'));
 				}
-				$valid = call_user_func($this->def['fn']['valid'],$rec,$def,&$mesg,'add');
+				$valid = call_user_func($this->def['fn']['valid'],$rec,$def,$mesg,'add');
 				if (!$valid) {
 					$this->errors[$key] = $mesg;
 				}
@@ -561,7 +561,7 @@ class Widget {
 					// here, end fields are required, as the existing record is no longer passed
 					$def['fields'][$field]['valid'] = array_merge($ov,array('!be_null($x)'=>'{$Y} cannot be blank if closing record'));
 				}
-				$valid = call_user_func($this->def['fn']['valid'],$rec,$def,&$mesg,'edit');
+				$valid = call_user_func($this->def['fn']['valid'],$rec,$def,$mesg,'edit');
 				if (!$valid) {
 					$this->errors[$key] = $mesg;
 				}
@@ -592,7 +592,7 @@ class Widget {
 		foreach ($this->recs as $key => $rec) {
 			$mesg = '';
  			if ($this->record_passed($rec)) {
-				$confirmed = call_user_func($this->def['fn']['confirm'],$rec,$this->def,&$mesg,'add');
+				$confirmed = call_user_func($this->def['fn']['confirm'],$rec,$this->def,$mesg,'add');
 				if (!$confirmed) {
 					$this->warnings[$key] = $mesg;
 				}
