@@ -124,7 +124,7 @@ function news_search()
 						'format'=>'data'
 						),
 				     orr($_REQUEST['control'],array()));
-	$result = call_engine($control,'',true,true,$TOTAL,$PERM);
+	$result = call_engine($control,'',true,true,&$TOTAL,&$PERM);
 	$sub = oline('Found '.$TOTAL.' results for '.bold($query));
 	return $sub . $result;
 

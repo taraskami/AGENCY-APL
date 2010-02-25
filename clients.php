@@ -1587,7 +1587,7 @@ function cd_reg_f($id)
 function generate_list_long_service($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,&$rec_num)
 {
 	if ($control['format'] != 'long') {
-		return generate_list_generic($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,$rec_num);
+		return generate_list_generic($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,&$rec_num);
 	}
 
 	$pos=$control['list']['position'];

@@ -1202,7 +1202,7 @@ class Calendar_Record {
 function form_row_calendar_appointment($key,$value,&$def,$control,&$Java_Engine,$rec)
 {
 	if (!in_array($key,array('event_end','event_start','client_id','allow_overlap'))) {
-		return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
+		return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec);
 	}
 	//don't allow editing of times if passed w/ rec_init
 	$rec_init = $control['rec_init'];
@@ -1220,7 +1220,7 @@ function form_row_calendar_appointment($key,$value,&$def,$control,&$Java_Engine,
 	//first, client id
 	$conf = Calendar_Record::grab_config($rec['calendar_id']);
 	if ( in_array($key,array('client_id','allow_overlap')) && $conf['staff_id']) {
-		return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
+		return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec);
 	} elseif (in_array($key,array('client_id','allow_overlap'))) {
 		
 		return hiddenvar('rec['.$key.']',$value);
@@ -1285,7 +1285,7 @@ function valid_calendar_appointment($rec,&$def,&$mesg,$action,$rec_last)
 	//determine if record overlaps existing record
 	//the db does this too, but this provides _clean_ user errors
 	//record okay, fall through to normal validity checking
-	$valid = valid_generic($rec,$def,$mesg,$action,$rec_last);
+	$valid = valid_generic($rec,&$def,&$mesg,$action,$rec_last);
 	if (!$valid) {
 		return false;
 	}
@@ -1407,7 +1407,7 @@ function post_calendar_appointment($rec,$def,&$mesg,$filter='',$control=array())
 	$new_rec = $rec;
 	unset($new_rec['repeat_until']); // virtual fields, not in the database
 	unset($new_rec['event_repeat_type_code']);
-	$result = post_generic($new_rec,$def,$mesg,$filter,$control);
+	$result = post_generic($new_rec,$def,&$mesg,$filter,$control);
 	// if there's a filter, that means it's an update, so we don't do any repeating stuff
 	// if there's no repeat information, we also just return
 	if ($filter || be_null($rec['repeat_until']) || be_null($rec['event_repeat_type_code']))
