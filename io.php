@@ -1498,8 +1498,6 @@ function formvar_wipeout($varname,$label='',$submit=true)
 
 function yes_no_radio($name, $label, $default="")
 {
-// changed to take off trailing <br>
-    global $$name;
     return formradio("$name", "Y", ($default=="Y") )
             . "&nbsp;Yes&nbsp;&nbsp;\n"
             . formradio("$name", "N", ($default=="N") )
