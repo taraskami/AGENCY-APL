@@ -1251,32 +1251,41 @@ function client_reg_search()
       $dob=dateof($dob);
 	$filter = build_client_match_filter($name_last,$name_first,$dob,$ssn);
 	$client_search_rank = build_client_match_order($name_last,$name_first,$dob,$ssn);
-	$control=array('object'=>AG_MAIN_OBJECT_DB,
+	$obj = AG_MAIN_OBJECT_DB;	
+	$objs = AG_MAIN_OBJECT_DB . 's';  //FIXME--should reference plural	
+	$t_obj = $obj . '_reg_tmp';
+	$control=array('object'=>$t_obj,
 			   'action'=>'list',
 			   'list'=>array('filter'=>$filter,
 					     'order'=>array('match'=>true)
 					     ));
 
-      $title = 'Review existing '.AG_MAIN_OBJECT.'s for a match';
+      $title = "Review existing $objs for a match";
 	$out .= oline(smaller('(searching on name:'.bold($name_last.', '.$name_first).', dob: '.bold($dob).', ssn: '.bold($ssn).')'));
-      $out.=oline() . oline(red('Review the following '.AG_MAIN_OBJECT.'s to make sure '.AG_MAIN_OBJECT.' is not already registered'));
+      $out.=oline() . oline(red("Review the following $objs to make sure $obj is not already registered"));
+	//----- Create a copy of def -----//
+	$engine[$t_obj]=$engine[$obj];
+	$engine[$t_obj]['object']=$t_obj;
 	//----- modify client columns -----//
-	$engine[AG_MAIN_OBJECT_DB]['fn']['show_query_row'] = 'show_query_row_generic';
-	$engine[AG_MAIN_OBJECT_DB]['list_fields'] = array('match',AG_MAIN_OBJECT_DB.'_id','custom5','ssn','dob','name_last','name_first');
+	$engine[$t_obj]['fn']['show_query_row'] = 'show_query_row_generic';
+	$engine[$t_obj]['list_fields'] = array('match',$obj.'_id','custom5','ssn','dob','name_last','name_first');
 
-	$engine[AG_MAIN_OBJECT_DB]['sel_sql'] = 'SELECT '.$client_search_rank.' as match, client_id,dob,ssn,name_last,name_first FROM client';
+	$engine[$t_obj]['sel_sql'] = 'SELECT '.$client_search_rank.' as match, client_id,dob,ssn,name_last,name_first FROM client';
 
 	//------ Highlight exact matches ------//
 	foreach ($main_object_reg_search_fields as $field) {
-		$engine[AG_MAIN_OBJECT_DB]['fields'][$field]['value_format_list'] = '(strtolower($x)==strtolower(\''.$rec[$field].'\')) ? bigger(bold($x)) : $x';
+		$engine[$t_obj]['fields'][$field]['value_format_list'] = '(strtolower($x)==strtolower(\''.$rec[$field].'\')) ? bigger(bold($x)) : $x';
 		$REC[$field] = $rec[$field];
+	}
+	if (!in_array($t_obj,$GLOBALS['AG_ENGINE_TABLES'])) {
+		array_push($GLOBALS['AG_ENGINE_TABLES'],$t_obj);
 	}
 
 	$out.=call_engine($control,'control_client_reg',$NO_TITLE=true,$NO_MESSAGES=false,$TOT,$PERM);
-      $out.=oline() . oline(bigger(link_engine(array('object'=>AG_MAIN_OBJECT_DB,
+      $out.=oline() . oline(bigger(link_engine(array('object'=>$obj,
 								     'action'=>'add',
 								     'rec_init'=>$REC),
-							     'If the '.AG_MAIN_OBJECT.' is not already registered, proceed here')));
+							     "If the $obj is not already registered, proceed here")));
       
       return $out;
 }
