@@ -260,10 +260,7 @@ function view_staff( $staff,$def='',$action='',$control='',$control_array_variab
 	}
 
 	// outputs a form to find all records of a given type
-	// super-user only for now
-	if (has_perm('super_user')) {
-		$out .= staff_record_association_form($staff['staff_id']);
-	}
+	$out .= staff_record_association_form($staff['staff_id']);
 	return $out;
 }
 
