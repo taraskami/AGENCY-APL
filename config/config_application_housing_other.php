@@ -32,7 +32,7 @@ should be included in this distribution.
 */
 
 
-$engine['application_housing_other'] = array('singular'=>'Non-DESC Housing Application',
+$engine['application_housing_other'] = array('singular'=>'Non-' . org_name('short') . ' Housing Application',
 							   'perm_add' => 'connect,ir',
 							   'perm_edit' => 'connect,ir',
 							   'perm' => 'any',

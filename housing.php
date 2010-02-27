@@ -109,7 +109,7 @@ function housing_status_f( $id )
 {
 // return a formatted string briefly describing
 // most recent housing situation
-// (currently limited to DESC housing, could conceivably expand)
+// (currently limited to own org housing, could conceivably expand)
 	global $engine;
 	$def=$engine['residence_own'];
 	$sql="SELECT continuous_housing_project_own($id) AS project_date, continuous_housing_own($id) AS own_date,
@@ -188,7 +188,7 @@ function get_residencies($filter,$order='')
 
 function get_residencies_other($filter,$order='')
 {
-// residencies_other means non-DESC housing
+// residencies_other means housing with other organization
 	global $residency_other_select_sql;
 	return agency_query( $residency_other_select_sql, $filter,
 			orr($order,'residence_date'));

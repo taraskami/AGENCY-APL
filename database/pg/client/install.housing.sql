@@ -24,10 +24,10 @@
 \i housing/create.tbl_housing_unit_subsidy.sql
 
 
-/* non-DESC residence records */
+/* Other org residence records */
 \i housing/create.tbl_residence_other.sql
 
-/* DESC residence records */
+/* Own org residence records */
 \i housing/create.view.l_move_out_was.sql
 \i housing/create.tbl_residence_own.sql
 \i housing/create.view.residence_own.sql

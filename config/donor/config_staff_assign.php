@@ -62,7 +62,7 @@ $engine['staff_assign']=array(
 													'add_query_modify_condition'=>array('$x=="CM_PAYEE"'=>'CM_PRIMARY'),
 													'valid'=>array('$x !== "UNKNOWN"'=>'Cannot assign type UNKOWN',
 															   '$x !== "CM_OTHER" || be_null($rec["staff_id"])'=>
-															   'Other CMs can only be assigned to non-desc staff',
+															   'Other CMs can only be assigned to non-' . org_name('short') . ' staff',
 															   '$x!=="CM_PAYEE" || !be_null($rec["staff_id"])'=>
 															   '{$Y}: The joint CM & Payee code can only be used for '.$AG_TEXT['ORGANIZATION_SHORT'].' staff',
 															   '$x!=="CM_MH"||has_perm("CM_MH_ASSIGNS")

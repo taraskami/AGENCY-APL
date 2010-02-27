@@ -75,7 +75,7 @@ function client_selector($show_selected="Y",$text="",$form="N")
 		$cl=sql_fetch_assoc(client_get($client_select));
 		if ($staffs=get_staff_clients($cl[AG_MAIN_OBJECT_DB.'_id'],true)) {//only staff who want alerts
 			foreach($staffs as $sid) {
-				if (is_numeric($sid)) { //no non-desc staff
+				if (is_numeric($sid)) { //no outside staff
 					add_id($sid,$STAFF);
 					$_SESSION['LOG_STAFF'] = $STAFF;
 				}

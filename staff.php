@@ -435,7 +435,7 @@ function staff_name( $sid )
 {
 	if (!$sid) {
 		return false;
-	} elseif (!is_numeric($sid)) { //non-desc staff
+	} elseif (!is_numeric($sid)) { //other organzation's staff
 		return $sid;
 	}
 	$staff=get_staff(array("staff_id"=>$sid,"is_active"=>array(sql_true(),sql_false())));
