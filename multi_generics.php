@@ -46,9 +46,9 @@ $user_field = $multi['field'];
 $f_def = $c_def['fields'][$user_field];
 $a = array_keys($c_def['fields']);
 $table = $f_def['lookup']['table'];
-
 $order=is_array($multi['other_codes']) ? implode($multi['other_codes'],"','") : '';			
-$codes=agency_query("SELECT * FROM $table ORDER BY $user_field IN ('$order'), description"); 
+$sql=orr($multi['sel_sql'],"SELECT * FROM $table");
+$codes=agency_query("$sql ORDER BY $user_field IN ('$order'), description"); 
 while ($item=sql_fetch_assoc($codes))
 {
 $code=$item[$user_field];
@@ -82,19 +82,28 @@ function add_generics_fields($def,$child_object)
 	$user_field = $multi['field'];
 	$f_def = $c_def['fields'][$user_field];
 	$table = $f_def['lookup']['table'];
-	$codes=agency_query("SELECT * FROM $table");
+	$codes=agency_query(orr($multi['sel_sql'],"SELECT * FROM $table"));
 	$multi_fields=$multi['multi_fields'];
 	while($rec=sql_fetch_assoc($codes))
 	{
 		$code=$rec[$user_field];
 		$fake_field = "multi_$child_object". '_multi_' . $code;
 		$label=$rec["description"];
+		switch ( $rec['value_type_code'] ) {
+			case 'YESNO' :
+				$format = 'radio';
+				break;
+			default :
+				$format = 'check';
+		}
 		$def["fields"][$fake_field]=array("data_type"=>"multi_rec",
-						    "display_add"=>"multi_disp",
-						    "label_add"=>$label,
+							"display_add"=>"multi_disp",
+							"label_add"=>$label,
 // changing to array:
-						    "multi_field"=>$multi_fields,
-						    "multi_type"=>"boolean");
+							"multi_field"=>$multi_fields,
+							"multi_type"=>'boolean',
+							'multi_format'=>$format,
+							'null_ok'=>sql_true($rec['null_ok']));
 	}
 	if ($multi['confirm_none']) {
 		$def['fields']["multi_{$child_object}_multi_no_multi_records"] = array("data_type"=>"multi_rec",
@@ -115,7 +124,7 @@ function valid_generics($action,$big_rec,&$def,&$mesg,&$valid,$child_object)
 	$user_field=$def['multi'][$child_object]['field'];
 	$any_subs = false;
 	foreach($big_rec as $key=>$rec) {
-		if (is_array($rec) && $key !== "multi_{$child_object}_multi_no_multi_records") {
+		if (!($def['fields'][$key]['data_type']=='array') and is_array($rec) && $key !== "multi_{$child_object}_multi_no_multi_records") {
 			$any_subs = $any_subs ? true : sql_true($rec[$multi_fields]);
 			foreach($rec as $skey=>$value) {
 				if ( ($val=$subdef['fields'][$skey]['valid']) && sql_true($rec[$multi_fields])) {
@@ -133,6 +142,14 @@ function valid_generics($action,$big_rec,&$def,&$mesg,&$valid,$child_object)
 						}
 					}
 				}
+			}
+			//if ( (be_null($rec[$multi_fields]) or (
+			if ( ( ($def['fields'][$key]['multi_format']=='radio' and be_null($rec[$multi_fields]))
+				or ($def['fields'][$key]['multi_format']=='checkbox' and ~!sql_true($rec[$multi_fields])))
+				and (!$def['fields'][$key]['null_ok']===true)) {
+				$mesg .= oline('Must specify ' . value_generic($rec[$user_field],$subdef,$user_field,$action));
+				$valid=false;
+				$def['fields'][$key]['not_valid_flag']=true;
 			}
 			if (sql_true($rec[$multi_fields]) and in_array($rec[$user_field],$subdef['fields'][$user_field]['require_comment_codes']) and be_null($rec['comment'])) {
 				$mesg .= oline('Comment required for ' . $subdef['singular'] . ' of ' . value_generic($rec[$user_field],$subdef,$user_field,$action));
@@ -174,7 +191,7 @@ function form_generics_row($key,$rec,$def,$child_object)
 			}
 			$out .= hiddenvar("rec[$sub2][$key]",$value);
 		}
-		$out .= rowrlcell(
+				$out .= rowrlcell(
 					formcheck("rec[$sub2][$multi_fields]",sql_true($rec[$multi_fields]))
 					,$label.smaller(' (please describe) ')
 					. formvartext("rec[$sub2][comment]",$rec['comment']) 
@@ -183,7 +200,17 @@ function form_generics_row($key,$rec,$def,$child_object)
 		foreach($rec as $key=>$value)
 		{
 			if ($key==$multi_fields) {
-				$out .= rowrlcell(formcheck("rec[$sub2][$key]",sql_true($value)),"$label");
+				switch ($def['fields'][$sub2]['multi_format']) {
+					case 'radio' :
+						$formval = sql_true($value) ? 'Y' : (sql_false($value) ? 'N' : NULL);
+						if ($def['fields'][$sub2]['null_ok']) {
+							$wipeout = formradio_wipeout("rec[$sub2][$key]");
+						}
+						$out .= rowrlcell($wipeout . yes_no_radio("rec[$sub2][$key]",'',$formval),$label);
+						break;
+					default :
+						$out .= rowrlcell(formcheck("rec[$sub2][$key]",sql_true($value)),"$label");
+				}
 			} else {
 				$out .= hiddenvar("rec[$sub2][$key]",$value);
 			}
@@ -200,7 +227,6 @@ function post_generics($multi_records,$new_rec,$def,&$mesg,$child_object)
 	$multi_fields=$multi['multi_fields'];
 	$sing = $c_def['singular'];
 	$cid=$new_rec[$def['id_field']];
-	//      echo "cid = " . $cid;
 	if (!(is_numeric($cid)))
 	{
 		$mesg .=oline("Error: Cannot post $sing records, no ".$def['singular']." ID given to post_generics");
@@ -209,55 +235,60 @@ function post_generics($multi_records,$new_rec,$def,&$mesg,$child_object)
 	$count=0;
 	foreach($multi_records as $sub=>$rec)
 	{
-		if (sql_true($rec[$multi_fields]) && $sub !== "multi_{$child_object}_multi_no_records")
+		$post_by_reference = in_array($def['id_field'], array_keys($rec)) ? FALSE : TRUE;
+		//if (sql_true($rec[$multi_fields]) && $sub !== "multi_{$child_object}_multi_no_records")
+		if (!be_null($rec[$multi_fields]) && $sub !== "multi_{$child_object}_multi_no_records")
 		{
 			$fields=$def["fields"][$sub];
 			$label=$fields["label"];
 			
-			$rec[$def['id_field']]=$cid;
+			if (!$post_by_reference) { 
+				$rec[$def['id_field']]=$cid;
+			} else {
+				$ref_def=get_def('reference');
+			}
 			unset($rec[$c_def['id_field']]);
 			unset($rec['source']); //genericize?
 			unset($rec['is_deleted']);
 			
 			foreach($rec as $key=>$value)
 			{
-				if ($key=="added_at" || $key=="changed_at" || $key==$multi_fields)
+				//if ($key=="added_at" || $key=="changed_at" || $key==$multi_fields)
+				if ($key==$multi_fields and stristr($key,'_date'))
 				{
-					unset($rec[$key]);
-					$rec["FIELD:$key"]="CURRENT_TIMESTAMP";
+					//unset($rec[$key]);
+					//$rec["FIELD:$key"]="CURRENT_TIMESTAMP";
+					$rec[$key]=dateof('now','SQL');
 				}
 			}			
-			$result=agency_query(sql_insert($table,$rec));
+			$c_def['post_with_transactions']=false; // already in transaction from parent record
+			//$result=agency_query(sql_insert($table,$rec));
+			$result=post_generic($rec,$c_def,$mesg);
 			if (!$result)
 			{
-				$mesg .= oline("Your attempt to {$action} a {$label} record failed.");
-				log_error("Error in {$action}ing, using post_generic(). Here was the record: " 
+				$mesg .= oline("Your attempt to post a {$label} record failed.");
+				log_error("Error in {$action}ing, using post_generics_multi(). Here was the record: " 
 					    . dump_array($rec));
-				continue;
+				//continue;
+				return false;
 			}
-			$test_rec=array();
-			foreach($rec as $key=>$value)
-			{
-				if (be_null($value))
-				{
-					$test_rec["FIELD:BE_NULL($key)"]="true";
+			if ($post_by_reference) {
+				$ref_rec=array(
+					'from_table'=>$def['object'],
+					'from_id_field'=>$def['id_field'],
+					'from_id'=>$cid,
+					'to_table'=>$c_def['object'],
+					'to_id_field'=>$c_def['id_field'],
+					'to_id'=>$result[$c_def['id_field']],
+					'added_by'=>$result['added_by'],
+					'changed_by'=>$result['changed_by']);
+				$ref_def['post_with_transactions']=false; // already in transaction from parent record
+				$result=post_generic($ref_rec,$ref_def,$mesg);
+				if (!$result) {
+					$mesg .= oline("Error posting by reference.  Here was the reference: " . dump_array($ref_rec));
+					//continue;
+					return false;
 				}
-				
-				elseif(substr($key,0,6) == "FIELD:")
-				{
-					continue;// skip fields like added_at, changed_at
-				}
-				else
-				{
-					$test_rec[$key]=$value;
-				}
-			}
-			$new_sub_rec=agency_query($c_def["sel_sql"],$test_rec);
-			if (!$new_sub_rec)
-			{
-				$mesg .= oline("The database accepted your {$action}ing of a $label $sing, but I was unable to find the record.");
-				log_error("The database accepted your $action, but I was unable to find the record.");
-				continue;
 			}
 			$count++;
 		}
@@ -267,8 +298,30 @@ function post_generics($multi_records,$new_rec,$def,&$mesg,$child_object)
 		}
 	}
 	
-	$mesg .= oline("You succesfully {$action}ed $count $sing records.");
+	$mesg .= oline("You succesfully posted $count $sing records.");
 	return true;
 }
 
+function info_additional_config_array( &$def ) {
+	$multi=array('sub_title' => 'Additional Information',
+	   	'multi_fields'=>'info_additional_value',
+		'object' => 'info_additional',
+		'field' => 'info_additional_type_code',
+		'blank_fn'=>'blank_generics_add',
+		'add_fields_fn'=>'add_generics_fields',
+		'form_row_fn'=>'form_generics_row',
+		'valid_fn'=>'valid_generics',
+		'post_fn'=>'post_generics',
+		'sel_sql'=>"SELECT * FROM l_info_additional_type WHERE '{$def['object']}' = ANY(applicable_tables)",
+		'allow_none'=>true);
+
+	$infos=agency_query($multi['sel_sql']);
+		if (sql_num_rows($infos) > 0 ) {
+			$def['multi_records']=true;
+			$def['multi']['info_additional']=$multi;
+			return true;
+		} else {
+			return false;
+		}
+}
 ?>

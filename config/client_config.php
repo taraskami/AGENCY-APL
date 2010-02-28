@@ -169,6 +169,7 @@ $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
 				'db_revision_history', // database modifications applied
 				//---Testing---//
 				'report',
+				'info_additional',
 				//---Postgresql---//
  				'pg_catalog'
 				);

@@ -109,6 +109,7 @@ $engine['global_default'] = array(
 				  'confirm_record'=>null,
 				  'custom_css'=>null, //passed to <head> tag
 				  'display_client_refs'=>null,
+				  'include_info_additional'=>true,
 				  'delete_another' => null, //allow one to delete multiple records w/o being prompted for password
 				  'delete_another_password_cycle' => 10,
 				  'enable_client_refs' => null,

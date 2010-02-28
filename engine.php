@@ -36,7 +36,6 @@ function engine($control='',$control_array_variable='control')
       /*
 	 * Documentation: http://www.desc.org/chasers_wiki/index.php/Engine_Documentation
 	 */
-
 	global $engine;
 
       $commands=array();
@@ -151,6 +150,7 @@ function engine($control='',$control_array_variable='control')
 	/*
 	 * Multi-records
 	 */
+
       if ( ($def['multi_records']) and ($action=='add') ) {
 		foreach( $def['multi'] as $m=>$opts ) {
 			$def=call_user_func($opts["add_fields_fn"],$def,$m);

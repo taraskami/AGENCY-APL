@@ -553,6 +553,10 @@ function config_object($object)
 		}
 	  }	
 
+	  // Info Additional Records
+	  if ($OBJECT['include_info_additional']) {
+	    info_additional_config_array($OBJECT);
+	  }
       // FIELDS NOT IN POST TABLE
       $fields_db       = array_keys(array_merge($fields_view,$fields_table));
       $FIELDS_NOT_DB   = array_diff(array_keys($fields_config_file),$fields_db);
@@ -2628,12 +2632,12 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
 		$NEW_REC = sql_to_php_generic(sql_fetch_assoc($new_rec),$def);
 
 	}
-
       if (isset($multi_records)) {
-
 	    foreach ($def['multi'] as $m=>$opts) {
-			if (!(call_user_func($opts['post_fn'],$multi_records,$NEW_REC,$def,$mesg,$m))) {
-				$mesg .= oline("You attempted to {$action} multiple $m records failed.");
+			//if (!(call_user_func($opts['post_fn'],$multi_records,$NEW_REC,$def,$mesg,$m))) {
+			if (!$opts['post_fn']($multi_records,$NEW_REC,$def,$mesg_minor,$m)) {
+				$mesg .= oline("You attempted to {$action} multiple $m records failed.")
+						. message_result_detail($mesg_minor);
 				return false;
 	    	}
 		}
@@ -2641,7 +2645,7 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
 
       if (!$NEW_REC) {
 
-	    $mesg .= oline("The database accepted your $action, but I was unable to find the record. The $action will be aborted.");
+	    $mesg .= oline("The database accepted your $action, but I was unable to find the record. The $action will be aborted.") . message_result_detail($mesg_minor);
 	    log_error("The database accepted your $action, but I was unable to find the record.");
 	    return false;
 
@@ -2649,7 +2653,7 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
 
 	$singular = $def['singular'];
       $mesg .= oline("Your {$singular} was successfully {$action}ed.");
-
+	  $mesg .= message_result_detail($mesg_minor);
       return $NEW_REC;
 }
 
@@ -2777,9 +2781,12 @@ function process_generic(&$sess,&$form,$def)
 		} elseif ($type=='multi_rec') { //cycle through and assign sub-records
 			foreach ($form_value as $sub_key=>$sub_value) {
 				if ( ($fields['multi_type']=='boolean') 
-				     && ($sub_key==$fields['multi_field'])
-				     && (sql_true($sub_value)) ) {
-					$sub_value=sql_true();
+				     && ($sub_key==$fields['multi_field'])) {
+					if ($fields['multi_format']=='radio') {
+						$sub_value=sql_true($sub_value) ? 'Y' : (sql_false($sub_value) ? 'N' : NULL );
+					} elseif (sql_true($sub_value)) {
+						$sub_value=sql_true();
+					}
 					$sess[$form_key][$sub_key]=$sub_value;
 				} else {
 					$sess[$form_key][$sub_key] = get_magic_quotes_gpc() ? stripslashes($sub_value) : $sub_value;
@@ -3787,4 +3794,10 @@ function update_engine_control($noexists=false)
 	. oline('Update Engine Object') . $update_list)
 	: '');
 }
+
+function message_result_detail($mesg) {
+	// hacky way to avoid nested divs, should work if mesg is just text.
+	return div(strip_tags($mesg,'<br><p>'),'','class="engineMessageResultDetail"');
+}
+
 ?>

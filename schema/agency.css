@@ -46,6 +46,9 @@ should be included in this distribution.
 a.fancyLink { text-decoration: none; }
 a.fancyLink:hover, a.fancyLink:active { color: #f00; text-decoration: underline; }
 
+a.toggleLink { font-size: 65%; }
+div.engineMessageResultDetail { font-size: 80%; border: solid 1px black; }
+
 .warning, .error { color: #f00; } /* same for now */
 .message { color: #18782f; }
 

@@ -161,6 +161,8 @@ INSERT INTO db_list
 \i create.view.db_agency_relations.sql
 \i create.view.db_agency_functions.sql
 
+\i create.info_additional.sql
+
 /* core functions */
 
 \i functions/create.functions_agency_core.sql

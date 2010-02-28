@@ -101,3 +101,12 @@ $(function() {
 		$(this).closest('tr').toggleClass('engineFormSelected');
 	});
 });
+
+/* Hide & Toggle minor engine messages */
+$(function() {
+	$(".engineMessageResultDetail").hide().before('<a href="#" class="toggleLink">details...</a>');
+	$(".engineMessageResultDetail").prev().click( function(event) {
+		event.preventDefault();
+		$(this).next().toggle();
+	});
+});
