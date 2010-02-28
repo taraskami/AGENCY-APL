@@ -479,7 +479,10 @@ function engine($control='',$control_array_variable='control')
 					  . '&'.$control_array_variable.'[action]='.$action
 					  . '&'.$control_array_variable.'[id]='.$id
 					  . '&'.$control_array_variable.'[step]='.$step
-					  . '&'.$control_array_variable.'[message]='.urlencode($message);
+						;
+				  // Long messages can't be passed through URL.	
+				  //. '&'.$control_array_variable.'[message]='.urlencode($message);
+				  $_SESSION['successful_add_edit_message']= $message;
 				  header('Location: '.$page.'?'.$query_string);
 				  exit;
 			  }
@@ -669,6 +672,8 @@ function engine($control='',$control_array_variable='control')
 				 * Catch add/edit redirects
 				 */
 				if ($step=='successful_add_edit') {
+					$message = $_SESSION['successful_add_edit_message'] . $message;
+					unset($_SESSION['successful_add_edit_message']);
 					if ($prepend_add_eval=$def['prepend_finished_add_eval']) {
 						$rec = $REC;
 						$prepend_add_html = eval('return '.$prepend_add_eval.';');
