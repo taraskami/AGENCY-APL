@@ -33,6 +33,11 @@ should be included in this distribution.
 
 
 $engine['info_additional'] = array(
-	'singular'=>'Additional Information'
+	'singular'=>'Additional Information',
+	'allow_edit'=>false,
+	'perm_edit'=>'super_user'
+	// You should be very careful not to edit these records once added!
+	// Instead edit the reference to point to a different record, and
+	// add it if necessary.
 	);
 ?>
