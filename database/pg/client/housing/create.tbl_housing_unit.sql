@@ -1,5 +1,6 @@
 CREATE TABLE tbl_housing_unit (
-	housing_unit_code 		VARCHAR(6) PRIMARY KEY,
+	housing_unit_id			SERIAL PRIMARY KEY,
+	housing_unit_code 		VARCHAR(6) UNIQUE NOT NULL,
 	housing_unit_date			DATE NOT NULL,
 	housing_unit_date_end		DATE,
 	unit_type_code 			VARCHAR(10) NOT NULL REFERENCES tbl_l_unit_type (unit_type_code),
