@@ -103,6 +103,7 @@ function engine($control='',$control_array_variable='control')
 	 */
 	if ( ($old_action != $action) or ($old_id != $id) or ($old_object != $object) ) {
 		$control['step']='';
+		$control['object_references']=array();
       }
 
 	$step   = $control['step'];
@@ -244,6 +245,15 @@ function engine($control='',$control_array_variable='control')
 	 */
 	$message .= call_user_func($def['fn']['process_staff_alert'],$def,$REC,&$control);
 	$_SESSION['CONTROL'.$session_identifier]['staff_alerts'] = $control['staff_alerts'];
+
+	/*
+	 * Process object references
+	 */
+
+	//$def['fn']['process_object_reference']='process_object_reference_generic';//FIXME
+	$message .= process_object_reference_generic($def,$REC,$control);
+	merge_object_reference_db($object,$id,$control);
+	$_SESSION['CONTROL'.$session_identifier]['object_references'] = orr($control['object_references'],array());
 
 	/*
 	 * Any messages from last page
@@ -428,6 +438,12 @@ function engine($control='',$control_array_variable='control')
 				  }
 			  }
 
+			  /*
+			   * Post object references
+			   */
+			  if (!$post_failed && ($refs = $control['object_references']['to'])) {
+				  $post_failed = !post_object_references($a,$def,$refs,$message);
+			  }
 			  
 			  if ($post_failed) {
 				  /*
@@ -515,6 +531,7 @@ function engine($control='',$control_array_variable='control')
 
 		    $return_to_edit = hlink($_SERVER['PHP_SELF'].'?'.$control_array_variable.'[step]=continued'.$link_control,
 						    'Return to edit','',' class="linkButton"');
+			$object_refs = populate_object_references($control) . object_reference_container();
 		    $view_rec = ($format=='data') 
 			    ? view_generic($REC,$def,$action,$control) 
 			    : call_user_func($def['fn']['view'],$REC,$def,$action,$control);
@@ -522,7 +539,7 @@ function engine($control='',$control_array_variable='control')
 
 		    if ($control['break_confirm']) {
 			    $message .= ' '.$return_to_edit;
-			    $output .= $view_rec;
+			    $output .= $object_refs . $view_rec;
 			    break;
 		    }
 		    
@@ -546,8 +563,8 @@ function engine($control='',$control_array_variable='control')
 			    . formend();
 
 		    $output .= oline().$required_fields_text;
+		    $output .= $object_refs . $view_rec;
 
-		    $output .= $view_rec;
 		    if ($def['enable_staff_alerts_'.$action] 
 			  && $alerts = get_staff_alerts_generic($REC,$action,$def,$control)) {
 			    $output .= div(oline(bold('Staff Alerts:')).$alerts,'',
@@ -623,6 +640,23 @@ function engine($control='',$control_array_variable='control')
 		    if ($def['enable_staff_alerts_'.$action]) {
 			    $staff_alerts = add_staff_alert_form_generic($def,$REC,$control);
 		    }
+			/* Pass on already-selected objects */
+			$pre_refs = populate_object_references($control);
+			$show_selected = object_reference_container();
+
+			/* Object References Form */
+			if ($objs = $def['allow_object_references']) {
+
+				foreach ($objs as $obj ) {
+					$t_def=get_def($obj);
+					$div_id='';
+					$object_refs .= object_selector_generic($obj,$div_id);
+					$tab_links .= html_list_item(hlink("#$div_id",$t_def['plural']));
+				}
+				$tabs = html_list($tab_links,'class="'.$obj.'"');	
+				$object_refs_show_link = hlink('','Refer to other records...',NULL,'class="fancyLink" id="objectSelectorShowLink"');
+				$object_refs = div($tabs . $object_refs,'objectSelectorForm','class=objectSelectorForm');
+			} // end O. R. Form
 
 		    $title = call_user_func($def['fn']['title'],$action,$REC,$def);
 
@@ -637,10 +671,14 @@ function engine($control='',$control_array_variable='control')
 		    for ($i = 0;  $_REQUEST['remove_attachment'.$i]; $i++) {
 			    $REC[$_REQUEST['remove_attachment'.$i]] = null;
 		    }
-
-		    $output .= oline().$required_fields_text;
 		    $output .= formto($page, '', $enctype) //for attachment upload 
-			    . div(button($submit_text,'','','','','class="engineButton"') . $reset_button . $cancel_button,'','')
+				. span(
+				div($object_refs,'objectSelector')
+				. $show_selected)
+			    . div(button($submit_text,'','','','','class="engineButton"') . $reset_button . $cancel_button,'','style="clear: both"')
+				. div($pre_refs,'preSelectedObjects')
+				. $required_fields_text
+				. ' | ' . $object_refs_show_link
 			    . div(call_user_func($def['fn']['form'],$REC,$def,$control),'','')  //GENERATE THE FORM
 			    . $staff_alerts
 			    . hiddenvar($control_array_variable.'[step]','submit')
@@ -681,6 +719,7 @@ function engine($control='',$control_array_variable='control')
 				}
 				$title = oline(call_user_func($def['fn']['title'],$action,$REC,$def));
 				$output .= $prepend_add_html; //this will be coming from 'add' or 'edit'
+				$output .= populate_object_references($control) . object_reference_container();
 				$output .= ($format == 'data') 
 					? view_generic($REC,$def,$action,$control)
 					: call_user_func($def['fn']['view'],$REC,$def,$action,$control);

@@ -1,4 +1,5 @@
 <?php
+
 /*
 <LICENSE>
 
@@ -30,14 +31,21 @@ should be included in this distribution.
 </LICENSE>
 */
 
-link_style_sheet('pepper-grinder/jquery-ui-1.7.2.custom.css','screen',' class="styleSheetScreen"');
-link_style_sheet('jquery.datepick.css','screen',' class="styleSheetScreen"');
-link_style_sheet('jquery.clockpick.css','screen',' class="styleSheetScreen"');
+$quiet='Y';
+include 'includes.php';
+$qs=$_REQUEST['QuickSearch'];
+$my=$_REQUEST['MyClients'];
+$obj=orr($_REQUEST['QuickSearchObject'],AG_MAIN_OBJECT_DB);
 
-link_javascript('jquery-1.4.min.js');
-link_javascript('jquery-ui-1.7.2.custom.min.js');
-link_javascript('jquery.datepick.pack.js');
-link_javascript('jquery.clockpick.js');
-link_javascript('jquery_agency.js');
-link_javascript('object_reference.js');
+if ($my && ($my == 'true')) {
+	$filt['IN:' . $obj .'_id'] = staff_client_assignments_ids($UID);
+} elseif ($qs) {
+	$filt = object_qs_filter($qs,$obj);
+} else {
+	return false;
+}
+$control=array('action' => 'list', 'list' => array( 'filter' => $filt));
+$def = get_def($obj);
+$recs = list_generic($control,$def,'',$dummy);
+out( $recs );
 ?>

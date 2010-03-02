@@ -3797,7 +3797,7 @@ function update_engine_control($noexists=false)
 
 function message_result_detail($mesg) {
 	// hacky way to avoid nested divs, should work if mesg is just text.
-	return div(strip_tags($mesg,'<br><p>'),'','class="engineMessageResultDetail"');
+	return $mesg ? div(strip_tags($mesg,'<br><p>'),'','class="engineMessageResultDetail"') : '';
 }
 
 ?>

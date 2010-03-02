@@ -430,6 +430,11 @@ function show_query($fields,$result,$control,$def,$total,$control_array_variable
 		$a = sql_to_php_generic($a,$def);
 
 		$row_content = call_user_func($fn,$fields,$position,$a,$control,$def,$control_array_variable,&$REC_NUM);
+        $row_content = 	$row_content
+			. hiddenvar('objectPickerObject',$def['object'])
+                        . hiddenvar('objectPickerId',$a[$def['id_field']])
+                        . hiddenvar('objectPickerMethod','searchResult')
+                        . hiddenvar('objectPickerLabel',object_label($def['object'],$a[$def['id_field']]));
 
 		if ($reverse) {
 			//pre-pend result set

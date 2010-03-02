@@ -1,4 +1,3 @@
-<?php
 /*
 <LICENSE>
 
@@ -30,14 +29,49 @@ should be included in this distribution.
 </LICENSE>
 */
 
-link_style_sheet('pepper-grinder/jquery-ui-1.7.2.custom.css','screen',' class="styleSheetScreen"');
-link_style_sheet('jquery.datepick.css','screen',' class="styleSheetScreen"');
-link_style_sheet('jquery.clockpick.css','screen',' class="styleSheetScreen"');
+/* Additional Information */
+div#infoAdditionalContainer {
+	border: 4px black;
+	padding: 5px;
+	background-color:  #FBFFA5;
+	width: auto;
+	float: right;
+	margin: 4px;
+}
 
-link_javascript('jquery-1.4.min.js');
-link_javascript('jquery-ui-1.7.2.custom.min.js');
-link_javascript('jquery.datepick.pack.js');
-link_javascript('jquery.clockpick.js');
-link_javascript('jquery_agency.js');
-link_javascript('object_reference.js');
-?>
+div#infoAdditionalContainer H2 {
+	font-size: 85%;
+	margin-top: 1px;
+	color: #8C135F;
+}
+
+/* Object References */
+div#objectReferenceContainer {
+	border: 4px black;
+	width: auto;
+	float: right;
+	padding: 5px;
+	background-color: #28F3B4;
+	margin: 5px;
+}
+
+div#objectReferenceContainer H2,
+div#objectReferenceContainer H3 {
+	font-size: 75%;
+	margin-top: 1px;
+	color: #9E5322;
+}
+
+#objectSelectorShowLink {
+	font-size: 75%;
+}
+
+#objectSelectorHideLink {
+	font-size: 75%;
+}
+
+a.selectedObjectRemove {
+	font-size: 65%;
+}
+
+.objectSelectorTitle { font-weight: bold; }

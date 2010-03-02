@@ -82,6 +82,7 @@ link_style_sheet('layout.css','screen,print',' class="styleSheetBoth"');
 link_style_sheet('agency.css','screen',' class="styleSheetScreen"');
 link_style_sheet('print.css','print',' class="styleSheetPrint"');
 link_style_sheet(AG_MAIN_OBJECT_DB.'.css','screen',' class="styleSheetScreen"');
+link_style_sheet('object_reference.css','screen',' class="styleSheetScreen"');
 
 link_javascript('agency.js');
 

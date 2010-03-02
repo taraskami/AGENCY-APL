@@ -113,6 +113,7 @@ $engine['global_default'] = array(
 				  'delete_another' => null, //allow one to delete multiple records w/o being prompted for password
 				  'delete_another_password_cycle' => 10,
 				  'enable_client_refs' => null,
+				  'allow_object_references' => null,
 // 				  'enable_staff_alerts' => null, //during view //set below
 // 				  'enable_staff_alerts_add' => null, //during add
 				  'hidden_html_absolute' => null, //for things like hidden <div>s, <style> and <script>, output (for list) independent of existing records or not
