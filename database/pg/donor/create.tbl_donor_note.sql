@@ -2,7 +2,7 @@ CREATE TABLE tbl_donor_note (
 	donor_note_id		SERIAL PRIMARY KEY,
 	is_front_page		BOOLEAN NOT NULL DEFAULT TRUE,
 	donor_id			INTEGER NOT NULL REFERENCES tbl_donor(donor_id),
-	note				TEXT,
+	note				TEXT NOT NULL,
 	staff_id			INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
 	agency_program_code	VARCHAR(10) REFERENCES tbl_l_agency_program (agency_program_code),
 	agency_project_code	VARCHAR(10) REFERENCES tbl_l_agency_project (agency_project_code),

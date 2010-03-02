@@ -2,7 +2,7 @@ CREATE TABLE tbl_client_note (
 	client_note_id		SERIAL PRIMARY KEY,
 	is_front_page		BOOLEAN NOT NULL,
 	client_id			INTEGER NOT NULL REFERENCES tbl_client(client_id),
-	note				TEXT,
+	note				TEXT NOT NULL,
 	flag_entry_codes		VARCHAR[],
 	--system fields
 	added_by			INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
