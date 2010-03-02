@@ -688,10 +688,10 @@ function call_sql_function()
 	return $t[0];
 }
 
-function toggle_query_display()
+function toggle_query_display($state=NULL)
 {
 	global $query_display;
-	$query_display = $query_display ? null : 'Y';
+	$query_display = orr($state,$query_display) ? null : 'Y';
 }
 
 function sql_nextval($seq)
