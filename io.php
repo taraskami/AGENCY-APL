@@ -1825,7 +1825,7 @@ function html_start($title='')
       return ''//'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n"
 		. "<html>\n<head>\n"
   		//. '<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />'
-  		. '<link rel="shortcut icon" href="images/favicon.png" type="image/png" />'
+  		. '<link rel="shortcut icon" href="images/agency_logo_small.png" type="image/png" />'
 		. ($title ? title($title) : '')
 		. ($GLOBALS['AG_HEAD_TAG'] ? $GLOBALS['AG_HEAD_TAG'] : '')
 		. "\n</head>\n<body".$GLOBALS['AG_BODY_TAG_OPTIONS'].">\n"
@@ -1850,7 +1850,7 @@ function html_header($title, $refresh=0)
 	out(title($title));
 	html_meta('Content-Type','text/html; charset=iso-8859-1'); //fall-back character encoding
 	//out('<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />'."\n");
-	out('<link rel="shortcut icon" href="images/favicon.png" type="image/png" />'."\n");
+	out('<link rel="shortcut icon" href="images/agency_logo_small.png" type="image/png" />'."\n");
 	out($GLOBALS['AG_HEAD_TAG']);
 	out("</head>\n<body".$GLOBALS['AG_BODY_TAG_OPTIONS'].">\n");
  	out(anchor('TOP'));
