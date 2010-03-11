@@ -222,6 +222,7 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 			$div_id,'class="' . $object .'"');
 }
 
+/*
 function get_object_references($object,$id,$id_field=NULL) {
 	$def=get_def($object);
 	$id_field=orr($id_field,$def['id_field']);
@@ -231,6 +232,48 @@ function get_object_references($object,$id,$id_field=NULL) {
 		'to_id'=>$id,'to_table'=>$def['table']);
 	$refs = get_generic(array($filter_from,$filter_to),'','',get_def('reference'));
 	return $refs;
+}
+*/
+
+function object_reference_filter($object,$id,$id_field=NULL,$ref_types='both',$ref_object=NULL) {
+	$def=get_def($object);
+	$id_field=orr($id_field,$def['id_field']);
+	$filter_from=array("FIELD:COALESCE(from_id_field,'$id_field')"=>"'$id_field'",
+		'from_id'=>$id,'from_table'=>$def['table']);
+	$filter_to=array("FIELD:COALESCE(to_id_field,'$id_field')"=>"'$id_field'",
+		'to_id'=>$id,'to_table'=>$def['table']);
+	if ($ref_object) {
+		$filter_to['from_table']=$ref_object;
+		$filter_from['to_table']=$ref_object;
+	}
+	switch($ref_types) {
+		case 'to' :
+			$filter=$filter_to;
+		case 'from' :
+			$filter=$filter_from;
+		case 'both' :
+		default :
+			$filter["a"]=$filter_from;
+			$filter["b"]=$filter_to;
+			$filter=array($filter);
+	}
+	return $filter;  
+}
+
+function object_reference_filter_wrap( $object,$id,$id_field=NULL,$ref_types='both',$ref_object=NULL,$ref_id_field=NULL) {
+
+	$o_def=get_def($object);
+	$id_field=orr($id_field,$o_def['id_field']);
+
+	$r_def=get_def($ref_object);
+	$ref_id_field=orr($ref_id_field,$r_def['id_field']);
+	$fkey="SELECT CASE WHEN to_table='$object' THEN from_id WHEN from_table='$object' THEN to_id END FROM reference WHERE ";
+	$filter["FIELDIN:$ref_id_field"]="($fkey" . read_filter(object_reference_filter($object,$id,$id_field,$ref_types,$ref_object)) . ")";
+	return $filter;
+}
+
+function get_object_references($object,$id,$id_field=NULL) {
+	return get_generic(object_reference_filter($object,$id,$id_field),'','',get_def('reference'));
 }
 
 function info_additional_label($id) {

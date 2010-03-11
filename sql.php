@@ -315,15 +315,9 @@ function read_filter( $filter, $bool="AND", $lang="SQL")
 		return oline("I (read_filter) have been asked to explain a query in language understandable by humans, but I don't know how!");
 	}
 	// cycle through each filter element
-	if ( (! is_array($filter)) || ($filter==array()) ) // blank filter returns blank string or empty array
+	if ( (! $filter) || ($filter==array()) ) // blank filter returns blank string or empty array
 	{
 		return "";
-	}
-	if (!is_assoc_array($filter)) {
-		foreach($filter as $f) {
-			$clauses[]=read_filter($f);
-		}
-		return '(' . implode($clauses,') OR (') . ')';
 	}
     foreach ($filter as $field=>$value)
     {
