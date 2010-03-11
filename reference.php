@@ -273,6 +273,10 @@ function object_reference_filter_wrap( $object,$id,$id_field=NULL,$ref_types='bo
 }
 
 function get_object_references($object,$id,$id_field=NULL) {
+	if (!(is_numeric($id) and (intval($id)==$id))) { 
+		// Ref table currently only holds integers, skip anything else
+		return false;
+	}
 	return get_generic(object_reference_filter($object,$id,$id_field),'','',get_def('reference'));
 }
 
