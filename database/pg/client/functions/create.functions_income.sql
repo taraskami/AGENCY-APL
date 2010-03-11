@@ -9,7 +9,7 @@ BEGIN
 		OR ( CASE WHEN income.income_date_end IS NULL THEN
 				(new.income_date_end >= income.income_date)
 			WHEN new.income_date_end IS NULL THEN
-				(income.income_date_end <= new.income_date)
+				(income.income_date_end >= new.income_date)
 			ELSE
 				( (new.income_date <= income_date_end)
 					AND ( new.income_date_end >= income.income_date))
