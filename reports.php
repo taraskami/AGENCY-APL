@@ -37,7 +37,7 @@ function report_generate_menu(&$navigation)
 	 // open_query and profile report links here:
 	 $out = html_list( 
 				html_list_item(hlink_if('open_query.php','Direct SQL Query Page',has_perm('open_query'),'',' class="fancyLink"'),'class="reportFile"')
-				. html_list_item(hlink_if('rpt_profile.php',org_name('short') . ' Profile Report',has_perm('agency_profile_report'),'',' class="fancyLink"'),'class="reportFile"')
+				. html_list_item(hlink_if('rpt_profile.php',org_name('short') . ' Profile Report',has_perm('agency_profile_rep'),'',' class="fancyLink"'),'class="reportFile"')
 				,'class="reportList"') . $out;
 	$perm = $tot_recs = NULL;
 	 return $out . call_engine(array('object'=>'report','action'=>'list','format'=>''),'',true,true,$perm,$tot_recs);
