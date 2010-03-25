@@ -110,3 +110,12 @@ $(function() {
 		$(this).next().toggle();
 	});
 });
+
+/* Hide & Toggle minor messages */
+$(function() {
+	$(".hiddenDetail").hide().before('<a href="#" class="toggleLink">details...</a>');
+	$(".hiddenDetail").prev().click( function(event) {
+		event.preventDefault();
+		$(this).next().toggle();
+	});
+});

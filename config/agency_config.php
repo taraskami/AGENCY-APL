@@ -540,6 +540,6 @@ define('AG_ERROR_LOG_BACKTRACE',false);
 * Define directory for attached files.
 */
 
-define('AG_ATTACHMENT_LOCATION','/var/www/html/attachments/');
+define('AG_ATTACHMENT_LOCATION',$AG_HOME_BY_FILE . '/attachments/');
 
 ?>

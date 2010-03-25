@@ -164,6 +164,7 @@ $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
 //				'survey_2008_1night',
 				'user_option',
 				//---Engine & AGENCY---//
+				'attachment',
  				'news',
  				'generic_sql_query', // a pseudo object for handling generic SQL
 				'db_revision_history', // database modifications applied

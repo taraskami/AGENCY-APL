@@ -2170,9 +2170,9 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 			    // User tried to upload file, but it failed (and field could not be null.)
 			    $mesg .= oline($value['error']);
 			    $valid = false;	
-		    } elseif ( $value['session_key'] && !(is_readable($_SESSION[$value['session_key']]['tmp_file']))) {
+		    } elseif ( $value['session_key'] && !(is_readable(($q=$_SESSION[$value['session_key']]['tmp_file'])))) {
 			    // pending upload is not readable.
-			    $mesg .= oline('Attachment pending in field ' . $label . ' is not readable.');
+			    $mesg .= oline("Attachment pending in field $label is not readable from $q.");
 			    $valid = false;
 		    }
 	    } elseif ( ($type=='ssn') && (!ssn_of($value))  && (!be_null($value)) ) {
@@ -2468,7 +2468,7 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
 			    $old_rec = sql_fetch_assoc(get_generic($filter, '','',$def));
 
 			    if (is_numeric($old_rec[$key])) {
-				    $assoc_attachment_def = get_def('association_attachment');
+				    $assoc_attachment_def = get_def('attachment_link');
 				    $assoc_attachment_table = $assoc_attachment_def['table_post'];
 				    $assoc_attachment_id_field = $assoc_attachment_def['id_field'];		
 				    $assoc_attachment_filter = array($assoc_attachment_id_field => $old_rec[$key]);

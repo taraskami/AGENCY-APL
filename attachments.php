@@ -140,7 +140,6 @@ function post_attachment($session_key, $object, $key)
 	 *  Posts record to association_attachment table.
 	 *  Return association_attachment_ID
 	*/
-
 	$f_tmp = $_SESSION[$session_key]['tmp_file'];
 
 
@@ -173,54 +172,29 @@ function post_attachment($session_key, $object, $key)
 			 );
 
 	$def = get_def('attachment');
-	$result = agency_query(sql_insert($def['table_post'], $rec, sql_supports_returning() ? '*' : false));
-	
-	// in case sql doesn't support returning:
-	if (!sql_supports_returning()) {
-		$result = get_generic($rec,'attachment_id DESC','1', $def['table']);
-		//Theoretically there could be more than one record with the properties specified by the filter. This will return the one with the largest attachment_id.
-	}
-
-	$tmp_new_rec = sql_fetch_assoc($result);
-	$file_id = $tmp_new_rec['file_upload_id'];
-
+	$tmp_new_rec = post_generic($rec, $def, $dummy_msg );
+	$file_id = $tmp_new_rec['attachment_id'];
 	if (is_numeric($file_id)) {
 		//move file to location given from file_name_from_attachment_id:
-		$moved = rename($f_tmp, file_name_from_file_upload_id($file_id, $extension)); 
+		if (!rename($f_tmp, file_name_from_file_upload_id($file_id, $extension))) {
+			return 'Unable to move pending attachment to file system. ';
+		}
 	}
 
-	$attachment_id = $tmp_new_rec['attachment_id']; 
-	
-	if (!$moved) {
-		return 'Unable to move pending attachment to file system. ';
-	}
-	
-	$assoc_attachment_rec = array(
+	$a_link_rec = array(
 					'parent_object' => $object,
 					'parent_field_name' => $key,
-					'attachment_id' => $attachment_id,
+					'attachment_id' => $file_id,
 					'added_by' => $GLOBALS['UID'],
 					'changed_by' => $GLOBALS['UID']
 					);	
 
-	$assoc_attachment_def = get_def('association_attachment');
-
-	$a_a_res = agency_query(sql_insert($assoc_attachment_def['table_post'], $assoc_attachment_rec, sql_supports_returning() ? '*' : false));
-
-	// in case sql doesn't support returning:
-	if (!sql_supports_returning()) {
-		$a_a_res = get_generic($assoc_attachment_rec,'association_attachment_id DESC','1', $assoc_attachment_def['table']);
-		//Theoretically there could be more than one record with the properties specified by the filter. This will return the one with the largest association_attachment_id.
-	}
-
-	$a_a_rec = sql_fetch_assoc($a_a_res);
-	$a_attachment_id = $a_a_rec['association_attachment_id'];	
-
+	$a_link_def = get_def('attachment_link');
+	$a_a_rec = post_generic($a_link_rec,$a_link_def,$dummy_mesg);
+	$a_attachment_id = $a_a_rec['attachment_link_id'];	
 	return (is_numeric($a_attachment_id)) ? $a_attachment_id : false;
-	
 }
 
-//function link_attachment($value, $action, $key)
 function link_attachment($value, $key, $short_format=false)
 {
 	/*
@@ -253,7 +227,7 @@ function link_attachment($value, $key, $short_format=false)
 	 */
 	
 	//get association_attachment record:
-	$a_attachment_def = get_def('association_attachment');
+	$a_attachment_def = get_def('attachment_link');
 	$a_attachment_filter = array($a_attachment_def['id_field'] => $a_attachment_id);
 	$a_attachment_rec = sql_fetch_assoc(get_generic($a_attachment_filter, '', '', $a_attachment_def));
 		
@@ -264,8 +238,8 @@ function link_attachment($value, $key, $short_format=false)
 
 	//check if null and return $attachment_id
 	if (!$file_rec) {
-		log_error('Failed to find attachment with association_attachment_id: ' . $a_attachment_id);
-		return $a_attachment_id;
+			log_error('Failed to find attachment with attachment_link_id: ' . $a_attachment_id);
+			return $a_attachment_id;
 	}
 
 	$extension = $file_rec['extension'];
@@ -278,17 +252,15 @@ function link_attachment($value, $key, $short_format=false)
 	//only show other_text if action is not list
 	//if ($action != 'list') {
 	if (!$short_format) {
-		$other_text = oline('Attached at: ' . datetimeof($a_attachment_rec['added_at'], 'US')) 
-			. oline(' Attached by: ' . staff_name($a_attachment_rec['added_by']))
-			. ($file_rec['added_at'] != $a_attachment_rec['added_at']? oline('Uploaded at: ' . datetimeof($file_rec['added_at'], 'US')): '')
-			. ($file_rec['added_by'] != $a_attachment_rec['added_by']? oline('Uploaded by: ' . staff_name($file_rec['added_by'])) : '');
+		$other_text .= "Attachment: " . view_generic($file_rec,$file_def,'view')
+						. "Attachment Link: " .  view_generic($a_attachment_rec,$a_attachment_def,'view');
 	}
 
-	$control['object'] = 'association_attachment';
+	$control['object'] = 'attachment_link';
 	$control['id'] = $a_attachment_id; 
 	$control['action'] = 'download';
 	
-	return link_engine($control, $label) . oline(smaller($size)) .smaller($other_text );
+	return link_engine($control, $label) . smaller($size). ' ' . div($other_text,'','class="hiddenDetail"');
 }
 
 function link_pending_attachment($session_key)
@@ -298,7 +270,7 @@ function link_pending_attachment($session_key)
 	 * Take session key where information is stored.
 	 */
 
-	$control['object'] = 'association_attachment'; //hacky, as nothing is yet in attachment
+	$control['object'] = 'attachment_link'; //hacky, as nothing is yet in attachment
 	$control['id'] = $session_key;
 	$control['action'] = 'download';
 
@@ -336,10 +308,10 @@ function attachment_label($a_attachment_rec, $a_attachment_id, $extension, $date
 	$parent_id_field = $parent_def['id_field'];
 
 
-	if (array_key_exists(AG_MAIN_OBJECT.'_id', $parent_rec)) {
+	if ($parent_rec and array_key_exists(AG_MAIN_OBJECT.'_id', $parent_rec)) {
 		// check if there is a client id.
 		$prefix = 'cl'.$parent_rec[AG_MAIN_OBJECT.'_id'].'_';
-	} elseif (array_key_exists('staff_id', $parent_rec)) {
+	} elseif ($parent_rec and array_key_exists('staff_id', $parent_rec)) {
 		// check if there is a staff id.
 		$prefix = 'st'.$parent_rec['staff_id'].'_';
 	} else {
@@ -358,7 +330,7 @@ function attachment_label($a_attachment_rec, $a_attachment_id, $extension, $date
 function get_attachment_content($id, &$mesg) 
 {
 	/* 
-	 * $id should be a number for an association_attachment_id,
+	 * $id should be a number for an attachment_link_id,
 	 * or $id should be a session key for a pending file, of the 
 	 * form pending_uploadXX, where XX is a number.
 	 *
@@ -366,11 +338,10 @@ function get_attachment_content($id, &$mesg)
 	 * filename to output, expected filesize, expected md5sum, 
 	 * mime-type, and the contents of the file.
 	 */
-
 	if (is_numeric($id)) {
 
 		//retrieve association_attachment record corresponding to this association attachment ID
-		$a_attachment_def = get_def('association_attachment');
+		$a_attachment_def = get_def('attachment_link');
 		$a_attachment_filter = array($a_attachment_def['id_field'] =>$id);
 		$a_attachment_rec = sql_fetch_assoc(get_generic($a_attachment_filter, '', '', $a_attachment_def));
 		
@@ -379,7 +350,7 @@ function get_attachment_content($id, &$mesg)
 		
 		// This checks that they have permissions for the parent object
 		if ( ! has_perm($parent_def['perm_view'])){
-			$mesg = 'You do not have the permission for this.'; 
+			$mesg .= 'You do not have the permission for this.'; 
 			return false;
 		}
 		
@@ -395,12 +366,12 @@ function get_attachment_content($id, &$mesg)
 		$attachment_info['output_filename'] = attachment_label($a_attachment_rec, $id, $extension, $datetime );
 		
 		//get stored file:
-		$file = file_name_from_file_upload_id($att_rec['file_upload_id'], $extension);
+		$file = file_name_from_file_upload_id($att_rec['attachment_id'], $extension);
 		
 		if (is_readable($file)) {
 			$attachment_info['attachment_contents'] = file_get_contents($file);	
 		} else {
-			$mesg = 'File '. $file .' is not readable. We were looking for attachment with association attachment id: '. $id . '.';
+			$mesg .= 'File '. $file .' is not readable. We were looking for attachment with attachment link_id: '. $id . '.';
 			return false;
 		}
 		

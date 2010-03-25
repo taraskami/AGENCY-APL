@@ -199,3 +199,8 @@ select
 	alert_notify_enable('tbl_staff_employment'),
 	alert_notify_enable('tbl_permission')
 	;
+
+/* attachments */
+\i create.tbl_attachment_link.sql
+\i create.tbl_attachment.sql
+

@@ -48,6 +48,7 @@ a.fancyLink:hover, a.fancyLink:active { color: #f00; text-decoration: underline;
 
 a.toggleLink { font-size: 65%; }
 div.engineMessageResultDetail { font-size: 80%; border: solid 1px black; }
+div.hiddenDetail { font-size: 70%; background-color: #FFDDDD; }
 
 .warning, .error { color: #f00; } /* same for now */
 .message { color: #18782f; }
