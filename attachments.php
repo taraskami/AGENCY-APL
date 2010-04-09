@@ -177,7 +177,7 @@ function post_attachment($session_key, $object, $key)
 	if (is_numeric($file_id)) {
 		//move file to location given from file_name_from_attachment_id:
 		if (!rename($f_tmp, file_name_from_file_upload_id($file_id, $extension))) {
-			return 'Unable to move pending attachment to file system. ';
+			return 'Unable to move pending attachment to file system. (' . $f_tmp . '->' . file_name_from_file_upload_id($file_id,$extension).')';
 		}
 	}
 
