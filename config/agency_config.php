@@ -405,23 +405,6 @@ $iandr_feed_table="agency_comment";
 $iandr_feed_id="agency_id";
 $iandr_page='iandr_display.php'; //adding because apparently, it was never set...JH
 
-$alert_select_sql = 
-	"SELECT 
-		alert_id,
-		ref_id, 
-		staff_id, 
-		$alert_table.added_by, 
-		ref_table, 
-            alert_subject,
-            alert_text,
-		$alert_table.added_at,
-                has_read, 
-        subject as summary,
-		log_text 
-	FROM $alert_table
-		 LEFT JOIN $log_table on ($alert_table.ref_table='LOG' AND $alert_table.ref_id=$log_table.log_id)";
-$alert_order="added_at DESC";
-	
 $log_select_sql = "
     SELECT $log_table.*, staff_name($log_table.added_by) AS _added_by,
     SUBSTRING(log_text from 1 for 90) as Snippet

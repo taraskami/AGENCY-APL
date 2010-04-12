@@ -62,8 +62,8 @@ function get_alerts_for_staff( $id, $limit=25,$unread_only=false )
 
 function get_alerts($filter,$order="",$limit="")
 {
-	global $alert_select_sql,$alert_order;
-	return agency_query($alert_select_sql,$filter,orr($order,$alert_order),$limit);
+	global $alert_order;
+	return get_generic($filter,orr($order,$alert_order),$limit,get_def('alert'));
 }
 
 function get_alerts_for_log( $logno, $separator="" )
