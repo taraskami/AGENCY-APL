@@ -1252,7 +1252,8 @@ function client_reg_search()
 	$filter = build_client_match_filter($name_last,$name_first,$dob,$ssn);
 	$client_search_rank = build_client_match_order($name_last,$name_first,$dob,$ssn);
 	$obj = AG_MAIN_OBJECT_DB;	
-	$objs = AG_MAIN_OBJECT_DB . 's';  //FIXME--should reference plural	
+	$obj_label = AG_MAIN_OBJECT;
+	$objs = $obj_label . 's';  //FIXME--should reference plural	
 	$t_obj = $obj . '_reg_tmp';
 	$control=array('object'=>$t_obj,
 			   'action'=>'list',
@@ -1262,7 +1263,7 @@ function client_reg_search()
 
       $title = "Review existing $objs for a match";
 	$out .= oline(smaller('(searching on name:'.bold($name_last.', '.$name_first).', dob: '.bold($dob).', ssn: '.bold($ssn).')'));
-      $out.=oline() . oline(red("Review the following $objs to make sure $obj is not already registered"));
+      $out.=oline() . oline(red("Review the following $objs to make sure $obj_label is not already registered"));
 	//----- Create a copy of def -----//
 	$engine[$t_obj]=$engine[$obj];
 	$engine[$t_obj]['object']=$t_obj;
@@ -1285,7 +1286,7 @@ function client_reg_search()
       $out.=oline() . oline(bigger(link_engine(array('object'=>$obj,
 								     'action'=>'add',
 								     'rec_init'=>$REC),
-							     "If the $obj is not already registered, proceed here")));
+							     "If the $obj_label is not already registered, proceed here")));
       
       return $out;
 }
