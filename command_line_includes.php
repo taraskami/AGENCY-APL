@@ -102,6 +102,7 @@ include $off . 'attachments.php';
 include $off . 'link.php';
 include $off . 'multi_generics.php';
 include $off . 'reference.php';
+include $off . 'local.php';
 
 /* read configuration */
 include $off . AG_CONFIG_DIR . '/agency_config.php';
