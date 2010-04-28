@@ -231,3 +231,7 @@ div.client_elevated_concern_short {
 	vertical-align: top;
 	border-spacing: 0px;
 }
+
+.menuLink {
+	font-size: 65%;
+}

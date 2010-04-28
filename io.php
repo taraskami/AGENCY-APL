@@ -2306,9 +2306,9 @@ function show_top_nav( $firstcell="",$cells="",$auth='')
 	$standard = $auth ? 2 : 1;
  	$cell_count=(count($cells)+$standard)*2;
 	$cell_count_hack=$cell_count+1;
-	foreach($AG_MENU_LINKS as $label=>$url)
+	foreach($AG_MENU_LINKS as $link)
 	{
-		$links .=oline(hlink($off . $url,smaller($label)));
+		$links .=oline(span($link,'class="menuLink"'));
 	}
 	//$links = help('MENU',$links,'MENU'); // Uncomment this hack to make your menu collapsible.
 	$bugzilla_link = ($tmp_link = link_bugzilla()) ? ' | '.$tmp_link : '';

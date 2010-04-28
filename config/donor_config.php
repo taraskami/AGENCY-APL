@@ -45,10 +45,11 @@ $AG_TEXT['LINK_HOME'] = 'Donor DB Home';
 
 $AG_IMAGES['AGENCY_LOGO_MEDIUM'] = $off.'images/donor_logo_medium.png';
 
-$AG_MENU_LINKS=array('Home' => $agency_home_url,
-				'Add '.ucwords(AG_MAIN_OBJECT)=>'client_reg.php',
-			   	' '=>'',
-			   	'Reports' => AG_REPORTS_URL);
+$AG_MENU_LINKS=array(
+	hlink($agency_home_url,'Home'),
+	hlink('client_reg.php','Add ' . AG_MAIN_OBJECT),
+	'',
+	hlink(AG_REPORTS_URL,'Reports'));
 
 $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
 				//---Staff & Users---//

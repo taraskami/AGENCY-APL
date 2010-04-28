@@ -442,12 +442,12 @@ define('AG_MAP_URL','http://maps.google.com/?q=');
 
 
 $AG_MENU_LINKS = array(//of the form 'link_text'=>url
-			   'Home'	  => $agency_home_url,
-			   'Log'      => $log_page.'?action=browse',
-			   'Calendar' => $calendar_url.'?Menu',
-			   'BedReg'   => AG_BEDREG_URL,
-			   'Reports'  => AG_REPORTS_URL,
-			   'Menu'  => 'menu.php'
+			   hlink($agency_home_url,'Home'),
+			   hlink(AG_LOG_URL,'Logs'),
+			   hlink($calendar_url.'?Menu','Calendar'),
+			   hlink(AG_BEDREG_URL,'BedReg'),
+			   hlink(AG_REPORTS_URL,'Reports'),
+			   hlink('menu.php','Menu')
 			   );
 
 
