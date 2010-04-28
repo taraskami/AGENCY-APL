@@ -36,6 +36,16 @@
 
 \i create.tbl_staff_assign.sql
 
+/*
+ * Ethnicity:  Although child records, I had to
+ * move them up because they are referenced by
+ * createa.functions_client.sql
+ */ 
+
+\i create.l_ethnicity_simple.sql
+\i create.l_ethnicity.sql
+\i create.tbl_ethnicity.sql
+
 /* additional core functions referencing client and staff */
 \i functions/create.functions_client.sql
 \i functions/create.functions_staff_assign_trigger.sql
@@ -60,10 +70,6 @@
 
 \i create.l_disability.sql
 \i create.tbl_disability.sql
-
-\i create.l_ethnicity_simple.sql
-\i create.l_ethnicity.sql
-\i create.tbl_ethnicity.sql
 
 \i create.tbl_client_note.sql
 

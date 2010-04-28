@@ -201,6 +201,6 @@ select
 	;
 
 /* attachments */
-\i create.tbl_attachment_link.sql
 \i create.tbl_attachment.sql
+\i create.tbl_attachment_link.sql
 

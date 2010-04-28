@@ -7,13 +7,13 @@
  */
 
 CREATE
-	USER agency
-	PASSWORD 'PASSWORD'
+	USER fff
+	PASSWORD 'fff'
 	NOCREATEDB NOCREATEUSER;
 
 CREATE
-	DATABASE agency
-	OWNER agency;
+	DATABASE fff
+	OWNER fff;
 
-  \c agency
+  \c fff
 
