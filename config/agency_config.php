@@ -100,6 +100,7 @@ define('AG_AGENCY_ADMIN_URL','menu.php#admin');
 $agency_search_url=$off.'object_query.php';
 define('AG_REPORTS_URL','canned_report.php');
 $log_page="log_browse.php";
+define('AG_LOG_URL','log_browse.php');
 $log_add_page="log_add.php";
 $revision_history_url = $agency_home_url.'display_history.php';
 $calendar_url = 'calendar_display.php';
