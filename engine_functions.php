@@ -2091,7 +2091,7 @@ function form_generic($rec,$def,$control)
 			preg_match('/^multi_(.*?)_multi_(.*)$/',$key,$matches);
 			$multi_out[$matches[1]] .= call_user_func($def['multi'][$matches[1]]['form_row_fn'],$key,$value,$def,$matches[1]);
 		} else {
-			$out .= call_user_func($def['fn']['form_row'],$key,$value,$def,$control,$Java_Engine,$rec);
+			$out .= $def['fn']['form_row']($key,$value,$def,$control,$Java_Engine,$rec);
 		}
       }
 	  $out .= tableend();
