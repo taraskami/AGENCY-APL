@@ -47,7 +47,8 @@ if (!in_array($qs_type,$tmp_searches)) {
 switch ($qs_type) {
 	//custome type handling here
  default :
-	 $out = call_user_func($qs_type.'_search');
+	$func=$qs_type.'_search';
+	 $out = $func();
 }
 
 $label = $AG_QUICK_SEARCHES[$qs_type];

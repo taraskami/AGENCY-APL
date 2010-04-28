@@ -737,8 +737,8 @@ function db_connect($db='',$eng='',$die_func='sql_die')
 			die('MySQL functions appear to be missing from PHP');
 		}
     		$link = @mysql_connect($db_server[$eng],$db_user_name[$eng],$db_password[$eng])
-			or call_user_func($die_func,"Could not connect to MYSQL @ $db_server[$eng] server");
-		@mysql_select_db("$db") or call_user_func($die_func,"Could not get $db db from $eng");
+			or $die_func("Could not connect to MYSQL @ $db_server[$eng] server");
+		@mysql_select_db("$db") or $die_func("Could not get $db db from $eng");
 		return $link;
 	case 'pg' :
 		if ( !function_exists('pg_connect') ) {
@@ -747,7 +747,7 @@ function db_connect($db='',$eng='',$die_func='sql_die')
 		$res = @pg_connect("host=$db_server[$eng] user=$db_user_name[$eng] password=$db_password[$eng] dbname=$db port=$port");
 		
 		if (!$res) {
-			call_user_func($die_func, "Could not connect to Postgres @ {$db_server[$WHICH_DB]} server for database $db");
+			$die_func("Could not connect to Postgres @ {$db_server[$WHICH_DB]} server for database $db");
 		}
 		return $res;
 	default :

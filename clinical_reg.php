@@ -744,13 +744,14 @@ function clinical_reg_valid_records($client_id,$REC,&$script_config,&$per_object
 			}
 
 		}
-
-		if (function_exists('clinical_reg_valid_'.$obj)) {
+	
+		$func = 'clinical_reg_valid_'.$obj;
+		if (function_exists($funcj)) {
 
 			/*
 			 * Per object checks, if function exists
 			 */
-			$valid = call_user_func('clinical_reg_valid_'.$obj,$rec,$script_config,&$per_object_errors[$obj]) ? $valid : false;
+			$valid = $func($rec,$script_config,$per_object_errors[$obj]) ? $valid : false;
 
 		}
 

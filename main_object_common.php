@@ -384,12 +384,13 @@ function client_reg_search_verify()
 	global $rec,$def;
 
 	$def['multi_records'] = null;
-	$valid = call_user_func($def['fn']['valid'],$rec,&$def,&$out,'add');
+	$valid = $def['fn']['valid']($rec,$def,$out,'add');
 	$out = $out ? red($out) : '';
 	if (!$valid) {
 		$out .= client_reg_form();
 	} else {
-		$out .= call_user_func(AG_MAIN_OBJECT_DB.'_reg_search');
+		$func = AG_MAIN_OBJECT_DB.'_reg_search';
+		$out .= $func();
 	}
 	return $out;
 }

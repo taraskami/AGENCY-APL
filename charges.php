@@ -94,7 +94,7 @@ function get_charge( $charge_id )
 function get_charges( $filter )
 {
 	$def = get_def('charge');
-	return call_user_func($def['fn']['get'],$filter,'effective_date DESC','',$def);
+	return $def['fn']['get']($filter,'effective_date DESC','',$def);
 }
 
 function total_charges( $filter )
@@ -121,6 +121,8 @@ function get_charges_for( $client="ALL", $filter="" )
 // voids and showing the link to the void form
 function show_charges( $charges, $format="short", $show_voids="N", $show_vbutton="N" )
 {
+// FIXME This could probably all be replaced with generic functionality...
+
     $output = "";
 
     if (sql_num_rows( $charges) == 0)
@@ -182,11 +184,11 @@ function show_charges( $charges, $format="short", $show_voids="N", $show_vbutton
             }
 
             $cells = "";
-            $cells .= call_user_func($func, dateof($row['effective_date']))
-                   . call_user_func($func,$row['charge_type_code'])
-		   . call_user_func($func,$row['housing_unit_code'])
-                   . call_user_func($func,$row['amount'])
-                   . call_user_func($func,smaller(webify($row["comment"])));
+            $cells .= $func(dateof($row['effective_date']))
+                   . $func($row['charge_type_code'])
+				   . $func($row['housing_unit_code'])
+                   . $func($row['amount'])
+                   . $func(smaller(webify($row["comment"])));
 
             if ($format=="full")
             {
@@ -200,11 +202,11 @@ function show_charges( $charges, $format="short", $show_voids="N", $show_vbutton
 		}
         		$poster=staff_link($row["added_by"]);
                 $cells .=
-                                    call_user_func($func,$row['agency_project_code']).
-                        call_user_func($func,$subs_text).
-                    call_user_func($func,dateof($row['period_start'])).
-                        call_user_func($func,dateof($row['period_end'])).
-                        call_user_func($func,smaller( oline($poster) . oline(dateof($row["added_at"])),2));
+                                    $func($row['agency_project_code']).
+                        $func($subs_text).
+                   		$func(dateof($row['period_start'])).
+                        $func(dateof($row['period_end'])).
+                        $func(smaller( oline($poster) . oline(dateof($row["added_at"])),2));
 
             }
             // show void button for a voided charge?

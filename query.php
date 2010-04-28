@@ -281,13 +281,13 @@ function search( $fields, $select_sql, $alias, $show_heads_func, $noun="record",
 	{
 		$result .= oline(bigger("The following $count " . (($count==1) ? $noun : $plural_noun )
 		. " matched your search:"),2);
-		$result .= oline( call_user_func( $show_heads_func, $a , $select_to_url, $allow_other ))
+		$result .= oline( $show_heads_func( $a , $select_to_url, $allow_other ))
 		. oline("Click on a " . $noun . " to see a full entry");
 	}
 	else
 	{
 		$result = oline("Sorry, no $plural_noun matched your search criteria",2);
-		$result .= oline( call_user_func( $show_heads_func, $a , $select_to_url, $allow_other ));
+		$result .= oline( $show_heads_func( $a , $select_to_url, $allow_other ));
 	}
 
 	if ($showsql)
@@ -323,7 +323,7 @@ function iandr_search()
 	} else {
 		$result = oline("Sorry, no $plural_noun matched your search criteria",2);
 	}
-	$result .= oline( call_user_func( 'show_iandr_heads', $res ));
+	$result .= oline( show_iandr_heads( $res ));
 
 	return $result;
 }

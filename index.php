@@ -48,6 +48,9 @@ $commands=array();
 
 
 $news_control = array('object'=>'news','action'=>'list');
+$links_func=AG_MAIN_OBJECT_DB.'_agency_home_links';
+$links_sidebar_func=AG_MAIN_OBJECT_DB.'_home_sidebar_left';
+
 array_push($commands,
 	     //bottomcell(html_heading_1(
 	     bottomcell(
@@ -55,7 +58,7 @@ array_push($commands,
 								     span('What\'s<br />New?',' style="font-size: 9pt; font-weight: normal;"'),'','class="fancyLink"')
 						     ,'','style="float:right;"')
 						 . div($AG_TEXT['AGENCY_HOME_TITLE'],'homePageTitle','class="homePageTitle"')
-			    . call_user_func(AG_MAIN_OBJECT_DB.'_agency_home_links')
+			    . $links_func()
  			    ,'id="homeMenu" class="homeMenu"'));
 $title=$AG_TEXT['AGENCY_HOME_TITLE'];
 
@@ -65,7 +68,7 @@ $my_links = staff_links();
 $table = show_alerts($UID,25);
 
 $out =tablestart('',' class="" bgcolor="" width="100%" cellspacing="0"')
-	. row(topcell(call_user_func(AG_MAIN_OBJECT_DB.'_home_sidebar_left'))
+	. row(topcell($links_sidebar_func())
 	     . topcell($table,"rowspan=\"9\" bgcolor=\"{$colors['blank']}\" align=\"center\"")
 	     . topcell($my_links,' align="right" rowspan="9" bgcolor="'.$colors['blank'].'"')
 	     )

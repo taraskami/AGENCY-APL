@@ -83,7 +83,7 @@ $rec_init_tmp = $_REQUEST['rec_init'];
 /*
  * Merge working versions of $rec_init
  */
-call_user_func($def['fn']['process'],&$rec_init,&$rec_init_tmp,$def);
+$def['fn']['process']($rec_init,$rec_init_tmp,$def);
 
 $reset = $_REQUEST['reset'];
 $step  = $_REQUEST['step'];
@@ -101,7 +101,7 @@ if ($reset or be_null($qdid)) {
 
 	$_SESSION['qDAL_rec_init'.$qdid] = $rec_init = orr(array_filter(orr($rec_init,array())),$_SESSION['qDAL_rec_init'.$qdid],array());
 	
-	$def = call_user_func($def['fn']['multi_hide_fields'],$def,$rec_init);
+	$def = $def['fn']['multi_hide_fields']($def,$rec_init);
  	$m_add = $def['multi_add'];
  	if ($m_add['common_fields_required']) {
  		foreach ($m_add['common_fields'] as $f ) {
@@ -131,7 +131,7 @@ if ($step=='confirmed' and (!$AG_AUTH->reconfirm_password())) {
 
 } elseif ($step=='confirmed' and valid_multi_record_generic($records,$def,$message,$errors,$rec_init)) {
 
-	if ($records = call_user_func($def['fn']['post_multi_records'],$records,$def,&$message,$rec_init)) {
+	if ($records = $def['fn']['post_multi_records']($records,$def,$message,$rec_init)) {
 
 		$new_ids = array();
 		foreach ($records as $rec) {
@@ -165,7 +165,7 @@ if ($step=='confirmed' and (!$AG_AUTH->reconfirm_password())) {
 		/*
 		 * call any after-post output (DAL calls a PATH tracking form, and exits)
 		 */
-		$message .= call_user_func($def['fn']['multi_add_after_post'],$message,$rec,$def,$old_rec_init);
+		$message .= $def['fn']['multi_add_after_post']($message,$rec,$def,$old_rec_init);
 
 		$message .= oline('',5);
 
@@ -180,9 +180,9 @@ if ($step=='submit' and valid_multi_record_generic($records,$def,$message,$error
 	 */
 
 	$out = ($message ? div($message,'',' class="error"') : '')
-		. html_heading_3(call_user_func($def['fn']['multi_add_title'],$def,$rec_init)) 
+		. html_heading_3($def['fn']['multi_add_title']($def,$rec_init)) 
 		. html_heading_4('Please review these records carefully. Once they are posted, they cannot be edited.','class="error"')
-		. call_user_func($def['fn']['view_list'],$records,$def,$control,$rec_init)
+		. $def['fn']['view_list']($records,$def,$control,$rec_init)
 		. formto('','',$AG_AUTH->get_onsubmit(''))
 		. oline(red('Enter password for '.staff_link($GLOBALS['UID']).' to confirm: ')
 			  . $AG_AUTH->get_password_field())
@@ -204,7 +204,7 @@ if ($step=='submit' and valid_multi_record_generic($records,$def,$message,$error
 		/*
 		 * Create default records merged with rec_init from initial form
 		 */
-		$records = $_SESSION['RECS'.$qdid] = call_user_func($def['fn']['multi_add_blank'],$def,$rec_init);
+		$records = $_SESSION['RECS'.$qdid] = $def['fn']['multi_add_blank']($def,$rec_init);
 
 	}
 	
@@ -218,9 +218,9 @@ if ($step=='submit' and valid_multi_record_generic($records,$def,$message,$error
 	}
 
 	$out = div($message,'',' class="error"')
-		. html_heading_3(call_user_func($def['fn']['multi_add_title'],$def,$rec_init))
+		. html_heading_3($def['fn']['multi_add_title']($def,$rec_init))
 		. formto()
-		. call_user_func($def['fn']['form_list'],$records,$def,$control,$errors,$rec_init)
+		. $def['fn']['form_list']($records,$def,$control,$errors,$rec_init)
 		. button('Submit','','','','','class="engineButton"')
 		. hlink($_SERVER['PHP_SELF'].'?reset=1&object='.$object.$ini_reset_query,'Reset','','class="linkButton"')
 		. hiddenvar('step','submit')
@@ -236,7 +236,7 @@ if ($step=='submit' and valid_multi_record_generic($records,$def,$message,$error
 	$defaults = orr($_REQUEST['rec_init_defaults'],$rec_init);
 	$out = formto() 
 		. div($message,'',' class="error"')
-		. call_user_func($def['fn']['init_form'],$def,$defaults,$control)
+		. $def['fn']['init_form']($def,$defaults,$control)
 		. hiddenvar('qdid',$qdid)
 		. hiddenvar('object',$object)
 		. button('Submit','','','','','class="engineButton"')

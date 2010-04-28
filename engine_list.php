@@ -247,7 +247,7 @@ function list_generic($control,$def,$control_array_variable='',&$REC_NUM)
 	}
 
       $out = $add_link 
-		. call_user_func($function,$result,$fields,$max,$position,$total,$control,$def,$control_array_variable,&$rec_num);
+		. $function($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,$rec_num);
 
       return $out;
 
@@ -429,7 +429,7 @@ function show_query($fields,$result,$control,$def,$total,$control_array_variable
 		$a = sql_fetch_assoc($result,$position);
 		$a = sql_to_php_generic($a,$def);
 
-		$row_content = call_user_func($fn,$fields,$position,$a,$control,$def,$control_array_variable,&$REC_NUM);
+		$row_content = $fn($fields,$position,$a,$control,$def,$control_array_variable,$REC_NUM);
         $row_content = 	$row_content
 			. hiddenvar('objectPickerObject',$def['object'])
                         . hiddenvar('objectPickerId',$a[$def['id_field']])
@@ -633,7 +633,7 @@ function show_query_row_generic($fields,$position,$rec,$control,$def,$control_ar
 	 * the fields passed in the $fields variable
 	 */
 
-	if (call_user_func($def['fn']['engine_record_perm'],$control,$rec,$def)) {
+	if ($def['fn']['engine_record_perm']($control,$rec,$def)) {
 
 // 		$reverse = $control['list']['reverse'];
 		$MAX=$control['list']['position']+$control['list']['max'];
@@ -807,7 +807,7 @@ function list_query($def,$filter='',$order='',$control,$group='')
 	if (is_array($def)) {
 
 		$fn = $group ? 'get_generic' : $def['fn']['get'];
-		return call_user_func($fn,$filter,$order,$limit,$def,false,$group);
+		return $fn($filter,$order,$limit,$def,false,$group);
 
 	} else { // a raw query is being passed in the $def variable
 
@@ -1281,11 +1281,11 @@ function show_list_totals($result,$total,$def,$control,$fields)
 		for ($i=0; $i<$total; $i++) {
 
 			$a=sql_fetch_assoc($result,$i);
-			$TOTALS = call_user_func('calculate_list_totals_generic',$a,$def,$TOTALS);
+			$TOTALS = calculate_list_totals_generic($a,$def,$TOTALS);
 
 			if ($i >= $pos && $i < $pos+$max && $max < $total) { //hide page totals if all recs displayed
 
-				$page_totals = call_user_func('calculate_list_totals_generic',$a,$def,$page_totals);
+				$page_totals = calculate_list_totals_generic($a,$def,$page_totals);
 
 			}
 
@@ -1495,16 +1495,16 @@ function form_list_generic($RECS,$def,$control,$errors,$rec_init)
 	 * Generate the multi-record entry form, with one row per record.
 	 */
 
-	$rows = call_user_func($def['fn']['form_list_header'],$def,$control,&$row_count);
+	$rows = $def['fn']['form_list_header']($def,$control,$row_count);
 	foreach ($RECS as $number => $rec) {
 		$w = $w==1 ? 2 : 1;
 		if (in_array($number,$errors)) {
 			$w = 'Error';
 		}
-		$rows .= row(call_user_func($def['fn']['form_list_row'],$number,$rec,$def,$control),' class="generalData'.$w.'"');
+		$rows .= row($def['fn']['form_list_row']($number,$rec,$def,$control),' class="generalData'.$w.'"');
 	}
 
-	if (call_user_func($def['fn']['multi_record_allow_common_fields'],$rec_init)) {
+	if ($def['fn']['multi_record_allow_common_fields']($rec_init)) {
 		$common = '';
 		foreach ($def['multi_add']['common_fields'] as $field) {
 			$common .=  oline(bold(label_generic($field,$def,'add')))
@@ -1587,7 +1587,7 @@ function valid_multi_record_generic(&$records,&$def,&$message,&$errors,$rec_init
 				$def['fields'][$field]['null_ok'] = $tmp[$field];
 			}
 		}
-		if (call_user_func($def['fn']['multi_record_passed'],$rec,$rec_init,$def)) {
+		if ($def['fn']['multi_record_passed']($rec,$rec_init,$def)) {
 			foreach ($def['multi_add']['common_fields'] as $field) {
 				$rec[$field]=$common_val[$field]; // tack common vals on to each record
 			}
@@ -1617,7 +1617,7 @@ function post_multi_records_generic($records,$def,&$message,$rec_init)
 	$success = true;
 	$one = true;
 	foreach ($records as $n => $rec) {
-		if (call_user_func($def['fn']['multi_record_passed'],$rec,$rec_init,$def)) {
+		if ($def['fn']['multi_record_passed']($rec,$rec_init,$def)) {
 			if ($reference_id) {
 				$rec[$def['multi_add']['reference_id_field']] = $reference_id;
 			}
@@ -1626,7 +1626,7 @@ function post_multi_records_generic($records,$def,&$message,$rec_init)
 			} else {
 				$success = false;
 			}
-			if ($one and call_user_func($def['fn']['multi_record_allow_common_fields'],$rec_init) and $success) {
+			if ($one and $def['fn']['multi_record_allow_common_fields']($rec_init) and $success) {
 				$reference_id = $tmp_r[$def['id_field']];
 			}
 		}
@@ -1674,7 +1674,7 @@ function view_list_generic($RECS,$def,$control,$rec_init)
 	 * Generate a view of the entered records for previewing them prior to posting
 	 */
 
-	$rows = call_user_func($def['fn']['form_list_header'],$def,$control,&$row_count);
+	$rows = $def['fn']['form_list_header']($def,$control,$row_count);
 
 	foreach ($RECS as $number => $rec) {
 		foreach ($rec as $key => $value) {
@@ -1684,7 +1684,7 @@ function view_list_generic($RECS,$def,$control,$rec_init)
 				: $value;
 		}
 
-		if (call_user_func($def['fn']['multi_record_passed'],$rec,$rec_init,$def)) { //use dal date as a 'passed' record
+		if ($def['fn']['multi_record_passed']($rec,$rec_init,$def)) { //use dal date as a 'passed' record
 			$w = $w==1 ? 2 : 1;
 
 			$confirm_message = '';
@@ -1692,7 +1692,7 @@ function view_list_generic($RECS,$def,$control,$rec_init)
 				$rows .= row(cell($confirm_message,' class="warning" colspan="'.$row_count.'"'));
 			}
 
-			$rows .= row(call_user_func($def['fn']['view_list_row'],$number,$rec,$def,$control),' class="generalData'.$w.'"');
+			$rows .= row($def['fn']['view_list_row']($number,$rec,$def,$control),' class="generalData'.$w.'"');
 		}
 	}
 
@@ -1871,9 +1871,10 @@ function object_child_command_box_generic($object,$parent_id)
 	$tmp .= tableend();
 
 	//handle image display for objects with images/photos
+	$test_fn=$object.'_photo';
 	if ($GLOBALS['AG_'.strtoupper($object).'_PHOTO_BY_FILE']
-	    && function_exists($object.'_photo')
-	    && count(call_user_func($object.'_photo',$parent_id,1,true)) > 1) {
+	    && function_exists($test_fn)
+	    && count($test_fn($parent_id,1,true)) > 1) {
  		$photos = oline(hlink($_SERVER['PHP_SELF'] . '?id='.$parent_id.'&display_all_photos='.(!$_REQUEST['display_all_photos']),
  					    smaller($_REQUEST['display_all_photos'] 
  							? 'Show current photo only' 

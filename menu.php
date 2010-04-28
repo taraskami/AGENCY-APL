@@ -86,7 +86,7 @@ foreach ($AG_MENU_TYPES as $t => $d) {
 
 		$func = 'agency_menu_'.$t;
 		if (function_exists($func)) {
-			list($menu,$error) = call_user_func($func);
+			list($menu,$error) = $func();
 		}
 
 	}

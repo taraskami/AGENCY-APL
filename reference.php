@@ -167,7 +167,7 @@ function post_object_references( $rec,$def,$refs, &$mesg ) {
 			'added_by' => $rec['added_by'],
 			'changed_by' => $rec['changed_by']);
 		$mesg2='';
-		if (!$n_alert = call_user_func($rdef['fn']['post'],$n_ref,$rdef,$mesg2)) {
+		if (!$n_alert = $rdef['fn']['post']($n_ref,$rdef,$mesg2)) {
 			// only return message on failure
 			$mesg .= $mesg2;
 			$posted_refs = false;

@@ -137,7 +137,7 @@ function engine($control='',$control_array_variable='control')
 	/*
 	 * Object merging
 	 */
-	$def = call_user_func($def['fn']['object_merge'],$def,$control);
+	$def = $def['fn']['object_merge']($def,$control);
 
 	/*
 	 * Permissions
@@ -154,7 +154,7 @@ function engine($control='',$control_array_variable='control')
 
       if ( ($def['multi_records']) and ($action=='add') ) {
 		foreach( $def['multi'] as $m=>$opts ) {
-			$def=call_user_func($opts["add_fields_fn"],$def,$m);
+			$def=$opts["add_fields_fn"]($def,$m);
 		}
       }
 
@@ -222,7 +222,7 @@ function engine($control='',$control_array_variable='control')
 	 * $rec is only used for processing. Anything beyond here uses $REC
 	 */
 	$rec = $_REQUEST['rec'];
-	call_user_func($def['fn']['process'],&$REC,&$rec,$def);
+	$def['fn']['process']($REC,$rec,$def);
 	$_SESSION['REC'.$session_identifier] = $REC;
 
       /*
@@ -238,12 +238,12 @@ function engine($control='',$control_array_variable='control')
 	/*
 	 * Process auto-close
 	 */
-	$message .= call_user_func($def['fn']['auto_close'],$def,$action,$_REQUEST['auto_close_id'],$_REQUEST['auto_close_date']);
+	$message .= $def['fn']['auto_close']($def,$action,$_REQUEST['auto_close_id'],$_REQUEST['auto_close_date']);
 
 	/*
 	 * Process staff alert
 	 */
-	$message .= call_user_func($def['fn']['process_staff_alert'],$def,$REC,&$control);
+	$message .= $def['fn']['process_staff_alert']($def,$REC,$control);
 	$_SESSION['CONTROL'.$session_identifier]['staff_alerts'] = $control['staff_alerts'];
 
 	/*
@@ -296,19 +296,19 @@ function engine($control='',$control_array_variable='control')
 		}
 
 	    if ($step=='submit') {
-		    if (!call_user_func($def['fn']['valid'],$REC,&$def,&$message,$action,$REC_LAST)) { 
+		    if (!$def['fn']['valid']($REC,$def,$message,$action,$REC_LAST)) { 
 			    /*
 			     * Not valid
 			     */
 			    $step='continued';
-		    } elseif (!call_user_func($def['fn']['rec_changed'],$REC,$REC_LAST,$def)) {
+		    } elseif (!$def['fn']['rec_changed']($REC,$REC_LAST,$def)) {
 			    /*
 			     * No changes made, abort edit and go to view
 			     */
 			    $message .= 'No changes made during edit.  Record untouched.';
 			    $action = 'view';
 		    } elseif ( ($action=='add') and $def['single_active_record']
-				   and ($res = call_user_func($def['fn']['get_active'],$filter=$REC_INIT,$REC,$def))
+				   and ($res = $def['fn']['get_active']($filter=$REC_INIT,$REC,$def))
 				   and (sql_num_rows($res) > 0) ) {
 			    /*
 			     * Verify/close active record
@@ -340,7 +340,7 @@ function engine($control='',$control_array_variable='control')
 											   'Edit overlapping record','',' target="_blank"'))
 						    . html_list_item('Modify new record '.hlink('#below','below').' such that it no longer overlaps existing record')
 						    )
-				    . call_user_func($def['fn']['view'],$a,$def,$action) . anchor('below');
+				    . $def['fn']['view']($a,$def,$action) . anchor('below');
 			    $step='continued';
 		    } else {
 			    /*
@@ -385,14 +385,14 @@ function engine($control='',$control_array_variable='control')
 			     */
 			  $res = $def['post_with_transactions'] ? sql_begin() : '';
 
-			  if ($changed_rec = call_user_func($def['fn']['rec_collision'],$REC,$REC_LAST,$def,$action,&$message)) {
+			  if ($changed_rec = $def['fn']['rec_collision']($REC,$REC_LAST,$def,$action,&$message)) {
 				  /*
 				   * Record collision
 				   */
 				  $action      = 'view';
 				  $step        = 'done';
 				  $post_failed = true;
-			  } elseif ($def['verify_on_post'] && !call_user_func($def['fn']['valid'],$REC,&$def,&$message,$action,$REC_LAST)) {
+			  } elseif ($def['verify_on_post'] && !$def['fn']['valid']($REC,$def,$message,$action,$REC_LAST)) {
 				  /*
 				   * Not valid
 				   */
@@ -402,14 +402,14 @@ function engine($control='',$control_array_variable='control')
 				  /*
 				   * Insert
 				   */
-				  $a = call_user_func($def['fn']['post'],$REC,$def,&$message);
+				  $a = $def['fn']['post']($REC,$def,$message);
 				  if (!$a) { $post_failed = true; }
 			  } elseif ($action=='edit') {
 				  /*
 				   * Update
 				   */
 				  $filter = array($def['id_field']=>$id);
-				  $a      = call_user_func($def['fn']['post'],$REC,$def,&$message,$filter,$control);
+				  $a      = $def['fn']['post']($REC,$def,$message,$filter,$control);
 				  if (!$a) { $post_failed = true; }
 			  } else {
 				  $message    .= oline('Asked to post, but not in add or edit.  Something is wrong.');
@@ -429,7 +429,7 @@ function engine($control='',$control_array_variable='control')
 					  $n_alert['ref_id']     = $a[$def['id_field']];
 					  $n_alert['added_by']   = $a['added_by'];
 					  $n_alert['changed_by'] = $a['changed_by'];
-					  if (!$n_alert = call_user_func($adef['fn']['post'],$n_alert,&$adef,&$message)) {
+					  if (!$n_alert = $adef['fn']['post']($n_alert,$adef,$message)) {
 						  $posted_alerts = false;
 					  }
 				  }
@@ -515,7 +515,7 @@ function engine($control='',$control_array_variable='control')
 		    /*
 		     * Valid record, user is prompted to confirm record before posting
 		     */
-		    call_user_func($def['fn']['confirm'],$REC,$def,&$message,$action,$REC_LAST);
+		    $def['fn']['confirm']($REC,$def,&$message,$action,$REC_LAST);
 		    $message = ($message
 				    ? (black(oline('Please review these warnings: ',2))
 					 . $message . oline(hrule()))
@@ -534,8 +534,8 @@ function engine($control='',$control_array_variable='control')
 			$object_refs = populate_object_references($control) . object_reference_container();
 		    $view_rec = ($format=='data') 
 			    ? view_generic($REC,$def,$action,$control) 
-			    : call_user_func($def['fn']['view'],$REC,$def,$action,$control);
-		    $title = oline(call_user_func($def['fn']['title'],$action,$REC,$def));
+			    : $def['fn']['view']($REC,$def,$action,$control);
+		    $title = oline($def['fn']['title']($action,$REC,$def));
 
 		    if ($control['break_confirm']) {
 			    $message .= ' '.$return_to_edit;
@@ -576,7 +576,7 @@ function engine($control='',$control_array_variable='control')
 			    /*
 			     * Get blank record
 			     */
-			    $REC=call_user_func($def['fn']['blank'],&$def,&$REC_INIT);
+			    $REC=$def['fn']['blank']($def,$REC_INIT);
 			    unset($REC_LAST);
 			    $_SESSION['REC_LAST'.$session_identifier]=null;
 			    $step='continued';	
@@ -588,7 +588,7 @@ function engine($control='',$control_array_variable='control')
 			    $filter = array($def['id_field']=>$id);
 			    $REC = ($format=='data')
 				    ? get_generic($filter,'','',$def,$def['use_table_post_edit'])
-				    : call_user_func($def['fn']['get'],$filter,'','',$def,$def['use_table_post_edit']); //optional order and limit parameters
+				    : $def['fn']['get']($filter,'','',$def,$def['use_table_post_edit']); //optional order and limit parameters
 			    $cnt=sql_num_rows($REC);
 			    if ($cnt == 1) {
 
@@ -618,7 +618,7 @@ function engine($control='',$control_array_variable='control')
 	    }
 
 	    if ($step == 'continued') {
-		    $cancel_url = call_user_func($def['fn']['cancel_url'],$REC,$def,$action,$control_array_variable);
+		    $cancel_url = $def['fn']['cancel_url']($REC,$def,$action,$control_array_variable);
 		    $cancel_button = hlink($cancel_url,$cancel_text,''
 						   ,' class="linkButton" onclick="'.call_java_confirm('Are you sure you want cancel?').'"');
 		    $reset_button = hlink($page.'?'.$control_array_variable.'[step]=new'
@@ -658,7 +658,7 @@ function engine($control='',$control_array_variable='control')
 				$object_refs = div($tabs . $object_refs,'objectSelectorForm','class=objectSelectorForm');
 			} // end O. R. Form
 
-		    $title = call_user_func($def['fn']['title'],$action,$REC,$def);
+		    $title = $def['fn']['title']($action,$REC,$def);
 
 		    foreach ($def['fields'] as $field) {
 			    if ($field['data_type'] == 'attachment') {
@@ -679,7 +679,7 @@ function engine($control='',$control_array_variable='control')
 				. div($pre_refs,'preSelectedObjects')
 				. $required_fields_text
 				. ' | ' . $object_refs_show_link
-			    . div(call_user_func($def['fn']['form'],$REC,$def,$control),'','')  //GENERATE THE FORM
+			    . div($def['fn']['form']($REC,$def,$control),'','')  //GENERATE THE FORM
 			    . $staff_alerts
 			    . hiddenvar($control_array_variable.'[step]','submit')
 			    . div(button($submit_text,'','','','','class="engineButton"') . $reset_button . $cancel_button,'','')
@@ -696,7 +696,7 @@ function engine($control='',$control_array_variable='control')
       case 'view' :
 		if ( $read_perm ) {
 			$filter = array($def['id_field']=>$id);
-			$REC = sql_fetch_assoc(call_user_func($def['fn']['get'],$filter,'','',$def));
+			$REC = sql_fetch_assoc($def['fn']['get']($filter,'','',$def));
 			if (!$REC) {
 				$message .= oline("ID $id not found for record type $object.  Can't $action.");
 			} else {
@@ -717,12 +717,12 @@ function engine($control='',$control_array_variable='control')
 						$prepend_add_html = eval('return '.$prepend_add_eval.';');
 					}
 				}
-				$title = oline(call_user_func($def['fn']['title'],$action,$REC,$def));
+				$title = oline($def['fn']['title']($action,$REC,$def));
 				$output .= $prepend_add_html; //this will be coming from 'add' or 'edit'
 				$output .= populate_object_references($control) . object_reference_container();
 				$output .= ($format == 'data') 
 					? view_generic($REC,$def,$action,$control)
-					: call_user_func($def['fn']['view'],$REC,$def,$action,$control);
+					: $def['fn']['view']($REC,$def,$action,$control);
 
 				//THIS ISN'T READY YET
 // 				//-- general child record handling --//
@@ -828,7 +828,7 @@ function engine($control='',$control_array_variable='control')
 		 */
 		if ( $read_perm ) {
 			$list=unserialize(urldecode(stripslashes($list)));
-			$title =  call_user_func($def['fn']['list_title'],$control,$def);
+			$title =  $def['fn']['list_title']($control,$def);
 
 			/*
 			 * Check for available alternate formats
@@ -880,7 +880,7 @@ function engine($control='',$control_array_variable='control')
 			/*
 			 * Generate list
 			 */
-			$result = call_user_func($list_func,$control,$def,$control_array_variable,&$total_records,$sid);
+			$result = $list_func($control,$def,$control_array_variable,&$total_records,$sid);
 			$output .= (($total_records==0) ? '' : $use_link ) . $result;
 		} else {
 
@@ -949,12 +949,12 @@ function engine($control='',$control_array_variable='control')
 
 			$message .= formend();
 
-			$output .= call_user_func($def['fn']['view'],$REC,$def,$action);
+			$output .= $def['fn']['view']($REC,$def,$action);
 
 		} else {
 			$control['step']='';
 
-			$res = call_user_func($def['fn']['delete'],$filter,$def,$_REQUEST['delete_comment']);
+			$res = $def['fn']['delete']($filter,$def,$_REQUEST['delete_comment']);
 			$message .= oline($res ?
 						'Record '.$id.' successfully deleted from '.$def['table'].'.'
 						: 'Error.  Record not deleted.');
@@ -967,7 +967,7 @@ function engine($control='',$control_array_variable='control')
 				$control['list']=$list;
 				$output .= $list 
 					? oline(list_title_generic($control,$def),2)
-					. call_user_func($def['fn']['list'],$control,$def,$control_array_variable,&$total_records)
+					. $def['fn']['list']($control,$def,$control_array_variable,$total_records)
 					: '';
 			}
 		}

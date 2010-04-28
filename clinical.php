@@ -665,7 +665,7 @@ function view_dal($rec,$def,$action,$control='',$control_array_variable='control
 
 	if (be_null($rec['progress_note'])) { //progress note exists in other record
 		
-	} elseif ( ($other_res = call_user_func($def['fn']['get'],array('dal_progress_note_id'=>$rec[$def['id_field']]),$def['id_field'],'',$def))
+	} elseif ( ($other_res = $def['fn']['get'](array('dal_progress_note_id'=>$rec[$def['id_field']]),$def['id_field'],'',$def))
 		     && (sql_num_rows($other_res) > 0) ) { //referencing records
 		while ($a = sql_fetch_assoc($other_res)) {
 			$summary .= row(cell(value_generic($a['dal_date'],$def,'dal_date',$action)) 

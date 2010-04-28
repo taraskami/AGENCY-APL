@@ -278,7 +278,7 @@ function engine_perm($control,$access_type='')
 
 	$fn = $def['fn']['engine_record_perm'];
 	if ($rec && ($fn !== 'engine_record_perm_generic') ) {
-		$PERM = call_user_func($fn,$control,$rec,$def);
+		$PERM = $fn($control,$rec,$def);
 	}
 
       return $PERM;
@@ -1375,7 +1375,7 @@ function blank_generic(&$def, &$rec_init)
 
       if ($def['multi_records']) {
 		foreach ($def['multi'] as $m=>$opts) {
-			$rec=call_user_func($opts['blank_fn'],$rec,$def,$m);
+			$rec=$opts['blank_fn']($rec,$def,$m);
 		}
       }
       return $rec;
@@ -1656,10 +1656,10 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 			  } elseif ($fields[$key]['system_field']) {
 				  $system .= oline(smaller(label_generic($key,$def,$action).': '.value_generic($value,$def,$key,$action)));
 			  } else {
-				  $out .= call_user_func($def['fn']['view_row'],$key,$value,$def,$action,$rec);
+				  $out .= $def['fn']['view_row']($key,$value,$def,$action,$rec);
 			  }
 		  } else {
-				  $out .= call_user_func($def['fn']['view_row'],$key,$value,$def,$action,$rec);
+				  $out .= $def['fn']['view_row']($key,$value,$def,$action,$rec);
 		  }
 	    }
       }
@@ -1675,7 +1675,7 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 			      //nothing
 			} else {
 			      $value =  eval('return '.$fields[$key]['value_'.$action].';');
-				$out .= call_user_func($def['fn']['view_row'],$key,$value,$def,$action,$rec);
+				$out .= $def['fn']['view_row']($key,$value,$def,$action,$rec);
 			}
 		  }
 	    }
@@ -2086,10 +2086,10 @@ function form_generic($rec,$def,$control)
 			// EVALUATE $value
 			$x=$value;
 			$value = eval('return '. $fields[$key]['value_'.$action].';');
-			$out .= call_user_func($def['fn']['view_row'],$key,$value,$def,$action,$rec);
+			$out .= $def['fn']['view_row']($key,$value,$def,$action,$rec);
 		} elseif ($disp=='multi_disp') {
 			preg_match('/^multi_(.*?)_multi_(.*)$/',$key,$matches);
-			$multi_out[$matches[1]] .= call_user_func($def['multi'][$matches[1]]['form_row_fn'],$key,$value,$def,$matches[1]);
+			$multi_out[$matches[1]] .= $def['multi'][$matches[1]]['form_row_fn']($key,$value,$def,$matches[1]);
 		} else {
 			$out .= $def['fn']['form_row']($key,$value,$def,$control,$Java_Engine,$rec);
 		}
@@ -2126,8 +2126,11 @@ function get_generic($filter,$order='',$limit='',$def,$table_post=false,$group='
 	  return agency_query($sql,$filter,$order,$limit,'',$group);
 }
 
-function get_active_generic($filter,$rec,$def,$order='')
+function get_active_generic(&$filter,$rec,$def,$order='')
 {
+	// FIXME:  This function fails if record exists w/ no end date,
+	// and new record is added w/ earlier start date and no end date
+
 	$fields = array_keys($def['fields']);
 	$object = $def['object'];
 
@@ -2152,7 +2155,7 @@ function get_active_generic($filter,$rec,$def,$order='')
 		$order = orr($order,$def['id_field'].' DESC'); //default to pull most recent record
 	}
 	$filter = array_merge($new_filter,$filter);
-	return call_user_func($def['fn']['get'],$filter,$order,'1',$def);
+	return $def['fn']['get']($filter,$order,'1',$def);
 }
 
 function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
@@ -2176,7 +2179,7 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 	}
 	if ($def['multi_records']) { //horrid 'generic' multi-record hack
 		foreach ($def['multi'] as $c_obj=>$opts) {
-			call_user_func($opts['valid_fn'],$action,$rec,&$def,&$mesg,&$VALID,$c_obj);  
+			$opts['valid_fn']($action,$rec,&$def,&$mesg,&$VALID,$c_obj);  
 		}
 	}
 	foreach ($rec as $key=>$value) {
@@ -2658,7 +2661,6 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
 	}
       if (isset($multi_records)) {
 	    foreach ($def['multi'] as $m=>$opts) {
-			//if (!(call_user_func($opts['post_fn'],$multi_records,$NEW_REC,$def,$mesg,$m))) {
 			if (!$opts['post_fn']($multi_records,$NEW_REC,$def,$mesg_minor,$m)) {
 				$mesg .= oline("You attempted to {$action} multiple $m records failed.")
 						. message_result_detail($mesg_minor);
@@ -3052,7 +3054,7 @@ function add_staff_alert_form_generic($def,$rec,$control)
 
 	$alert['staff_id'] = $alert['staff_id']=='-1' ? '' : $alert['staff_id'];
 	
-	if (!be_null(array_filter($alert)) and !call_user_func($adef['fn']['valid'],$alert,&$adef,&$mesg,'add',$rec_last=array())) {
+	if (!be_null(array_filter($alert)) and !$adef['fn']['valid']($alert,$adef,$mesg,'add',$rec_last=array())) {
 		$error = red($mesg);
 	}
  	$multi = oline() . js_link(smaller('(multiple)'),'document.getElementById(\'engineStaffAlertFormStaff\').multiple="multiple";document.getElementById(\'engineStaffAlertFormStaff\').size=8;document.getElementById(\'engineStaffAlertFormStaff\').name=document.getElementById(\'engineStaffAlertFormStaff\').name+"[]"');
@@ -3135,7 +3137,7 @@ function process_staff_alert_generic($def,$rec,&$control)
 	    or $alert['ref_table'] != $def['object']) {
 		return 'Error: ID or OBJECT mismatch. Couldn\'t add alert';
 	}
-	if (!call_user_func($adef['fn']['valid'],$alert,&$adef,&$mesg,'add',$rec_last=array())) {
+	if (!$adef['fn']['valid']($alert,&$adef,&$mesg,'add',$rec_last=array())) {
 		return 'Couldn\'t add alert. Validity Problems: ' . oline() . $mesg;
 	}
 	foreach( $alerts as $alert_staff )
@@ -3506,7 +3508,7 @@ function auto_close_generic($def,$action,$id,$date)
 
 	// get existing record
 	$filter = array($def['id_field']=>$id);
-	$res = call_user_func($def['fn']['get'],$filter,'','',$def);
+	$res = $def['fn']['get']($filter,'','',$def);
 	if (!$res) {
 		return oline('Couldn\'t find '.$object.' record '.$id);
 	}
@@ -3516,12 +3518,12 @@ function auto_close_generic($def,$action,$id,$date)
 	$rec[$end] = $close_date;
 
 	//verify record
-	if (!call_user_func($def['fn']['valid'],$rec,&$def,&$message,$action,$rec_last)) {
+	if (!$def['fn']['valid']($rec,&$def,&$message,$action,$rec_last)) {
 		return bold('This record couldn\'t be closed due to the following errors (it might need to be edited manually):')
 			. div($message,'','class="indent"');
 	} 
 
-	$a      = call_user_func($def['fn']['post'],$rec,$def,&$message,$filter);
+	$a      = $def['fn']['post']($rec,$def,$message,$filter);
 
 	$_SESSION['approved_auto_close_'.md5($object . $id)] = null; //unset authorization
 

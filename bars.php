@@ -73,8 +73,7 @@ function bar_status( $client, $group="",$start="",$end="",$brc="",$which=array()
 	foreach ($which as $barred_from) {
 		$filt['barred_from_'.$barred_from] = sql_true();
 	}
-	$result=sql_num_rows(call_user_func($func,$filt,'','','bar'))>0;
-	return $result;
+	return sql_num_rows($func($filt,'','','bar'))>0;
 }
 
 function bar_status_f( $client,$format='',&$is_provisional)
