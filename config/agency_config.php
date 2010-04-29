@@ -36,7 +36,7 @@ should be included in this distribution.
 //$AG_AGENCY_ADVISORY_STYLE = 'background-color: #faa; border: solid 1px #333; margin-top: 2px;';
 
 //Agency public addresses:
-$agency_public_home_url='http://agency.sourceforge.net/';
+$agency_public_home_url='http://agency-software.org/';
 
 //$agency_donate_url='http://sourceforge.net/donate/index.php?group_id=281315';
 $agency_donate_url='<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
