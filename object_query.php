@@ -532,9 +532,9 @@ if ($type) {
 	}
 	if (${$control_var}['list']['filter']) {
 
-	      $out .= bigger(bold("Searching the $database[$WHICH_DB] database using:"));
-		$out .= div(webify_sql(make_agency_query($sel_sql,$filter,null,null,null,$group ? ${$control_var}['list']['group'] : "")),''
-				,'class=" sqlCode"');
+	      $sql_f = bigger(bold("Searching the $database[$WHICH_DB] database using:"))
+			. div(webify_sql(make_agency_query($sel_sql,$filter,null,null,null,$group ? ${$control_var}['list']['group'] : "")),'','class=" sqlCode"');
+		$out .= div(toggle_label('sql details...') . $sql_f,'','class="hiddenDetail"');
 		set_time_limit(120); //2 minutes enough?
 
 		$results = oline(call_engine($$control_var,$control_var,$notitle,$no_messages=false,$tot,$perm));
