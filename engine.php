@@ -852,31 +852,24 @@ function engine($control='',$control_array_variable='control')
 				$med_listing = true;
 				$med_link = link_engine($m_control,smaller('View expanded list of these '.$def['plural']),$control_array_variable);
 			}
-			if ($format == 'data') {
+			if ($format=='data') {
 				$list_func = $engine['functions']['list'];
-			} else {
-				$use_link[] = $data_link;
 			} 
-
-			if ($med_listing or $long_listing or ($format=='data')) {
-				switch ($format) {
-				case 'medium':
-				case 'long':
-				case 'data':
-					$use_link[] = $normal_link;
-				default:
-					if ($format != 'medium' && $med_listing) {
-						$use_link[] = $med_link;
-					}
-					if ($format != 'long' && $long_listing) {
-						$use_link[] = $long_link;
-					}
-				}
+			if ($format) {
+				$use_link[] = $normal_link;
+			}
+			if ( ($format=='') and ($list_func != $list_func_norm)) {
+				$use_link[] = $data_link;
+			}
+			if ($format != 'medium' && $med_listing) {
+				$use_link[] = $med_link;
+			}
+			if ($format != 'long' && $long_listing) {
+				$use_link[] = $long_link;
 			}
 			if ($use_link) {
 				$use_link = div(implode(' | ',$use_link),'','style="white-space: nowrap; margin: 2px; "');
 			}
-
 			/*
 			 * Generate list
 			 */
