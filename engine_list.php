@@ -260,9 +260,13 @@ function generate_list_generic($result,$fields,$max,$position,$total,$control,$d
 	 */
 
 	$totals = show_list_totals($result,$total,$def,$control,$fields);
-	return  list_header($fields,$max,$position,$total,$control,$def,$control_array_variable) 
+	$header= $control['list']['no_controls']  
+		? tablestart() 
+		: list_header($fields,$max,$position,$total,$control,$def,$control_array_variable); 
+	return  $header 
 		. $totals
-		. show_query($fields,$result,$control,$def,$total,$control_array_variable,&$REC_NUM)
+		//. show_query($fields,$result,$control,$def,$total,$control_array_variable,&$REC_NUM)
+		. show_query($fields,$result,$control,$def,$total,$control_array_variable,&$rec_num)
 		. $totals
 		. list_footer($fields,$max,$position,$total,$control,$control_array_variable);
 
@@ -1036,8 +1040,7 @@ function child_list( $object, $id, $page='', $PARENT='', $ID_FIELD='', &$js_hide
 
       // CONSTRUCT FILTER
       $ID_FIELD=orr($ID_FIELD,$engine[$PARENT]['id_field']);
-      $filter = array($ID_FIELD => $id );
-      
+	  $filter = array($ID_FIELD => $id );
       // CONSTRUCT CONTROL ARRAY
       $tmp_control = array(
 				'object'=>$object,
@@ -1048,6 +1051,11 @@ function child_list( $object, $id, $page='', $PARENT='', $ID_FIELD='', &$js_hide
 						'filter' => $filter
 						)
 				);
+	  // This is a terrible hack, for referenced fields...
+	  $def=get_def($object);
+	  if (!in_array($ID_FIELD,array_keys($def['fields']))) {
+		$tmp_control['list']['filter_ref']=object_reference_filter_wrap($PARENT,$id,$ID_FIELD,'both',$object);
+	  }
 
 	$js_hide = ($_REQUEST[$var_name]['object']==$object) ? false : $js_hide; //don't hide the object being worked on
 
@@ -1077,7 +1085,7 @@ function engine_java_wrapper($tmp_control,$var_name=null,&$js_hide,$title=null,$
       $control = array_merge($tmp_control,
 				     orr($_SESSION[strtoupper($var_name)],array()),
 				     unserialize_control(orr($_REQUEST[$var_name],array())) );
-      $control['list']['filter']=$filter; // BLOW OUT OLD FILTER
+      $control['list']['filter']=orr($tmp_control['list']['filter_ref'],$filter); // BLOW OUT OLD FILTER
       $control['page']=$page;             // BLOW OUT OLD PAGE
 
       // GET RECORDS
@@ -1157,7 +1165,7 @@ function engine_java_wrapper($tmp_control,$var_name=null,&$js_hide,$title=null,$
 							   span($back_to_top_link,' class="childListLeft"')
 							   . div(
 								   $subtitle_stuff
-								   . oline($OUTPUT),'',' class="childListData"')
+								   . oline($OUTPUT),'',' class="childListData childListData' . ucfirst($object) . '"')
 							   ,$object.'ChildList'.$js_ident,$js_hide);
 	
 }

@@ -32,96 +32,74 @@ should be included in this distribution.
 */
 
 $engine['log'] = array(
-			     'subtitle_eval_code'=>'($total>0) ? smaller(hlink("log_browse.php?action=show_client_logs&cid=".$id,"Show full text of these logs")) : ""',
-			     'subtitle_html'=>smaller(hlink('log_browse.php?action=browse','Go to log index')),
- 			     'allow_add'=>false,
-  			     'add_link_show'=>false,
- 			     'list_hide_view_links' => true,
-			     'singular'=>'log',
-			     'perm'=>'any',
-			     'perm_list'=>'any',
-			     'list_fields'=>array('added_at','custom1','added_by','custom2','subject'),
-			     'list_order'=>array('added_at'=>true),
-			     'list_max'=>25,
-			     'title_view'=>'"Log ".$rec["log_id"]',
-			     'title_add' =>'"Add A New Log Entry"',
-			     'fn'=>array(
-					     'get'=>'get_log_engine'
-					     ),
-			     'fields'=>array(
-						   'subject'=>array(
-// 									  'data_type'=>'html',
-									  'is_html'=>true,
-									  'value_format_list'=>'smaller($x)',
-									  'value_list'=>'div(hlink("log_browse.php?action=show&id=$rec[log_id]",
-													  ( be_null($x) 
-													    ? orr(substr($rec["log_text"],0,90),"LOG CONTAINS NO TEXT") 
-													    : $x) )
-												  ,"",(isset($rec["_staff_alert_ids"]) 
-													 && in_array($GLOBALS["UID"],sql_to_php_array($rec["_staff_alert_ids"])))
-												  ? " style=\"background-color: #FFC0C0; padding: 3px;\""
-												  : null)'
-									  ),
-						   'added_by'=>array('label'=>'Author'),
+	'allow_object_references'=>array('client','bar'),
+	'add_another'=>true,
+	'enable_staff_alerts'=>true,
+	'enable_staff_alerts_view'=>true,
+	'include_info_additional'=>true,
+	'list_fields'=>array('custom1','log_type_code','staff_alerts','clients','additional','subject'),
+//	'subtitle_eval_code'=>'($total>0) ? smaller(hlink("log_browse.php?action=show_client_logs&cid=".$id,"Show full text of these logs")) : ""',
+	'subtitle_html'=>smaller(hlink('log_browse.php?action=browse','Go to log index')),
+//	'allow_add'=>false,
+//	'add_link_show'=>true,
+	'list_hide_view_links' => true,
+	'perm'=>'any',
+	'list_order'=>array('added_at'=>false),
+	'list_max'=>25,
+	'title_view'=>'"Log ".$rec["log_id"] . " " . smaller(hlink(AG_LOG_URL,"go to Log index"))',
+	'title_add' =>'"Add A New Log Entry"',
+	'cancel_add_url' => AG_LOG_URL,
 
-						   'log_text' => array('null_ok' => false,
-									     'comment' => 'Compose your log here'),
+	'fields' => array(
+		'clients'=>array(
+			'data_type'=>'references', // This doesn't mean anything currently
+			'value_format'=>'smaller($x)',
+			'is_html'=>'true',
+			'value'=>'object_references_f($def["object"],$rec[$def["id_field"]],NULL,NULL,NULL,array("client"))' ),
+		'staff_alerts'=>array(
+			'data_type'=>'alerts', // This doesn't mean anything currently
+			'value_format'=>'smaller($x)',
+			'is_html'=>'true',
+			'value'=>'staff_alerts_f($def["object"],$rec[$def["id_field"]])' ),
+		'additional'=>array(
+			'data_type'=>'references',
+			'value_format'=>'smaller($x)',
+			'is_html'=>'true',
+			'label_view'=>'additional information',
+			'value'=>'div(info_additional_f($def["object"],$rec[$def["id_field"]],NULL,NULL,NULL),"","class=\"infoAdditionalContainer\"")' ),
+		'log_type_code'=>array(
+			'show_lookup_code'=>'CODE',
+			'data_type'=>'lookup_multi',
+			'lookup_format'=>'checkbox',
+			'value_format'=>'smaller($x)',
+			'label'=>'In logs',
+			'valid'=>array('count($x)>0'=>'You must specify at least one log')),
+		'written_by'=>array(
+			'label'=>'Author',
+			'default'=>'$GLOBALS["UID"]',
+			'display'=>'display'),
+		'occurred_at'=>array('label'=>'Event Time',
+			'comment'=>'Leave blank unless this is a very late entry'),
+	   'subject'=>array(
+			'is_html'=>true,
+			'value_format_list'=>'smaller($x)',
+			'value_list'=>'div(elink("log",$rec["log_id"],$x) . div($rec["log_text"],"","class=\"hiddenLogText\"")
+							  ,"",(isset($rec["_staff_alert_ids"]) 
+							 && in_array($GLOBALS["UID"],sql_to_php_array($rec["_staff_alert_ids"])))
+							  ? " style=\"background-color: #FFC0C0; padding: 3px;\""
+							  : null)'
+			  ),
+		'log_text' => array( 'comment' => 'Compose your log here'),
+		'custom1'=>array(
+			  'data_type'=>'html',
+			  'display'=>'hide',
+			  'display_list'=>'display',
+			  'label'=>'Added at/#/Author',
+			  'label_format'=>'smaller($x)',
+			  'value'=>'smaller(oline("#".$rec["log_id"]." by " .staff_link($rec["written_by"])) . dateof($rec["added_at"]) . " " . timeof($rec["added_at"]))'
+		  )
 
-						   //see below for more in_xxx detail
-						   'in_loga' => array( 'label'=>'Log C'),
-						   'in_logb' => array('label'=>'Log B'),
-						   'in_logc' => array('label'=>'Log C'),
+   )
+);
 
-						   //log flags
-						   'was_assault_staff'  => array('label_add' => 'Staff Assaulted or Injured?',
-											   'label'=>'Staff Assaulted or Injured'),
-						   'was_assault_client' => array('label_add' => 'Client(s) Assaulted or Injured?',
-											   'label'=>'Client(s) Assuaulted or Injured'),
-						   'was_police'            => array('label_add' => 'Were Police Called?',
-											   'label'=>'Police were Called'),
-						   'was_medics'         => array('label_add' => 'Were Medics Called?',
-											   'label'=>'Medics Were Called'),
-						   'was_bar'            => array('label_add' => 'Client(s) Barred?',
-											   'label'=>'Client(s) Barred'),
-						   'was_drugs'          => array('label_add' => 'Drugs or Alcohol Involved?',
-											   'label'=>'Drugs or Alcohol Involved'),
-
-						   'custom1'=>array(
-									  'data_type'=>'html',
-									  'display'=>'hide',
-									  'display_list'=>'display',
-									  'label'=>'Log #/<BR>In Logs',
-									  'label_format'=>'smaller($x)',
-									  'value'=>'smaller($rec["log_id"]."<br />").smaller(which_logs_f($rec),2)'
-									  ),
-						   'custom2'=>array(
-									  'data_type'=>'html',
-									  'display'=>'hide',
-									  'display_list'=>'display',
-									  'label'=>ucwords(AG_MAIN_OBJECT).'s',
-									  'value'=> 'isset($rec["_client_links"]) 
-											     ? orr(implode("<BR>",client_link(sql_to_php_array($rec["_client_links"]))),
-												     "(no '.AG_MAIN_OBJECT.'s referenced)")
-											     : get_clients_for_log($rec["log_id"])',
-									  'value_format'=>'smaller($x)'
-									  ),
-									  
-						   )
-			     );
-
-$t_in_fields = array( 'in_loga',
-			    'in_logb',
-			    'in_logc'
-			    );
-
-$t_valid_record = array();
-foreach ($t_in_fields as $t_f) {
-	$engine['log']['fields'][$t_f]['boolean_form_type'] = 'checkbox';
-	$engine['log']['fields'][$t_f]['label'] = orr($engine['log']['fields'][$t_f]['label'],ucwords(preg_replace('/^in_/','',$t_f)));
-	$engine['log']['fields'][$t_f]['null_ok'] = true; // not null should be set in the db
-
-	$t_valid_record[] = 'sql_true($rec['.$t_f.'])';
-}
-
-$engine['log']['valid_record'] = array(implode(' || ',$t_valid_record) => 'You must specify at least one log to post a log entry.');
 ?>

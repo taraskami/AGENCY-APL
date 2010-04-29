@@ -232,6 +232,10 @@ div.client_elevated_concern_short {
 	border-spacing: 0px;
 }
 
+.myAlert {
+	background-color: #FFAAAA;
+}
+
 .menuLink {
 	font-size: 65%;
 }

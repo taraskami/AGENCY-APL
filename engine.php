@@ -576,7 +576,7 @@ function engine($control='',$control_array_variable='control')
 			    /*
 			     * Get blank record
 			     */
-			    $REC=$def['fn']['blank']($def,$REC_INIT);
+			    $REC=$def['fn']['blank']($def,$REC_INIT,$control);
 			    unset($REC_LAST);
 			    $_SESSION['REC_LAST'.$session_identifier]=null;
 			    $step='continued';	

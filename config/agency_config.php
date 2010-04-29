@@ -99,9 +99,8 @@ $organization_home_url=$agency_wiki_public_url . 'Not_set_organization_home_url'
 define('AG_AGENCY_ADMIN_URL','menu.php#admin');
 $agency_search_url=$off.'object_query.php';
 define('AG_REPORTS_URL','canned_report.php');
-$log_page="log_browse.php";
+//define('AG_LOG_URL','display.php?control[action]=list&control[object]=log&control[id]=1');
 define('AG_LOG_URL','log_browse.php');
-$log_add_page="log_add.php";
 $revision_history_url = $agency_home_url.'display_history.php';
 $calendar_url = 'calendar_display.php';
 define('CALENDAR_REPORT_MEDICAL_URL',AG_REPORTS_URL.'?filename=clinical/med_calendar.cfg');
@@ -326,20 +325,7 @@ $client_search_fields= array(
 				     "clinical_id",
 				     "added_by");
 
-$log_search_fields= array(
-				  "log_text",
-				  "subject",
-				  "added_at",
-				  "added_by" );
-
-$log_table="log";
-$log_table_id="log_id";
 $logs_per_screen=25;
-
-// $log_types need to match the structure of log table:
-$log_types=array('a'=>'Log A',
-		     'b'=>'Log B',
-		     'c'=>'Log C');
 
 //--------Staff------//
 define('AG_STAFF_PAGE','staff_display.php');
@@ -405,11 +391,6 @@ $bugzilla_template_account_id = 19; // a template user from which to populate em
 $iandr_feed_table="agency_comment";
 $iandr_feed_id="agency_id";
 $iandr_page='iandr_display.php'; //adding because apparently, it was never set...JH
-
-$log_select_sql = "
-    SELECT $log_table.*, staff_name($log_table.added_by) AS _added_by,
-    SUBSTRING(log_text from 1 for 90) as Snippet
-    FROM $log_table ";
 
 /*
  * Absolute maximum string length

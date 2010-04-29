@@ -35,10 +35,6 @@ function merge_object_reference_db($object,$id,&$control) {
 	if ( $control['action']=='add') { // no db refs yet
 		return;
 	}
-	if ($control['action']=='list') { //not sure how this should work for list
-		return;
-	}
-
 	$start_refs_from = is_array($control['object_references']['from']) ? $control['object_references']['from'] : array();
 	$start_refs_to = is_array($control['object_references']['to']) ? $control['object_references']['to'] : array();
 	$db_refs = $add_refs = array();
@@ -222,20 +218,46 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 			$div_id,'class="' . $object .'"');
 }
 
-/*
-function get_object_references($object,$id,$id_field=NULL) {
-	$def=get_def($object);
-	$id_field=orr($id_field,$def['id_field']);
-	$filter_from=array("FIELD:COALESCE(from_id_field,'$id_field')"=>"'$id_field'",
-		'from_id'=>$id,'from_table'=>$def['table']);
-	$filter_to=array("FIELD:COALESCE(to_id_field,'$id_field')"=>"'$id_field'",
-		'to_id'=>$id,'to_table'=>$def['table']);
-	$refs = get_generic(array($filter_from,$filter_to),'','',get_def('reference'));
-	return $refs;
+function info_additional_f($object,$id,$id_field=NULL,$sep='') {
+	$sep=orr($sep,$GLOBALS['NL']);
+	$filter=object_reference_filter_wrap( $object,$id,$id_field,'from','info_additional');
+	$key='info_additional_type_code';
+//toggle_query_display();
+	$recs=agency_query("SELECT * FROM info_additional LEFT JOIN l_info_additional_type USING ($key)",$filter);
+//toggle_query_display();
+	while ($rec=sql_fetch_assoc($recs)) {
+		$label=$rec['description'] . $rec['info_additional_value'];
+		$link=elink($object,$id,$label);
+		if (sql_true($rec['info_additional_value'])) {
+			$major[]=$link;
+		} else {
+			$minor[]=$link;
+		}
+	}
+	$maj = $major ? implode($sep,$major) : '';
+	$min = $minor ? div(toggle_label("more info...") . implode($sep,$minor),'','class="hiddenDetail"') : '';
+	return $maj . $min;
 }
-*/
+		
+function object_references_f($object,$id,$id_field=NULL,$sep='',$ref_types='to',$inc_objs=NULL, $exc_objs=NULL) {
+	$r_ctrl=array(); 
+	$sep=orr($sep,$GLOBALS['NL']);
+	$ref_types=orr($ref_types,'to');
+	merge_object_reference_db($object,$id,$r_ctrl);
+	$refs=orr($r_ctrl['object_references'][$ref_types],array());
+	foreach( $refs as $k=>$v) {
+		if ( ! (( $exc_objs and in_array($v['object'],$exc_objs) )
+				or ($inc_objs and !in_array($v['object'],$inc_objs))
+				or ( ($v['object']=='info_additional' and !($inc_objs and in_array("info_additional",$inc_objs))) ) )) {
+			$out[]=elink($v['object'],$v['id'],$v['label']);
+		}
+	}
+	return $out ? implode($sep,$out) : '';
+}
 
 function object_reference_filter($object,$id,$id_field=NULL,$ref_types='both',$ref_object=NULL) {
+	if (!($id and is_numeric($id))) { return array('FIELD:false'=>'true'); }
+
 	$def=get_def($object);
 	$id_field=orr($id_field,$def['id_field']);
 	$filter_from=array("FIELD:COALESCE(from_id_field,'$id_field')"=>"'$id_field'",
@@ -248,15 +270,19 @@ function object_reference_filter($object,$id,$id_field=NULL,$ref_types='both',$r
 	}
 	switch($ref_types) {
 		case 'to' :
-			$filter=$filter_to;
+			$filter['a']=$filter_to;
+			break;
 		case 'from' :
-			$filter=$filter_from;
+			$filter['b']=$filter_from;
+			break;
 		case 'both' :
 		default :
 			$filter["a"]=$filter_from;
 			$filter["b"]=$filter_to;
-			$filter=array($filter);
+//			$filter=array($filter);
 	}
+	$filter=array($filter);
+//outline("Returning: " . read_filter($filter));
 	return $filter;  
 }
 
@@ -295,6 +321,12 @@ function info_additional_label($id) {
 
 function object_label($object,$id) {
 	switch ($object) {
+		case 'log' :
+			$def=get_def('log');
+			$table=$def['table'];
+			$id_f=$def['id_field'];
+			$l=sql_assign("SELECT SUBSTRING(COALESCE(subject,log_text) FROM 0 FOR 50) FROM $table",array($id_f => $id));
+			break;
 		case 'client' :
 			$l = client_name($id,0,true);
 			break;

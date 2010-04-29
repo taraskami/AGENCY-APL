@@ -30,7 +30,8 @@ should be included in this distribution.
 */
 
 /* Additional Information */
-div#infoAdditionalContainer {
+div#infoAdditionalContainer,
+div.infoAdditionalContainer {
 	border: 4px black;
 	padding: 5px;
 	background-color:  #FBFFA5;
@@ -39,7 +40,8 @@ div#infoAdditionalContainer {
 	margin: 4px;
 }
 
-div#infoAdditionalContainer H2 {
+div.infoAdditionalContainer H2,
+div.infoAdditionalContainer H2 {
 	font-size: 85%;
 	margin-top: 1px;
 	color: #8C135F;

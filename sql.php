@@ -353,6 +353,8 @@ function read_filter( $filter, $bool="AND", $lang="SQL")
 			if (($op=="IN") || ($op=="NOT IN")) {
 				$sql .= "$field $op ('" . implode("','",$value) . "') \n$bool ";
 			} elseif ($op == 'ARRAY_EQUALS' or $op == 'ARRAY_CONTAINS') {
+				// I think for ARRAY_CONTAINS, this should be OR
+				$tmp_bool= $op=='ARRAY_CONTAINS' ? 'OR' : 'AND';
 				$t_sql = array();
 				foreach ($value as $t_val) {
 					$t_sql[] = enquote1(sql_escape_string($t_val))." = ANY ($field)";
@@ -361,7 +363,7 @@ function read_filter( $filter, $bool="AND", $lang="SQL")
 				if ($op == 'ARRAY_EQUALS') {
 					$t_eq = ' AND ARRAY_COUNT('.$field.') = '.count($value);
 				}
-				$sql .= '('.implode(' AND ',$t_sql).$t_eq.')'."\n$bool";
+				$sql .= '('.implode(" $tmp_bool ",$t_sql).$t_eq.')'."\n$bool";
 			} else {
 				$sql .= "($field $op'" . implode( "' ".reverse_op($bool)." $field$op'", $value ). "') \n $bool ";
 			}

@@ -195,7 +195,7 @@ function engine_perm($control,$access_type='')
 	if ( has_perm('super_user','S') ) {
 		return true;
 	}
-	
+
 	if (!$control || $control=='super_user') {
 		return false;
 	}
@@ -1279,9 +1279,8 @@ function write_action_options($config_object,$FIELDS)
 
 }
 
-function blank_generic(&$def, &$rec_init)
+function blank_generic(&$def, &$rec_init,&$control)
 {
-
 	/*
 	 * Returns a blank record, filling in defaults, and values
 	 * passed in rec_init()
@@ -1378,8 +1377,22 @@ function blank_generic(&$def, &$rec_init)
 			$rec=$opts['blank_fn']($rec,$def,$m);
 		}
       }
-      return $rec;
+	// rec_init key not in REC (might?) mean create a reference...
+	$other_keys=array_diff(array_keys(orr($rec_init,array())),$a);
+	foreach( $other_keys as $dummy=>$o) {
+		//not much to work with with just a key, so try for object_id
+		if (preg_match('/^(.*)_id$/',$o,$matches)) {
+			$t_def=get_def($matches[1]);
+			if ($t_def['id_field']==$o) {
+		        $control['object_references']['to'][]=array(
+	                'object'=>$t_def['object'],
+    	            'id' => $rec_init[$o],
+        	        'label' => object_label($t_def['object'],$rec_init[$o]));
+			}
+		}
+	  }	
 
+      return $rec;
 }
 
 function value_generic($value,$def,$key,$action,$do_formatting=true)
@@ -3039,7 +3052,7 @@ function add_staff_alert_form_generic($def,$rec,$control)
 		$out = div($alerts,'addStaffAlertContainer')
 			. pick_staff_to('staff_alerts[]', $active_only="Yes", $default=-1 ,$subset=false,$options=' id="addStaffAlertList"')
 			. button('Add','','','','javascript:addStaffAlert(); return false;');
-		return div(oline(bold('Staff Alerts')).$out,'','class="staff" style="border: solid 1px black; padding: 5px; margin: 10px; width: 22em;"');
+		return div(oline(bold('Staff Alerts')).$out,'staffAlertContainer','class="staff" style="border: solid 1px black; padding: 5px; margin: 10px; width: 22em;"');
 	} elseif ($control['action'] != 'view') { return false; }
 
 	$req = ' '.red('*');
@@ -3770,7 +3783,7 @@ function make_staff_list_form($value,$key,$def,$control,$formvar)
 		$out = div($hidden,'add'.$key.'Container')
 			. pick_staff_to($formvar.'['.$key.'][]', $active_only='HUMAN', $default=-1 ,$subset=false,$options=' id="addStaff'.$key.'List"')
 			. button('Add','','','','javascript:addStaff'.$key.'(); return false;');
-		return div($out,'','class="staff" style="border: solid 1px black; padding: 5px; margin: 10px; width: 22em;"');
+		return div($out,'staffAlertContainer','class="staff" style="border: solid 1px black; padding: 5px; margin: 10px; width: 22em;"');
 
 	return $key;
 }

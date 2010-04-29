@@ -2315,7 +2315,7 @@ function show_top_nav( $firstcell="",$cells="",$auth='')
 	$spacer=cell('','style="width: 5px; background-color: #fff;"');
 	$out = tablestart("",'width="98%" cellpadding="0" cellspacing="0" border="0"')
 		. row(
-			topcell($firstcell,"align=\"left\" colspan=\"$cell_count_hack}\"") . $spacer . rightcell(table(row(
+			topcell($firstcell,"align=\"left\" colspan=\"$cell_count\"") . $spacer . rightcell(table(row(
 				cell(organization_logo_small(),'class="logo"')
 				. cell(agency_logo_small(),'class="logo"') 
 				. cell(link_agency_donate())),'width="80"'),'width="80"'))
@@ -2477,5 +2477,11 @@ function org_name($format='') {
 	}
 	return $x;
 }
+
+function toggle_label($label) {
+	// Hacky function to embed a label for hiddenDetail...
+	return hiddenvar('toggleLabel',$label);
+}
+
 
 ?>

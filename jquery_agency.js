@@ -113,9 +113,53 @@ $(function() {
 
 /* Hide & Toggle minor messages */
 $(function() {
-	$(".hiddenDetail").hide().before('<a href="#" class="toggleLink">details...</a>');
-	$(".hiddenDetail").prev().click( function(event) {
+	//$(".hiddenDetail").hide().before('<a href="#" class="toggleLink">details...</a>');
+	$(".hiddenDetail").each( function() {
+		var lab = $(this).children("[name=toggleLabel]");
+		if (lab.val()==undefined) {
+			var text = "details...";
+		} else {
+			var text = lab.val();
+		}
+		$(this).hide().before('<a href="#" class="toggleLink">'+text+'</a>');
+	});
+
+	$(".toggleLink").click( function(event) {
 		event.preventDefault();
 		$(this).next().toggle();
 	});
 });
+
+/*
+ * Log text, show as row in table
+   Should be genericized to hiddenEngineText
+   */
+
+$(function() {
+	//$(".hiddenLogText").hide().before('<a href="#" class="toggleLink">read</a>');
+	$(".hiddenLogText").each( function(i) { 
+		var row=$(this).closest('tr');
+		var cols=$(row).children().filter("td").length;
+		var text=$(this).next();
+		$(this).append("<br /><br />");
+		var pre='<tr><td colspan=' + cols + '>';
+		var post='</td></tr>';
+		var newrow=pre + post;
+		var nr = $(row).after(newrow);
+		$(nr).next().children().append($(this)).hide();
+	});
+	var link = $(".hiddenLogText").first().closest("table").before('&nbsp;<a href="#" class="toggleLogText">Show/hide text in place</a>');
+	$(".toggleLogText").click( function(event) {
+		event.preventDefault();
+		$(".hiddenLogText").parent().toggle();
+	});
+});
+
+$(function() {
+	// move staff alerts to command bar
+	//$("#engineStaffAlertForm").wrap("<td></td>").after($("#agencyTopLoginBox"));
+	//$("#staffAlertContainer").hide();
+//	$("#staffAlertContainer").wrap("<td></td>").insertAfter("#agencyTopLoginBox");
+//	$("#agencyTopLoginBox").parent().after("test").wrap("<td></td>"));
+});
+

@@ -177,7 +177,7 @@ INSERT INTO db_list
 /* log */
 \i functions/create.functions_log.sql
 \i create.tbl_reference.sql
-/* modify this for appropriate log groups: */
+\i create.l_log_type.sql
 \i create.tbl_log.sql
 
 /* feedback */
