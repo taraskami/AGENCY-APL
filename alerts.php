@@ -318,4 +318,23 @@ function view_alert($rec,$def,$action,$control='',$control_array_variable='contr
 
 	return view_generic($rec,$def,$action,$control,$control_array_variable);
 }
+
+function staff_alerts_f($object,$id,$sep='') {
+	$sep=orr($sep,$GLOBALS['NL']);
+	$alerts=get_alerts(array('ref_table'=>$object,'ref_id'=>$id));
+	while ($rec=sql_fetch_assoc($alerts)) {
+		$link=staff_link($rec['staff_id']);
+		if ($rec['staff_id']==$GLOBALS['UID']) { //Alert to user
+			$to_me=true;
+			$link=bigger($link);
+		}
+		$out[]=$link;
+	}
+	if ($out) {
+		return $to_me 
+			? div(implode($sep,$out),'','class="myAlert"')
+			: implode($sep,$out);
+	}
+}
+		
 ?>
