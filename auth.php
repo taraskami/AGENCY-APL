@@ -189,7 +189,7 @@ class Auth {
 				. button($AG_TEXT['AUTH_LOGIN_TOP_BOX_BUTTON_LABEL'],'',$this->var_user_switch,'',
 					  '',' class="agencyTopLoginInput"')
 				. hiddenvar($this->var_unique_hash,$hash)
-				. formend(),'agencyTopLoginBox');
+				. formend() . toggle_label("Login as..."),'agencyTopLoginBox','class="hiddenDetail"');
 		$AG_HEAD_TAG .= md5_header_tags($this->var_password,true,$this->var_unique_hash); //this must be called after form generation to generate proper js
 		return $form;
 	}
