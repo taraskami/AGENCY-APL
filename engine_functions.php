@@ -277,7 +277,12 @@ function engine_perm($control,$access_type='')
 	}
 
 	$fn = $def['fn']['engine_record_perm'];
-	if ($rec && ($fn !== 'engine_record_perm_generic') ) {
+	// This was getting called with blank $fn.
+	// Not sure why, so I added a check to skip that
+	// Worst-case should be that some access is not allowed that
+	// should be, which is beter than the reverse!
+	// if ($rec && ($fn !== 'engine_record_perm_generic') ) {
+	if ($rec && $fn && ($fn !== 'engine_record_perm_generic') ) {
 		$PERM = $fn($control,$rec,$def);
 	}
 
