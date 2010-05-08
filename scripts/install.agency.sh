@@ -21,11 +21,9 @@ else
 	case "$DISTRO" in
 		UBUNTU)
 			SU_COMMAND=sudo
-			PKG_COMMAND="apt-get install"
 			;;
 		FEDORA)
 			SU_COMMAND=su root -c
-			PKG_COMMAND="yum -y install"
 			;;
 	esac
 #FIXME:  only for testing	
@@ -33,9 +31,21 @@ else
 #	IS_ROOT=false
 fi
 
-RPM_REQS="postgresql postgresql-devel postgresql-libs postgresql-server postgresql-pltcl postgresql-table_log postgresql-contrib zziplib zziplib-devel php-pear gcc php-pgsql php-devel mod_ssl pcre-devel make"
+case "$DISTRO" in
+	UBUNTU)
+		WEB_USER=www-data 
+		PKG_COMMAND="apt-get install"
+		;;
+	FEDORA)
+		WEB_USER=apache
+		PKG_COMMAND="yum -y install"
+		;;
+esac
 
-DEB_REQS="libpq-dev postgresql-server-dev-8.4" # for table_log
+RPM_REQS="postgresql postgresql-devel postgresql-libs postgresql-server postgresql-pltcl postgresql-table_log postgresql-contrib zziplib zziplib-devel php-pear gcc php-pgsql php-devel mod_ssl pcre-devel make git"
+
+DEB_REQS="libpq-dev postgresql-server-dev-8.4 make apache2 libapache2-mod-php5 php5-cli php5-pgsql php5-dev php-pear libzzip-0-13 libpcre3-dev git-core"
+# Fixme: No ubuntu package for table_log
 
 APP_DIR=agency
 SOURCE_TARBALL=$1
@@ -43,7 +53,7 @@ GIT_REPO=git://agency.git.sourceforge.net/gitroot/agency/agency
 AG_CORE=database/pg/agency_core
 CONFIG_DB_TEMPLATE=config/agency_config_db.php.template
 CONFIG_DB_DEST=config/agency_config_db.php
-PG_SQL=install.client_database.sql
+PG_SQL='install.$AG_FLAVOR_database.sql'
 PG_SU_SQL=install2.db.sql
 PG_SU_DIR=pg_super_user
 PG_SU_SCRIPT=$WEB_BASE/$APP_DIR/scripts/install.agency.root.sh
@@ -61,7 +71,15 @@ PG_PORT=5432
 
 function install_software_reqs {
 
-	$SU_COMMAND $PKG_COMMAND $RPM_REQS
+    case "$DISTRO" in
+        UBUNTU)
+            PKG_REQS="$DEB_REQS"
+            ;;
+        FEDORA)
+            PKG_REQS="$RPM_REQS"
+            ;;
+	esac
+	$SU_COMMAND $PKG_COMMAND $PKG_REQS
 	$SU_COMMAND pecl install zip
 }
 
@@ -89,7 +107,6 @@ function install_software {
 }
 
 function create_config_file {
-	echo USER: $PG_USER, DB: $PG_DB, HOST: $PG_HOST PORT: $PG_PORT
 	touch $CONFIG_DB_DEST #FIXME--It shouldn't exist, but should test anyway
 	chmod 600 $CONFIG_DB_DEST
 	cat $CONFIG_DB_TEMPLATE | \
@@ -98,8 +115,9 @@ function create_config_file {
 		sed "s/\\\$PG_SERVER/$PG_HOST/g" | \
 		sed "s/\\\$PG_PASS/$PG_PASS/g" | \
 		sed "s/\\\$PG_PORT/$PG_PORT/g" \
-		> $CONFIG_DB_DEST
-	# SUDO chown WEBUESR $CONFIG_DB_DEST
+		>> $CONFIG_DB_DEST
+	chmod 400 $CONFIG_DB_DEST
+	$SU_COMMAND chown $WEB_USER $CONFIG_DB_DEST
 }
 	
 
@@ -111,6 +129,8 @@ if [ "$SOURCE_TARBALL" = "-h" ] ||  [ "$SOURCE_TARBALL" = "--help" ] ; then
 fi
 
 read -p "Please be advised this install script is EXPERIMENTAL.  Would you like to continue? (y/N)" -n 1 alpha_warn
+echo
+echo
 if [ "$alpha_warn" != "Y" ] && [ "$alpha_warn" != "y" ] ; then
 	exit
 fi
@@ -120,7 +140,9 @@ echo
 if [ "$install_reqs" == "y" ] || [ "$install_reqs" == "Y" ] ; then
 	install_software_reqs
 	if [ $? != 0 ] ; then
-		read -n 1 -p "there was an error installing software requirements.  Do you want to continue?" -n 1 proceed
+		echo
+		read -n 1 -p "there was an error installing software requirements.  Do you want to continue? (y/N)" -n 1 proceed
+		echo
 		if [ "$proceed" != "Y" ] && [ "$proceed" != "y" ] ; then
 			exit 1
 		fi
@@ -133,14 +155,16 @@ if [ "$SOURCE_TARBALL" != "" ] ; then
 	# If specified, assume yes install
 	install_software=Y
 else
-	read -p "would you like to install AGENCY software with Git? (Y/N)" -n 1 install_software
+	read -p "would you like to install AGENCY software with Git? (Y/n)" -n 1 install_software
 	echo
 fi
 
 if [ "$install_software" != "n" ] && [ "$install_software" != "N" ] ; then
 	install_software
 	if [ $? != 0 ] ; then
+		echo
 		read -n 1 -p "there was an error installing software.  Do you want to continue?" -n 1 proceed
+		echo
 		if [ "$proceed" != "Y" ] && [ "$proceed" != "y" ] ; then
 			exit 1
 		fi
@@ -177,7 +201,17 @@ else
 fi
 
 cd ../.. ; #to datababase/pg
-echo running install rest of install scripts
+echo Please choose which version of AGENCY to install:
+select AG_FLAVOR in $( ls -1 install.*_database.sql | cut -f 2 -d '.' | cut -f 1 -d '_' ) ; do
+	if [ "$AG_FLAVOR" != "" ] ; then
+		break;
+	fi
+done;
+
+PG_SQL=install.${AG_FLAVOR}_database.sql
+LOCAL_CONFIG_SRC=agency_config_local.sample.$AG_FLAVOR
+
+echo running rest of install scripts for $AG_FLAVOR version
 cat $PG_SQL | psql -U $PG_USER -h $PG_HOST $PG_DB 
 if [ $? = 0 ] ; then
 	echo successfully ran AGENCY install script
@@ -186,20 +220,23 @@ else
 	exit 1;
 fi
 
+cp $WEB_BASE/$APP_DIR/config/$LOCAL_CONFIG_SRC $WEB_BASE/$APP_DIR/config/agency_config_local.php
+
 read -p "would you like to create the agency_config_db.php file? (Y/n)" -n 1 create_config
 echo
 
 #echo got $create_config
 if [ "$create_config" != "N"  ] && [ "$create_config" != "n" ] ; then
+	echo
 	echo "OK.  Sorry to do this to you, but I'll need to ask you your database password 2 more times."
 	PG_PASS2=dummy
 	while [ "$PG_PASS" != "$PG_PASS2" ] ; do
-		read -p "Please enter your database password: " PG_PASS
+		read -s -p "Please enter your database password: " PG_PASS
 		echo
-		read -p "Please confirm your database password: " PG_PASS2
+		read -s -p "Please confirm your database password: " PG_PASS2
 		echo
 	done
-	cd ../../ # Should be $WEBBASE
+	cd ../../ # Should be same as $WEBBASE
 	create_config_file 
 fi
 

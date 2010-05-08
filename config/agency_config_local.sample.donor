@@ -39,41 +39,6 @@ should be included in this distribution.
  * Don't check agency_config_local.php into CVS or Git!
  */
 
-//Postgres:
-$db_server["pg"]    = 'localhost';
-$db_user_name["pg"] = 'agency_donor';
-$db_password["pg"]  = ''; /** *** Add your Password here *** */
-$database["pg"]     = 'agency_donor';
-$db_port['pg']      = '5432';
-
-
-/*
- * Currently the MySQL settings are only used for access to Bugzilla.
- * You probably don't need to change them.
- */
-
-//MYSQL:
-$db_server["my"]    = 'localhost';
-$db_user_name["my"] = 'Agency';
-$db_password["my"]  = '';
-$database["my"]     = 'Agency';
-$db_port['my']      = null;
-
-/*
- * Read-Only DB Access - used for DB maintenance
- *
- *    Set to true and then define a read-only user and password.
- *
- *    Note: User should be set up in PostgreSQL as read-only by using the 
- *          plpgsql function grant_read_permissions_all().
- */
-define('AG_READ_ONLY_MODE',false);
-if (AG_READ_ONLY_MODE) {
-	// these must be set in order to connect in read-only mode
-	$db_user_name['pg'] = '';
-	$db_password['pg']  = '';
-}
-
 /*
  * this is the _display_ term
  */
@@ -84,6 +49,15 @@ define('AG_MAIN_OBJECT','donor');
  * and is much more difficult to change.
  */
 define('AG_MAIN_OBJECT_DB','donor'); 
+
+
+/*
+ * Use this for a Read-only mode.
+ * You will need to specify username and password
+ * in agency_config_db.php
+ */
+
+define('AG_READ_ONLY_MODE',false);
 
 /*
  * Error Logging
@@ -114,8 +88,8 @@ define('AG_ENGINE_CONFIG_ARRAY','engine');
  */
 
 // Base install
-$AG_HOME_BY_FILE = '/var/www/html/agency_donor';
-$AG_HOME_BY_URL =  '/agency_donor';
+$AG_HOME_BY_FILE = '/var/www/html/agency';
+$AG_HOME_BY_URL =  '/agency';
 
 // Client photos
 $AG_CLIENT_PHOTO_BY_FILE  = $AG_HOME_BY_FILE . '/photos';
