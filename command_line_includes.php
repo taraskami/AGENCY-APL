@@ -65,6 +65,18 @@ if (is_file($local_config_file)) {
 	die();
 }
 
+/*
+ * agency_config_db.php is new file to hold db username/password.
+ * Formerly in agency_config_local.php
+ * This is an attempt to stay backward compatible.  If info
+ * is still in agency_config_local.php, then things should still work.
+ */
+
+$db_config_file = $off. AG_CONFIG_DIR . '/agency_config_db.php';
+if (is_file($db_config_file)) {
+	require $db_config_file;
+}
+
 if (!$AG_DB_CONNECTION = db_connect()) {
 	die('Unable to connect to database.');
 }
