@@ -1,10 +1,37 @@
 #!/bin/bash
+
+PG_USER=agency
+PG_DB=agency
+PG_HOST=localhost
+PG_PORT=5432
+
+APP_DIR=agency
+SOURCE_TARBALL=$1
+GIT_REPO=git://agency.git.sourceforge.net/gitroot/agency/agency 
+AG_CORE=database/pg/agency_core
+CONFIG_DB_TEMPLATE=config/agency_config_db.php.template
+CONFIG_DB_DEST=config/agency_config_db.php
+PG_SU_SQL=install2.db.sql
+PG_SU_DIR=pg_super_user
+PG_SU_SCRIPT=$WEB_BASE/$APP_DIR/scripts/install.agency.root.sh
+#PG_COMMAND="psql -f $PG_SU_SQL"
+PG_SU_USER=postgres
+LOG_DIR=/var/log/agency
+LOG_FILE=/agency_error.log
+RPM_REQS="postgresql postgresql-devel postgresql-libs postgresql-server postgresql-pltcl postgresql-table_log postgresql-contrib zziplib zziplib-devel php-pear gcc php-pgsql php-devel mod_ssl pcre-devel make git"
+DEB_REQS="libpq-dev postgresql-server-dev-8.4 make apache2 libapache2-mod-php5 php5-cli php5-pgsql php5-dev php-pear libzzip-0-13 libpcre3-dev git-core"
+# Fixme: No ubuntu package for table_log
+
 if $(cat /etc/issue | grep -i ubuntu > /dev/null) ; then
 	DISTRO=UBUNTU
 elif $(cat /etc/issue | grep -i fedora > /dev/null) ; then
 	DISTRO=FEDORA
+elif $(cat /etc/issue | grep -i centos > /dev/null) ; then #one of these is superfluous
+	DISTRO=FEDORA
+elif $(cat /etc/issue | grep -i 'cent os' > /dev/null) ; then #space in cent os?
+	DISTRO=FEDORA
 fi
-echo detected $DISTRO
+#echo detected $DISTRO
 
 if [ $USER = 'root' ] ; then
 	case "$DISTRO" in
@@ -16,6 +43,7 @@ if [ $USER = 'root' ] ; then
 			;;
 	esac
 	IS_ROOT=true
+
 else
 	WEB_BASE="/home/$USER/public_html"
 	case "$DISTRO" in
@@ -23,7 +51,7 @@ else
 			SU_COMMAND=sudo
 			;;
 		FEDORA)
-			SU_COMMAND=su root -c
+			SU_COMMAND="su root -c"
 			;;
 	esac
 #FIXME:  only for testing	
@@ -34,41 +62,33 @@ fi
 case "$DISTRO" in
 	UBUNTU)
 		WEB_USER=www-data 
+		WWW_SERVICE=apache2
 		PKG_COMMAND="apt-get install"
 		;;
 	FEDORA)
 		WEB_USER=apache
+		WWW_SERVICE=httpd
 		PKG_COMMAND="yum -y install"
 		;;
 esac
 
-RPM_REQS="postgresql postgresql-devel postgresql-libs postgresql-server postgresql-pltcl postgresql-table_log postgresql-contrib zziplib zziplib-devel php-pear gcc php-pgsql php-devel mod_ssl pcre-devel make git"
-
-DEB_REQS="libpq-dev postgresql-server-dev-8.4 make apache2 libapache2-mod-php5 php5-cli php5-pgsql php5-dev php-pear libzzip-0-13 libpcre3-dev git-core"
-# Fixme: No ubuntu package for table_log
-
-APP_DIR=agency
-SOURCE_TARBALL=$1
-GIT_REPO=git://agency.git.sourceforge.net/gitroot/agency/agency 
-AG_CORE=database/pg/agency_core
-CONFIG_DB_TEMPLATE=config/agency_config_db.php.template
-CONFIG_DB_DEST=config/agency_config_db.php
-PG_SQL='install.$AG_FLAVOR_database.sql'
-PG_SU_SQL=install2.db.sql
-PG_SU_DIR=pg_super_user
-PG_SU_SCRIPT=$WEB_BASE/$APP_DIR/scripts/install.agency.root.sh
-#PG_COMMAND="psql -f $PG_SU_SQL"
-PG_SU_USER=postgres
 
 
 
-#AGENCY database defaults.  Fixme.
-PG_USER=agency
-PG_DB=agency
-PG_HOST=localhost
-PG_PORT=5432
 
+function start_services {
+	/sbin/service postgresql start
+	/sbin/service $WWW_SERVICE start
+}
 
+function make_log {
+	if ! [ -d $LOG_DIR ] ; then
+		mkdir $LOG_DIR
+	fi
+	touch $LOG_DIR/$LOG_FILE
+	$SU_COMMAND chown $WEB_USER $LOG_DIR/$LOG_FILE
+}
+	
 function install_software_reqs {
 
     case "$DISTRO" in
@@ -79,8 +99,8 @@ function install_software_reqs {
             PKG_REQS="$RPM_REQS"
             ;;
 	esac
-	$SU_COMMAND $PKG_COMMAND $PKG_REQS
-	$SU_COMMAND pecl install zip
+	$SU_COMMAND "$PKG_COMMAND $PKG_REQS"
+	$SU_COMMAND "pecl install zip"
 }
 
 function install_software {
@@ -90,7 +110,7 @@ function install_software {
 		fi
 	fi
 
-	if [ -d agency ]
+	if [ -d $APP_DIR ]
 		then echo $WEB_BASE/$APP_DIR already exists.
 		echo You must remove it before running this script.
 		exit 1;
@@ -117,7 +137,7 @@ function create_config_file {
 		sed "s/\\\$PG_PORT/$PG_PORT/g" \
 		>> $CONFIG_DB_DEST
 	chmod 400 $CONFIG_DB_DEST
-	$SU_COMMAND chown $WEB_USER $CONFIG_DB_DEST
+	$SU_COMMAND "chown $WEB_USER $CONFIG_DB_DEST"
 }
 	
 
@@ -171,6 +191,7 @@ if [ "$install_software" != "n" ] && [ "$install_software" != "N" ] ; then
 	fi
 fi
 
+start_services
 
 echo cding to $WEB_BASE/$APP_DIR/$AG_CORE/$PG_SU_DIR
 cd $WEB_BASE/$APP_DIR/$AG_CORE/$PG_SU_DIR
@@ -190,7 +211,7 @@ echo attempting to run database superuser scripts...
 echo in directory $( pwd )
 case $DISTRO in 
 		UBUNTU) sudo $PG_SU_SCRIPT $PG_DB $PG_USER $PG_SU_USER $PG_SU_SQL ; run_su=$? ;;
-		FEDORA) su -c "$PG_SU_SCRIPT $PG_DB $PG_USER $PG_SU_SER $PG_SU_SQL" ; run_su=$? ;;
+		FEDORA) su -c "$PG_SU_SCRIPT $PG_DB $PG_USER $PG_SU_USER $PG_SU_SQL" ; run_su=$? ;;
 esac 
 if   [ $run_su = 0 ] ; then
 	echo successfully ran database superuser scripts.
@@ -225,7 +246,6 @@ cp $WEB_BASE/$APP_DIR/config/$LOCAL_CONFIG_SRC $WEB_BASE/$APP_DIR/config/agency_
 read -p "would you like to create the agency_config_db.php file? (Y/n)" -n 1 create_config
 echo
 
-#echo got $create_config
 if [ "$create_config" != "N"  ] && [ "$create_config" != "n" ] ; then
 	echo
 	echo "OK.  Sorry to do this to you, but I'll need to ask you your database password 2 more times."
@@ -240,4 +260,6 @@ if [ "$create_config" != "N"  ] && [ "$create_config" != "n" ] ; then
 	create_config_file 
 fi
 
+make_log
+#setsebool -P httpd_can_network_connect_db=1
 
