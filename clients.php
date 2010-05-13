@@ -1345,15 +1345,11 @@ function client_agency_home_links()
 {
 	/* setup home links */
 	$add_client_link = hlink("client_reg.php",'Add '.ucfirst(AG_MAIN_OBJECT));
-	$home_links_1 = array(hlink_if('mail_entry.php','Mail Entry',has_perm('admin,mail_entry')), //mail
-				    link_entry('Gatekeeping'), //entry
-				    $add_client_link //add client
+	$home_links_1 = array(link_feedback(), //feedback
+				    link_admin(), //AGENCY admin
+				    $add_client_link
 				    );
-	$home_links_2 = array(link_feedback(), //feedback
-				    link_admin() //AGENCY admin
-				    //hlink('menu.php#staff','Staff Menu') //staff
-				    );
-
+	//$home_links_2 = array('add second line of commands here');
 	return implode(' | ',$home_links_1)
 		. ($home_links_2 ? oline() . implode(' | ',$home_links_2) : '');
 

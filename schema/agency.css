@@ -156,7 +156,9 @@ tr.engineFormSelected { background-color: #1BEDDF; }
 /* top menus and such */
 
 #homeMenu { text-align: center; }
-#homePageTitle { font-size: 160%; font-weight: bold; }
+.homePageTitle { font-size: 160%; font-weight: bold; text-align: center;  }
+.homeLinks {position: relative; bottom: 0; }
+.newsLink { position: absolute; right: 0; top: 0; font-size: 9pt; font-weight: normal; float: right; }
 
 #agencySuperUser form { display: inline; margin: 0px; }
 

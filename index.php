@@ -46,21 +46,17 @@ $quiet="Y";
 include "includes.php"; 
 $commands=array();
 
-
+// Home page top commands box
 $news_control = array('object'=>'news','action'=>'list');
 $links_func=AG_MAIN_OBJECT_DB.'_agency_home_links';
+$links=span($links_func(),'class="homeLinks"');
 $links_sidebar_func=AG_MAIN_OBJECT_DB.'_home_sidebar_left';
-
+$news=div(link_engine($news_control,'What\'s<br />New?','class="fancyLink"'),'','class="newsLink"');
+$title=para(span($AG_TEXT['AGENCY_HOME_TITLE'],'class="homePageTitle"'));
+//$spacer = oline('',3);
 array_push($commands,
 	     //bottomcell(html_heading_1(
-	     bottomcell(
-						 div(link_engine($news_control,
-								     span('What\'s<br />New?',' style="font-size: 9pt; font-weight: normal;"'),'','class="fancyLink"')
-						     ,'','style="float:right;"')
-						 . div($AG_TEXT['AGENCY_HOME_TITLE'],'homePageTitle','class="homePageTitle"')
-			    . $links_func()
- 			    ,'id="homeMenu" class="homeMenu"'));
-$title=$AG_TEXT['AGENCY_HOME_TITLE'];
+	     cell(div($title . $news . $links . $spacer,'','style="position: relative;" '),'id="homeMenu" class="homeMenu"'));
 
 // Show a "My Clients" box
 $my_links = staff_links();
