@@ -520,13 +520,13 @@ function do_pick_sql( $query, $default_value="",$add_null=false, $format='',$for
 	return $out;
 }
 
-function sql_assign( $select,$filter )
+function sql_assign( $select,$filter='', $order='',$limit='', $offset='' )
 {
 // Takes select and filter, does a query
 // that should return one row, with one field
 // which is the value that is returned.
 
-	$result = sql_fetch_row(agency_query($select,$filter));
+	$result = sql_fetch_row(agency_query($select,$filter,$order,$limit,$offset));
 	return $result[0];
 }
 
