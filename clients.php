@@ -1524,7 +1524,8 @@ function staff_links()
 {
 	global $UID;
 
-	return client_elevated_concern_list()
+	return '' 
+//		. client_elevated_concern_list()
 //		. recent_staff_dals_missing_pn_f()
 		. assignments_f($UID,true)
 		. Calendar::my_calendar()
