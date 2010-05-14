@@ -36,4 +36,4 @@ INSERT INTO tbl_report (report_title, report_category_code, report_header, repor
   staff_id
   FROM permission', NULL, sys_user(), sys_user(), false, NULL, NULL, NULL, NULL);
 
-/* COMMIT; */
+COMMIT; 
