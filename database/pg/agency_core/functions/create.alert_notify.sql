@@ -17,15 +17,9 @@ BEGIN
           SELECT INTO textRecipient staff_email FROM staff WHERE staff_id=NEW.staff_id;
           change_opt_url := url_base || E'display.php?control\%5baction\%5d=view&control\%5bobject\%5d=user_option&control\%5bformat\%5d=&control\%5bid\%5d=' || NEW.staff_id;
           change_opt_blurb := E'You have received this email because your AGENCY user options are set to send an email whenever you receive a AGENCY alert.  If you prefer not to receive emails about your alerts, use the link below to change your settings:\n\n\"' || change_opt_url || '"';
-          textSender='AGENCY SYSTEM <No_Email@xxx.org>';
-          IF (UPPER(NEW.ref_table)='LOG') THEN
-               alert_url := url_base || 'log_browse.php?action=show&id=' || NEW.ref_id;
-               textSubject := get_db_name()||' Alert: ' || INITCAP(NEW.ref_table) || ' ' || NEW.ref_id;
-          ELSE 
-               alert_url := url_base || E'display.php?control\%5baction\%5d=view&control\%5bobject\%5d=alert&control%5bformat%5d=&control\%5bid\%5d=' 
-                    || NEW.alert_id;
-               textSubject := get_db_name()||' Alert: ' || INITCAP(NEW.ref_table) || ' Record ' || NEW.ref_id;
-          END IF;
+          textSender='AGENCY SYSTEM <No_Reply@xxx.org>';
+          alert_url := url_base || E'display.php?control\%5baction\%5d=view&control\%5bobject\%5d=alert&control%5bformat%5d=&control\%5bid\%5d=' || NEW.alert_id;
+          textSubject := get_db_name()||' Alert: ' || INITCAP(NEW.ref_table) || ' Record ' || NEW.ref_id;
           textMessage := E'You have received an AGENCY alert\n\n'
                     || alert_url || E'\n\n'
                     || change_opt_blurb;
