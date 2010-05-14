@@ -1557,7 +1557,6 @@ function formend()
 
 function tablestart_blank( $title="", $options="")
 {
-      global $colors;
 	if (!stristr($options,'class')) {
 		$options .= ' class=""';
 	}
@@ -1566,8 +1565,6 @@ function tablestart_blank( $title="", $options="")
 
 function tablestart( $title="", $options="" )
 {
-	global $colors;
-	$text_color=$colors["text"];
 	if (! stristr($options,"class"))
 	{
 		$options .= ' class="generalTable"';
