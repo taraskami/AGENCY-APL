@@ -70,6 +70,8 @@ array(
 
       //Authorization stuff
       'LOGIN_TITLE' => 'Login to AGENCY',
+	  //Box (div content) that will show on login screen
+	  'LOGIN_ADVISORY' => '',
       'LOGIN_SUB_TEXT' => "Welcome to AGENCY! Please enter your username and password:<br>\n",
       'AUTH_LOGOUT_MESSAGE' => 'You have been logged out.',
       'AUTH_LOGIN_BUTTON_TEXT' => 'Login',

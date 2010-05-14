@@ -146,8 +146,9 @@ class Auth {
 	    $hash = $this->set_hash(microtime());
 	    $destination = htmlentities(str_replace('logout_agency=Y','',$_SERVER['REQUEST_URI']));
 	    $post_variables = $this->post_variables();
+	    $advisory_box=div($AG_TEXT['LOGIN_ADVISORY'],'loginAdvisory');
 	    $login_form=formto($destination,'',$this->get_onsubmit())  //this should take care of DESIRED variables coming in via GET
-			    . div(div(
+			    . div( $advisory_box . div(
 					'Login to '.link_agency_public_home('','',' target="_blank"') . agency_logo_small() . organization_logo_small() ,'loginTitle','')
 		    . div(
 			    ( count($this->mesg)>0 ? div($this->format_messages(),'',' class="loginFormMessages"') : '')
@@ -594,7 +595,6 @@ class Auth {
 
 function has_perm($perm_list=null,$mode="R",$staff_id="")
 {
-
 	/*
 	 * Primary function to test for various types of permissions.
 	 * $perm_list is passed, can be array or string (or string list w/ commas)

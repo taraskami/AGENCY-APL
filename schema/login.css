@@ -65,3 +65,4 @@ input.loginFormButton { font-size: 160%;
 	text-align: justify; margin: 5px 0px; font-weight: normal; clear: both; }
 #loginContainer { width: 320px; float: left; }
 #loginImage { margin: 55px 0px 10px 30px; clear: right; text-align: center; background-color: none;}
+#loginAdvisory { float: right; background-color: #FFBBBB; font-color: red; }
