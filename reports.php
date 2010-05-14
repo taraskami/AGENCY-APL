@@ -579,7 +579,8 @@ function list_report($control,$def,$control_array_variable='',&$REC_NUM)
 					$li = '';
 				}
 				//$out .= oline(link_report($rep['report_id'],$rep['report_title']));
-				$li .= html_list_item(link_report($rep['report_id'],$rep['report_title']));
+				$comment=($com=$rep['report_comment']) ? span($com . toggle_label('comment...'),'class="hiddenDetail"') : '';
+				$li .= html_list_item(link_report($rep['report_id'],$rep['report_title']) . ' ' . $comment);
 				$old_sortkey=$sortkey;
 				$out .= ($REC_NUM==$count) ? html_list($li) : '';
 			}
