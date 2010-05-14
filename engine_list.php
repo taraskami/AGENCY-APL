@@ -1230,18 +1230,18 @@ function list_title_generic($control,$def)
 		$staff=orr($filter['staff_id'],$filter['staff_id_name']);
 		$x .= ' for '.staff_link($staff);
 	}
-	$title = oline($format ? eval('return '.$format.';') : bigger(bold($x)));
+	$title = $format ? eval('return '.$format.';') : bigger(bold($x));
 	if ($sql = $control['sql']) {
 		if (is_array($sql)) {
 			$sql = $sql[count($sql) - 1];
 		}
-		$title.=oline(smaller('Using: '.italic($sql)));
+		$subtitle='Using: '.italic($sql);
 	} elseif (!array_key_exists(AG_MAIN_OBJECT_DB.'_id',$filter) 
 	    && !array_key_exists('staff_id',$filter)
 	    && !array_key_exists('staff_id_name',$filter)) {
-		$title.=oline(smaller('Using: '.italic($def['sel_sql'].($filter ? ' WHERE '.read_filter($filter) : ''))));
+		$subtitle ='Using: '.italic($def['sel_sql'].($filter ? ' WHERE '.read_filter($filter) : ''));
 	}
-	return $title;
+	return oline($title .' '.div(smaller($subtitle) . toggle_label("sql details..."),'','class="hiddenDetail"'));
 }
 
 function list_verify_control($c)
