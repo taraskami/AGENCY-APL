@@ -677,8 +677,9 @@ function engine($control='',$control_array_variable='control')
 				. $show_selected)
 			    . div(button($submit_text,'','','','','class="engineButton"') . $reset_button . $cancel_button,'','style="clear: both"')
 				. div($pre_refs,'preSelectedObjects')
-				. $required_fields_text
-				. ' | ' . $object_refs_show_link
+				. $required_fields_text 
+				. (($required_fields_text and $object_refs_show_link) ? ' | ' : '')
+				. $object_refs_show_link
 			    . div($def['fn']['form']($REC,$def,$control),'','')  //GENERATE THE FORM
 			    . $staff_alerts
 			    . hiddenvar($control_array_variable.'[step]','submit')

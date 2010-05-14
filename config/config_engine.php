@@ -42,7 +42,7 @@ $engine['text_options'] = array(
 				'view_text'=> 'View/Edit Data Record',
 				'add_another' => 'Post Record and Add Another',
 				'post' => 'Post Record',
-				'required_fields' => smaller(oline(italic('('.red('*').') denotes required values')))
+				'required_fields' => smaller(italic('('.red('*').') denotes required values'))
 				);
 
 //PICK SOMETHING THAT WON'T SHOW UP
