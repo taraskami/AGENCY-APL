@@ -360,7 +360,7 @@ case 'view' :
 	// Fixme: instead of "details...", should say "controls..."
 	$commands =array($commands,cell(div(toggle_label("settings...") . show_pick_logs(),'','class="hiddenDetail"'),'class="pick"'));
 	if (!isset($LOG_FILTER)) {
-		$out .= alert_mark('Use Checkboxes to Select Log(s) to View');
+		$out .= alert_mark('Open Settings to Select Log(s) to view');
 	} elseif (isset($LOG_FILTER) && sql_num_rows($a)==0) {
 		$out .=alert_mark('Your selection contains no log entries');
 	} elseif ($LOG_FILTER) { // ??? (OK, if no LOG_FILTER, user needs to select logs first)
