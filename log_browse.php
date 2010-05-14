@@ -359,7 +359,14 @@ case 'view' :
 	$nav_links=list_links($logs_per_screen,$LOG_POS,$log_count,$control,'control');
 	// Fixme: instead of "details...", should say "controls..."
 	$commands =array($commands,cell(div(toggle_label("settings...") . show_pick_logs(),'','class="hiddenDetail"'),'class="pick"'));
-	if (!isset($LOG_FILTER)) {
+	if (count($log_types) == 0 ) {
+		$lt_def=get_def('l_log_type');
+		$msg = oline('The log system cannot be used until one or more log types are created.');
+		$msg .= has_perm($lt_def['perm_add'],'W')
+				? 'You can ' . add_link('l_log_type','add a log type record now')
+				: 'You don\'t seem to have appropriate permissions to add a log type record.  Please ask your system administrator to do so.';
+		$out .= alert_mark($msg);
+	} elseif (!isset($LOG_FILTER)) {
 		$out .= alert_mark('Open Settings to Select Log(s) to view');
 	} elseif (isset($LOG_FILTER) && sql_num_rows($a)==0) {
 		$out .=alert_mark('Your selection contains no log entries');
