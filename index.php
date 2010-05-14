@@ -39,8 +39,7 @@ function cell2_title( $string,$offset=0 )
 
 }
 
-global $colors;
-global $AG_TEXT,$log_add_page;
+global $colors, $AG_TEXT;
 
 $quiet="Y";
 include "includes.php"; 
