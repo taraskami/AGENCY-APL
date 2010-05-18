@@ -91,21 +91,6 @@ function get_alerts_for_log( $logno, $separator="" )
 	  }
 }
 
-/* function no longer used and can be dropped next time somebody reads this
-function count_alerts_log($lognum)
-{
-        $count_sql="SELECT Count(*) 
-		FROM $alert_table AS AL
-		LEFT JOIN $staff_table AS ST on AL.staff_id=ST.$staff_table_id
-		WHERE AL.ref_table='LOG' 
-		AND AL.ref_id=$lognum";
-
-
-        $count = sql_fetch_row( sql_query( $count_sql  ));
-	return $count[0];
-}
-*/
-
 function show_alerts($UID, $limit='')
 {
       $mesg =' (You have no new alerts)';
@@ -188,9 +173,9 @@ EOF
 			$rowclass = $color_flip ? '2' : '1';
 
 			if (strtoupper($x['ref_table'])=='LOG') {
-
 				$alert_description=$x['ref_table'] . ' ' . $x['ref_id'] . ': ';
-				$alert_link=log_link($x['ref_id'],$x['summary']);
+				//$alert_link=log_link($x['ref_id'],$x['summary']);
+				$alert_link=log_link($x['ref_id']);
 
 			} else { //engine stuff here -- send to alert record
 
