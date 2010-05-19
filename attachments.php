@@ -137,8 +137,8 @@ function post_attachment($session_key, $object, $key)
 	 *  Post record to attachment table, including original file name, extension, MD5 and added_by
 	 *  Get back ID of new record (use RETURNING)
 	 *  Moves file into permanent location
-	 *  Posts record to association_attachment table.
-	 *  Return association_attachment_ID
+	 *  Posts record to attachment_link table.
+	 *  Return attachment_link_ID
 	*/
 	$f_tmp = $_SESSION[$session_key]['tmp_file'];
 
@@ -226,7 +226,7 @@ function link_attachment($value, $key, $short_format=false)
 	 * to an attachment which is already in the database.
 	 */
 	
-	//get association_attachment record:
+	//get attachment_link record:
 	$a_attachment_def = get_def('attachment_link');
 	$a_attachment_filter = array($a_attachment_def['id_field'] => $a_attachment_id);
 	$a_attachment_rec = sql_fetch_assoc(get_generic($a_attachment_filter, '', '', $a_attachment_def));
@@ -340,7 +340,7 @@ function get_attachment_content($id, &$mesg)
 	 */
 	if (is_numeric($id)) {
 
-		//retrieve association_attachment record corresponding to this association attachment ID
+		//retrieve attachment_link record corresponding to this attachment link ID
 		$a_attachment_def = get_def('attachment_link');
 		$a_attachment_filter = array($a_attachment_def['id_field'] =>$id);
 		$a_attachment_rec = sql_fetch_assoc(get_generic($a_attachment_filter, '', '', $a_attachment_def));
@@ -354,7 +354,7 @@ function get_attachment_content($id, &$mesg)
 			return false;
 		}
 		
-		//retrieve attachment record referred to by this association_attachment record
+		//retrieve attachment record referred to by this attachment_link record
 		$att_def = get_def('attachment');
 		$att_filter = array($att_def['id_field'] => $a_attachment_rec['attachment_id']);
 		$att_rec = sql_fetch_assoc(get_generic($att_filter, '', '', $att_def));

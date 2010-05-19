@@ -205,7 +205,7 @@ function engine_perm($control,$access_type='')
 	$id     = $control['id'];
 
 	// This is for the special case of a pending attachment:
-	if (($object == 'association_attachment') && preg_match('/^pending_upload[0-9]*$/', $id)) {
+	if (($object == 'attachment_link') && preg_match('/^pending_upload[0-9]*$/', $id)) {
 		return true;
 	}
 
