@@ -62,7 +62,26 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 	    $control_array['action']=orr($control_array['action'],'view'); //DEFAULT IS VIEW
 
 	    //CHECK PERMISSIONS TO DETERMINE WHETHER A LINK IS GENERATED
-	    $perm = engine_perm($control_array);
+		if ($control_array['object']=='attachment_link') {
+			$ctrl_temp=$control_array;
+			//For these, test permissions of parent record
+			$aa_def=get_def('attachment_link');
+			$filter=array($aa_def['id_field']=>$ctrl_temp['id']);
+			$att=get_generic($filter,'','',$aa_def);
+			if (sql_num_rows($att)<>1) {
+				$perm=false;
+			} else {
+				$a=sql_fetch_assoc($att);
+				$ctrl_temp['object']=$a['parent_object'];
+				//FIXME: Do we really need to fetch this record?
+				$pr_filt=array($a['parent_field_name']=>$a['attachment_link_id']);
+				$pr_def=get_def($a['parent_object']);
+				$ctrl_temp['id']=sql_assign("SELECT {$pr_def['id_field']} FROM {$a['parent_object']}",$pr_filt);
+				$perm = engine_perm($ctrl_temp);
+			}
+		} else {
+		    $perm = engine_perm($control_array);
+		}
 	    foreach($control_array as $key=>$value) {
 		  //initiallize things like object, action, rec_init and id
 		  if (in_array($key,$main_controls)) {
@@ -212,7 +231,7 @@ function engine_perm($control,$access_type='')
       $def = get_def($object);
       $perm=$def["perm_$action"];
       $access_type = orr($access_type,
-				 ($action=='view' || $action=='list') ? 'R' : 'W');
+				 in_array($action,array('view','list','download')) ? 'R' : 'W');
 
 	//check for read access to verything
 	if ( $access_type == 'R' && has_perm('read_all') ) {

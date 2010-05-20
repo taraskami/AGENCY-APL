@@ -52,7 +52,8 @@ $engine['actions']=array('add' => 'write',
 			 'edit' => 'write',
 			 'delete' => 'write',
 			 'view' => 'read',
-			 'list' => 'read');
+			 'list' => 'read',
+			 'download' => 'read');
 
 $engine['control_pass_elements'] = array('object','action','id');
 
@@ -171,6 +172,7 @@ $engine['global_default'] = array(
 				  'allow_edit' => false,
 				  'allow_list' => true,
 				  'allow_view' => true,
+				  'allow_download' => true,
 				  //'label_format' => '$x',
 				  //'value_format' => 'bold($x)', redundant!!
 				  //title added below
@@ -330,7 +332,8 @@ $engine['data_types'] = array(
 					'timestamp_past' => array('timestamp_past'), //custom AGENCY Postgresql Domain - see create.domain.dates.sql
 					'array' => array(//add more here as needed
 							     'varchar[]',
-							     'integer[]')
+							     'integer[]'),
+					'attachment' => array() // should this be array( 'int' )?
 			      );
 			      //everything else is unknown
 $engine['system_fields'] = array(
