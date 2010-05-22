@@ -77,7 +77,6 @@ if (AG_OUTPUT_MODE === 'HTML') {
 }
 
 //link style sheet
-$AG_HEAD_TAG .= Java_Engine::get_js("var printStyleSheetPath = '{$off}schema/print.css'");
 link_style_sheet('layout.css','screen,print',' class="styleSheetBoth"');
 link_style_sheet('agency.css','screen',' class="styleSheetScreen"');
 link_style_sheet('print.css','print',' class="styleSheetPrint"');

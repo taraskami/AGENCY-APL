@@ -132,21 +132,6 @@ function link_unduplication($label='',$step="")
       return hlink_if($undups_url,$label,$can_undup);
 }
 
-function link_pfriendly($cancel=false)
-{        
-	/*
-    return smaller(hlink($_SERVER['PHP_SELF'] . "?pfriendly=$value", 
-		(($value == "Y")
-        ? "Switch to Printer Friendly"
-        : "Cancel Printer Friendly")));
-	*/
-	if ($cancel) {
-		return div(hlink('#','Cancel Printer Friendly','','onclick="printPreview();blur();return false;"'),'printerFriendlyCancel');
-	} else {
-		return hlink('#','Switch to Printer Friendly','','onclick="printPreview();blur();return false;"');
-	}
-}
-
 function link_wiki($db_title,$label='',$options='')
 {
 	if (!AG_WIKI_BASE_URL) {

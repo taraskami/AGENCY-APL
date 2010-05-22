@@ -2285,14 +2285,11 @@ function agency_top_header($commands="")
        $out = $test_db_warning . show_top_nav(table(row(
                        cell(smaller("If you are not ") . staff_link( ORR($AUID,$UID ))
                          . smaller(", please ".Auth::logout())
-                         . smaller("&nbsp;&nbsp;|&nbsp;&nbsp;"
-                                     . smaller(link_pfriendly())
-                                     . $demo_mode_link)
+                         . smaller( $demo_mode_link)
                        . $user_msg)
 ))
                         ,$commands,$login_box)
                 . $out; //test box in middle
-	$out .= link_pfriendly($cancel=true);
 	out($out);
 }
 

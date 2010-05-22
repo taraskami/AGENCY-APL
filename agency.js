@@ -102,37 +102,6 @@ function toggleDisplayId(tid,displayOpt) {
 	}
 }
 
-var onPrintFriendly = false;
-var originalStyleSheet = new Array();
-
-/*
- * This gets set in includes.php, due to $off funkiness
- * var printStyleSheetPath = 'schema/print.css';
- */
-
-function printPreview() {
-	if (!document.getElementsByTagName) { return; }
-	if (!onPrintFriendly) {
-		onPrintFriendly = true;
-		var styleSheets = document.getElementsByTagName('link');
-		for (var i=0; i<styleSheets.length; i++) {
-			if (styleSheets[i].getAttribute('class')=='styleSheetScreen') {
-				originalStyleSheet[i] = styleSheets[i].getAttribute('href');
-				styleSheets[i].setAttribute('href',printStyleSheetPath);
-			}
-		}
-	} else {
-		onPrintFriendly = false;
-		var styleSheets = document.getElementsByTagName('link');
-		for (var i=0; i<styleSheets.length; i++) {
-			if (styleSheets[i].getAttribute('class')=='styleSheetScreen') {
-				styleSheets[i].setAttribute('href',originalStyleSheet[i]);
-			}
-		}
-	}
-	return false;
-}
-
 /* quick search */
 function switchQuickSearch(which) {
 	whichQuickSearch=which;

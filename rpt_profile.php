@@ -160,7 +160,6 @@ if ($action<>'submit')
       $message = oline(red('This report may take a few minutes.'));
       $out = formto()
 		. hiddenvar('action','submit')
-		. hiddenvar('pfriendly',$pfriendly)
 		. tablestart_blank()
 		. rowrlcell('Start Date',form_field('date','startdate',$startdate))
 		. rowrlcell('End Date',form_field('date','enddate',$enddate))
