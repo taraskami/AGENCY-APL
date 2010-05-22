@@ -164,10 +164,10 @@ tr.engineFormSelected { background-color: #1BEDDF; }
 
 #agencySuperUser span, #agencySuperUser input, #agencySuperUser select{ font-size: 70%; }
 
-#agencyTopLoginBox { margin: 1px; background-color: #dfffdf; width: 70px;}
-#agencyTopLoginBox span { font-size: 65%; font-weight: bold; }
-#agencyTopLoginBox input { margin: 1px; font-size: 65%; border: 1px solid #000; display: block; }
-#agencyTopLoginBox input[type=text], #agencyTopLoginBox input[type=password] {  width: 65px; }
+#agencyTopLoginBox { margin: 1px; background-color: #dfffdf; }
+#agencyTopLoginBox span { font-size: 165%; font-weight: bold; }
+#agencyTopLoginBox input { margin: 1px; font-size: 165%; border: 1px solid #000; display: block; }
+#agencyTopLoginBox input[type=text], #agencyTopLoginBox input[type=password] {   }
 #agencyTopLoginBox input[type=hidden] { display: none; }
 
 a.calTodayLink,a.calNowLink { font-size: 65%; vertical-align: bottom; }
