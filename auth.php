@@ -76,7 +76,7 @@ class Auth {
       var $mesg;
       var $error;
 	var $failed;
-
+	 var $kiosk_active = false;
 	/*
 	 * use very carefully. When this is set to 
 	 * true, a failed login won't exit the 
@@ -89,6 +89,20 @@ class Auth {
 		$this->error=array();
 		$this->mesg=array();
       }
+
+	function reset_kiosk()
+	{
+		$this->new_session();
+		$hash=$this->set_hash(microtime());
+	        $this->make_auth_array(AG_KIOSK_USER,$hash);
+		$this->kiosk_active=true;
+		$_SESSION['AUTH']['kiosk_active']=true;
+	}
+
+	function kiosk_active()
+	{
+		return $this->kiosk_active;
+	}
       
       function authenticate()
       {
@@ -97,10 +111,19 @@ class Auth {
 		session_name($AG_AUTH_DEFINITION['SESSION_NAME']);
 		session_cache_expire($AG_AUTH_DEFINITION['SESSION_EXPIRE']);
 		session_start();
+		if ($_SESSION['AUTH']['kiosk_active']) {
+			$this->kiosk_active=true;
+		}
+		if (!AG_KIOSK_MODE) {
+			if ($this->kiosk_active()) {
+				$this->new_session();
+			}
+		}
+
 		$last_user=$_SESSION['USER_INFO'][$AG_AUTH_DEFINITION['USER_ID_FIELD']];
 		if (!$this->is_valid())
 		{
-			if ($this->suppress_login) {
+			if ($this->suppress_login or AG_KIOSK_MODE) {
 				return false;
 			}
 			echo $this->login();
@@ -129,7 +152,10 @@ class Auth {
 		    array_push($this->mesg,$AG_TEXT['AUTH_LOGOUT_MESSAGE']);
 		    return false;
 	    } elseif($this->new_valid_auth()) {
-	            return true;
+			if (!$this->kiosk_active()) {
+				$_SESSION['auth']['kiosk_active']=false;
+			}
+			return true;
 	    } elseif ($this->failed_user_switch()) {
 	            return false;
 	    } elseif ($this->existing_auth()) {
@@ -183,7 +209,7 @@ class Auth {
 		global $AG_TEXT, $AG_HEAD_TAG;
 		$hash = $this->set_hash(microtime());
 		$form = div(span($AG_TEXT['AUTH_LOGIN_TOP_BOX_LABEL'])
-				. formto(htmlspecialchars($_SERVER['REQUEST_URI']),'',$this->get_onsubmit())
+				. formto(htmlspecialchars($_SERVER['REQUEST_URL']),'',$this->get_onsubmit())
 				. formvartext($this->var_username,'Username','class="agencyTopLoginInput" onclick="this.value=\'\';"')
 				. formpassword($this->var_password,'password',
 							 'id="topLoginBoxPassword" autocomplete="off" class="agencyTopLoginInput" onfocus="this.value=\'\'"')
@@ -318,6 +344,10 @@ class Auth {
 		    }
 
 		    $this->log_user_login();
+			if ($username != AG_KIOSK_USER) {
+				$_SESSION['kiosk_active']=false;
+				$this->kiosk_active=false;
+			}
 		    return true;
 	    }
 	    return false;

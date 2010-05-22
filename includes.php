@@ -96,7 +96,18 @@ if ($refresh) {
 
 //------checking authentication--------//
 $AG_AUTH = new Auth();
-$AG_AUTH->authenticate();
+if (!$AG_AUTH->authenticate()) {
+	if (AG_KIOSK_MODE) {
+		$AG_AUTH->reset_kiosk();
+		$AG_AUTH->authenticate();
+	}
+} else {
+	// Authenticate has failed here.
+	// Not sure how or why you could continue
+	// There is a suppress_login option, however
+	// so maybe there is a purpose
+}
+
 
 //INCLUDE ITEMS REQUIRING $engine ARRAY, or DB CONNECTION
 //include AG_CONFIG_DIR . '/agency_config_post.php';

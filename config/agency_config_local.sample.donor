@@ -60,6 +60,16 @@ define('AG_MAIN_OBJECT_DB','donor');
 define('AG_READ_ONLY_MODE',false);
 
 /*
+ * Use this for kiosk mode. (auto-login)
+ *
+ * Note:  this is an AGENCY username (e.g., staff)
+ *
+ * Note:  DO NOT use this without considering security issues!
+ */
+define('AG_KIOSK_MODE',false);
+define('AG_KIOSK_USER','');
+
+/*
  * Error Logging
  */
 define('AG_ERROR_LOG_FILE','/var/log/agency/agency_error.log');

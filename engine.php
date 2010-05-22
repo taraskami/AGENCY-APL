@@ -188,9 +188,13 @@ function engine($control='',$control_array_variable='control')
 	$re_enter_pwd = engine_password_cycle($def,$action,$step);
 
       $button_variable  = 'postingbutton';
-      $require_password = $re_enter_pwd ? $def['require_password'] : false;
-
 	global $AG_AUTH;
+    if ($AG_AUTH->kiosk_active()) {
+		$require_password=false;
+	} else {
+		$require_password= $re_enter_pwd ? $def['require_password'] : false;
+	}
+
 	$post_button           = button($post_text,'','','','','class="engineButton"');
 	$post_another_button   = button($add_another_text,'SUBMIT',$button_variable,'','',' class="engineButton"');
 	$remember_values_check = $def['add_another_and_remember'] ?

@@ -2282,9 +2282,13 @@ function agency_top_header($commands="")
 		? '&nbsp;&nbsp;|&nbsp;&nbsp;'.hlink($_SERVER['PHP_SELF'].'?demoMode='.($GLOBALS['AG_DEMO_MODE'] ? 'N' : 'Y')
 			  ,'Turn Demo Mode '.($GLOBALS['AG_DEMO_MODE'] ? 'Off' : 'On'))
 		: '';
+	$staff_link=staff_link(orr($AUID,$UID));
+	// FIXME: Can you assume Kiosk identity? Not sure.
+	$user_logout_msg= ($AG_AUTH->kiosk_active())
+		? smaller('You are running in Kiosk mode as ') . $staff_link . smaller( ' ('.Auth::logout('reset') .')')
+		: smaller('If you are not ') . $staff_link . smaller(', please '.Auth::logout());
        $out = $test_db_warning . show_top_nav(table(row(
-                       cell(smaller("If you are not ") . staff_link( ORR($AUID,$UID ))
-                         . smaller(", please ".Auth::logout())
+                       cell($user_logout_msg
                          . smaller( $demo_mode_link)
                        . $user_msg)
 ))
