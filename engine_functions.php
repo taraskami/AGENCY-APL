@@ -41,6 +41,17 @@ function elink($object,$id,$label,$options=null)
 	return link_engine(array('object'=>$object,'id'=>$id),$label,'',$options);
 }
 
+function add_link($object,$label='',$options=null)
+{
+	/*
+	 * A quick add-link engine function
+	 */
+
+	$def=get_def($object);
+	$sing=$def['singular'];
+	return link_engine(array('object'=>$object,'action'=>'add','id'=>$id),orr($label,'Add ' . aan($sing) . ' ' . $sing),'',$options);
+}
+
 function qelink($rec,$def,$label,$options=null)
 {
 	return elink($def['object'],$rec[$def['id_field']],$label,$options);
