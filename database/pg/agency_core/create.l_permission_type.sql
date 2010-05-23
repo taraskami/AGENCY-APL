@@ -43,4 +43,5 @@ INSERT INTO tbl_l_permission_type VALUES ('SUPER_USER', 'AGENCY Super-User',sys_
 INSERT INTO tbl_l_permission_type VALUES ('PASSWORD', 'Change Passwords',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_permission_type VALUES ('USER_SWITCH', 'Switch User Identity',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_permission_type VALUES ('STAFF_REQUEST', 'Staff Requests',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_permission_type VALUES ('UPDATE_ENGINE', 'Update the Engine Array',sys_user(),current_timestamp,sys_user(),current_timestamp);
 

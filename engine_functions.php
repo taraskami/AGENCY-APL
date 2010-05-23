@@ -2952,7 +2952,7 @@ function update_engine_array($use_auth=true,$engine_array=null,$tables=null) {
 	$engine_array = orr($engine_array,AG_ENGINE_CONFIG_ARRAY);
 	$engine = null; //objects w/o config files were not configuring properly w/o this
 
-	$auth = $use_auth ? has_perm('admin','RW') : true;
+	$auth = $use_auth ? has_perm('update_engine,admin','RW') : true;
 	if (!$auth) {
 		outline(red('You don\'t have permission to update the engine array.'));
 		exit;
@@ -3863,7 +3863,7 @@ function update_engine_control($noexists=false)
 	}
 	$update_list .= selectend() . oline() . button('update!') . formend();
 
-	return ( ($noexists or has_perm('update_engine'))
+	return ( ($noexists or has_perm('update_engine,admin','RW'))
 	?  smaller( formto('update_engine_config.php','',' target="_blank"')
 	. oline('Update Engine Object') . $update_list)
 	: '');
