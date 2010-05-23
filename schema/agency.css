@@ -46,6 +46,7 @@ should be included in this distribution.
 a.fancyLink { text-decoration: none; }
 a.fancyLink:hover, a.fancyLink:active { color: #f00; text-decoration: underline; }
 
+span.testDbWarningLink,
 a.toggleLink { font-size: 65%; }
 div.engineMessageResultDetail { font-size: 80%; border: solid 1px black; }
 div.hiddenDetail { font-size: 70%; background-color: #FFDDDD; }
@@ -210,7 +211,7 @@ div.client_elevated_concern_short {
 }
 
 /* Test Warning Box */
-.agencyTestWarning {
+#agencyTestWarningBox {
 	background-color: red;
 	text-align: center;
 	width:100%; 

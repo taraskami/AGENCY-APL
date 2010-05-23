@@ -2234,14 +2234,12 @@ function agency_top_header($commands="")
 	global $UID, $title, $database,$WHICH_DB,$testing_area_message,$db_server;
 	global $AUID, $AG_AUTH;
 	if (is_test_db()) {
-		$test_db_warning = div(table(row(
-			cell(update_engine_control(),'class="updateEngine"')
-			. cell(center(bold(white(bigger("WARNING: Test Database in use",3) 
+		$test_db_warning = div(
+			bold(white(bigger("WARNING: Test Database in use",3) 
 			. oline()
 			. smaller( 'Database: ' . $database[$WHICH_DB] . ', server: ' .$db_server[$WHICH_DB]))
-			. bold(help('test_database','',smaller('tell me more',2),' class="fancyLink"',false,true)))), 
-     		' class="agencyTestWarning"'))),'agencyTestWarningBox');
-		$test_hide_link = Java_Engine::toggle_id_display(' +/- Test DB Warning box','agencyTestWarningBox','block');
+			. bold(help('test_database','',smaller('tell me more',2),' class="fancyLink"',false,true))),'agencyTestWarningBox');
+		$test_hide_link = oline(span(Java_Engine::toggle_id_display('Test Warning','agencyTestWarningBox','block'),'class="testDbWarningLink"'));
 	}
 	if (AG_SHOW_AUTH_TOP_LOGIN_BOX) {
 		$login_box = $AG_AUTH->top_login_box(); //must come prior to AG_HEAD_TAG being output by html_header()
@@ -2261,22 +2259,22 @@ function agency_top_header($commands="")
 	//$out .= $test_db_warning;
 	$out .= $password_bar;
 
-	$super_user_menu = null;
 	if (has_perm('user_switch','S',orr($AUID,$UID))) {
-		if ($AUID) {
-			$curr_id .= " (current identity is " . staff_link($UID) . ") ";
-		}
-		$super_user_menu = has_perm('super_user','S',orr($AUID,$UID)) ? $test_hide_link : '';
 		$tmp_id_check = $AUID ? "staff_id=$AUID" : 'FALSE';
-		$user_msg .= oline()
-			.div(formto(htmlspecialchars($_SERVER['REQUEST_URI'])) 
+		$switch_identity = 
+			div(formto(htmlspecialchars($_SERVER['REQUEST_URI'])) 
 				. selectto('ASSUME_IDENTITY')
 				. selectitem('-1','(choose from list)')
 				. do_pick_sql("SELECT staff_id AS value, CASE WHEN name_first < 'A' THEN name_last ELSE name_last || ', ' || name_first END as label FROM staff WHERE is_active AND ($tmp_id_check OR staff_id NOT IN (SELECT staff_id FROM permission WHERE permission_type_code='SUPER_USER')) AND NOT name_first < 'A' ORDER BY 2",$AUID,false)
 				. selectend()
-				. button("Switch Identity") . $curr_id 
-				. formend().span($super_user_menu),'agencySuperUser');
-
+				. button("Switch Identity") 
+				. formend(),'agencySuperUser');
+		if ($AUID) {
+			$curr_id = smaller(' | (current identity is ') . staff_link($UID) . smaller(') ');
+			$switch_id1=$switch_identity;
+		} else {
+			$switch_id2=oline(div($switch_identity.toggle_label("Impersonate..."),'','class="hiddenDetail"'));
+		}
 	}
 	$demo_mode_link = has_perm('demo_mode')
 		? '&nbsp;&nbsp;|&nbsp;&nbsp;'.hlink($_SERVER['PHP_SELF'].'?demoMode='.($GLOBALS['AG_DEMO_MODE'] ? 'N' : 'Y')
@@ -2287,12 +2285,17 @@ function agency_top_header($commands="")
 	$user_logout_msg= ($AG_AUTH->kiosk_active())
 		? smaller('You are running in Kiosk mode as ') . $staff_link . smaller( ' ('.Auth::logout('reset') .')')
 		: smaller('If you are not ') . $staff_link . smaller(', please '.Auth::logout());
+	   if ($update_engine=update_engine_control()) {
+			$update_engine=oline(div($update_engine.toggle_label("Update engine..."),'','class="updateEngine hiddenDetail"'));
+		}
+
        $out = $test_db_warning . show_top_nav(table(row(
-                       cell($user_logout_msg
+                       cell($user_logout_msg . $curr_id
+						 . $switch_id1
                          . smaller( $demo_mode_link)
                        . $user_msg)
 ))
-                        ,$commands,$login_box)
+                        ,$commands,$test_hide_link.$switch_id2.$update_engine.$login_box)
                 . $out; //test box in middle
 	out($out);
 }

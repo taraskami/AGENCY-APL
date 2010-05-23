@@ -121,7 +121,7 @@ $(function() {
 		} else {
 			var text = lab.val();
 		}
-		$(this).hide().before('<a href="#" class="toggleLink">'+text+'</a>');
+		$(this).hide().before('<a href="#" class="toggleLink fancyLink">'+text+'</a>');
 	});
 
 	$(".toggleLink").click( function(event) {
