@@ -59,15 +59,23 @@ $id = orr($id, staff_id_from_username($email));
 /*
  * Use last view staff ID if neither staff ID nor Email were passed via URL. 
  * Bug 23526.
+ * Or just default to your own page
  */
 
 if (!$id && !$email){
-	$id = $_SESSION['STAFF_DISPLAY_PAGE_ID'];
+	$id = orr($_SESSION['STAFF_DISPLAY_PAGE_ID'],$UID);
  }
 
-if (!$id || (sql_num_rows(staff_get($id)) < 1)) {
-	outline('No Staff found');
-	out(link_agency_home('AGENCY Home.'));
+if (!engine_perm(array('action'=>'view','object'=>'staff','id'=>$id))) {
+	agency_top_header();
+	outline(alert_mark('You do not have permissions to view this page'));
+	page_close();
+	exit;
+}
+	
+if (sql_num_rows(staff_get($id) < 1)) {
+	agency_top_header();
+	outline(alert_mark('No Staff found'));
 	page_close();
 	exit; 
  }
