@@ -35,6 +35,16 @@ should be included in this distribution.
 //$AG_AGENCY_ADVISORY = ''; 
 //$AG_AGENCY_ADVISORY_STYLE = 'background-color: #faa; border: solid 1px #333; margin-top: 2px;';
 
+/*
+ * Use this for kiosk mode. (auto-login)
+ *
+ * Note:  this is an AGENCY username (e.g., staff)
+ *
+ * Note:  DO NOT use this without considering security issues!
+ */
+define('AG_KIOSK_MODE',false);
+define('AG_KIOSK_USER','agency_kiosk');
+
 //Agency public addresses:
 $agency_public_home_url='http://agency-software.org/';
 
