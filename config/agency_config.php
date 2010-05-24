@@ -128,7 +128,7 @@ define('AG_PASSWORD_RESET_URL','reset_password.php');
  * Email Sender
  * This will be the 'From:' line in any emails sent
  */
-$AG_EMAIL_SENDER='AGENCY Software <noreply@'.$_SERVER['SERVER_NAME'].'>';
+$AG_EMAIL_SENDER='AGENCY Notifier <noreply@'.$_SERVER['SERVER_NAME'].'>';
 
 //password and staff tables (moved from below)
 $staff_table="staff";

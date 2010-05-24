@@ -105,7 +105,7 @@ function issue_token( $email, &$msg ) {
 	$token =generate_token();
 	$token_rec=array('email_address'=>$email,
 				'token'=>$token,
-				'staff_id'=>$sid,
+				'staff_id'=>$staff_id,
 				'added_by'=>$GLOBALS["sys_user"],
 				'changed_by'=>$GLOBALS["sys_user"]);
 	if (!agency_query(sql_insert('tbl_auth_token',$token_rec))) {
