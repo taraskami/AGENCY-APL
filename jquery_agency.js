@@ -163,3 +163,11 @@ $(function() {
 //	$("#agencyTopLoginBox").parent().after("test").wrap("<td></td>"));
 });
 
+$(function() {
+/* To remove test warning, click on red spacer cells */
+	$(".topNavSpacerTest").live( "click", function() {
+		$(".agencyTestWarningBox").remove();
+		$(".topNavSpacerTest").addClass('topNavSpacer').removeClass('topNavSpacerTest');
+	});
+});
+
