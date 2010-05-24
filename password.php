@@ -67,7 +67,7 @@ function can_change_password( $staff_id,$user_id="" )
 
 	}
 
-	return ($id == $staff_id) || has_perm($perm);
+	return ($id == $staff_id) || has_perm($perm) || ($id == $GLOBALS['sys_user']);
 
 }
 

@@ -108,6 +108,18 @@ $calendar_url = 'calendar_display.php';
 define('CALENDAR_REPORT_MEDICAL_URL',AG_REPORTS_URL.'?filename=clinical/med_calendar.cfg');
 define('CALENDAR_REPORT_INANIMATE_URL',AG_REPORTS_URL.'?filename=general/calendar.cfg');
 
+// You can disable self-serve password resets:
+//define('AG_PASSWORD_RESET_ENABLE',false);
+
+// Even if you disable resets, don't comment this line out
+define('AG_PASSWORD_RESET_URL','reset_password.php');
+
+/*
+ * Email Sender
+ * This will be the 'From:' line in any emails sent
+ */
+$AG_EMAIL_SENDER='AGENCY Software <noreply@'.$_SERVER['SERVER_NAME'].'>';
+
 //password and staff tables (moved from below)
 $staff_table="staff";
 $staff_table_id="staff_id";

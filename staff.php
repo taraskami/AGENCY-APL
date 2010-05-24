@@ -883,11 +883,21 @@ function staff_id_from_username($uname)
 	foreach (array('username','username_unix') as $x)
 	{
 		$res = get_generic(array($x => $uname),' is_active = true DESC',1,'staff');
-		if (sql_num_rows($res) > 0) {
+		if (sql_num_rows($res) == 1) {
 			$rec = sql_fetch_column($res,'staff_id');
 			return $rec[0];
 		}
 	
+	}
+	return false;
+}
+
+function staff_id_from_email($email)
+{
+	$res = get_generic(array('staff_email' => $email),' is_active = true DESC',1,'staff');
+	if (sql_num_rows($res) == 1) {
+		$rec = sql_fetch_column($res,'staff_id');
+		return $rec[0];
 	}
 	return false;
 }

@@ -204,3 +204,5 @@ select
 \i create.tbl_attachment.sql
 \i create.tbl_attachment_link.sql
 
+/* auth tokens, for resetting passwords */
+\i create.tbl_auth_token.sql

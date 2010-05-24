@@ -190,6 +190,7 @@ class Auth {
 				    . div(formpassword_md5($this->var_password,false,true,$this->var_unique_hash,'class="loginFormBox"'),'',' class="loginFormBox"')
 				    . div(button($AG_TEXT['AUTH_LOGIN_BUTTON_TEXT'],'submit','logbutton','',"",' class="loginFormButton"'),'',' class="loginFormButton"')
 				    . ( count($this->error)>0 ? div($this->format_errors(),'',' class="loginFormMessages"') : '')
+					. oline(hlink(AG_PASSWORD_RESET_URL,'I forgot my password'),2)
 				    ,'loginContainer')
 			    . div(oline($AG_TEXT['CONFIDENTIAL_STATEMENT'],2) . $AG_TEXT['COPYRIGHT_STATEMENT'],'loginConfidential')
 			    ,'',' class="loginForm"')
