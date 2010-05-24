@@ -2234,12 +2234,9 @@ function agency_top_header($commands="")
 	global $UID, $title, $database,$WHICH_DB,$testing_area_message,$db_server;
 	global $AUID, $AG_AUTH;
 	if (is_test_db()) {
-		$test_db_warning = div(
-			bold(white(bigger("WARNING: Test Database in use",3) 
-			. oline()
-			. smaller( 'Database: ' . $database[$WHICH_DB] . ', server: ' .$db_server[$WHICH_DB]))
-			. bold(help('test_database','',smaller('tell me more',2),' class="fancyLink"',false,true))),'agencyTestWarningBox');
-		$test_hide_link = oline(span(Java_Engine::toggle_id_display('Test Warning','agencyTestWarningBox','block'),'class="testDbWarningLink"'));
+		$test_db_warning=div('Warning: test database '
+         . $database[$WHICH_DB] . '@' .$db_server[$WHICH_DB] . ' ' 
+          .  help('test_database','','tell me more',' class="fancyLink"',false,true),'','class="agencyTestWarningBox"');
 	}
 	if (AG_SHOW_AUTH_TOP_LOGIN_BOX) {
 		$login_box = $AG_AUTH->top_login_box(); //must come prior to AG_HEAD_TAG being output by html_header()
@@ -2256,7 +2253,6 @@ function agency_top_header($commands="")
 	send_quick_search_js();
 	html_header($title);
 	$out .= ($testing_area_message);
-	//$out .= $test_db_warning;
 	$out .= $password_bar;
 
 	if (has_perm('user_switch','S',orr($AUID,$UID))) {
@@ -2289,13 +2285,13 @@ function agency_top_header($commands="")
 			$update_engine=oline(div($update_engine.toggle_label("Update engine..."),'','class="updateEngine hiddenDetail"'));
 		}
 
-       $out = $test_db_warning . show_top_nav(table(row(
+       $out = show_top_nav(table(row(
                        cell($user_logout_msg . $curr_id
 						 . $switch_id1
                          . smaller( $demo_mode_link)
-                       . $user_msg)
+                       . $user_msg . $test_db_warning, $test_style)
 ))
-                        ,$commands,$test_hide_link.$switch_id2.$update_engine.$login_box)
+                        ,$commands,$switch_id2.$update_engine.$login_box)
                 . $out; //test box in middle
 	out($out);
 }
@@ -2313,10 +2309,12 @@ function show_top_nav( $firstcell="",$cells="",$auth='')
 	}
 	//$links = help('MENU',$links,'MENU'); // Uncomment this hack to make your menu collapsible.
 	$bugzilla_link = ($tmp_link = link_bugzilla()) ? ' | '.$tmp_link : '';
-	$spacer=cell('','style="width: 5px; background-color: #fff;"');
+	$extra=is_test_db() ? 'Test' : '';
+	$spacer_plain=cell('','class="topNavSpacer"');
+	$spacer=cell('','class="topNavSpacer' . $extra . '"');
 	$out = tablestart("",'width="98%" cellpadding="0" cellspacing="0" border="0"')
 		. row(
-			topcell($firstcell,"align=\"left\" colspan=\"$cell_count\"") . $spacer . rightcell(table(row(
+			topcell($firstcell,"align=\"left\" colspan=\"$cell_count\"") . $spacer_plain . rightcell(table(row(
 				cell(organization_logo_small(),'class="logo"')
 				. cell(agency_logo_small(),'class="logo"') 
 				. cell(link_agency_donate())),'width="80"'),'width="80"'))

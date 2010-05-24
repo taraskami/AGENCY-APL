@@ -211,12 +211,29 @@ div.client_elevated_concern_short {
 }
 
 /* Test Warning Box */
-#agencyTestWarningBox {
+.agencyTestWarningBox {
 	background-color: red;
-	text-align: center;
-	width:100%; 
-	padding: 10px;
+	color: white;
+	padding: 5px;
+	font-size: 80%;
 }
+
+.agencyTestWarningBox a {
+	font-size: 70%;
+}
+
+/* Spacers for top bar cells */
+.topNavSpacer {
+	width: 5px;
+	background-color: #fff;
+}
+
+/* Augment test_db warning */
+.topNavSpacerTest {
+	width: 5px;
+	background-color: red;
+}
+
 
 /* Confidentiality Box */
 .confidentialBox {
