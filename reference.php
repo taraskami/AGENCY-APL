@@ -204,7 +204,7 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 			. button('Search','','','','','class="objectPickerSubmit"');
 	} elseif ($method=='Pick') {
 		$op .= selectto('objectPickerPickList',$obj_opt )
-			. do_pick_sql("SELECT $id_field AS value,$label_field AS label FROM " . $def['table'])
+			. do_pick_sql("SELECT $id_field AS value,$label_field AS label FROM " . $def['table'] . " ORDER BY $label_field")
 			. selectend()
 			. button('Add','','','','','class="objectPickerSubmit" ' . $obj_option);
 	}
