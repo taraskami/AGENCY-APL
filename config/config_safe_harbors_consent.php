@@ -1,11 +1,12 @@
-<?php
+//config_safe_harbors_consent.php
 
+<?php
 /*
 <LICENSE>
 
 This file is part of AGENCY.
 
-AGENCY is Copyright (c) 2003-2009 by Ken Tanzer and Downtown Emergency
+AGENCY is Copyright (c) 2003-2010 by Ken Tanzer and Downtown Emergency
 Service Center (DESC).
 
 All rights reserved.
@@ -31,20 +32,13 @@ should be included in this distribution.
 </LICENSE>
 */
 
-
-$engine['safe_harbors_consent'] = array(
-						    'fields'=>array(
-									  'safe_harbors_exclude_data_codes'=>
-									  array(
-										  'lookup_format'=>'checkbox_v',
-										  'lookup_order'=>'TABLE_ORDER',
-										  'valid'=>array('(be_null($x) && $rec["safe_harbors_consent_status_code"] != "REFUSED_D") || (!be_null($x) && $rec["safe_harbors_consent_status_code"]=="REFUSED_D")'=>'{$Y} should only be filled in if client consented to Safe Harbors, but wished to exclude certain data elements',
-												     '!(in_array("SSN",$x) and in_array("SSN_P",$x))'=>'{$Y} cannot have both SSN options selected.'),
-										  'label'=>'Data Elements to Exclude from Safe Harbors',
-										  'comment'=>'Fill in ONLY if client has consented to Safe Harbors, but wishes to exclude these elements'
-										  )
-									  )
-						    );
-										
-												     
+$engine['safe_harbors_consent']=array(
+                                'singular'=>'Safe Harbors Consent',
+                                'list_fields'=>array('consent_status_code','consent_date'),
+                                'add_link_show'=>true,
+                                'fields'=>array(
+                                                                'consent_status_code'=>array('label'=>'Safe Harbors Consent Given?'),
+                                                                'safe_harbors_consent_paper_form'=>array('data_type'=>'attachment')
+                                                                )
+                        );
 ?>
