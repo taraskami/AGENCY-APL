@@ -73,7 +73,8 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 	    $control_array['action']=orr($control_array['action'],'view'); //DEFAULT IS VIEW
 
 	    //CHECK PERMISSIONS TO DETERMINE WHETHER A LINK IS GENERATED
-		if ($control_array['object']=='attachment_link') {
+		//But don't check pending attachments
+		if ($control_array['object']=='attachment_link' and (is_numeric($control_array['id']))) {
 			$ctrl_temp=$control_array;
 			//For these, test permissions of parent record
 			$aa_def=get_def('attachment_link');
