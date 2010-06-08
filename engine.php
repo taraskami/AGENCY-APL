@@ -649,7 +649,7 @@ function engine($control='',$control_array_variable='control')
 			$show_selected = object_reference_container();
 
 			/* Object References Form */
-			if ($objs = $def['allow_object_references']) {
+			if (($action=='add') and ($objs = $def['allow_object_references'])) {
 
 				foreach ($objs as $obj ) {
 					$t_def=get_def($obj);
