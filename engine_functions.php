@@ -2340,7 +2340,7 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 			    if (!eval( "return $test;" )) {
 				    $mesg .= empty($msg) 
 					    ? oline("Field $label has an invalid value.")
-					    : oline(str_replace('{$Y}',$label,$msg));
+					    : oline(str_replace(array('{$Y}','{$x}'),array($label,$x),$msg));
 				    $valid=false;
 			    }
 		    }
