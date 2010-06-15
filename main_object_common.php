@@ -273,7 +273,7 @@ function client_link( $idnum, $name="lookup", $url="" , $options=null)
 	{
 		$name=client_name($idnum,$max_length);
 	}
-	$result=hlink(orr($url,$client_page)."?id=$idnum",$name,'',$options) . "\n";
+	$result=hlink($GLOBALS['off']. orr($url,$client_page)."?id=$idnum",$name,'',$options) . "\n";
 	$client_links[$idnum]=$result;
 	return $result; 
 }

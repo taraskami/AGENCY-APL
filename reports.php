@@ -525,7 +525,7 @@ if (!be_null($init) && is_assoc_array($init)) {
 			$url .= '&'.AG_REPORTS_VARIABLE_PREFIX.$var.'='.$val;
 		}
 	}
-	$url = AG_REPORTS_URL . '?report_id='.$report_id . $url;
+	$url = $GLOBALS['off'].AG_REPORTS_URL . '?report_id='.$report_id . $url;
 	$rep = get_report_from_db($report_id);
 	return hlink_if($url,$label,(be_null($rep['report_permission']) || has_perm($rep['report_permission'])));
 }
