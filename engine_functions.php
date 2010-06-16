@@ -1792,8 +1792,11 @@ function view_generic_row($key,$value,$def,$action,$rec)
 	default:
 		$value_cell = cell($value,$v_opts);
 	}
-
-	return row($label_cell.$value_cell);
+	$pre = orr($pr['row_before_view'],$pr['row_before']);
+	$post = orr($pr['row_after_view'],$pr['row_after']);
+	return ($pre ? row(cell(eval('return ' . $pre.';'),'colspan=2')) : '' )
+	. row($label_cell.$value_cell)
+	. ($post ? row(cell(eval('return ' . $post.';'),'colspan=2')) : '');
 
 }
 
@@ -2106,7 +2109,11 @@ function form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec,$formvar
 		$value_cell = cell($field,$v_opts);
 	}
 	$out = row($label_cell.$value_cell);
-      return $out;
+	$pre = orr($pr['row_before_edit'],$pr['row_before']);
+	$post = orr($pr['row_after_edit'],$pr['row_after']);
+	return ($pre ? row(cell(eval('return ' . $pre.';'),'colspan=2')) : '' )
+	. $out
+	. ($post ? row(cell(eval('return ' . $post.';'),'colspan=2')) : '');
 }
 
 function form_generic($rec,$def,$control)
