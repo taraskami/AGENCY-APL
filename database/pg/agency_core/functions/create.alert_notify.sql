@@ -47,6 +47,30 @@ CREATE OR REPLACE FUNCTION verify_alert_notify() RETURNS trigger AS $$
           }
      }
 
+     if {[info exists NEW(alert_notify_field2)]} {
+          spi_exec "SELECT a.attrelid AS col FROM pg_catalog.pg_attribute a
+               WHERE a.attrelid = $oid AND a.attname ~ '^$NEW(alert_notify_field2)$' AND NOT a.attisdropped"
+          if {![info exists col]} {
+               elog ERROR "$NEW(alert_notify_field2) does not exist in $NEW(alert_object)"
+          }
+     }
+
+     if {[info exists NEW(alert_notify_field3)]} {
+          spi_exec "SELECT a.attrelid AS col FROM pg_catalog.pg_attribute a
+               WHERE a.attrelid = $oid AND a.attname ~ '^$NEW(alert_notify_field3)$' AND NOT a.attisdropped"
+          if {![info exists col]} {
+               elog ERROR "$NEW(alert_notify_field3) does not exist in $NEW(alert_object)"
+          }
+     }
+
+     if {[info exists NEW(alert_notify_field4)]} {
+          spi_exec "SELECT a.attrelid AS col FROM pg_catalog.pg_attribute a
+               WHERE a.attrelid = $oid AND a.attname ~ '^$NEW(alert_notify_field4)$' AND NOT a.attisdropped"
+          if {![info exists col]} {
+               elog ERROR "$NEW(alert_notify_field4) does not exist in $NEW(alert_object)"
+          }
+     }
+
      return [array get NEW]
 $$ LANGUAGE pltcl;
 
@@ -113,39 +137,122 @@ CREATE OR REPLACE FUNCTION table_alert_notify() RETURNS trigger AS $$
 
      #get staff and insert alert
      set staff [list]
-     spi_exec -array notify_recs "SELECT staff_id, alert_notify_field, alert_notify_value FROM alert_notify_current 
-		LEFT JOIN staff USING (staff_id)
+     spi_exec -array notify_recs "SELECT staff_id, 
+		match_program_field,
+		match_project_field,
+		match_facility_field,
+		match_position_field,
+		match_shift_field,
+		match_assignments_field,
+		match_supervisor_field,
+		match_supervisees_field,
+		alert_notify_field,
+		alert_notify_value
+		FROM alert_notify_current 
 		WHERE alert_object='$object' 
- 			AND alert_notify_action_code IN ('$action','ANY') 
-			AND is_active" {
+		AND alert_notify_action_code IN ('$action','ANY')" {
+
+		  set notify1 false
+		  set notify2 false
+		  set notify3 false
+		  set notify4 false
 
           if {[info exists notify_recs(alert_notify_field)]} {
-
                #
                # field is set, determine if value matches
                #
-
                if {[info exists record($notify_recs(alert_notify_field))] 
                     && [info exists notify_recs(alert_notify_value)]} { #value match
-
-                    if { $record($notify_recs(alert_notify_field)) == $notify_recs(alert_notify_value) } {
-
-                         lappend staff $notify_recs(staff_id)
-
-                    }
-
+                    	if { $record($notify_recs(alert_notify_field)) == $notify_recs(alert_notify_value) } {
+							set notify1 true
+                    	}
                } elseif {![info exists record($notify_recs(alert_notify_field))] 
                     && ![info exists notify_recs(alert_notify_value)]} { #null value match
-
-                    lappend staff $notify_recs(staff_id)
-
+						set notify1 true
                }
-
           } else {
-
-               lappend staff $notify_recs(staff_id)
-
+				set notify1 true
           }
+
+		  # This is unnecessarily long, duplicating 1 field/value for 2nd pair
+          if {[info exists notify_recs(alert_notify_field2)]} {
+               if {[info exists record($notify_recs(alert_notify_field2))] 
+                    && [info exists notify_recs(alert_notify_value2)]} { #value match
+                    	if { $record($notify_recs(alert_notify_field2)) == $notify_recs(alert_notify_value2) } {
+							set notify2 true
+                    	}
+               } elseif {![info exists record($notify_recs(alert_notify_field2))] 
+                    && ![info exists notify_recs(alert_notify_value2)]} { #null value match
+						set notify2 true
+               }
+          } else {
+				set notify2 true
+          }
+          
+		if {[info exists notify_recs(alert_notify_field3)]} {
+               if {[info exists record($notify_recs(alert_notify_field3))] 
+                    && [info exists notify_recs(alert_notify_value3)]} { #value match
+                    	if { $record($notify_recs(alert_notify_field3)) == $notify_recs(alert_notify_value3) } {
+							set notify3 true
+                    	}
+               } elseif {![info exists record($notify_recs(alert_notify_field3))] 
+                    && ![info exists notify_recs(alert_notify_value3)]} { #null value match
+						set notify3 true
+               }
+          } else {
+				set notify3 true
+          }
+
+		if {[info exists notify_recs(alert_notify_field4)]} {
+               if {[info exists record($notify_recs(alert_notify_field4))] 
+                    && [info exists notify_recs(alert_notify_value4)]} { #value match
+                    	if { $record($notify_recs(alert_notify_field4)) == $notify_recs(alert_notify_value4) } {
+							set notify4 true
+                    	}
+               } elseif {![info exists record($notify_recs(alert_notify_field4))] 
+                    && ![info exists notify_recs(alert_notify_value4)]} { #null value match
+						set notify4 true
+               }
+          } else {
+				set notify4 true
+          }
+
+		if { $notify1 && $notify2 && $notify3 && $notify4 } {
+			set query_select "SELECT distinct staff_id FROM staff WHERE is_active "
+			set filter ""
+            if { [info exists notify_recs(match_facility_field)] } {
+				set filter "$filter AND staff.agency_facility_code = '$record($notify_recs(match_facility_field))'"
+			}
+            if { [info exists notify_recs(match_project_field)] } {
+				set filter "$filter AND staff.agency_project_code = '$record($notify_recs(match_project_field))'"
+			}
+            if { [info exists notify_recs(match_program_field)] } {
+				set filter "$filter AND staff.agency_program_code = '$record($notify_recs(match_program_field))'"
+			}
+            if { [info exists notify_recs(match_position_field)] } {
+				set filter "$filter AND staff.staff_position_code = '$record($notify_recs(match_position_field))'"
+			}
+            if { [info exists notify_recs(match_shift_field)] } {
+				set filter "$filter AND staff.staff_shift_code = '$record($notify_recs(match_shift_field))'"
+			}
+            if { [info exists notify_recs(match_assignments_field)] } {
+				set filter "$filter AND staff.staff_id = ANY(client_staff_assign_own($record($notify_recs(match_assignments_field))))"
+			}
+			# Immediate supervisor
+            if { [info exists notify_recs(match_supervisor_field)] } {
+				set filter "$filter AND staff.supervised_by = '$record($notify_recs(match_supervisor_field))'"
+			}
+			# Any supervisee below in direct chain:
+            if { [info exists notify_recs(match_supervisees_field)] } {
+				set filter "$filter AND is_supervised_by('$record($notify_recs(match_supervisor_field))',staff.supervised_by)"
+			}
+            if { [info exists notify_recs(staff_id)] } {
+				set filter "$filter AND staff.staff_id = '$notify_recs(staff_id)'"
+			}
+			spi_exec -array notify_staff "$query_select $filter" {
+				lappend staff $notify_staff(staff_id)	
+		 	}
+		}
      }
 
      if {$action=="INSERT"} {

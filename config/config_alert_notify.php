@@ -33,22 +33,41 @@ should be included in this distribution.
 
 
 $engine['alert_notify'] = array(
-					  'singular' =>'Alert Notify Record',
-					  'add_another' => true,
-					  'list_fields' => array('alert_object','alert_notify_action_code','alert_notify_field','alert_notify_value','alert_notify_date'),
-					  'fields' => array(
-								  'alert_object'=>array(
-												'data_type'=>'lookup',
-												'lookup' => array(
-															'table'=>'alert_notify_enabled_objects',
-															'value_field'=>'alert_object_code',
-															'label_field'=>'description'
-															)
-												),
-								  'alert_notify_value'=>array('data_type'=>'varchar'),
-								  'alert_notify_reason'=>array('null_ok'=>false,
-													 'label'=>'Reason for notification?')
-								  )
-					  );
+  /* FIXME: self perm not working. Not strictly needed, as valid on staff_id enforces own only */
+  //'perm'=>'self',
+  'singular' =>'Alert Notify Record',
+  'add_another' => true,
+  'list_fields' => array('alert_notify_date','alert_object','alert_notify_action_code','alert_notify_basis'),
+  'fields' => array(
+	  'staff_id'=>array( 
+            	'row_before'=>'oline(bigger(bold("Who to notify"))) . italic("All of these conditions must be met")',
+		'valid'=>array( 'has_perm("super_user") or ($x==$GLOBALS["UID"])'=>'You can only set notifications for yourself'),
+		'confirm'=>array( '!be_null($x)'=>'You are setting a group alert notification.  Do so with caution',
+			'be_null($x) or ($x ==$GLOBALS["UID"])'=>'You are setting an alert notification for another staff member.  Make sure this is correct')),
+	  'alert_object'=>array(
+            	'row_before'=>'oline(bigger(bold("Basic Setup")))',
+		'data_type'=>'lookup',
+		'lookup' => array(
+			'table'=>'alert_notify_enabled_objects',
+			'value_field'=>'alert_object_code',
+			'label_field'=>'description'
+			)
+		),
+		'alert_notify_field'=>array(
+            		'row_before'=>'oline(bigger(bold("Advanced triggering conditions")))',
+			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
+		'alert_notify_field2'=>array(
+			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
+		'alert_notify_field3'=>array(
+			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
+		'alert_notify_field4'=>array(
+			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
+		'alert_notify_reason'=>array('null_ok'=>false,
+            		'row_before'=>'oline(bigger(bold("Purpose and Comments")))',
+			'label'=>'Reason for notification?'),
+		'match_program_field' => array( 'row_before_edit' => 'oline(bold(smaller("select fields to match with Staff record")))'),
+        	'match_assignments_field' => array( 'row_before_edit'=>'oline(bold(smaller("or ' . ucfirst(AG_MAIN_OBJECT) . ' field to match with case list")))' )
+	)
+);
 
 ?>
