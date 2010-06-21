@@ -65,7 +65,7 @@ $engine['alert_notify'] = array(
 		'alert_notify_reason'=>array('null_ok'=>false,
             		'row_before'=>'oline(bigger(bold("Purpose and Comments")))',
 			'label'=>'Reason for notification?'),
-		'match_program_field' => array( 'row_before_edit' => 'oline(bold(smaller("select fields to match with Staff record")))'),
+		'match_program_field' => array( 'row_before' => 'oline(bold(smaller("These fields in triggering object matched with Staff record")))'),
         	'match_assignments_field' => array( 'row_before_edit'=>'oline(bold(smaller("or ' . ucfirst(AG_MAIN_OBJECT) . ' field to match with case list")))' )
 	)
 );

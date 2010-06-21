@@ -7,6 +7,12 @@ CREATE TABLE tbl_alert_notify (
 
 	/* Whom to alert */
 	staff_id				INTEGER REFERENCES tbl_staff ( staff_id ),
+	agency_program_code		VARCHAR(10) REFERENCES tbl_l_agency_program (agency_program_code),
+	agency_project_code		VARCHAR(10) REFERENCES tbl_l_agency_project (agency_project_code),
+	staff_position_code		VARCHAR(10) REFERENCES tbl_l_staff_position (staff_position_code),
+	facility_code		VARCHAR(10) REFERENCES tbl_l_facility (facility_code),	
+	staff_shift_code		VARCHAR(10) REFERENCES tbl_l_staff_shift (staff_shift_code),	
+	/* Match staff info w/ trigger record */
 	match_program_field		NAME,
 	match_project_field		NAME,
 	match_position_field	NAME,

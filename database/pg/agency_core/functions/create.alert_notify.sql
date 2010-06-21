@@ -138,6 +138,11 @@ CREATE OR REPLACE FUNCTION table_alert_notify() RETURNS trigger AS $$
      #get staff and insert alert
      set staff [list]
      spi_exec -array notify_recs "SELECT staff_id, 
+		agency_program_code,
+		agency_project_code,
+		staff_position_code,
+		facility_code,
+		staff_shift_code,
 		match_program_field,
 		match_project_field,
 		match_facility_field,
@@ -220,6 +225,21 @@ CREATE OR REPLACE FUNCTION table_alert_notify() RETURNS trigger AS $$
 		if { $notify1 && $notify2 && $notify3 && $notify4 } {
 			set query_select "SELECT distinct staff_id FROM staff WHERE is_active "
 			set filter ""
+            if { [info exists notify_recs(agency_program_code)] } {
+				set filter "$filter AND staff.agency_program_code = '$notify_recs(agency_program_code)'"
+			}
+            if { [info exists notify_recs(agency_project_code)] } {
+				set filter "$filter AND staff.agency_project_code = '$notify_recs(agency_project_code)'"
+			}
+            if { [info exists notify_recs(staff_position_code)] } {
+				set filter "$filter AND staff.staff_position_code = '$notify_recs(staff_position_code)'"
+			}
+            if { [info exists notify_recs(facility_code)] } {
+				set filter "$filter AND staff.facility_code = '$notify_recs(facility_code)'"
+			}
+            if { [info exists notify_recs(staff_shift_code)] } {
+				set filter "$filter AND staff.staff_shift_code = '$notify_recs(staff_shift_code)'"
+			}
             if { [info exists notify_recs(match_facility_field)] } {
 				set filter "$filter AND staff.agency_facility_code = '$record($notify_recs(match_facility_field))'"
 			}
