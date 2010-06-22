@@ -10,7 +10,7 @@ CREATE TABLE tbl_alert_notify (
 	agency_program_code		VARCHAR(10) REFERENCES tbl_l_agency_program (agency_program_code),
 	agency_project_code		VARCHAR(10) REFERENCES tbl_l_agency_project (agency_project_code),
 	staff_position_code		VARCHAR(10) REFERENCES tbl_l_staff_position (staff_position_code),
-	facility_code		VARCHAR(10) REFERENCES tbl_l_facility (facility_code),	
+	agency_facility_code		VARCHAR(10) REFERENCES tbl_l_agency_facility (agency_facility_code),	
 	staff_shift_code		VARCHAR(10) REFERENCES tbl_l_staff_shift (staff_shift_code),	
 	/* Match staff info w/ trigger record */
 	match_program_field		NAME,
@@ -53,11 +53,11 @@ CREATE VIEW alert_notify AS SELECT *,
             CASE WHEN match_assignments_field IS NOT NULL THEN 'ASSIGN ' ELSE '' END
             || CASE WHEN match_supervisor_field IS NOT NULL THEN 'BOSS ' ELSE '' END
             || CASE WHEN match_supervisees_field IS NOT NULL THEN 'STAFF ' ELSE '' END
-            || CASE WHEN match_program_field IS NOT NULL THEN 'PROG ' ELSE '' END
-            || CASE WHEN match_project_field IS NOT NULL THEN 'PROJ ' ELSE '' END
-            || CASE WHEN match_position_field IS NOT NULL THEN 'POS ' ELSE '' END
-            || CASE WHEN match_facility_field IS NOT NULL THEN 'FACIL ' ELSE '' END
-            || CASE WHEN match_shift_field IS NOT NULL THEN 'SHIFT ' ELSE '' END
+            || CASE WHEN COALESCE(match_program_field,agency_program_code) IS NOT NULL THEN 'PROG ' ELSE '' END
+            || CASE WHEN COALESCE(match_project_field,agency_project_code) IS NOT NULL THEN 'PROJ ' ELSE '' END
+            || CASE WHEN COALESCE(staff_position_code,match_position_field) IS NOT NULL THEN 'POS ' ELSE '' END
+            || CASE WHEN COALESCE(agency_facility_code,match_facility_field) IS NOT NULL THEN 'FACIL ' ELSE '' END
+            || CASE WHEN COALESCE(staff_shift_code,match_shift_field) IS NOT NULL THEN 'SHIFT ' ELSE '' END
             || CASE WHEN staff_id IS NOT NULL THEN 'ID' ELSE '' END)
         END AS alert_notify_basis
  	FROM tbl_alert_notify

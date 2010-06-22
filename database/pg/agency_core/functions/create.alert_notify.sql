@@ -141,7 +141,7 @@ CREATE OR REPLACE FUNCTION table_alert_notify() RETURNS trigger AS $$
 		agency_program_code,
 		agency_project_code,
 		staff_position_code,
-		facility_code,
+		agency_facility_code,
 		staff_shift_code,
 		match_program_field,
 		match_project_field,
@@ -234,8 +234,8 @@ CREATE OR REPLACE FUNCTION table_alert_notify() RETURNS trigger AS $$
             if { [info exists notify_recs(staff_position_code)] } {
 				set filter "$filter AND staff.staff_position_code = '$notify_recs(staff_position_code)'"
 			}
-            if { [info exists notify_recs(facility_code)] } {
-				set filter "$filter AND staff.facility_code = '$notify_recs(facility_code)'"
+            if { [info exists notify_recs(agency_facility_code)] } {
+				set filter "$filter AND staff.agency_facility_code = '$notify_recs(facility_code)'"
 			}
             if { [info exists notify_recs(staff_shift_code)] } {
 				set filter "$filter AND staff.staff_shift_code = '$notify_recs(staff_shift_code)'"
