@@ -52,6 +52,4 @@ WHERE alert_notify_date <= CURRENT_DATE AND (alert_notify_date_end IS NULL OR al
 
 \i ../agency_core/functions/create.alert_notify.sql
 
-/*
 COMMIT; 
-*/
