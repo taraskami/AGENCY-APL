@@ -39,37 +39,17 @@ CREATE OR REPLACE FUNCTION verify_alert_notify() RETURNS trigger AS $$
           elog ERROR "Must use valid objects in tbl_alert_notify. $NEW(alert_object) does not exist."
      }
 
-     if {[info exists NEW(alert_notify_field)]} {
-          spi_exec "SELECT a.attrelid AS col FROM pg_catalog.pg_attribute a
-               WHERE a.attrelid = $oid AND a.attname ~ '^$NEW(alert_notify_field)$' AND NOT a.attisdropped"
-          if {![info exists col]} {
-               elog ERROR "$NEW(alert_notify_field) does not exist in $NEW(alert_object)"
-          }
-     }
+	set match_fields { alert_notify_field alert_notify_field2 alert_notify_field3 alert_notify_field4 match_program_field match_project_field match_position_field match_facility_field match_shift_field match_supervisor_field match_supervisees_field match_assignments_field }
 
-     if {[info exists NEW(alert_notify_field2)]} {
-          spi_exec "SELECT a.attrelid AS col FROM pg_catalog.pg_attribute a
-               WHERE a.attrelid = $oid AND a.attname ~ '^$NEW(alert_notify_field2)$' AND NOT a.attisdropped"
-          if {![info exists col]} {
-               elog ERROR "$NEW(alert_notify_field2) does not exist in $NEW(alert_object)"
-          }
-     }
-
-     if {[info exists NEW(alert_notify_field3)]} {
-          spi_exec "SELECT a.attrelid AS col FROM pg_catalog.pg_attribute a
-               WHERE a.attrelid = $oid AND a.attname ~ '^$NEW(alert_notify_field3)$' AND NOT a.attisdropped"
-          if {![info exists col]} {
-               elog ERROR "$NEW(alert_notify_field3) does not exist in $NEW(alert_object)"
-          }
-     }
-
-     if {[info exists NEW(alert_notify_field4)]} {
-          spi_exec "SELECT a.attrelid AS col FROM pg_catalog.pg_attribute a
-               WHERE a.attrelid = $oid AND a.attname ~ '^$NEW(alert_notify_field4)$' AND NOT a.attisdropped"
-          if {![info exists col]} {
-               elog ERROR "$NEW(alert_notify_field4) does not exist in $NEW(alert_object)"
-          }
-     }
+	foreach f $match_fields {
+		if {[info exists NEW($f)]} {
+			spi_exec "SELECT a.attrelid AS col FROM pg_catalog.pg_attribute a
+				WHERE a.attrelid = $oid AND a.attname ~ '^$NEW($f)$' AND NOT a.attisdropped"
+			if {![info exists col]} {
+				elog ERROR "Invalid alert_notify record: field $NEW($f) does not exist in $NEW(alert_object)"
+			}
+		}
+	}
 
      return [array get NEW]
 $$ LANGUAGE pltcl;

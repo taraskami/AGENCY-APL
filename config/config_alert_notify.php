@@ -62,11 +62,28 @@ $engine['alert_notify'] = array(
 			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
 		'alert_notify_field4'=>array(
 			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
+
+		'match_program_field' => array( 
+			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object'),
+			'row_before' => 'oline(bold(smaller("These fields in triggering object matched with Staff record")))'),
+		'match_position_field'=>array(
+			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
+		'match_project_field'=>array(
+			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
+		'match_shift_field'=>array(
+			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
+		'match_facility_field'=>array(
+			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
+		'match_supervisor_field'=>array(
+			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
+		'match_supervisees_field'=>array(
+			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
+		'match_assignments_field'=>array(
+			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object'),
+        	'row_before_edit'=>'oline(bold(smaller("or ' . ucfirst(AG_MAIN_OBJECT) . ' field to match with case list")))' ),
 		'alert_notify_reason'=>array('null_ok'=>false,
             		'row_before'=>'oline(bigger(bold("Purpose and Comments")))',
-			'label'=>'Reason for notification?'),
-		'match_program_field' => array( 'row_before' => 'oline(bold(smaller("These fields in triggering object matched with Staff record")))'),
-        	'match_assignments_field' => array( 'row_before_edit'=>'oline(bold(smaller("or ' . ucfirst(AG_MAIN_OBJECT) . ' field to match with case list")))' )
+			'label'=>'Reason for notification?')
 	)
 );
 
