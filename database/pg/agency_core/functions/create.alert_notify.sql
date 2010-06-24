@@ -235,7 +235,7 @@ CREATE OR REPLACE FUNCTION table_alert_notify() RETURNS trigger AS $$
 				set filter "$filter AND staff.staff_position_code = '$notify_recs(staff_position_code)'"
 			}
             if { [info exists notify_recs(agency_facility_code)] } {
-				set filter "$filter AND staff.agency_facility_code = '$notify_recs(facility_code)'"
+				set filter "$filter AND staff.agency_facility_code = '$notify_recs(agency_facility_code)'"
 			}
             if { [info exists notify_recs(staff_shift_code)] } {
 				set filter "$filter AND staff.staff_shift_code = '$notify_recs(staff_shift_code)'"
