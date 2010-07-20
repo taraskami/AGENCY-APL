@@ -2322,10 +2322,8 @@ function show_top_nav( $firstcell="",$cells="",$auth='')
 				. cell(agency_logo_small(),'class="logo"') 
 				. cell(link_agency_donate())),'width="80"'),'width="80"'))
 		. rowstart() 
-		. bottomcell(
-				 $links
-				 ,"width=\"70\" align=\"left\" bgcolor=\"{$colors['menu']}\" class=\"\"");
-	$out .= $spacer;
+		. bottomcell($links,'id="topMenuCell"')
+		. $spacer;
 	if ($auth) {
 		$out .= bottomcell($auth,'class="staff"').$spacer;
 	}
