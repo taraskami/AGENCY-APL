@@ -121,7 +121,7 @@ $enable_query="INSERT INTO tbl_db_revision_history
 
      VALUES ('ENABLING_TABLE_LOG_TRIGGERS'||current_timestamp, /*UNIQUE_DB_MOD_NAME */
             'Enabling Table Log triggers', /* DESCRIPTION */
-            '" . strtoupper(AG_MAIN_OBJECT) ."',
+            '" . strtoupper(AG_MAIN_OBJECT_DB) ."',
             '', /* git SHA ID, if applicable */
             '', /* git tag, if applicable */
             current_timestamp, /* Applied at */
