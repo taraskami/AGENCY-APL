@@ -44,4 +44,6 @@ INSERT INTO tbl_l_permission_type VALUES ('PASSWORD', 'Change Passwords',sys_use
 INSERT INTO tbl_l_permission_type VALUES ('USER_SWITCH', 'Switch User Identity',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_permission_type VALUES ('STAFF_REQUEST', 'Staff Requests',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_permission_type VALUES ('UPDATE_ENGINE', 'Update the Engine Array',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_permission_type VALUES ('GENERIC_OO_EXPORT', 'Output Generic OpenOffice files',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_permission_type VALUES ('SQL_DUMP', 'Output Data in Raw Formats',sys_user(),current_timestamp,sys_user(),current_timestamp);
 
