@@ -708,7 +708,12 @@ function config_object($object)
 	    }
 
       }
-
+	  foreach ($OBJECT['fields'] as $k=>$field) {
+	    if (!isset($config_object['fields'][$k]['length']) and ($field['data_type']=='text')) {
+			// don't set length unless manually specified for text fields
+			unset($OBJECT['fields'][$k]['length']);
+		}
+	  }
       return $OBJECT;
 
 }
