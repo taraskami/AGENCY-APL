@@ -56,6 +56,17 @@ function add_link($object,$label='',$options=null,$rec_init=NULL)
 	return link_engine($control,orr($label,'Add ' . aan($sing) . ' ' . $sing),'',$options);
 }
 
+function list_link($object,$label='',$filter='',$order='',$options=null)
+{
+	/*
+	 * A quick list link engine function
+	 */
+	$def=get_def($object);
+	$plur=$def['plural'];
+	$list_a=array('filter'=>orr($filter,array()),'order'=>orr($order,array()));
+	return link_engine(array('object'=>$object,'action'=>'list','id'=>'list','list'=>$list_a),orr($label,'List ' . $plur),'',$options);
+}
+
 function qelink($rec,$def,$label,$options=null)
 {
 	return elink($def['object'],$rec[$def['id_field']],$label,$options);
