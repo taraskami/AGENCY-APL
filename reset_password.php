@@ -33,13 +33,14 @@ should be included in this distribution.
 
 
 include 'command_line_includes.php';
-
+$js_head=link_style_sheet('agency.css') . link_style_sheet('reset_password.css');
 $UID=$sys_user;
 
-$title = "AGENCY Password Reset Page";
+$title = agency_logo_small() . "AGENCY Password Reset Page";
 $footer .= oline() . oline("Return to the " . link_agency_home('AGENCY Home Page'),3);
 $div_id='passwordResetPage';
 $div2='id="passwordResetPage"';
+$div2=$div_id;
 
 $email=$_REQUEST['email'];
 $token=$_REQUEST['token'];
@@ -89,7 +90,7 @@ if (!$token) {
 	$out .= new_password_form($email,$token);
 }
 
-out(div(oline($out,2) . $footer,$div2));
+out($AG_HEAD_TAG . div(oline($out,2) . $footer,$div2));
 page_close();
 exit;
 ?>
