@@ -168,28 +168,62 @@ EOF
 
 		$i = 0;
 		foreach ($alerts as $x) {
-
+			$extra=$action=$user=$action2=$user2='';
 			$color_flip = !$color_flip;
 			$rowclass = $color_flip ? '2' : '1';
 
-			if (strtoupper($x['ref_table'])=='LOG') {
-				$alert_description=$x['ref_table'] . ' ' . $x['ref_id'] . ': ';
-				//$alert_link=log_link($x['ref_id'],$x['summary']);
-				$alert_link=log_link($x['ref_id']);
-
-			} else { //engine stuff here -- send to alert record
-
- 				$alert_description = engine_translate_singular($x['ref_table']) . ': ';
- 				$alert_link=link_engine(array('object'=>'alert','id'=>$x['alert_id']),$x['alert_subject']);
-
-			}
+			    //engine stuff here -- send to alert record
+				preg_match('/.* ([a-z]*)$/i',$x['alert_subject'],$matches);
+				$action=strtolower($matches[1]);
+				$ref_def=get_def($x['ref_table']);
+				$ref=get_generic(array($ref_def['id_field']=>$x['ref_id']),'','',$x['ref_table']);
+				if ($ref=sql_fetch_assoc($ref)) {
+					if (array_key_exists('staff_id',$ref)) {
+						$extra = staff_link($ref['staff_id']);
+					}
+					if (array_key_exists('client_id',$ref)) {
+						$extra .= client_link($ref['client_id']);
+					} else {
+						$refs=object_references_f($x['ref_table'],$x['ref_id'],NULL,$sep=', ');
+						$extra .= $refs;
+					}
+					switch ($action) {
+						case 'added' :
+							$user=$ref['added_by'];
+							break;
+						case 'edited' :
+							$user=$ref['changed_by'];
+							break;
+						case 'deleted' :
+							$user=$ref['deleted_by'];
+							break;
+						case 'attention' : // flagged--log,or after-the-fact-reference
+							$action='';
+							if (strtoupper($x['ref_table']=='LOG')) {
+								$user=$ref['written_by'];
+							} else {
+								$user=$ref['changed_by']; // show who changed last, I guess??
+							}	
+							if ($x['changed_by'] <> $ref['changed_by']) {
+								$action2='flagged';
+								$user2=$x['changed_by'];
+							}
+							break;
+					}
+				}
+ 				$alert_description = strtoupper($x['ref_table'])=='LOG' ? "Log: " . $ref['subject'] : engine_translate_singular($x['ref_table']);
+ 				$alert_link=smaller(link_engine(array('object'=>'alert','id'=>$x['alert_id']),'detail'));
+ 				$ref_link=link_engine(array('object'=>$x['ref_table'],'id'=>$x['ref_id']),$alert_description);
 
 			$rows .=row(
 					cell(smaller(datetimeof($x['added_at'],'US','TWO')))
 					. cell(smaller(staff_link($x['added_by'])))
 					. cell(
-						 $alert_description
-						 . $alert_link)
+						 "$ref_link "
+						 . smaller("$action by " .staff_link($user).": ") 
+						 . ($action2 ? smaller("$action2 by " .staff_link($user2).": ") : '')
+						 . ($extra? smaller("($extra)") : '')
+						 . ($alert_link ? " $alert_link" : ''))
 					. cell(
 						 right(form_field('boolcheck','acknowledge['.$x['alert_id'].']','',
 									' id="alert'.$i.'" onclick="checkRow(this,event,'.$i.')" title="Hold down Shift key to select multiple alerts"')) 
