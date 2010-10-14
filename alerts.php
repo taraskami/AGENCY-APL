@@ -340,7 +340,7 @@ function view_alert($rec,$def,$action,$control='',$control_array_variable='contr
 
 function staff_alerts_f($object,$id,$sep='') {
 	$sep=orr($sep,$GLOBALS['NL']);
-	$alerts=get_alerts(array('ref_table'=>$object,'ref_id'=>$id));
+	if ($id>0 and (intval($id)==$id)) { $alerts=get_alerts(array('ref_table'=>$object,'ref_id'=>$id)); }
 	while ($rec=sql_fetch_assoc($alerts)) {
 		$link=staff_link($rec['staff_id']);
 		if ($rec['staff_id']==$GLOBALS['UID']) { //Alert to user
