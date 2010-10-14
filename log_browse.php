@@ -184,6 +184,8 @@ if (isset($pick_logs)) {
 $AG_USER_OPTION->set_option('LOG_DISPLAY_OPTIONS',$USER_PREFS);
 
 $log_count = count_rows($log_table,$LOG_FILTER);
+$logs_per_screen=min($log_count,$logs_per_screen); 
+
 if (isset($_REQUEST['log_jump_date']) and ($tmp_jump=dateof($_REQUEST['log_jump_date'],'SQL'))) {
 	$tmp_filter = $LOG_FILTER;
 	$tmp_filter['<: added_at']=$tmp_jump;
@@ -274,7 +276,13 @@ case 'show_page_logs' :
 
 	if ( ! (($LOG_POS >=0) and ($LOG_POS < $log_count ) )) {
 		// if invalid LOG_POS, set to end of log.
- 		$LOG_POS = $log_count - $logs_per_screen +1;
+ 		$LOG_POS = $log_count - $logs_per_screen;
+	}
+	if ($LOG_POS-min($log_count,$logs_per_screen)  < 0) {
+		$LOG_POS=0;
+	}
+	if ($LOG_POS > $log_count-$logs_per_screen) {
+		$LOG_POS=$log_count-$logs_per_screen;
 	}
 //outline("In list: pos=$pos,log_count=$log_count,lps=$logs_per_screen, set LOG_POS TO $LOG_POS");
 
