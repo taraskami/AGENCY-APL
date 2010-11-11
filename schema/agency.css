@@ -259,3 +259,13 @@ div.client_elevated_concern_short {
 .menuLink {
 	font-size: 65%;
 }
+
+div#noStaffEmployment {
+	background-color: #FFCCCC;
+	padding: 10px;
+	width: 80%;
+	font-size: 120%;
+	font-style: italic;
+	margin-bottom: 12px;
+	margin-left: 6px;
+}

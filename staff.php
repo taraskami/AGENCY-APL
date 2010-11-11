@@ -148,10 +148,41 @@ function view_staff( $staff,$def='',$action='',$control='',$control_array_variab
 		return view_generic($staff,$def,$action,$control,$control_array_variable);
 	}
 
-      global $colors,$UID;
+      global $colors,$UID,$sys_user;
 	$def = orr($def,get_def('staff'));
 	if (!is_array($staff)) {
 		$staff=sql_fetch_assoc($staff);
+	}
+	$id=$staff[$def['id_field']];	
+	if (sql_true($staff['is_active']) and be_null(
+			$staff['staff_title']
+			. $staff['supervised_by']
+			. $staff['agency_project_code']
+			. $staff['agency_position_code'])) {
+			//Likely no staff_employment record, confirm
+			$staff_emp=get_generic(staff_filter($id),NULL,NULL,get_def('staff_employment'));
+			if (sql_num_rows($staff_emp)==0) {
+				$no_staff_emp=true;
+				if ($id==$sys_user) {
+					$is_sys_user=true;
+				} else {
+					$is_sys_user=false;
+				}
+			}
+	}
+	if ($no_staff_emp and !$is_sys_user) {
+		$no_staff_emp_msg = div('This user is marked active, but does not have a staff employment record.  You can '
+							. add_link('staff_employment','add one now',NULL,staff_filter($id)).'.','noStaffEmployment');
+	} elseif (!$is_sys_user) {
+		/* engine links to list others */
+		$project = link_engine_list_filter('staff',array('agency_project_code'=>$staff['agency_project_code']),
+			     value_generic($staff['agency_project_code'],$def,'agency_project_code','list'),'class="fancyLink"');
+		$program = link_engine_list_filter('staff',array('agency_program_code'=>$staff['agency_program_code']),
+			     value_generic($staff['agency_program_code'],$def,'agency_program_code','list'),'class="fancyLink"');
+		$location = link_engine_list_filter('staff',array('agency_facility_code'=>$staff['agency_facility_code']),
+				 value_generic($staff['agency_facility_code'],$def,'agency_facility_code','list'),'class="fancyLink"');
+	} else {
+		$no_staff_emp_msg = div('The system user is used for automatic things, and should never be used for regular purposes.  You should never log in with this account.','noStaffEmployment');
 	}
 	$email = $staff['staff_email'];
 	$position = value_generic($staff['staff_title'],$def,'staff_title','list');
@@ -160,7 +191,7 @@ function view_staff( $staff,$def='',$action='',$control='',$control_array_variab
 		$supervisor .= smaller(' ('.value_generic(staff_position($staff['supervised_by']),$def,'staff_position_code','list').')',2);
  	}
 	//get supervisees
-	$res = get_generic(array('supervised_by'=>$staff['staff_id'],'is_active'=>sql_true()),'name_last','',$def);
+	$res = get_generic(array('supervised_by'=>$id,'is_active'=>sql_true()),'name_last','',$def);
 	if (sql_num_rows($res) > 0) {
 		$supervisees = array();
 		while ($a = sql_fetch_assoc($res)) {
@@ -174,7 +205,7 @@ function view_staff( $staff,$def='',$action='',$control='',$control_array_variab
 		 */
 		if (has_perm($def['perm_edit'],'RW')) {
 
-			$supervisees .= oline('',2).staff_supervisor_transfer_form($staff['staff_id']);
+			$supervisees .= oline('',2).staff_supervisor_transfer_form($id);
 
 		}
 
@@ -188,32 +219,22 @@ function view_staff( $staff,$def='',$action='',$control='',$control_array_variab
 	} 
 
 	//photo for page of individual staff
-	$photo = oline(staff_photo( $staff['staff_id']))
-		. smaller(hlink_if( AG_STAFF_PAGE . '?action=print_staff_id&id='.$staff['staff_id'],'Print ID Card',is_id_station()),2);
+	$photo = oline(staff_photo( $id))
+		. smaller(hlink_if( AG_STAFF_PAGE . '?action=print_staff_id&id='.$id,'Print ID Card',is_id_station()),2);
 
 	$summary = html_heading_2($staff['name_first'] . ' ' . $staff['name_last']
-					  . span(", ID # " . $staff['staff_id'],' style="font-weight: normal; font-size: 70%;"')) 
-		. html_heading_4(italic($position))
-		. staff_phone_f($staff['staff_id']);
+					  . span(", ID # " . $id,' style="font-weight: normal; font-size: 70%;"')) 
+		. ($no_staff_emp ? $no_staff_emp_msg : html_heading_4(italic($position)))
+		. staff_phone_f($id);
 
 
 	/* staff assignments */
 	$hide_button = oline(right(Java_Engine::hide_show_button('StaffAssign',false) . smaller('Staff Assignments',3)));
 	$staff_assigns = div($hide_button
-				   . Java_Engine::hide_show_content(assignments_f($staff["staff_id"]),'StaffAssign',false)
+				   . Java_Engine::hide_show_content(assignments_f($id),'StaffAssign',false)
 				   ,'',' style="float:right;"');
 	
-	/* engine links to list others */
-	$project = link_engine_list_filter('staff',array('agency_project_code'=>$staff['agency_project_code']),
-						     value_generic($staff['agency_project_code'],$def,'agency_project_code','list'),'class="fancyLink"');
-
-	$program = link_engine_list_filter('staff',array('agency_program_code'=>$staff['agency_program_code']),
-						     value_generic($staff['agency_program_code'],$def,'agency_program_code','list'),'class="fancyLink"');
-
-	$location = link_engine_list_filter('staff',array('agency_facility_code'=>$staff['agency_facility_code']),
-							value_generic($staff['agency_facility_code'],$def,'agency_facility_code','list'),'class="fancyLink"');
-
-	$remote_access = staff_remote_access_status_f($staff['staff_id']);
+	$remote_access = staff_remote_access_status_f($id);
 
 	// photo must span additional rows if certain conditions are met
 	$photo_row_span = 11;
@@ -229,29 +250,31 @@ function view_staff( $staff,$def='',$action='',$control='',$control_array_variab
 			  // Basic Info
 			  . row( rightcell('Email:') . leftcell( $email ? hlink('mailto:%20'.$email,$email) : '' ))
 			  .	 rowrlcell('AGENCY Username:',value_generic($staff['username'],$def,'username','list'))
-			  .	 rowrlcell('Project:',$project)
-			  .	 rowrlcell('Program:',$program)
-			  .	 rowrlcell('Location:',$location)
-			  .	 rowrlcell('Supervised By:',$supervisor)
+			  . ($no_staff_emp ? '' :
+			  	rowrlcell('Project:',$project)
+			  	.	 rowrlcell('Program:',$program)
+			  	.	 rowrlcell('Location:',$location)
+			  	.	 rowrlcell('Supervised By:',$supervisor)
+			  )
 			  .    ($supervisees ? rowrlcell('Supervises:',$supervisees) : '')
 			  .    (($tmp_sl = staff_language_f($staff['staff_id'])) ? rowrlcell('Language(s):',$tmp_sl) : '')
 			  // Password and options
-			  .	 rowrlcell('Password:',link_password_change($staff['staff_id']))
+			  .	 rowrlcell('Password:',link_password_change($id))
 			  // Remote access password strength
 			  . ($remote_access 
 			     ? rowrlcell('Remote Access:', $remote_access)
 			     : '')
-			  .	 rowrlcell('User Options:',link_engine(array('object'=>'user_option','id'=>$staff['staff_id']),'Change/View'))
+			  .	 rowrlcell('User Options:',link_engine(array('object'=>'user_option','id'=>$id),'Change/View'))
 			  // End Summary
 			  ,'',' border="3" cellspacing="2"'). oline();
 	
-	$out .= div(link_engine(array('object'=>'log','action'=>'list','list'=>array('filter'=>array('added_by'=>$staff["staff_id"]))),'Show all logs written by this person','',''),'','') . oline();
+	$out .= div(link_engine(array('object'=>'log','action'=>'list','list'=>array('filter'=>array('written_by'=>$id))),'Show all logs written by this person','',''),'','') . oline();
 	
-	$out .= list_all_child_records('staff',$staff['staff_id'],$def,false);
+	$out .= list_all_child_records('staff',$id,$def,false);
 
 	//staff permission check (bug 28545):
 	if (has_perm('admin')) {
-		$spc = staff_permission_check( $staff['staff_id'] );
+		$spc = staff_permission_check( $id );
 		$hide_button = Java_Engine::hide_show_button('staffShowPermissionCheck',$hide = true);
 		$title = section_title('Permission Check');
 		$out  .= span($hide_button.'&nbsp;'.$title,' class="childListTitle"')
@@ -261,7 +284,7 @@ function view_staff( $staff,$def='',$action='',$control='',$control_array_variab
 
 	// outputs a form to find all records of a given type
 	if ( ($staff['staff_id']==$UID) or has_perm('super')) {
-		$out .= staff_record_association_form($staff['staff_id']);
+		$out .= staff_record_association_form($id);
 	}
 	return $out;
 }

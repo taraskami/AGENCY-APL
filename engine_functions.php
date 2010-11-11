@@ -41,7 +41,7 @@ function elink($object,$id,$label,$options=null)
 	return link_engine(array('object'=>$object,'id'=>$id),$label,'',$options);
 }
 
-function add_link($object,$label='',$options=null)
+function add_link($object,$label='',$options=null,$rec_init=NULL)
 {
 	/*
 	 * A quick add-link engine function
@@ -49,7 +49,11 @@ function add_link($object,$label='',$options=null)
 
 	$def=get_def($object);
 	$sing=$def['singular'];
-	return link_engine(array('object'=>$object,'action'=>'add','id'=>$id),orr($label,'Add ' . aan($sing) . ' ' . $sing),'',$options);
+	$control=array('object'=>$object,'action'=>'add','id'=>$id);
+	if (is_array($rec_init)) {
+		$control['rec_init']=$rec_init;
+	}
+	return link_engine($control,orr($label,'Add ' . aan($sing) . ' ' . $sing),'',$options);
 }
 
 function qelink($rec,$def,$label,$options=null)
