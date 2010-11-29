@@ -56,9 +56,13 @@ function addSelectedObject( id, label, obj, canRemove, refType ) {
 	if (dupe) {
 	       return false;
 	};
-
-	var lab = '<a href=display.php?control[action]=view&control[object]=' + obj + '&control[id]='
-		+ id +' class=' + obj + 'Link>'+label + '</a>';
+	/* FIXME: this is an ugly hack, and also won't work for donor or other flavors */
+ 	if (obj=='client') {
+		var lab = '<a href=client_display.php?id=' + id +' class=' + obj + 'Link>'+label+'</a>';
+	} else {
+		var lab = '<a href=display.php?control[action]=view&control[object]=' + obj + '&control[id]='
+			+ id +' class=' + obj + 'Link>'+label + '</a>';
+	};
 	var pre = '<input type=hidden id=selectedObject';
 	var val_num = pre + 'Number'+objectSelectNum + ' value="' + objectSelectNum + 
 		'" name=selectedObjectNumber[]>';
