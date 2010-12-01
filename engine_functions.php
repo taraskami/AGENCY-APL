@@ -112,8 +112,15 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
       } else {
 	    return dead_link('LINK_ENGINE() REQUIRES AN ARRAY');
       }
-
-      $page = ($action=='list') ? $page : 'display.php'; //only list may be displayed elsewhere (for now)
+//      $page = ($action=='list') ? $page : 'display.php'; //only list may be displayed elsewhere (for now)
+	if ($action == 'list') {
+		//$page=$page;
+	} elseif ( ($format != 'data') and ($action=='view') and (($object==AG_MAIN_OBJECT_DB) or ($object=='staff'))) {
+		//redirect client & staff views to their special pages
+		$page=$object.'_display.php';
+	} else {
+		$page='display.php';
+	}
 
       if (!$object) {
 		return dead_link(alt($label,'LINK_ENGINE() CANNOT SEND A NULL OBJECT TO ENGINE'));

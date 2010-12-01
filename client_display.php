@@ -35,7 +35,7 @@ include 'includes.php';
 include 'mail.php';
 
 $action = $_REQUEST['action'];
-$ID     = $_SESSION['CLIENT_ID'] = orr($_REQUEST['id'],$_SESSION['CLIENT_ID']);
+$ID     = $_SESSION['CLIENT_ID'] = orr($_REQUEST['id'],$_REQUEST['control']['id'],$_SESSION['CLIENT_ID']);
 
 if (!$ID or ($ID > AG_POSTGRESQL_MAX_INT) or (!is_numeric($ID))) {
 
@@ -119,6 +119,7 @@ if (!$client_not_found) {
 								 . oline(hlink_if("get_photo.php?client_id={$client['client_id']}",
 											(is_photo_station() ? "Take" : "Upload") . " new photo",true))
 								 . link_engine(array('object'=>AG_MAIN_OBJECT_DB,
+												'format'=>'data',
 											   'id'=>$client[AG_MAIN_OBJECT_DB.'_id']),
 										   $AG_TEXT['LINK_VIEW_EDIT']) ),'bgcolor="#ffff80"'));
 
