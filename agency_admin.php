@@ -79,17 +79,7 @@ function agency_menu_admin()
 	. call_engine(array('object'=>'db_revision_history','action'=>'list','format'=>''),'',true,true,$perm,$tot_recs);
 
 	//Browse AGENCY tables via Engine
-	$menu['Browse AGENCY Tables via Engine'] = para(oline(link_all_db_views())
-									 .link_all_db_tables())
-		. formto('display.php')
-		. oline('Or, enter a table name:')
-		. form_field('text','control[object]','','class="agencyForm"') . $button
-		. hiddenvar('control[action]','list')
-		. hiddenvar('control[format]','raw')
-		. formend()
-		. oline().link_engine(array('object'=>'db_agency_functions',
-						    'action'=>'list'),'List all AGENCY functions');
-	
+	$menu['Browse AGENCY Tables via Engine'] = engine_browser_control();
 	//Browse Engine Config Options Array
 	$menu['Browse Engine Config Array'] = para('These pages may take some time to load')
 		. formto(AG_AGENCY_ADMIN_URL)
@@ -146,29 +136,6 @@ function show_all_permissions($title='Show All Staff Permission Records')
 	//      return call_engine($CONTROL,'admin_perm_control');
 	$js_hide = true;
 	return engine_java_wrapper($control,'admin_perm_control',$js_hide,$title);
-}
-
-function link_all_db_views($label='List all DB Views')
-{
-	return link_engine(array('object'=>'pg_catalog',
-					 'action'=>'list',
-					 'format'=>'raw',
-					 'list'=>array(
-							   'filter'=>array('type'=>'view')
-							   )
-					 )
-				 ,$label);
-}
-
-function link_all_db_tables($label='List all DB Tables')
-{
-	return link_engine(array('object'=>'pg_catalog',
-					 'action'=>'list',
-					 'format'=>'raw',
-					 'list'=>array(
-							   'filter'=>array('type'=>'table')
-							   )
-					 ),$label);
 }
 
 function agency_menu_mip()

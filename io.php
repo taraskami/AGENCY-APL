@@ -2285,13 +2285,16 @@ function agency_top_header($commands="")
 			$update_engine=oline(div($update_engine.toggle_label("Update engine..."),'','class="updateEngine hiddenDetail"'));
 		}
 
+		if (has_perm('admin')) { //FIXME: This is more a pref than a perm
+			$engine_browser = oline(div(engine_browser_control(). toggle_label("Quick browse..."),'','class="engineBrowser hiddenDetail"'));
+		}
        $out = show_top_nav(table(row(
                        cell($user_logout_msg . $curr_id
 						 . $switch_id1
                          . smaller( $demo_mode_link)
                        . $user_msg . $test_db_warning, $test_style)
 ))
-                        ,$commands,$switch_id2.$update_engine.$login_box)
+                        ,$commands,$switch_id2.$update_engine.$engine_browser.$login_box)
                 . $out; //test box in middle
 	out($out);
 }
@@ -2301,7 +2304,7 @@ function show_top_nav( $firstcell="",$cells="",$auth='')
 	global $colors,$AG_MENU_LINKS,$off,$AG_AGENCY_ADVISORY,$AG_AGENCY_ADVISORY_STYLE;
 	$cells=orr($cells,array());
 	$standard = $auth ? 2 : 1;
- 	$cell_count=(count($cells)+$standard)*2;
+	$cell_count=(count($cells)+$standard)*2;
 	$cell_count_hack=$cell_count+1;
 	foreach($AG_MENU_LINKS as $link)
 	{

@@ -3893,4 +3893,41 @@ function message_result_detail($mesg) {
 	return $mesg ? div(strip_tags($mesg,'<br><p>'),'','class="engineMessageResultDetail"') : '';
 }
 
+function engine_browser_control() {
+	return para(oline(link_all_db_views())
+		.link_all_db_tables())
+		. formto('display.php')
+		. oline('Or, enter a table name:')
+		. form_field('text','control[object]','','class="agencyForm"') . $button
+		. hiddenvar('control[action]','list')
+		. hiddenvar('control[format]','raw')
+		. formend()
+		. oline().link_engine(array('object'=>'db_agency_functions',
+						    'action'=>'list'),'List all AGENCY functions');
+}	
+
+function link_all_db_views($label='List all DB Views')
+{
+	return link_engine(array('object'=>'pg_catalog',
+					 'action'=>'list',
+					 'format'=>'raw',
+					 'list'=>array(
+							   'filter'=>array('type'=>'view')
+							   )
+					 )
+				 ,$label);
+}
+
+function link_all_db_tables($label='List all DB Tables')
+{
+	return link_engine(array('object'=>'pg_catalog',
+					 'action'=>'list',
+					 'format'=>'raw',
+					 'list'=>array(
+							   'filter'=>array('type'=>'table')
+							   )
+					 ),$label);
+}
+
+
 ?>
