@@ -36,7 +36,7 @@ should be included in this distribution.
 
 /* Datepicker for date fields */
 $(function() {
-	var today='<a href=# class="calTodayLink fancyLink">today</a>';
+	var today=' <a href=# class="calTodayLink fancyLink">today</a>';
 	$(".field_date").after(today);
 	$(".calTodayLink").click( function(event) {
 		event.preventDefault();
@@ -46,10 +46,9 @@ $(function() {
 	});
 
 	$('.field_date').datepick( {
-			showOn: 'button',
-			buttonImageOnly: true,
-			buttonImage: 'images/calendar.png',
-			numberOfMonths: 2,
+			showOnFocus: false, 
+    		showTrigger: '<img src="images/calendar.png" alt="Popup" class="calButton"/>',
+			monthsToShow: 2,
 			firstDay: 1,
 			yearRange: '-100:+10'
 	});

@@ -172,7 +172,7 @@ tr.engineFormSelected { background-color: #1BEDDF; }
 #agencyTopLoginBox input[type=hidden] { display: none; }
 
 a.calTodayLink,a.calNowLink { font-size: 65%; vertical-align: bottom; }
-.clockButton { vertical-align: text-bottom; }
+.clockButton,img.calButton { height:20; width:20; vertical-align: text-bottom; }
 
 #mainCalendar {
 	border: solid 2px #0f0f00;
