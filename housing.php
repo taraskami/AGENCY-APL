@@ -503,7 +503,7 @@ function unit_history($unit_no, $daterange_obj='',$sep='<br>')
 
 }
 
-function housing_project_of_unit($unit) {
+function housing_project_from_unit($unit) {
 
 	return call_sql_function('housing_project_from_unit',enquote1($unit));
 
