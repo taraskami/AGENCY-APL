@@ -42,7 +42,6 @@ function merge_object_reference_db($object,$id,&$control) {
 	$refs=get_object_references($object,$id);
 //outline("Got refcohnt: " . sql_num_rows($refs) );
 	while ($ref = sql_fetch_assoc($refs)) {
-		$t_def = get_def($ref['object']);
 		$t_id = $ref['to_id'];
 		$t_obj = $ref['to_table'];
 		$f_id = $ref['from_id'];
