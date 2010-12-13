@@ -174,8 +174,8 @@ $(function() {
 /* pre-selected objects */
 function addPreSelectedObjects() {
 	var n = 'preSelectedObject';
-	var count=$('[name=' + n + 'Number[]]').length;
-	$('[name=' +n + 'Number[]]').each( function() {
+	var count=$('[name="' + n + 'Number[]"]').length;
+	$('[name="' +n + 'Number[]"]').each( function() {
 		var num = $(this).val();
 		var obj = $('#' +n + 'Object'+num).val();
 		var id = $('#' +n + 'Id'+num).val();	
