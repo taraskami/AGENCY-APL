@@ -54,7 +54,8 @@ $engine['alert_notify'] = array(
 			)
 		),
 		'alert_notify_field'=>array(
-            		'row_before'=>'oline(bigger(bold("Advanced triggering conditions")))',
+            		'row_before'=>'oline(bigger(bold("Advanced triggering conditions")))'
+								  .'. oline(smaller(bold("(uses logical AND; e.g., all field/value pairs must match, or be blank)")))',
 			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
 		'alert_notify_field2'=>array(
 			'valid'=>array('be_null($x) or is_field($rec["alert_object"],$x)'=>'{$x} is not a field for this object')),
