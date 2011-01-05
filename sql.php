@@ -760,10 +760,9 @@ function sql_data_export($sql,$delimiter="\t",$null='',$quotes=false)
 {
 
 	/*
-	 * This is in BETA. Nothing is currently done regarding the
-	 * escaping of commas, tabs, or quotes (quotes will only be an
-	 * issue once tabs and commas are escaped via quotes). It is 
-	 * a vicious cycle.
+	 * This is in BETA.  There may be escaping issues.
+	 * Not sure about the tab delimited, but CSV specifies quotes should
+	 * be escaped as two quote characters.  This is currently implemented.
 	 */
 
 	if (is_array($sql)) {
@@ -780,7 +779,7 @@ function sql_data_export($sql,$delimiter="\t",$null='',$quotes=false)
 					$a[$key] = $null;
 				}
 				if ($quotes) {
-					$a[$key] = enquote2(str_replace('"','\"',$a[$key]));
+					$a[$key] = enquote2(str_replace('"','""',$a[$key]));
 				}
 			}
 			$export .= implode($delimiter,$a)."\n";

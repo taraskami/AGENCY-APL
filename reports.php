@@ -476,9 +476,20 @@ function report_generate_export($sql,$format)
 		preg_match('/^sql_(dump|data)_([a-z]*)$/',$format,$m);
 		header("Content-Type: text; charset=ISO-8859-1");
 		if ($m[1]=='data') {
-			$delimiter = $m[2]=='csv' ? ',' : "\t";
+			switch ($m[2]) {
+				case 'csv' :
+					$delimiter=',';
+					$quotes=true;
+					break;
+				case 'tab' :
+					$delimiter="\t";
+					$quotes=false;
+					break;
+				default :
+					// unknown format;
+			}
 			header('Content-Disposition: attachment; filename="agency_data.csv"');
-			out(sql_data_export($sql,$delimiter));
+			out(sql_data_export($sql,$delimiter,'',$quotes));
 		} elseif ($m[1]=='dump') {
 			header('Content-Disposition: attachment; filename="agency_sql_dump.sql"');
 			out(sql_commentify($GLOBALS['AG_TEXT']['CONFIDENTIAL_STATEMENT']));
