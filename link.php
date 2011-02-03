@@ -91,7 +91,7 @@ function link_agency_donate($label='',$type='Button',$options='')
 	global $agency_donate_url;
 	return $agency_donate_url;
 	if (strpos($options,'target=')===false) {
-		$options .= ' target="new"';
+		$options .= ' target="_blank"';
 	}
 	return hlink($agency_donate_url,orr($label,'<img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Donate to AGENCY" />','BUTTON',' target="_BLANK"'),$options);
 }
@@ -137,9 +137,10 @@ function link_wiki($db_title,$label='',$options='')
 	if (!AG_WIKI_BASE_URL) {
 		return false;
 	}
-	$db_title = str_replace(' ',' ',$db_title);
 	$label = orr($label,str_replace('_',' ',$db_title));
-
+	if (strpos($options,'target=')===false) {
+		$options .= ' target="_blank"';
+	}
 	return hlink(AG_WIKI_BASE_URL.$db_title,$label,'',$options);
 }
 
@@ -148,9 +149,10 @@ function link_wiki_public($db_title,$label='',$options='')
 	if (!AG_WIKI_PUBLIC_BASE_URL) {
 		return false;
 	}
-
-	//$db_title = str_replace(' ',' ',$db_title);
 	$label = orr($label,str_replace('_',' ',$db_title));
+	if (strpos($options,'target=')===false) {
+		$options .= ' target="_blank"';
+	}
 	return hlink(AG_WIKI_PUBLIC_BASE_URL.$db_title,$label,'',$options);
 }
 
