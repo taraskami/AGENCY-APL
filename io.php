@@ -2189,22 +2189,16 @@ function update_session_variable($sess_name,$a)
 
 function smart_char_destroy($string)
 {
-	$smarties=array(chr(145), //left single '
-			    chr(146), //right single '
-			    chr(147), //left double "
-			    chr(148), //right double "
-			    chr(150), //medium dash
-			    chr(151)  // &mdash;
+	$smarties=array(
+				chr(125)=>'...', //Ellipsis
+				chr(145)=>'\'', //left single '
+			    chr(146)=>'\'', //right single '
+			    chr(147)=>'"', //left double "
+			    chr(148)=>'"', //right double "
+			    chr(150)=>'-', //medium dash
+			    chr(151)=>'--'  // &mdash, good enough for now (we don't want to store HTML '&mdash;' or '&#151;').
 			    );
-	$standard=array('\'',
-			    '\'',
-			    '"',
-			    '"',
-			    '-',
-			    '--' //good enough for now (we don't want to store HTML '&mdash;' or '&#151;').
-			    );
-	$better=str_replace($smarties,$standard,$string);
-	return $better;
+	return str_replace(array_keys($smarties),array_values($smarties),$string);
 }
 
 function be_null( $val )
