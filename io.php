@@ -2190,7 +2190,7 @@ function update_session_variable($sess_name,$a)
 function smart_char_destroy($string)
 {
 	$smarties=array(
-				chr(125)=>'...', //Ellipsis
+				chr(133)=>'...', //Ellipsis
 				chr(145)=>'\'', //left single '
 			    chr(146)=>'\'', //right single '
 			    chr(147)=>'"', //left double "
