@@ -3911,15 +3911,15 @@ function message_result_detail($mesg) {
 
 function engine_browser_control() {
 	return para(oline(link_all_db_views())
-		.link_all_db_tables())
-		. formto('display.php')
+		. oline(link_all_db_tables())
+		. link_engine(array('object'=>'db_agency_functions',
+						    'action'=>'list'),'List all AGENCY functions','','target="_blank"'))
+		. formto('display.php','','target="_blank"')
 		. oline('Or, enter a table name:')
 		. form_field('text','control[object]','','class="agencyForm"') . $button
 		. hiddenvar('control[action]','list')
 		. hiddenvar('control[format]','raw')
-		. formend()
-		. oline().link_engine(array('object'=>'db_agency_functions',
-						    'action'=>'list'),'List all AGENCY functions');
+		. formend();
 }	
 
 function link_all_db_views($label='List all DB Views')
@@ -3931,7 +3931,7 @@ function link_all_db_views($label='List all DB Views')
 							   'filter'=>array('type'=>'view')
 							   )
 					 )
-				 ,$label);
+				 ,$label,'','target="_blank"');
 }
 
 function link_all_db_tables($label='List all DB Tables')
@@ -3942,7 +3942,7 @@ function link_all_db_tables($label='List all DB Tables')
 					 'list'=>array(
 							   'filter'=>array('type'=>'table')
 							   )
-					 ),$label);
+					 ),$label,'','target="_blank"');
 }
 
 
