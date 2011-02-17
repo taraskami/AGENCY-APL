@@ -222,7 +222,7 @@ function current_residence_own($client_id)
 
 function unit_no($client_id,$as_of='')
 {
-	return call_sql_function('unit_no',$client_id,orr($as_of,'current_date'));
+	return call_sql_function('unit_no',$client_id,$as_of ? enquote1($as_of) : 'current_date');
 }
 
 function last_residence_own($cid)
