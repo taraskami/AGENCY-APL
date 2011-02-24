@@ -121,6 +121,7 @@ $engine['global_default'] = array(
 				  'hidden_eval_absolute' => null, 
 				  'singular' => null,
 				  'plural' => null,
+				  'verb_passive' =>null,
 				  'multi_records' => false,
 				  'multi' => null,
 				  'multi_add' => null, //a configuration array for DAL-style quick add
