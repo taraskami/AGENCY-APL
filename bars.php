@@ -78,7 +78,6 @@ function bar_status( $client, $group="",$start="",$end="",$brc="",$which=array()
 
 function bar_status_f( $client,$format='',&$is_provisional)
 {
-	global $engine;
 	$format = orr($format,'short');
 	// return a formatted string describing bar status
 	$client_id=$client["client_id"];
@@ -91,6 +90,7 @@ function bar_status_f( $client,$format='',&$is_provisional)
 	$is_provisional = true;
 
 	$def = get_def('bar');
+	$noun = $def['singular'];
 	if (sql_num_rows($bars) > 0) {
 		while($curr_bar = sql_fetch_assoc($bars)) {
 			$days_barred = $curr_bar['days_barred'];
@@ -146,8 +146,8 @@ function bar_status_f( $client,$format='',&$is_provisional)
 	}
 	else
 	{
-		$link = html_no_print(' ('.link_engine(array('object'=>'bar','action'=>'add','rec_init'=>array('client_id'=>$client_id)),'Add a bar').')');
-		$res = smaller('Not barred'.$link);
+		$link = html_no_print(' ('.link_engine(array('object'=>'bar','action'=>'add','rec_init'=>array('client_id'=>$client_id)),'Add a ' . $noun).')');
+		$res = smaller('Not ' . $def['verb_passive'].$link);
 		if ($format=='mail') {
 			$res = oline($res);
 		}

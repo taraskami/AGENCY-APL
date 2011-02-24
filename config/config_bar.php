@@ -30,21 +30,34 @@ should be included in this distribution.
 </LICENSE>
 */
 
-$gbar = 'Reminder:  Graduated Bar';
+$noun = 'bar';
+$nouns = $noun . 's';
+$Noun = ucfirst($noun);
+
+$verb_passive = 'barred';
+$verb_active = 'bar';
+
+$gbar = 'Reminder:  Graduated ' . $Noun;
 $abrc = 'Automatic BRC';
+$cl_def = get_def('client');
+$cl_noun = orr($cl_def['singular'],'client'); // get_def might not work on initial load
+$Cl_noun = ucfirst($cl_noun);
+
 $engine["bar"]=array(
+	'singular'=>$noun,
+	'verb_passive'=>$verb_passive,
 	"title" => '(be_null($rec["client_id"]))
-	    ? ucwords($action)."ing Bar for non-client ".$rec["non_client_name_last"].", ".$rec["non_client_name_first"]
-          : ucwords($action) . "ing Bar for " . client_link($rec["client_id"])',
-	'title_list' => 'ucwords($action) . "ing Bar Records for " . client_link($rec["client_id"])',
- 	'subtitle_eval_code' => "oline(smaller(help('BarCodes','','What do the bar codes mean?','',false,true)))",
+	    ? ucwords($action)."ing ' .$Noun. ' for non-client ".$rec["non_client_name_last"].", ".$rec["non_client_name_first"]
+          : ucwords($action) . "ing ' .$Noun. ' for " . client_link($rec["client_id"])',
+	'title_list' => 'ucwords($action) . "ing ' .$Noun. ' Records for " . client_link($rec["client_id"])',
+	'subtitle_eval_code' => "oline(smaller(help('BarCodes','','What do the ' . $noun.' codes mean?','',false,true)))",
 	'list_fields'=>array('bar_date','bar_date_end','barred_from_summary','bar_type','flags','barred_by','comments'),
 	'list_order'=>array('bar_date'=>true),
 	'list_max'=>20,
 	'valid_record'=>array( 'sql_true($rec["barred_from_admin"]) or sql_true($rec["barred_from_clinical"])
 						or sql_true($rec["barred_from_housinga"]) or sql_true($rec["barred_from_housingb"])
 						or sql_true($rec["barred_from_dropin"]) or sql_true($rec["barred_from_shelter"])'
-				     =>'Must bar from at least one location',
+				     =>'Must ' .$verb_active . ' from at least one location',
 				     //non-client vs client
 				     '(be_null($rec["client_id"]) and (!be_null($rec["non_client_name_last"]) and
 										 !be_null($rec["non_client_name_first"]) and
@@ -53,17 +66,18 @@ $engine["bar"]=array(
 				     (!be_null($rec["client_id"]) and (be_null($rec["non_client_name_last"]) and
 										   be_null($rec["non_client_name_first"]) and
 										   be_null($rec["non_client_description"])))'=>
-				     'All non-client fields must be filled in for non-client bars'
+				     "All non-$cl_noun fields must be filled in for non-$cl_noun $nouns"
 				     ),
 	"fields" => array(
+				'barred_by' => array( 'label' => ucfirst($verb_passive) . ' By' ),
 				'bar_date' => array(
+							  'label' => "$Noun Date",
 							  "default" => "NOW"),
 				"bar_date_end" => array(
-								"default" => "NOW",
-								"label" => "Bar End Date",
+								"label" => "$Noun End Date",
 								"valid" => array(
 										     '($x >= $rec["bar_date"]) || empty($x)'  
-										     => "Bar End Date must be greater than Bar Date."
+										     => "$Noun End Date must be greater than $Noun Date."
 										     ),
 								"confirm" => array(
             // for brc bars, bar end date should be set only when client has
@@ -87,7 +101,7 @@ $engine["bar"]=array(
                 || (empty($x) && empty($rec["brc_client_attended_date"]))
                 || ($x && $rec["brc_client_attended_date"])'
                     => 'One of the Auto. BRC flags is set to Yes.  Are you sure you
-                    want to set a Bar End Date when there is no Client Attended
+                    want to set a ' . $Noun . ' End Date when there is no ' . $Cl_noun . ' Attended
                     BRC Date?'
                 )
 								), 
@@ -133,7 +147,7 @@ $engine["bar"]=array(
 						  ),
 				"tc" => array(
 						  "display_view" => "hide",
-						  "label" => "Threatening Client",
+						  "label" => "Threatening " . $Cl_noun,
 						  "comment" => $abrc
 						  ),
 				"ct" => array(
@@ -168,7 +182,7 @@ $engine["bar"]=array(
 							 ),
 				"ac" => array(
 						  "display_view" => "hide",
-						  "label" => "Assaulted Client",
+						  "label" => "Assaulted " . $Cl_noun,
 						  "comment" => $abrc
 						  ),
 				"ms" => array(
@@ -178,7 +192,7 @@ $engine["bar"]=array(
 						  ),
 				"mc" => array(
 						  "display_view" => "hide",
-						  "label" => "Menaced Client",
+						  "label" => "Menaced " . $Cl_noun,
 						  "comment" => $abrc
 						  ),
 				"dv" => array(
@@ -203,7 +217,7 @@ $engine["bar"]=array(
 							     ),
 				"overdose" => array(
 							  "display_view" => "hide",
-							  "label" => "Confirmed Client Overdose"
+							  "label" => "Confirmed $Cl_noun Overdose"
 							  ),
 				"cdmhp" => array(
 						     "display_view" => "hide",
@@ -217,18 +231,18 @@ $engine["bar"]=array(
 								  ),
 				'brc_elig_date' => array('label' => 'Date Eligible for BRC'),
 				'brc_client_attended_date' => array('data_type' => 'date_past',
-										'label' => 'Date Client Attended BRC'),
+										'label' => 'Date ' .$Cl_noun. ' Attended BRC'),
 				'brc_resolution_code' => array('label' => 'BRC Resolution'), 
                         	"appeal_elig_date" => array(
 							    "label" => "Date Eligible to Appeal",
 							    "valid" => array(
 									     '($x >= $rec["brc_client_attended_date"]) || empty($x)'  
-									     => "Date Eligible to Appeal must be greater than Date Client Attended BRC."
+									     => "Date Eligible to Appeal must be greater than Date $Cl_noun Attended BRC."
 									     )
 							    ),  
 				'brc_recommendation' => array('data_type' => 'text',
 									'label' => 'Barring Staff Recommendations for BRC'),
-				'bar_resolution_location_code' => array('label'=>'Where should client attend BRC?',
+				'bar_resolution_location_code' => array('label'=>'Where should ' .$cl_noun . ' attend BRC?',
 										    'comment'=>'(if applicable)',
 										    'valid'=>array('(be_null($rec["bar_date_end"]) and !be_null($x))
 												  or !be_null($rec["bar_date_end"])'=>'Field {$Y} required for BRC'),
@@ -245,11 +259,11 @@ $engine["bar"]=array(
  				'barred_from_housingb'=> array('display_view'=>'hide'),
  				'barred_from_shelter'=> array('display_view'=>'hide'),
 				'barred_from_summary'=>array(
-								     'label'=>'Barred From'),
+								     'label'=>ucfirst($verb_passive) . ' From'),
  				'non_client_description'=>array('textarea_width' => 40,
 									  'textarea_height' =>1 
 									  ),
-				'non_client_name_full'=>array('label'=>'Non-Client Name')
+				'non_client_name_full'=>array('label'=>'Non-' . $Cl_noun . ' Name')
 				)
 		     );
 
