@@ -43,7 +43,7 @@ $_SESSION['CLIENT_ID']=$ID;
 if (!$ID or ($ID > 2147483647)) //this is the maximum integer range in postgresql
 {
 	agency_top_header();
-	out(alert_mark($ID ? AG_MAIN_OBJECT.' ID ('.$ID.') out of range. Stopping' : 'No ID passed to '.AG_MAIN_OBJECT.'_display.  Stopping'));
+	out(alert_mark($ID ? AG_MAIN_OBJECT.' ID ('.$ID.') out of range. Stopping' : 'No ID passed to '.AG_MAIN_OBJECT_DB.'_display.  Stopping'));
 	page_close();
 	exit;
 }

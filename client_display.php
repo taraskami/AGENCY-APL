@@ -40,7 +40,7 @@ $ID     = $_SESSION['CLIENT_ID'] = orr($_REQUEST['id'],$_REQUEST['control']['id'
 if (!$ID or ($ID > AG_POSTGRESQL_MAX_INT) or (!is_numeric($ID))) {
 
 	agency_top_header();
-	out(alert_mark($ID ? AG_MAIN_OBJECT.' ID ('.$ID.') out of range. Stopping' : 'No ID passed to '.AG_MAIN_OBJECT.'_display.  Stopping'));
+	out(alert_mark($ID ? AG_MAIN_OBJECT.' ID ('.$ID.') out of range. Stopping' : 'No ID passed to '.AG_MAIN_OBJECT_DB.'_display.  Stopping'));
 	page_close();
 	exit;
 
