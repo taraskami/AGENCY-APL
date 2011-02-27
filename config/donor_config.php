@@ -134,7 +134,7 @@ $donor_data_merge_templates = array($donor_profile_template=>'Print Donor Profil
 
 //------- Main Object Registration -------//
 $main_object_reg_search_fields = array('donor_name');
-$main_object_reg_prompt = 'Please Enter Donor Name';
+$main_object_reg_prompt = 'Please Enter ' .ucfirst(AG_MAIN_OBJECT). ' Name';
 
 //eliminate photo support
 $AG_CLIENT_PHOTO_BY_FILE='';
