@@ -169,15 +169,17 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
       if ($list) {
 	    $control_str .= '&'.$control_array_variable.'[list]='.urlencode(percent_encode(serialize($list)));
       }
-      return ( ($perm && $allow)||engine_perm('super_user') )//super user
-		? hlink($page.'?'
+	  $target = $page.'?'
 			  . ($extras ? $extras.'&' : '')
 			  . $control_array_variable."[action]=$action&"
 			  . $control_array_variable."[object]=$object&"
 			  . $control_array_variable.'[format]='.$format.'&'
 			  . $control_array_variable."[id]={$id}{$init_str}{$control_str}"
-			  . ($anchor ? '#'.$anchor : '') 
-			  ,orr($label,$action),'',$link_options)
+			  . ($anchor ? '#'.$anchor : '');
+      $will_allow = ($perm && $allow)||engine_perm('super_user'); //super user
+
+      return $will_allow 
+		? hlink($target,orr($label,$action),'',$link_options)
 		: dead_link(orr($label,$action),$link_options);
 }
 
