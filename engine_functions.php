@@ -74,7 +74,10 @@ function qelink($rec,$def,$label,$options=null)
 
 function link_engine($control_array,$label='',$control_array_variable='',$link_options=null)
 {
-	$control_array_variable = orr($control_array_variable,'control');
+	  if ($link_options=='url_only') {
+		  $url_only = true;
+	  }
+      $control_array_variable = orr($control_array_variable,'control');
       $page=orr($control_array['page'],'display.php');  //figure out destination page
       $extras=explode('?',$page);
       $page=orr($extras[0],$page);
@@ -121,7 +124,7 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 	    $allow = $def['allow_'.$action];
 
       } else {
-	    return dead_link('LINK_ENGINE() REQUIRES AN ARRAY');
+	    return $url_only ? false : dead_link('LINK_ENGINE() REQUIRES AN ARRAY');
       }
 //      $page = ($action=='list') ? $page : 'display.php'; //only list may be displayed elsewhere (for now)
 	if ($action == 'list') {
@@ -134,7 +137,7 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 	}
 
       if (!$object) {
-		return dead_link(alt($label,'LINK_ENGINE() CANNOT SEND A NULL OBJECT TO ENGINE'));
+		return $url_only ? false : dead_link(alt($label,'LINK_ENGINE() CANNOT SEND A NULL OBJECT TO ENGINE'));
       }
 
       if ($rec_init and (in_array($action,array('add','widget')))) {
@@ -178,10 +181,19 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 			  . ($anchor ? '#'.$anchor : '');
       $will_allow = ($perm && $allow)||engine_perm('super_user'); //super user
 
-      return $will_allow 
-		? hlink($target,orr($label,$action),'',$link_options)
-		: dead_link(orr($label,$action),$link_options);
-}
+      switch ($link_options) {
+		case 'url_only' :
+			return $will_allow 
+				? $target
+				: false;
+			break;
+		default :
+			return $will_allow 
+				? hlink($target,orr($label,$action),'',$link_options)
+				: dead_link(orr($label,$action),$link_options);
+			break;
+		}
+}			
 
 function call_engine($control,$control_array_variable='control',$NO_TITLE=false,$NO_MESSAGES=false,&$TOTAL_RECORDS,&$PERM)
 {
