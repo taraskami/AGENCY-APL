@@ -1,3 +1,7 @@
 config/agency_config_local.php
 config/agency_config_db.php
+database/pg/agency_core/pg_super_user/create.user_and_db.sql
+agencylink/photo_upload/*
+attachments/*
+photos/pc*/*
 
