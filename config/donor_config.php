@@ -40,8 +40,8 @@ define('AG_PRODUCTION_DATABASE_SERVER','localhost');
 
 define('AG_LIST_EMPTY_HIDE',false); //show empty records by default
 
-$AG_TEXT['AGENCY_HOME_TITLE'] = 'Donor Database Home Page';
-$AG_TEXT['LINK_HOME'] = 'Donor DB Home';
+$AG_TEXT['AGENCY_HOME_TITLE'] = 'Customer Database Home Page';
+$AG_TEXT['LINK_HOME'] = 'Customer DB Home';
 
 $AG_IMAGES['AGENCY_LOGO_MEDIUM'] = $off.'images/donor_logo_medium.png';
 
