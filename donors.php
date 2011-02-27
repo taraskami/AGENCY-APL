@@ -621,22 +621,35 @@ function donor_reg_search()
 		$engine[AG_MAIN_OBJECT_DB]['fields'][$field]['value_format_list'] = '(strtolower($x)==strtolower(\''.$rec[$field].'\')) ? bigger(bold($x)) : $x';
 		$REC[$field] = $rec[$field];
 	}
+	$add_link_array = array('object'=>AG_MAIN_OBJECT_DB,
+					     'action'=>'add',
+					     'rec_init'=>$REC);
 
+	/* FIXME: Inefficienct hack
+	 * Doing query extra time (beforehand) so if 0 rows returned,
+	 * can redirect past search page.
+	 */
 
-	$control=array('object'=>AG_MAIN_OBJECT_DB,
+	if ( count_rows(AG_MAIN_OBJECT_DB,$filter) == 0 ) {
+		// No potential matches, redirect to next screen	
+		$redirect=link_engine($add_link_array,'','','url_only');
+		header('Location: ' . $redirect);
+		page_close();
+  		exit;
+	} else {
+    	$title = 'Review existing '.AG_MAIN_OBJECT.'s for a match';
+		$proceed_link = 'If the '.AG_MAIN_OBJECT.' is not already registered, proceed here';
+    	$out.=oline() . oline(red('Review the following '.AG_MAIN_OBJECT.'s to make sure '.AG_MAIN_OBJECT.' is not already registered'));
+		$control=array('object'=>AG_MAIN_OBJECT_DB,
 			   'action'=>'list',
 			   'list'=>array('filter'=>$filter,
 					     'order'=>array('donor_name'=>false)
 					     ));
-      $title = 'Review existing '.AG_MAIN_OBJECT.'s for a match';
-      $out.=oline() . oline(red('Review the following '.AG_MAIN_OBJECT.'s to make sure '.AG_MAIN_OBJECT.' is not already registered'));
-	$out.=call_engine($control,'control_client_reg',$NO_TITLE=true,$NO_MESSAGES=false,$TOT,$PERM);
-      $out.=oline() . oline(bigger(link_engine(array('object'=>AG_MAIN_OBJECT_DB,
-								     'action'=>'add',
-								     'rec_init'=>$REC),
-							     'If the '.AG_MAIN_OBJECT.' is not already registered, proceed here')));
-      
-      return $out;
+		$out.=call_engine($control,'control_client_reg',$NO_TITLE=true,$NO_MESSAGES=false,$TOT,$PERM);
+		$out.=oline()
+			. oline(bigger(link_engine($add_link_array,$proceed_link)));
+		return $out;
+	}
 }
 
 function donor_agency_home_links()
