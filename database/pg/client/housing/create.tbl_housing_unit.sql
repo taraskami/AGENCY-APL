@@ -9,6 +9,7 @@ CREATE TABLE tbl_housing_unit (
 	tax_credit 				BOOLEAN NOT NULL,
 	security_deposit 			NUMERIC(8,2) NOT NULL,
 	tax_credit_percent 		INTEGER,
+	max_occupant			INTEGER NOT NULL DEFAULT 1,
 -- Scattered Site Specific Data --
 	address_1				VARCHAR(70),
 	address_2				VARCHAR(70),

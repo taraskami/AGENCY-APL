@@ -871,4 +871,20 @@ function agency_menu_shelter()
 	return array($menu,$errors);
 }
 
+function can_occupy_residence_own($cid,$unit,$ondate) {
+/*
+   Check how many people (other than client)
+   are living in a unit, and compare with
+   max allowed.
+*/
+	$max = call_sql_function('allowed_occupant',"'$unit'","'$ondate'");
+	$filter = array("housing_unit_code"=>$unit,
+		"<=:residence_date"=>$ondate,
+		">=:COALESCE(residence_date_end,current_date)"=>$ondate,
+		"<>:client_id"=>$cid);
+	$found = count_rows("residence_own",$filter);
+	return $found < $max;
+}
+
+
 ?>

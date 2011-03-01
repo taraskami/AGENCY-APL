@@ -1108,20 +1108,33 @@ function client_search($allow_other="N",$auto_forward=true)
 			}
 
 		} elseif ( $x = unit_no_of($QuickSearch)) {
-
 			/*
 			 * Housing Unit search (most recent occupant)
 			 */
 		
-			$rec = sql_fetch_assoc(get_last_residence($x));
-			if ( $x = $rec[AG_MAIN_OBJECT_DB . '_id'] ) {
-
-				global $client_idType, $client_idText;
-				$client_idType = "equal";
-				$jump = $client_idText = $rec[AG_MAIN_OBJECT_DB.'_id'];
-
+			if (call_sql_function('current_occupant_count',"'$x'") < 2) {
+				$rec = sql_fetch_assoc(get_last_residence($x));
+				if ( $x = $rec[AG_MAIN_OBJECT_DB . '_id'] ) {
+					global $client_idType, $client_idText;
+					$client_idType = "equal";
+					$jump = $client_idText = $rec[AG_MAIN_OBJECT_DB.'_id'];
+				}
+			} else {
+					// for multiply-occupied units, show residences
+					$def=get_def('residence_own');
+					$fields=$def['list_fields'];
+					if (!in_array(AG_MAIN_OBJECT_DB.'_id',$fields)) {
+						array_push($fields,AG_MAIN_OBJECT_DB.'_id');
+					}  
+					$filter = array( 'housing_unit_code'=>$x);
+					$control = array('action'=>'list',
+						'object'=>'residence_own',
+						'list'=>array( 'filter'=>$filter,
+										'fields'=>$fields)
+						);
+					$result = list_generic($control,$def,'control',$REC_NUM);
+					return $result;
 			}
-
 		} elseif (preg_match('/^([a-z_]{3,}):([0-9]*)$/i',$QuickSearch,$m)) {
 
 			/*

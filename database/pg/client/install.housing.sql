@@ -29,6 +29,7 @@
 
 /* Own org residence records */
 \i housing/create.view.l_move_out_was.sql
+\i housing/create.multi_occupancy_functions.sql
 \i housing/create.tbl_residence_own.sql
 \i housing/create.view.residence_own.sql
 

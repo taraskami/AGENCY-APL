@@ -87,7 +87,7 @@ $engine['residence_own']=array(
 												   'label'=>'Unit',
 												   'is_html'=>true,
 												   'value'=>'link_unit_history($x)',
-												   'valid' => array('be_null($x) || $action=="edit" || sql_num_rows(get_generic(array("housing_unit_code"=>$x,"NULL:residence_date_end"=>""),"","","residence_own")) == 0'=>'There is already a client in the selected unit. This client should be moved out prior to moving in a new client.')
+												   'valid' => array('be_null($x) || can_occupy_residence_own($rec["client_id"],$rec["housing_unit_code"],$rec["residence_date"])'=>'This unit is already fully occupied')
 												   ),
 								'chronic_homeless_status_code'=>array('label'=>'Chronic Homeless Status at time of Move-in',
 														  'lookup_order'=>'TABLE_ORDER',

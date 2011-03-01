@@ -59,3 +59,6 @@ CREATE TRIGGER
 BEFORE UPDATE ON 
 	tbl_residence_own
 FOR EACH ROW EXECUTE PROCEDURE tbl_residence_own_validate_modify();
+
+CREATE TRIGGER check_max_occupant AFTER INSERT OR UPDATE ON tbl_residence_own
+    FOR EACH ROW EXECUTE PROCEDURE enforce_max_occupant();
