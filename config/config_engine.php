@@ -475,6 +475,7 @@ $engine['action_specific_vars']=array(
 				      'global'=>array(
 						      'perm'=>'any',
 						      'title'=> 'ucwords("{$action}ing {$def["singular"]}")',
+						      'title_format'=> 'bigger(bold($x))',
 							'enable_staff_alerts' => null
 						      ),
 				      'fields'=>array(
