@@ -61,7 +61,7 @@ switch ($action) {
 	 } else {
 			 // navigate back to user options
 			 array_push($navigation,hlink($_SERVER['PHP_SELF'].'?action=options&report_id=' . $report_id,'Change options for this report'));
-
+			 array_push($navigation,link_engine(array('object'=>'report','action'=>'edit','id'=>$report_id),'Edit this report'));
 			 // valid request, generate report
 		       $dummy=agency_query('SET DATESTYLE TO SQL');
 			 
