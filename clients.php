@@ -175,7 +175,9 @@ function client_show( $id )
 	$out .= rowrlcell("Current Registrations & Status",
 				jail_status_f($id)
 				. hospital_status_f($id)
-/*
+				. member_introduction_status_f($id)
+				. enrollments_f(client_filter($id),oline(),'Enrolled in ',oline())
+	/*
 				. conditional_release_f($id)
 				. housing_status_f($id)
 				. tier_status_f($id)
@@ -187,9 +189,9 @@ function client_show( $id )
 			  );
 
 	//Bar Status
-	$out .= row(
+	$out .= is_enabled('bar') ? row(
 			rightcell('Bar Status')
-			. leftcell(bar_status_f($client,'long',$is_provisional) . gatemail_status_f($client)));
+			. leftcell(bar_status_f($client,'long',$is_provisional) . gatemail_status_f($client))) : '';
 	// Medical Appointments
 /*
 	if ($c_apps = medical_appointments_f($id)) {
@@ -214,32 +216,25 @@ function client_show( $id )
 			);
 */	
 	// Disability Information
+	$disab_def=get_def('disability');
+	$d_sing=$disab_def['singular'];
 	$disab_filt = client_filter($id);
 	$disab_filt[] = array('NULL:disability_date_end'=>true,
 				    'FIELD>=:disability_date_end'=>'CURRENT_DATE');
-	$out .= row( rightcell('Disability Information'.
+	$out .= row( rightcell($d_sing . ' Information'.
 				     html_no_print(oline().smaller(link_engine(array("object"=>"disability",
 												     "action"=>"add",
 												     "rec_init"=>array($ID_FIELD=>$client[$ID_FIELD])),
-											     "Add a disability record") )))
+											     'Add a ' . $d_sing . ' record') )))
 		   . leftcell( multi_objects_f( 
 								 get_generic($disab_filt,'','','disability'), 'disability','disability_code','<br>'
 								 ) 
 				   ));
 
 	// Meds & Allergies
-	$out .= row( rightcell("Medical Concerns") . leftcell(
+	$out .= row( rightcell("Medical Issues") . leftcell(
 									  ($client["med_issues"]) ? blue(italic($client["med_issues"]))
 									  : smaller("(none)") ) );
-	$out .= row( rightcell("Medications") . leftcell(
-								   ($client["medications"]) ? blue(italic($client["medications"]))
-								   : smaller("(none)") ) );
-	if ($nic = nicotine_distribution_f($id)) {
-		$out .= row( rightcell('NRT Distribution') . leftcell($nic));
-	}
-	$out .= row( rightcell("Allergies") . leftcell(
-								 ( $client["med_allergies"]) ? blue(italic($client["med_allergies"]))
-								 : smaller("(none)") ) );
 	$out .= row(rightcell("Language")
 		  . leftcell ( lang_f($client)));
 	
@@ -253,7 +248,7 @@ function client_show( $id )
 //	$out .= row(rightcell('Outstanding Balances').leftcell(balance_by_project($id)));
 	// Basic Info
 	$out .= row( rightcell(oline('Date of Birth')
-				     . 'Gender, Ethnicity, SS, Vet Status')
+				     . 'Gender, Ethnicity, Vet Status')
 			 . leftcell( //oline(ageof($client['dob'],'Formatted') ) 
 					oline($deceased_f
 						? red('Deceased. '.dateof($client['dob']).' - '.dateof($deceased_date).' ('.client_age($id,'NO',$deceased_date).' years old)')
@@ -264,11 +259,12 @@ function client_show( $id )
 		   			. multi_objects_f( 
 								 get_generic(client_filter($id),'','','ethnicity')
 								 ,'ethnicity','ethnicity_code') . green("  |  ")
-					. blue($client["ssn"]) . green("  |  ") 
+					// . blue($client["ssn"]) . green("  |  ") 
 					. blue(value_generic($client['veteran_status_code'],$def,'veteran_status_code','list'))) );
+/*
 	//ids
 	$out .= row(rightcell(ucfirst(AG_MAIN_OBJECT).' ID #\'s').leftcell($ids));
-
+*/
 	$out .= row(cell(smaller(
 				   oline("Record Added By " . staff_link($client["added_by"]) . ", at " . datetimeof($client["added_at"],"US"))
 				   . "Record Last Edited By " . staff_link($client["changed_by"]) . ", at " . datetimeof($client["changed_at"],"US"))
@@ -446,10 +442,10 @@ function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
 			. row(boldcell("#")
 				. boldcell(oline(ucfirst(AG_MAIN_OBJECT)." / ID # /") 
 					     . oline("Overnight Eligibility | Assessed Score") 
-					     . "Housing Status")
+					     . (is_enabled('residence_own') ? "Housing Status" : ''))
  				. boldcell("Last Entry")
-				. boldcell("Bar Status") 
-				.  boldcell("Gender / Ethnicity /<br />Date of Birth / ssn") 
+				. ( is_enabled('bar') ? boldcell("Bar Status") : '')
+				.  boldcell(oline('Gender / DOB /') . 'Ethnicity') 
 				. boldcell("Picture"));
 	}
 	if ( ereg("\?",$select_to_url) )// figure out whether to add vars to
@@ -491,16 +487,16 @@ function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
 						. ($deceased ? oline($deceased) : '')
 						. smaller(client_staff_assignments_f($info[AG_MAIN_OBJECT_DB."_id"]))
 //						. smaller(priority_status_f($info[AG_MAIN_OBJECT_DB.'_id'],"")) . " | " . smaller(" assess: ") . bigger(assessment_f($info,"tiny"))
-						. smaller(housing_status_f($info[AG_MAIN_OBJECT_DB."_id"]))
+						. (is_enabled('residence_own') ? smaller(housing_status_f($info[AG_MAIN_OBJECT_DB."_id"])): '')
 						)
 				   //            . cell( $info["junk_LastGateDate"] )
  				   . cell( last_entry_f($info[AG_MAIN_OBJECT_DB."_id"]))
-				   . cell(bar_status_f($info,'',$is_provisional ))
-				   . cell( smaller(oline(value_generic($info['gender_code'],$def,'gender_code','list'))
+				   . (is_enabled('bar') ? cell(bar_status_f($info,'',$is_provisional )) : '')
+				   . cell( smaller(oline(value_generic($info['gender_code'],$def,'gender_code','list')
+					 	. green(' | ') .dateof($info["dob"])  )
 		   			. oline(multi_objects_f( 
 								 get_generic(client_filter($info[AG_MAIN_OBJECT_DB.'_id']),'','','ethnicity')
-								 ,'ethnicity','ethnicity_code'))
-					 . oline(dateof($info["dob"]) . green(' | ') . $info['ssn'])))
+								 ,'ethnicity','ethnicity_code'))))
 				   . cell( client_photo( $info[AG_MAIN_OBJECT_DB."_id"], 0.5 )), $opts);
 	}
 	$result .= tableend();
@@ -1245,7 +1241,14 @@ function client_age($id,$dob='NO',$date='',$format='year')
 	if ($dob=='NO') {
 		return $age;
 	} elseif (is_array($client)) {
-		return dateof($client['dob']) . " (" . blue("age=" . $age . ")");
+		$bday=year_of(dateof('now')).'-'.month_of($client['dob']) . '-'.day_of($client['dob']);
+		$days=days_interval(dateof('now','SQL'),dateof($bday));
+		if ($days==0) {
+			$msg= red(' BIRTHDAY TODAY!');
+		} elseif ($days< 7) {
+			$msg= red(' Birthday in ' . $days . ' days');
+		}
+		return dateof($client['dob']) . " (" . blue("age=" . $age) . ")" . $msg;
 	} else {
 		return 'Error: DOB request made to client_age() without client record ';
 	}
