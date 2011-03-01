@@ -36,4 +36,18 @@ should be included in this distribution.
  * There are probably things in io.php and elsewhere that should be moved here.
  */
 
+function is_enabled( $feature ) {
+	switch ($feature) {
+		// Features can be disabled here
+		// FIXME:  This should be moved to a config file
+
+		case 'some_disabled_feature' :
+		// case 'bar' :
+		// case 'residence_own' :
+			return false;
+		default :
+			return true;
+	}
+}
+
 ?>
