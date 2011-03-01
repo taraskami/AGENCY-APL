@@ -7,7 +7,7 @@ CREATE TABLE tbl_contact_information (
 	relation				VARCHAR(40),
 	name					VARCHAR(40),
 	phone_1				VARCHAR(14) NOT NULL CHECK (phone_1 ~ '\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$'),
-	phone_2				VARCHAR(14) NOT NULL CHECK (phone_2 ~ '\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$'),
+	phone_2				VARCHAR(14) CHECK ((phone_2 IS NULL) or phone_2 ~ '\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$'),
 	address_1				VARCHAR(70),
 	address_2				VARCHAR(70),
 	city					VARCHAR(30),
