@@ -931,7 +931,6 @@ function sql_metadata_wrapper($sql_metadata)
 	    }
 	    
 	}
-      
       return $sql_metadata;
 
 }
@@ -1048,7 +1047,8 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 		  $new['label']='Social Security #';
 
 	    } elseif (preg_match('/(.*)_code$/i',$field,$matches)
-		    && isTableView('l_' . $matches[1])) {
+//		    && isTableView('l_' . $matches[1])) {
+		    && is_view('l_' . $matches[1])) {
 
 		    /*
 		     * sql_metadata might return this information (if the lookup table is referenced in the db), 
@@ -1479,8 +1479,9 @@ function value_generic($value,$def,$key,$action,$do_formatting=true)
 	if (!$field) {
 		return $value;
 	}
-
-      $type=$field['data_type'];
+	// Although this $x_raw appears orphaned, it is available from config files a la $x.
+	$x_raw = $value; // Save raw value, w/o formatting.
+	$type=$field['data_type'];
 	//fixme: this should really be done at the formatting stage, since it doesn't webify anything
 	// that is occasionally a link (such as DAL progress note field).
 	if (!in_array($type,array('html','lookup','table_switch','lookup_multi','array','staff_list','attachment')) && !$field['is_html']) {
@@ -2936,7 +2937,7 @@ function title_generic($action,$rec,$def)
 {
       $a=orr($def['title_' . $action],$def['title']);
       $object=$def['object'];
-      $b=$def['title_format'];
+      $b=orr($def['title_format_'.$action],$def['title_format']);
       $x = $a
 	    // first figure out title text
 	    ? eval("return $a;")
@@ -2946,10 +2947,9 @@ function title_generic($action,$rec,$def)
 	    && !stristr($x,'Adding a new '.AG_MAIN_OBJECT.' record.')) {
 		$x .= ' for '.client_link($rec[AG_MAIN_OBJECT_DB.'_id']);
 	}
-
       // then determine format
-      return oline($b
-			 ? eval("return $b;")
+      $out = oline($b
+			 ? eval('return ' . $b. ';')
 			 : bigger(bold($x)))
 		. $required_note
 		. (sql_true($rec['is_deleted'])
@@ -2957,6 +2957,7 @@ function title_generic($action,$rec,$def)
 				. staff_link($rec['deleted_by']) . ' at ' . datetimeof($rec['deleted_at'],'US') 
 				. $GLOBALS['NL'] . ' with this comment: ' . underline($rec['deleted_comment']) . ')')))
 		   : '');
+	return $out;
 }
 
 function engine_process_quicksearch(&$step,&$rec,$control)
