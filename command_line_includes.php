@@ -85,6 +85,7 @@ if (!$AG_DB_CONNECTION = db_connect()) {
 //only include files needed for command-line play
 //or, files that won't choke on command-line
 
+include $off . 'agency_core.php';
 include $off . 'daterange.php';
 include $off . 'sql.php';
 include $off . 'engine_functions.php';
