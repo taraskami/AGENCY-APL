@@ -699,8 +699,8 @@ function is_human_staff($sid)
 
 function staff_summary($rec)
 {
+	// FIXME: much of this is duplicated in view_staff (tracker #3196596)
 	$def = get_def('staff');
-	//,'staff_position_code','agency_project_code','agency_facility_code'
 	return table(rowrlcell('position: ',bold(value_generic($rec['staff_position_code'],$def,'staff_position_code','list')))
 			 .rowrlcell('project: ',bold(value_generic($rec['agency_project_code'],$def,'agency_project_code','list')))
 			 .rowrlcell('Supervised By: ',value_generic($rec['supervised_by'],$def,'supervised_by','list'))
