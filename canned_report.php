@@ -46,6 +46,7 @@ if ($report_id = $_REQUEST['report_id']) {
 
 $navigation = array();
 $main_reports_url = hlink(AG_REPORTS_URL.'?action=&report_id=','List Reports');
+$edit_this_report = link_engine(array('object'=>'report','action'=>'edit','id'=>$report_id),'Edit this Report');
 
 switch ($action) {
  case 'post_sql': //this is for generating an openoffice document from posted sql (via list)
@@ -76,6 +77,7 @@ switch ($action) {
 	$title = 'Select Options ('. $report['report_title']. ')';
 	// navigate back to list of reports
 	array_push($navigation,$main_reports_url);
+	array_push($navigation,$edit_this_report);
 	// check permissions
 	$perm_type = $report['report_permission'];
 	if (!be_null($perm_type) && (!has_perm($perm_type))) {
