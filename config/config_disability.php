@@ -31,7 +31,12 @@ should be included in this distribution.
 </LICENSE>
 */
 
+// Edit this line to change the label of disability (e.g., "Special Need")
+$noun='Special Need';
+
+$Noun=ucfirst($noun);
 $engine['disability'] = array(
+		'singular'=>$noun,
 		'list_fields' => array('disability_code','disability_date','disability_date_end','added_by'),
 		'widget'=>array(
 				    'add'=>true,
@@ -43,13 +48,18 @@ $engine['disability'] = array(
 				    'optional_fields'=>array('comment')
 				    ),
 		'fields' => array(
+					'disability_id'=>array(
+									 'label'=>$Noun . ' ID'),
 					'disability_date'=>array(
+									 'label'=>$Noun . ' Date',
+								     'label_list'=>'Date',
 									 'default'=>'NOW'),
 					'disability_date_end'=>array(
-									     'label'=>'Disability End Date',
+									     'label'=>$Noun . ' End Date',
 									     'label_list'=>'End Date',
 									     'display_add'=>'hide'),
 					'disability_code' => array(
+									     'label'=>$Noun . ' Code',
 									'require_comment_codes' => array('9','44','45'),
 									   'display' => 'display',
 									   'display_add' => 'regular',

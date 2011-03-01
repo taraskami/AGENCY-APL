@@ -31,11 +31,13 @@ should be included in this distribution.
 </LICENSE>
 */
 
+$d_def=get_def('disability');
+$d_lab=$d_def['plural'];
 $engine['client']['multi_records'] = true;
 $engine['client']['multi'] = array(
 	'disability' => array(
-    	'sub_title' => 'Disabilities',
-	    'sub_sub_title'=>smaller('Check appropriate disabilities based on '.AG_MAIN_OBJECT.' self-report or staff observation'),
+    	'sub_title' => $d_lab,
+	    'sub_sub_title'=>smaller('Check appropriate ' .$d_lab . ' based on '.AG_MAIN_OBJECT.' self-report or staff observation'),
 		'multi_fields'=>'disability_date',
 		'object' => 'disability',
 		'field' => 'disability_code',
