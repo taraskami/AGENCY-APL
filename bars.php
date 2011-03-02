@@ -90,6 +90,7 @@ function bar_status_f( $client,$format='',&$is_provisional)
 	$is_provisional = true;
 
 	$def = get_def('bar');
+	$verb_passive=$def['verb_passive'];
 	$noun = $def['singular'];
 	if (sql_num_rows($bars) > 0) {
 		while($curr_bar = sql_fetch_assoc($bars)) {
@@ -111,7 +112,7 @@ function bar_status_f( $client,$format='',&$is_provisional)
 				$bar_type = $days_barred . ($days_barred > 1 ? " days" : " day");
 			}
 			$barred_from = value_generic($curr_bar['barred_from_summary'],$def,'barred_from_summary','list');
-			$bar_text = bigger(red(bold('BARRED'))).$prov_reinstate.' ('.bold($barred_from).') ';
+			$bar_text = bigger(red(bold(strtoupper($verb_passive)))).$prov_reinstate.' ('.bold($barred_from).') ';
 			if (($format <> "short") && ($format <> "mail"))
 			{
 				$bar_text .= bigger(red(bold("($bar_type)")));
@@ -122,7 +123,7 @@ function bar_status_f( $client,$format='',&$is_provisional)
 							    .( dateof($date,"SQL") > dateof("now","SQL") 
 								 ? bold(red("Bar set for ")) : "") 
 							    .( $enddate && dateof($enddate,"SQL") < dateof("now","SQL") 
-								 ? "expired bar started " : "")  
+								 ? "expired " .strtolower($def['singular']) . "bar started " : "")  
 							    . orr(dateof($date),$date)
 							    . ($enddate ?
 								 "-->" . orr(dateof($enddate),$enddate) : "" )
@@ -147,7 +148,7 @@ function bar_status_f( $client,$format='',&$is_provisional)
 	else
 	{
 		$link = html_no_print(' ('.link_engine(array('object'=>'bar','action'=>'add','rec_init'=>array('client_id'=>$client_id)),'Add a ' . $noun).')');
-		$res = smaller('Not ' . $def['verb_passive'].$link);
+		$res = smaller('Not ' . $verb_passive.$link);
 		if ($format=='mail') {
 			$res = oline($res);
 		}
