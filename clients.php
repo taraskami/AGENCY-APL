@@ -433,18 +433,24 @@ function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
 			. button("Enter Unregistered ".ucfirst(AG_MAIN_OBJECT))
 			. formend();
 	}
+	if (is_enabled('bar')) {
+		$b_def=get_def('bar');
+		$bar_status=boldcell($b_def['singular'] . ' Status');
+	}
 	if (sql_num_rows($clients)>0)
 	{
 		$result .= tablestart("","border=1")
 			. row(boldcell("#")
 				. boldcell(oline(ucfirst(AG_MAIN_OBJECT)." / ID # /") 
 					     . oline("Overnight Eligibility | Assessed Score") 
-					     . "Housing Status")
+					     . is_enabled('residence_own') ? "Housing Status" : '')
  				. boldcell("Last Entry")
-				. boldcell("Bar Status") 
+				. $bar_status
 				.  boldcell("Gender / Ethnicity /<br />Date of Birth / ssn") 
 				. boldcell("Picture"));
 	}
+
+
 	if ( ereg("\?",$select_to_url) )// figure out whether to add vars to
 	{			   // url with ? or &
 		$select_char = "&";
