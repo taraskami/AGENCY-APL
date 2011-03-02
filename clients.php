@@ -175,9 +175,7 @@ function client_show( $id )
 	$out .= rowrlcell("Current Registrations & Status",
 				jail_status_f($id)
 				. hospital_status_f($id)
-				. member_introduction_status_f($id)
-				. enrollments_f(client_filter($id),oline(),'Enrolled in ',oline())
-	/*
+/*
 				. conditional_release_f($id)
 				. housing_status_f($id)
 				. tier_status_f($id)
@@ -248,7 +246,7 @@ function client_show( $id )
 //	$out .= row(rightcell('Outstanding Balances').leftcell(balance_by_project($id)));
 	// Basic Info
 	$out .= row( rightcell(oline('Date of Birth')
-				     . 'Gender, Ethnicity, Vet Status')
+				     . 'Gender, Ethnicity, SS, Vet Status')
 			 . leftcell( //oline(ageof($client['dob'],'Formatted') ) 
 					oline($deceased_f
 						? red('Deceased. '.dateof($client['dob']).' - '.dateof($deceased_date).' ('.client_age($id,'NO',$deceased_date).' years old)')
@@ -259,12 +257,11 @@ function client_show( $id )
 		   			. multi_objects_f( 
 								 get_generic(client_filter($id),'','','ethnicity')
 								 ,'ethnicity','ethnicity_code') . green("  |  ")
-					// . blue($client["ssn"]) . green("  |  ") 
+					. blue($client["ssn"]) . green("  |  ") 
 					. blue(value_generic($client['veteran_status_code'],$def,'veteran_status_code','list'))) );
-/*
 	//ids
 	$out .= row(rightcell(ucfirst(AG_MAIN_OBJECT).' ID #\'s').leftcell($ids));
-*/
+
 	$out .= row(cell(smaller(
 				   oline("Record Added By " . staff_link($client["added_by"]) . ", at " . datetimeof($client["added_at"],"US"))
 				   . "Record Last Edited By " . staff_link($client["changed_by"]) . ", at " . datetimeof($client["changed_at"],"US"))
@@ -442,10 +439,10 @@ function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
 			. row(boldcell("#")
 				. boldcell(oline(ucfirst(AG_MAIN_OBJECT)." / ID # /") 
 					     . oline("Overnight Eligibility | Assessed Score") 
-					     . (is_enabled('residence_own') ? "Housing Status" : ''))
+					     . "Housing Status")
  				. boldcell("Last Entry")
-				. ( is_enabled('bar') ? boldcell("Bar Status") : '')
-				.  boldcell(oline('Gender / DOB /') . 'Ethnicity') 
+				. boldcell("Bar Status") 
+				.  boldcell("Gender / Ethnicity /<br />Date of Birth / ssn") 
 				. boldcell("Picture"));
 	}
 	if ( ereg("\?",$select_to_url) )// figure out whether to add vars to
@@ -492,11 +489,12 @@ function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
 				   //            . cell( $info["junk_LastGateDate"] )
  				   . cell( last_entry_f($info[AG_MAIN_OBJECT_DB."_id"]))
 				   . (is_enabled('bar') ? cell(bar_status_f($info,'',$is_provisional )) : '')
-				   . cell( smaller(oline(value_generic($info['gender_code'],$def,'gender_code','list')
-					 	. green(' | ') .dateof($info["dob"])  )
+
+				   . cell( smaller(oline(value_generic($info['gender_code'],$def,'gender_code','list'))
 		   			. oline(multi_objects_f( 
 								 get_generic(client_filter($info[AG_MAIN_OBJECT_DB.'_id']),'','','ethnicity')
-								 ,'ethnicity','ethnicity_code'))))
+								 ,'ethnicity','ethnicity_code'))
+					 . oline(dateof($info["dob"]) . ($info['ssn'] ? green(' | ') . $info['ssn'] : ''))))
 				   . cell( client_photo( $info[AG_MAIN_OBJECT_DB."_id"], 0.5 )), $opts);
 	}
 	$result .= tableend();
