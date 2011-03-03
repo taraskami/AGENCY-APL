@@ -908,7 +908,7 @@ function sql_metadata_wrapper($sql_metadata)
 	    /*
 	     * lookup table handling
 	     */
-	    if (preg_match('/_code$/i',$field) and $l_field = $metadata['lookup_column'] and $l_table = $metadata['lookup_table']
+	    if ( $l_field = $metadata['lookup_column'] and $l_table = $metadata['lookup_table']
 		  and is_table($l_table) and is_field($l_table,$l_field)) {
 
 		    $l_label = is_field($l_table,'description') ? 'description' : $l_field;
