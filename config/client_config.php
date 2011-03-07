@@ -162,6 +162,7 @@ $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
 //				'staff_termination',
 //				'staff_qualification',
 //				'survey_2008_1night',
+//				'safe_harbors_data_entry',
 				'user_option',
 				//---Engine & AGENCY---//
 				'attachment',

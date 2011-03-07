@@ -63,6 +63,7 @@ $engine["client"] = array(
 						'elevated_concern'          => 'general',
 //						'vocational_reg'            => 'general',
 //						'conditional_release' => 'general',
+//						'safe_harbors_data_entry'=>'general',
 //						'sh_additional_data'=>'general',
 /*
  * These items logically go in other sections, and are
