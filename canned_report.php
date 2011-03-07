@@ -41,12 +41,12 @@ if ($report_id = $_REQUEST['report_id']) {
 		 $report_id=NULL;
 	} else {
 		$action = orr($action,'options');
+		$edit_this_report = link_engine(array('object'=>'report','action'=>'edit','id'=>$report_id),'Edit this Report');
 	}
 }
 
 $navigation = array();
 $main_reports_url = hlink(AG_REPORTS_URL.'?action=&report_id=','List Reports');
-$edit_this_report = link_engine(array('object'=>'report','action'=>'edit','id'=>$report_id),'Edit this Report');
 
 switch ($action) {
  case 'post_sql': //this is for generating an openoffice document from posted sql (via list)
