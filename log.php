@@ -128,7 +128,7 @@ function generate_list_medium_log($result,$fields,$max,$position,$total,$control
 function generate_list_long_log($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,&$rec_num)
 {
 	if (!in_array($control['format'],array('long','medium'))) {
-		return generate_list_generic($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,&$rec_num);
+		return generate_list_generic($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,$rec_num);
 	}
 
 	$pos=$control['list']['position'];

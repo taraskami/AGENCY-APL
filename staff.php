@@ -770,7 +770,7 @@ function form_row_staff_request($key,$value,&$def,$control,&$Java_Engine,$rec)
 	$new_fields      = array('name_last','name_first','name_first_legal','prior_employee_code','prior_staff_id','size_head','home_address','home_phone','gender_code');
 
 	if (!in_array($key,array_merge($transfer_fields,$new_fields))) {
-		return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec);
+		return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
 	}
 
 	if (sql_true($rec['is_transfer']) and in_array($key,$new_fields)) {
@@ -779,7 +779,7 @@ function form_row_staff_request($key,$value,&$def,$control,&$Java_Engine,$rec)
 		return hiddenvar('rec['.$key.']',$value);
 	}
 
-	return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec);
+	return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
 }
 
 function staff_project($id)

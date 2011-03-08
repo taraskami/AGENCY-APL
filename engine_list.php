@@ -266,7 +266,7 @@ function generate_list_generic($result,$fields,$max,$position,$total,$control,$d
 	return  $header 
 		. $totals
 		//. show_query($fields,$result,$control,$def,$total,$control_array_variable,&$REC_NUM)
-		. show_query($fields,$result,$control,$def,$total,$control_array_variable,&$rec_num)
+		. show_query($fields,$result,$control,$def,$total,$control_array_variable,$rec_num)
 		. $totals
 		. list_footer($fields,$max,$position,$total,$control,$control_array_variable);
 
@@ -278,7 +278,7 @@ function generate_list_medium_generic($result,$fields,$max,$position,$total,$con
 	/*
 	 * place-holder function for custom medium-format lists
 	 */
-	return generate_list_generic($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,&$rec_num);
+	return generate_list_generic($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,$rec_num);
 
 }
 
@@ -288,7 +288,7 @@ function generate_list_long_generic($result,$fields,$max,$position,$total,$contr
 	/*
 	 * place-holder function for custom long-format lists
 	 */
-	return generate_list_generic($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,&$rec_num);
+	return generate_list_generic($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,$rec_num);
 
 }
 
@@ -1089,7 +1089,7 @@ function engine_java_wrapper($tmp_control,$var_name=null,&$js_hide,$title=null,$
       $control['page']=$page;             // BLOW OUT OLD PAGE
 
       // GET RECORDS
-	$OUTPUT= call_engine($control,$var_name,$NO_ENGINE_TITLE,false,$total,&$PERMISSION);
+	$OUTPUT= call_engine($control,$var_name,$NO_ENGINE_TITLE,false,$total,$PERMISSION);
 
       //ADD RECORD LINK
 	$add_link_control = $tmp_control;
@@ -1430,7 +1430,7 @@ function init_form_generic($def,$defaults,$control)
 
 	foreach ($def['multi_add']['init_fields'] as $key) {
 		$def['fields'][$key]['null_ok']=true;
-		$cell = form_field_generic($key,$defaults[$key],&$def,$control,&$Java_Engine,'rec_init');
+		$cell = form_field_generic($key,$defaults[$key],$def,$control,$Java_Engine,'rec_init');
 		$row .= rowrlcell(label_generic($key,$def,'add'),$cell);
 	}
 
@@ -1488,7 +1488,7 @@ function form_list_row_generic($number,$rec,$def,$control)
 			}
 			continue;
 		}
-		$cell = form_field_generic($field,$rec[$field],&$def,$control,&$Java_Engine,'RECS['.$number.']');
+		$cell = form_field_generic($field,$rec[$field],$def,$control,$Java_Engine,'RECS['.$number.']');
 		
 		$row .= cell($cell);
 	}
@@ -1516,7 +1516,7 @@ function form_list_generic($RECS,$def,$control,$errors,$rec_init)
 		$common = '';
 		foreach ($def['multi_add']['common_fields'] as $field) {
 			$common .=  oline(bold(label_generic($field,$def,'add')))
-				. oline(form_field_generic($field,$RECS[0][$field],&$def,$control,&$JUNK,'RECS[0]'));
+				. oline(form_field_generic($field,$RECS[0][$field],$def,$control,$JUNK,'RECS[0]'));
 		}
 	}
 	return table(row(topcell(table($rows,'','class="multiAddForm"')) . topcell(div($common))));
@@ -1599,7 +1599,7 @@ function valid_multi_record_generic(&$records,&$def,&$message,&$errors,$rec_init
 			foreach ($def['multi_add']['common_fields'] as $field) {
 				$rec[$field]=$common_val[$field]; // tack common vals on to each record
 			}
-			$t_v = valid_generic($rec,&$def,&$message,'add');
+			$t_v = valid_generic($rec,$def,$message,'add');
 			$valid = $t_v ? orrn($valid,$t_v) : $t_v;
 			if (!$t_v) {
 				array_push($errors,$number);

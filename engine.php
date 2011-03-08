@@ -978,7 +978,7 @@ function engine($control='',$control_array_variable='control')
 		break;
 	case 'download':
 		
-		$attachment_info = get_attachment_content($id, &$message);
+		$attachment_info = get_attachment_content($id, $message);
 		
 		if (!$attachment_info) {				
 			break;
