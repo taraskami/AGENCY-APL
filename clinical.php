@@ -616,7 +616,7 @@ function medical_appointments_f($cid)
 function generate_list_long_dal($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,&$rec_num)
 {
 	if ($control['format'] != 'long') {
-		return generate_list_generic($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,&$rec_num);
+		return generate_list_generic($result,$fields,$max,$position,$total,$control,$def,$control_array_variable,$rec_num);
 	}
 
 	$pos = $control['list']['position'];
@@ -1092,7 +1092,7 @@ function init_form_dal($def,$defaults,$control)
 		if ($key == 'client_id') {
 			$cell = active_clinical_select_to('rec_init['.$key.']',$defaults[$key]);
 		} else {
-			$cell = form_field_generic($key,$defaults[$key],&$def,$control,&$Java_Engine,'rec_init');
+			$cell = form_field_generic($key,$defaults[$key],$def,$control,$Java_Engine,'rec_init');
 		}
 		$row .= rowrlcell(label_generic($key,$def,'add'),$cell);
 	}
@@ -1122,7 +1122,7 @@ function form_list_row_dal($number,$rec,$def,$control)
 		if ($field == 'client_id') {
 			$cell = active_clinical_select_to('RECS['.$number.']['.$field.']',$rec[$field]);
 		} else {
-			$cell = form_field_generic($field,$rec[$field],&$def,$control,&$Java_Engine,'RECS['.$number.']');
+			$cell = form_field_generic($field,$rec[$field],$def,$control,$Java_Engine,'RECS['.$number.']');
 		}
 		$row .= cell($cell);
 	}
@@ -1222,7 +1222,7 @@ function form_row_cod_screening($key,$value,&$def,$control,&$Java_Engine,$rec)
 
 	if (preg_match('/^([ies])ds_question_a_code$/',$key,$m)) {
 		$missing_key = $m[1].'ds_data_status_code';
-		$missing = right(form_field_generic($missing_key,$rec[$missing_key],&$def,$control,&$Java_Engine));
+		$missing = right(form_field_generic($missing_key,$rec[$missing_key],$def,$control,$Java_Engine));
 		switch ($m[1]) {
 		case 'i' :
 			$prepend = row(cell(bold('1) During the past 12 months, have you had significant problems') . $missing,'colspan="2"'));
@@ -1236,7 +1236,7 @@ function form_row_cod_screening($key,$value,&$def,$control,&$Java_Engine,$rec)
 		}
 	}
 
-	return $prepend . form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec);
+	return $prepend . form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
 }
 
 function view_row_cod_screening($key,$value,$def,$action,$rec)
@@ -1277,40 +1277,40 @@ function form_row_conditional_release($key,$value,&$def,$control,&$Java_Engine,$
 	if ($key=='previous_reference_number')
 	{
 	
-	return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec) . row(cell(bold('Conditional Release/Less Restrictive Alternative Requirements'), 'colspan="2"'));
+	return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec) . row(cell(bold('Conditional Release/Less Restrictive Alternative Requirements'), 'colspan="2"'));
 	}		
 	
 	if ($key=='comment')
 	{
 	 
-	return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec) . row(cell(bold('Conditional Release/Less Restrictive Alternative Outcome'), 'colspan="2"'));
+	return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec) . row(cell(bold('Conditional Release/Less Restrictive Alternative Outcome'), 'colspan="2"'));
 	}
 
 	if ($key=='compliance_plan_appointment')
 	{
  
-	return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec) . row(cell('C: Client will take prescribed medications and comply with all lab tests.', 'colspan="2"'));
+	return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec) . row(cell('C: Client will take prescribed medications and comply with all lab tests.', 'colspan="2"'));
 	}
 
 	if ($key=='compliance_plan_medication')
 	{
  
-	return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec) . row(cell('D: Client will refrain from use of alcohol and unprescribed drugs and comply with random urinalysis if requested.', 'colspan="2"'));
+	return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec) . row(cell('D: Client will refrain from use of alcohol and unprescribed drugs and comply with random urinalysis if requested.', 'colspan="2"'));
 	}
 
 	if ($key=='compliance_plan_substance')
 	{
  
-	return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec) . row(cell('E: Client will refrain from acts, attempts and threats of harm to self, others or other\'s property.', 'colspan="2"'));
+	return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec) . row(cell('E: Client will refrain from acts, attempts and threats of harm to self, others or other\'s property.', 'colspan="2"'));
 	}
 
 	if ($key=='compliance_plan_threat')
 	{
  
-	return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec) . row(cell('F: Client will possess no firearms.', 'colspan="2"'));
+	return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec) . row(cell('F: Client will possess no firearms.', 'colspan="2"'));
 	}
 
-	return form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec);
+	return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
 }
 
 

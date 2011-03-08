@@ -389,7 +389,7 @@ function engine($control='',$control_array_variable='control')
 			     */
 			  $res = $def['post_with_transactions'] ? sql_begin() : '';
 
-			  if ($changed_rec = $def['fn']['rec_collision']($REC,$REC_LAST,$def,$action,&$message)) {
+			  if ($changed_rec = $def['fn']['rec_collision']($REC,$REC_LAST,$def,$action,$message)) {
 				  /*
 				   * Record collision
 				   */
@@ -519,7 +519,7 @@ function engine($control='',$control_array_variable='control')
 		    /*
 		     * Valid record, user is prompted to confirm record before posting
 		     */
-		    $def['fn']['confirm']($REC,$def,&$message,$action,$REC_LAST);
+		    $def['fn']['confirm']($REC,$def,$message,$action,$REC_LAST);
 		    $message = ($message
 				    ? (black(oline('Please review these warnings: ',2))
 					 . $message . oline(hrule()))

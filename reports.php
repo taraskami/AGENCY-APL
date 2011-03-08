@@ -242,7 +242,7 @@ function report_generate($report)
 		}
 
 		return html_heading_4(webify($report['report_header']),' class="reportHeader"')
-			. call_engine($control,$control_array_variable='control',$NO_TITLE=true,$NO_MESSAGES=true,&$TOTAL_RECORDS,&$PERM)
+			. call_engine($control,$control_array_variable='control',$NO_TITLE=true,$NO_MESSAGES=true,$TOTAL_RECORDS,$PERM)
 			. (!be_null($footer) ? html_heading_4($footer,' class="reportFooter"') : '');
 	}
 
