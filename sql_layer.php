@@ -126,7 +126,7 @@ function sql_metadata($table)
 			$b['field']   = $a['attname'];
 			$b['null_ok'] = sql_false($a['attnotnull']);
 
-			if (in_array($a['attname'],$primary_keys)) {
+			if (in_array($a['attname'],explode(',',$primary_keys))) {
 
 				$b['primary_key'] = true;
 
@@ -495,16 +495,9 @@ function sql_field_type($res,$field_number)
 
 function sql_primary_keys($table)
 {
-	$indexes=sql_indexes($table);
-	$primary=array();
-	foreach ($indexes AS $column=>$info)
-	{
-		if (sql_true($info['is_primary']))
-		{
-			array_push($primary,$column);
-		}
-	}
-	return $primary;
+	static $keys;
+	$keys[$table]=orr($keys[$table],call_sql_function('primary_key',enquote1($table)));
+	return $keys[$table];
 }
 
 function sql_num_rows($res,$eng='')

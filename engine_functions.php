@@ -547,7 +547,6 @@ function get_singular($object)
 
 function config_object($object)
 {
-
 	/*
 	 * Configure an AGENCY object, returning a configuration array
 	 */
@@ -1210,18 +1209,21 @@ function set_engine_defaults($object,$table='')
       $DEFAULTS['global_default']['table'] = $table;
       $DEFAULTS['global_default']['table_post'] = is_table('tbl_'.$object)
 	    ? 'tbl_' . $object : $table;
-	$primary=sql_primary_keys($table);
+	$primaries=sql_primary_keys($table);
+	if ($strip_from=strpos($primaries,',')) {
+		$primary = susbstr($primaries,0,$strip_from);
+	} else {
+		$primary = $primaries;
+	}
 	$indexes=array_keys(sql_indexes($table));
 	$fields=array_keys(sql_metadata($table)); 
-      $DEFAULTS['global_default']['id_field'] = ( is_field($table,$table.'_id')
-								  ? $table.'_id'                       //if it exists, table_id
-								  : ( is_field($table,substr($table,2,strlen($table)-2))  //trim off l_
-									? $table.'_code' //match on code
-									: ( $primary[0] 
-									    ? $primary[0]  //else go for the primary key
-									    : $fields[0] )  //failing that, the first field
-									)
-								  );
+      $DEFAULTS['global_default']['id_field'] = is_field($table,$table.'_id')
+		  ? $table.'_id' //if it exists, table_id
+		  : ( is_field($table,substr($table,2,strlen($table)-2))  //trim off l_
+				? $table.'_code' //match on code
+				//else go for the primary key, or failing that, the first field
+				: orr( $primary, $fields[0]) 
+		  );
       $singular=orr($engine[$object]['singular'],ucwords(preg_replace("/_/",' ',$object)));
 	$singular=preg_replace("/".AG_MAIN_OBJECT_DB."/i",ucwords(AG_MAIN_OBJECT),$singular);
       $DEFAULTS['global_default']['singular'] = $singular;
@@ -1250,9 +1252,8 @@ function set_engine_defaults($object,$table='')
 					 ? $table.'_id'                       //if it exists, table_id
 					 : ( is_field($table,substr($table,2,strlen($table)-2))  //trim off l_
 					     ? $table.'_code' //match on code
-					     : ( $primary[0] 
-						   ? $primary[0]  //else go for the primary key
-						   : $fields[0] )  //failing that, the first field
+						   //else go for the primary key, or failing that, the first field
+					     : orr( $primary,$fields[0]) 
 					     )));
 	/*
 	 * 2nd field

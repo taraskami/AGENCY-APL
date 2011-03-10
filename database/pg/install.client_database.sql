@@ -33,4 +33,5 @@ ALTER TABLE tbl_db_revision_history
 		(agency_flavor_code IS NULL OR
 		agency_flavor_code IN ('AGENCY_CORE','CLIENT',''));
 
+SELECT enable_table_logging_all();
 COMMIT;

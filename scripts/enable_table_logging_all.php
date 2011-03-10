@@ -105,6 +105,7 @@ $res = agency_query($query);
 
 if (sql_num_rows($res) < 1) {
 	outline('Table logging is already enabled for all existing lookups (l_*) and data tables (tbl_*)');
+	page_close();
 	exit;
 }
 
@@ -132,50 +133,8 @@ $enable_query="INSERT INTO tbl_db_revision_history
 while ($a = sql_fetch_assoc($res)) {
 	$table = $a['relname'];
 	$verbose && outline('Enabling table logging for '.bold($table));
-
-	$on_actions = in_array($table,$tmp_update_delete_only) 
-		? 'UPDATE OR DELETE'
-		: 'UPDATE OR INSERT OR DELETE';
-
-	$enable_query .= "
---$table
-SELECT * INTO {$table}_log FROM {$table} LIMIT 0;
-ALTER TABLE {$table}_log ADD COLUMN trigger_mode VARCHAR(10);
-ALTER TABLE {$table}_log ADD COLUMN trigger_tuple VARCHAR(5);
-ALTER TABLE {$table}_log ADD COLUMN trigger_changed TIMESTAMP;
-ALTER TABLE {$table}_log ADD COLUMN trigger_id BIGINT;
-CREATE SEQUENCE {$table}_log_id;
-ALTER TABLE {$table}_log ALTER COLUMN trigger_id SET DEFAULT NEXTVAL('{$table}_log_id');
-SELECT SETVAL('{$table}_log_id', 1, FALSE);
-
--- create trigger
-CREATE TRIGGER {$table}_log_chg 
-	AFTER {$on_actions} ON {$table} 
-	FOR EACH ROW EXECUTE PROCEDURE table_log();
--- Disable updates & deletes of log table
-CREATE RULE {$table}_log_nodelete AS
-	ON DELETE TO {$table}_log DO INSTEAD NOTHING;
-CREATE RULE {$table}_log_noupdate AS
-	ON UPDATE TO {$table}_log DO INSTEAD NOTHING;";
-
-
-	//check for primary key
-	$primary = sql_primary_keys($table);
-
-	if ($pk = $primary[0]) {
-
-		$enable_query .="
-
---create index on primary key
-
-CREATE INDEX index_{$table}_log_{$pk} ON {$table}_log ( {$pk} );
-
-";
-
-	}
-
-
+	$on_actions = in_array($table,$tmp_update_delete_only) ? 'UPDATE OR DELETE' : '';
+	$enable_query .= "SELECT enable_table_logging('$table','$on_actions'); \n ";
 }
-
 agency_query('BEGIN; '.$enable_query.' COMMIT;');
 ?>

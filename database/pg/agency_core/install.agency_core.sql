@@ -163,6 +163,8 @@ INSERT INTO db_list
 
 \i create.info_additional.sql
 
+\i create.view.table_log_enabled_tables.sql
+
 /* core functions */
 
 \i functions/create.functions_agency_core.sql
