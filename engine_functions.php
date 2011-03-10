@@ -2784,15 +2784,57 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
 
 function delete_generic($filter,$def,$delete_comment='')
 {
+	$stamp_rec['is_deleted']=sql_true();
+	$stamp_rec['deleted_by']=$GLOBALS['UID'];
+	$stamp_rec['FIELD:deleted_at']='CURRENT_TIMESTAMP';
+	$stamp_rec['deleted_comment']=$delete_comment;
+	if ($def['child_records']) {
+		$stamp_rec_child=$stamp_rec;
+		$stamp_rec_child['deleted_comment'] .= ' (Auto-deleting child records.)';
+		$del_recs=get_generic($filter,'','',$def);
+		while ($del_rec=sql_fetch_assoc($del_recs)) {
+			$ids[]=$del_rec[$def['id_field']];
+		}
+		$c_filter=array('IN:'.$def['id_field']=>$ids);
+		foreach ($def['child_records'] as $c_rec=>$dummy) {
+			if (!$ids) { continue; }
+//outline("Child record: $c_rec");
+			$c_def=get_def($c_rec);
+			$c_table=orr($c_def['table_post'],$c_def['table']);
+/*
+ * This case is for objects by reference.
+ * e.g., log.
+ * I'm not sure what the best thing to do here is.
+ * A log could ref 2 clients.  Wouldn't want to delete it.
+ * What if log refs 1 client.  Do you delete the ref,
+ * but not the log?  Or leave the ref?
+ *
+ * For now, I'm going to be safe and have this do nothing.
+ * FIXME!!
+ */
+			if (!is_array($c_def['fields'][$def['id_field']])) {
+/*
+				$c_filter=array();
+				foreach ($ids as $id) {
+					$c_filter['a']=object_reference_filter_wrap( $def['object'], $id,NULL,NULL,$c_rec);
+					$c_filter['b']=object_reference_filter_wrap( $def['object'], $id,NULL,NULL,$c_rec);
+				}
+outline(read_filter($c_filter));
+*/
+			} else {
+				if ($def['stamp_deletes']) {
+					$c_res = agency_query(sql_update($c_table,$stamp_rec_child,$c_filter));
+				} else {
+						$c_res = agency_query(sql_delete($c_table,$c_filter));
+				}
+			}
+		}
+	}	
+	$table=orr($def['table_post'],$def['table']);
 	if ($def['stamp_deletes']) {
-		$del_rec=$filter;
-		$del_rec['is_deleted']=sql_true();
-		$del_rec['deleted_by']=$GLOBALS['UID'];
-		$del_rec['FIELD:deleted_at']='CURRENT_TIMESTAMP';
-		$del_rec['deleted_comment']=$delete_comment;
-		$res = agency_query(sql_update(orr($def['table_post'],$def['table']),$del_rec,$filter));
+		$res = agency_query(sql_update($table,$stamp_rec,$filter));
 	} else {
-		$res = agency_query(sql_delete(orr($def['table_post'],$def['table']),$filter));
+		$res = agency_query(sql_delete($table,$filter));
 	}
 	return $res;
 }
