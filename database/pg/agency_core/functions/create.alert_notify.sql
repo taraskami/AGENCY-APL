@@ -99,20 +99,14 @@ CREATE OR REPLACE FUNCTION table_alert_notify() RETURNS trigger AS $$
           set object_id_column "$object$id"
 
      }
-
-     if {[array exists NEW] } {
-
-          # $NEW and $OLD are always passed, sometimes empty (NEW is empty
-          # for deletes, while OLD is empty for INSERTS
-
-          array set record [array get NEW]
-
-     } else {
-
-          array set record [array get OLD]
-
-     }
-
+	switch $TG_op {
+		DELETE {
+			array set record [array get OLD]
+		}
+		default {
+			array set record [array get NEW]
+		}
+	}
      set object_id $record($object_id_column)
 
      #get staff and insert alert
