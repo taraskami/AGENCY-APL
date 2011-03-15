@@ -19,3 +19,4 @@ CREATE VIEW l_accuracy AS SELECT * FROM tbl_l_accuracy WHERE NOT is_deleted;
 
 INSERT INTO tbl_l_accuracy VALUES ('A','Approximate',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_accuracy VALUES ('E','Exact',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_accuracy VALUES ('U','Unknown',sys_user(),current_timestamp,sys_user(),current_timestamp);
