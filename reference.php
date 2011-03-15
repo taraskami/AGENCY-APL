@@ -120,11 +120,22 @@ function process_object_reference_generic($def,$rec,&$control)
 function populate_object_references_one( $ref, $x, $type ) {
 	// silly little helper function to avoid looping & save code
 	$n='preSelectedObject';
+    $max_length=20;
+	// Settle for this for now:
+	$label=webify(substr($ref['label'],0,$max_length));
+/*
+//FIXME: this should work, but doesn't because refs are currently
+// embedded in input tags.  Better to use divs or data instead.
+	$label=(strlen($ref['label']) <= $max_length)
+		? webify($label)
+		: webify($label)
+			. div(toggle_label('...').webify(substr($ref['label'],$max_length)),'','class="hiddenDetail"');
+*/
 	return 
 		hiddenvar( $n.'Number[]',$x)
 		. hiddenvar( $n.'Object[]',$ref['object'],"id=\"{$n}Object$x\"")
 		. hiddenvar( $n.'Id[]',$ref['id'],"id=\"{$n}Id$x\"")
-		. hiddenvar( $n.'Label[]',$ref['label'],"id=\"{$n}Label$x\"")
+		. hiddenvar( $n.'Label[]',$label,"id=\"{$n}Label$x\"")
 		. hiddenvar( $n.'CanRemove[]',!($ref['canRemove']==false),"id=\"{$n}CanRemove$x\"")
 		. hiddenvar( $n.'RefType[]',$type,"id=\"{$n}RefType$x\"");
 }
