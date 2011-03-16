@@ -229,8 +229,11 @@ function oowriter_merge_new( $data_recs, $template, $data_eval="",$file_replace=
 		$sets=count($data_recs);
 		// Unpack file
         $file_replace=orr($file_replace,array());
-        $zip_files=unzip(AG_TEMPLATE_DIRECTORY . "/$template");
-        $contents=$zip_files["content.xml"];
+    	$template=preg_match('/\/tmp\//s',$template)
+        	? $template
+	        : AG_TEMPLATE_DIRECTORY . '/' . $template;
+	    $zip_files=unzip($template);
+		$contents=$zip_files["content.xml"];
 		// Look for start and end tags
         if ( ! preg_match('/^(.*?)(\$START)(.*)(\$END)(.*?)$/s',$contents,$matches))
         {
