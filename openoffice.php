@@ -320,7 +320,10 @@ function oowriter_merge( $data_recs, $template, $data_eval="",$file_replace="",$
 	// and replace $field with value, a la the current report writer
 
 	$file_replace=orr($file_replace,array());
-	$zip_files=unzip(AG_TEMPLATE_DIRECTORY . '/' . $template);
+	$template=preg_match('/\/tmp\//s',$template)
+		? $template
+		: AG_TEMPLATE_DIRECTORY . '/' . $template;
+	$zip_files=unzip($template);
 	$contents=$zip_files['content.xml'];
 	$styles=$zip_files['styles.xml'];
 
@@ -545,7 +548,10 @@ function office_merge( $data_recs, $template="",$extra_vars=array())
 	}
 	$template = orr($template,AG_OPEN_OFFICE_CALC_TEMPLATE);
 	$default_template = preg_match('/'. AG_OPEN_OFFICE_CALC_TEMPLATE.'/',$template);
-	$zip_files=unzip(AG_TEMPLATE_DIRECTORY . '/'. $template);
+    $template=preg_match('/\/tmp\//s',$template)
+        ? $template
+        : AG_TEMPLATE_DIRECTORY . '/' . $template;
+    $zip_files=unzip($template);
 	$contents=$zip_files["content.xml"];
 $DEBUG && outline("contents before: " . webify($contents));
 	
