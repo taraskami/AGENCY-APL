@@ -484,7 +484,8 @@ $AG_OPEN_OFFICE_TRANSLATIONS = array(
     chr(148) => '&quot;',
     chr(150) => '--',
     chr(194) => chr(194), // dummy, to prevent re-replacing characters (bug 6009
-    "\n" => '</text:p><text:p>' // assumes balanced tags, and start and end tags
+	chr(13).chr(10) => '<text:line-break/>',
+	"\n" => '<text:line-break/>'
 );
 
 /* 
