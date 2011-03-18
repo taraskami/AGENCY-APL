@@ -77,6 +77,7 @@ if ($sql)
 		switch ($format) {
 		case 'oo_merge_user':
 		case 'oo_merge':
+			$dummy=agency_query("SET DATESTYLE TO SQL");
 			if ($result = sql_query($sql)) {
 				process_open_query($result,array("HEADER-LABEL"=>"Spreadsheet Generated from Open Query:\n$sql"));
 			}
