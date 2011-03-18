@@ -12,7 +12,7 @@ CREATE TABLE tbl_donor (
 	ask_code			VARCHAR(10) REFERENCES tbl_l_ask (ask_code),
 	preferred_address_code	VARCHAR(10) REFERENCES tbl_l_address_type (address_type_code ) NOT NULL,
 	is_inactive			BOOLEAN NOT NULL DEFAULT FALSE,
-	from_united_way		BOOLEAN NOT NULL,
+	from_united_way		BOOLEAN NOT NULL DEFAULT FALSE,
 	special_next_mail		BOOLEAN NOT NULL DEFAULT FALSE,
 	scratch			VARCHAR(20),
 /*
