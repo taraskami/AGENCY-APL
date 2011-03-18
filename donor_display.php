@@ -35,7 +35,7 @@ $quiet="Y";
 include "includes.php";
 
 $action = $_REQUEST['action'];
-$ID=orr($_REQUEST['id'],$_SESSION['CLIENT_ID']);
+$ID=orr($_REQUEST['id'],$_REQUEST['control']['id'],$_SESSION['CLIENT_ID']);
 $_SESSION['CLIENT_ID']=$ID;
 
 // $DISPLAY_CLIENT=mergeClientEngine(); //MERGE DISPLAY_CLIENT and CONTROL_{object} ARRAYS
