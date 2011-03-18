@@ -50,7 +50,7 @@ $client = client_get($ID);
 
 if (sql_num_rows($client) == 0 ) {
 
-	$title="No client with ID $ID.";
+	$title="No " .AG_MAIN_OBJECT. " with ID $ID.";
 	$not_found_message=alert_mark($title);
 	$client_not_found=true;
 
