@@ -1772,6 +1772,9 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 		  }
 	    }
       }
+	  // Links to def array, and config file
+	  $system .= right(smaller('View ' . elink('config_file',$def['object'],'config file','target="_blank"')
+			. ' or ' . elink('def_array',$def['object'],'def array','target="_blank"') . ' for ' . $def['object']));
       
       $out .= row(cell($system,'class="systemField" colspan="2"'));
       $out .= tableend();
@@ -3038,9 +3041,20 @@ function add_another_set_rec_init($rec,$def,$rec_init,$session_identifier)
 	$_SESSION['CONTROL'.$session_identifier]['rec_init'] = $init;
 }
 
+function config_object_file_name( $object) {
+	global $off;
+	if (is_readable( ($x = $off . ENGINE_CONFIG_FILE_DIRECTORY . '/'.AG_MAIN_OBJECT_DB.'/config_'.$object.'.php'))) {
+		return $x;
+	} elseif (is_readable( ($x = $off . ENGINE_CONFIG_FILE_DIRECTORY.'/config_'.$object.'.php'))) {
+		return $x;
+	} else {
+		return false;
+	}
+}
+
 function update_engine_array($use_auth=true,$engine_array=null,$tables=null) {
 
-	global $AG_ENGINE_TABLES,$engine,$off;
+	global $AG_ENGINE_TABLES,$engine;
 
 	$engine_array = orr($engine_array,AG_ENGINE_CONFIG_ARRAY);
 	$engine = null; //objects w/o config files were not configuring properly w/o this
@@ -3070,26 +3084,20 @@ function update_engine_array($use_auth=true,$engine_array=null,$tables=null) {
 	 * if not found, look for config/config_address.php.
 	 */
 	foreach ($tables as $tmp)	{
-		if (is_readable( ($x = $off . ENGINE_CONFIG_FILE_DIRECTORY . '/'.AG_MAIN_OBJECT_DB.'/config_'.$tmp.'.php'))) {
-
-			include $x;
-
-		} elseif (is_readable( ($x = $off . ENGINE_CONFIG_FILE_DIRECTORY.'/config_'.$tmp.'.php'))) {
-
-			include $x;
-
-		} else {
-
-			outline('No config file found for '.bold($tmp).'. Will configure '.$tmp.' using engine defaults.');
-
+		if ($x[$tmp] = config_object_file_name($tmp)) {
+			include $x[$tmp];
 		}
 	}
-	
+	//$table=row(cell("Object") . cell("Config File"));
+	$table='<thead>' . (h_cell("Object") . h_cell("Config File")) . '</thead>';
 	foreach ($tables as $tmp)	{
 		$engine[$tmp]=config_object($tmp);
-		outline ('Configuring '.bold($tmp));
+		$msg = $x[$tmp] ? elink('config_file',$tmp,$x[$tmp],'target="_blank"') : 'using Engine defaults';
+		$msg .= smaller(' (' . elink('def_array',$tmp,'view def array','target="_blank"') . ')');
+		$table .= row(cell($tmp) . cell($msg));
 	}
-
+	$table = table($table,'class="updateEngine"');
+	out($table);
 	$serialized_engine=serialize($engine);
 	
 	outline();

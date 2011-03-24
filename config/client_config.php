@@ -35,7 +35,7 @@ should be included in this distribution.
 // Define production database name and server
 // Note: this is used to determine operating mode (eg, is_test_db())
 // not for actual database connection. This is defined in agency_config_local.php
-define('AG_PRODUCTION_DATABASE_NAME','xxxx');
+define('AG_PRODUCTION_DATABASE_NAME','agency_client');
 define('AG_PRODUCTION_DATABASE_SERVER','localhost');
 
 define('AG_LIST_EMPTY_HIDE',true); //show empty records by default
@@ -171,6 +171,8 @@ $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
  				'generic_sql_query', // a pseudo object for handling generic SQL
 				'db_revision_history', // database modifications applied
 				'reference',
+				'config_file',
+				'def_array',
 				//---Testing---//
 				'report',
 				'info_additional',

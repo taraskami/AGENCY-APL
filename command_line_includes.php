@@ -89,6 +89,7 @@ include $off . 'agency_core.php';
 include $off . 'daterange.php';
 include $off . 'sql.php';
 include $off . 'engine_functions.php';
+include $off . 'hacky_objects.php';
 include $off . 'engine_list.php';
 include $off . 'engine.php';
 include $off . 'password.php';
