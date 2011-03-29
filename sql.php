@@ -679,7 +679,7 @@ function call_sql_function()
 		return false;
 	}
 	$sql_args = implode(',',$args);
-	$res = sql_query("SELECT {$func}({$sql_args})");
+	$res = agency_query("SELECT {$func}({$sql_args})");
 	$t = sql_fetch_row($res);
 	return $t[0];
 }
