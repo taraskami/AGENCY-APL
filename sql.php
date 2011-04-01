@@ -363,7 +363,7 @@ function read_filter( $filter, $bool="AND", $lang="SQL")
 				if ($op == 'ARRAY_EQUALS') {
 					$t_eq = ' AND ARRAY_COUNT('.$field.') = '.count($value);
 				}
-				$sql .= '('.implode(" $tmp_bool ",$t_sql).$t_eq.')'."\n$bool";
+				$sql .= '('.implode(" $tmp_bool ",$t_sql).$t_eq.')'."\n$bool ";
 			} else {
 				$sql .= "($field $op'" . implode( "' ".reverse_op($bool)." $field$op'", $value ). "') \n $bool ";
 			}
