@@ -2291,7 +2291,7 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 	    $valid=true;
 	    if ($type=='multi_rec') { //do nothing, but capture
 		    continue;
-	    } elseif ( (be_null(trim($value))) && (!$fields[$key]['null_ok']) ) {	
+	    } elseif ( (be_null(trim(is_array($value) ? implode('',$value) : $value))) && (!$fields[$key]['null_ok']) ) {	
 		    $mesg .= oline("Field $label cannot be blank.");
 		    $valid=false;
 	    } elseif ( ($type == 'attachment') && is_array($value)) {
