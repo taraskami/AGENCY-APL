@@ -1700,7 +1700,7 @@ function js_link($label,$js,$options='')
 
 function js_add_content_link($content,$id,$label,$options='')
 {
-	$js = 'document.getElementById(\''.$id.'\').innerHTML+=\''.htmlentities(str_replace("\n",' ',$content)).'\'';
+	$js = 'document.getElementById(\''.$id.'\').innerHTML+=\''.str_replace("\n",' ',$content).'\'';
 
 	return js_link($label,$js,$options);
 }
