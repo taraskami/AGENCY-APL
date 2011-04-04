@@ -59,6 +59,8 @@ $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
 				'permission',
 				'user_option',
 				//---Engine & AGENCY---//
+				'info_additional',
+				'l_info_additional_type',
 				'generic_sql_query', // a pseudo object for handling generic SQL
 				'reference',
 				//---Postgresql---
