@@ -1,9 +1,11 @@
-CREATE TABLE tbl_l_info_additional_type (
-    info_additional_type_code     VARCHAR(30) PRIMARY KEY,
+CREATE TABLE tbl_info_additional_type (
+	info_additional_type_id		SERIAL PRIMARY KEY,
+    info_additional_type_code     VARCHAR(30) UNIQUE,
     description VARCHAR NOT NULL UNIQUE,
 	applicable_tables	VARCHAR[] NOT NULL,
 	value_type_code	VARCHAR(10) NOT NULL REFERENCES tbl_l_value_type (value_type_code),
 	null_ok		BOOLEAN NOT NULL,
+	comment	TEXT,
 --	widget_type_code	VARCHAR(10) REFERENCES tbl_l_widget_type_code,
     --system fields
     added_by                        INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
@@ -19,5 +21,5 @@ CREATE TABLE tbl_l_info_additional_type (
     sys_log                 TEXT
 );
 
-CREATE VIEW l_info_additional_type AS SELECT * FROM tbl_l_info_additional_type WHERE NOT is_deleted;
+CREATE VIEW info_additional_type AS SELECT * FROM tbl_info_additional_type WHERE NOT is_deleted;
 

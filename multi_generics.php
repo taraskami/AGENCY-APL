@@ -312,7 +312,7 @@ function info_additional_config_array( &$def ) {
 		'form_row_fn'=>'form_generics_row',
 		'valid_fn'=>'valid_generics',
 		'post_fn'=>'post_generics',
-		'sel_sql'=>"SELECT * FROM l_info_additional_type WHERE '{$def['object']}' = ANY(applicable_tables)",
+		'sel_sql'=>"SELECT * FROM info_additional_type WHERE '{$def['object']}' = ANY(applicable_tables)",
 		'allow_none'=>true);
 
 	$infos=agency_query($multi['sel_sql']);

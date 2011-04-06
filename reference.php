@@ -233,7 +233,7 @@ function info_additional_f($object,$id,$id_field=NULL,$sep='') {
 	$filter=object_reference_filter_wrap( $object,$id,$id_field,'from','info_additional');
 	$key='info_additional_type_code';
 //toggle_query_display();
-	$recs=agency_query("SELECT * FROM info_additional LEFT JOIN l_info_additional_type USING ($key)",$filter);
+	$recs=agency_query("SELECT * FROM info_additional LEFT JOIN info_additional_type USING ($key)",$filter);
 //toggle_query_display();
 	while ($rec=sql_fetch_assoc($recs)) {
 		$label=$rec['description'] . $rec['info_additional_value'];
@@ -320,7 +320,7 @@ function info_additional_label($id) {
 	$def=orr($def,get_def('info_additional'));
 	$filter=array('info_additional_id'=>$id);
 	$key='info_additional_type_code';
-	$rec=agency_query("SELECT * FROM info_additional LEFT JOIN l_info_additional_type USING ($key)",$filter);
+	$rec=agency_query("SELECT * FROM info_additional LEFT JOIN info_additional_type USING ($key)",$filter);
 	if ($rec2=sql_fetch_assoc($rec)) {
 		$l = $rec2['description'] . ' ' . $rec2['info_additional_value'];
 	} else {

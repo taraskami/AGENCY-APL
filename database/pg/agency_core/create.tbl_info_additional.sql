@@ -1,6 +1,6 @@
 CREATE TABLE tbl_info_additional (
 	info_additional_id 		SERIAL PRIMARY KEY,
-	info_additional_type_code	VARCHAR(30) NOT NULL REFERENCES tbl_l_info_additional_type (info_additional_type_code),
+	info_additional_type_code	VARCHAR(30) NOT NULL REFERENCES tbl_info_additional_type (info_additional_type_code),
 	info_additional_value	VARCHAR,
 	comment					TEXT,
 	--system fields

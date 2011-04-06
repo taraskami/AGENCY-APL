@@ -176,7 +176,7 @@ $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
 				//---Testing---//
 				'report',
 				'info_additional',
-				'l_info_additional_type',
+				'info_additional_type',
 				//---Postgresql---//
  				'pg_catalog'
 				);
