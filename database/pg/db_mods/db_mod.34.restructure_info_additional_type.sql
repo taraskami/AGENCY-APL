@@ -31,7 +31,6 @@ DROP TABLE tbl_l_info_additional_type;
 
 \i ../agency_core/create.tbl_info_additional_type.sql
 \i ../agency_core/create.tbl_info_additional.sql
-/*
+
 COMMIT;
-*/
 
