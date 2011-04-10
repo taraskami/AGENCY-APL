@@ -122,11 +122,7 @@
 \i create.view.elevated_concern_note.sql
 
 /* BAR SYSTEM */
-\i create.l_bar_location.sql
-\i create.l_brc_resolution.sql
-
-\i create.tbl_bar.sql
-\i create.view.bar.sql
+\i install.bar.sql
 
 /* SHELTER-SPECIFIC TABLES */
 /*

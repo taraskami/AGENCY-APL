@@ -107,12 +107,13 @@ function bar_status_f( $client,$format='',&$is_provisional)
 			// this only remains true if ALL bars are provisional
 			$is_provisional = $is_prov ? $is_provisional : false;
 			if (empty($enddate) || $curr_bar['brc_client_attended_date']) {
-				$bar_type = "BRC";
+				$bar_type = "OPEN";
 			} else {
 				$bar_type = $days_barred . ($days_barred > 1 ? " days" : " day");
 			}
-			$barred_from = value_generic($curr_bar['barred_from_summary'],$def,'barred_from_summary','list');
-			$bar_text = bigger(red(bold(strtoupper($verb_passive)))).$prov_reinstate.' ('.bold($barred_from).') ';
+			//$barred_from = value_generic($curr_bar['barred_from_summary'],$def,'barred_from_summary','list');
+			$barred_from = str_replace(',',', ',value_generic($curr_bar['barred_from_codes'],$def,'barred_from_codes','list'));
+			$bar_text = bigger(red(bold(strtoupper($verb_passive)))).$prov_reinstate.' '.bold($barred_from).' ';
 			if (($format <> "short") && ($format <> "mail"))
 			{
 				$bar_text .= bigger(red(bold("($bar_type)")));
@@ -136,7 +137,7 @@ function bar_status_f( $client,$format='',&$is_provisional)
 			{
 				// want next bar on a new line for short display
 				$res .= $bar_text . bigger(red(bold("("
-										. ($bar_type == "BRC" 
+										. ($bar_type == "OPEN" 
 										   ? $bar_type . 
 										   (($format=="mail")
 										    ? smaller(blue(" G-->" . dateof($curr_bar["gate_mail_date"]))) : "")
