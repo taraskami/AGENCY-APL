@@ -1,3 +1,5 @@
+/* INFO Additional */
+
 /*
 DROP VIEW info_additional;
 DROP table tbl_info_additional;

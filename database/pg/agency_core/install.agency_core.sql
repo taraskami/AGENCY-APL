@@ -161,8 +161,6 @@ INSERT INTO db_list
 \i create.view.db_agency_relations.sql
 \i create.view.db_agency_functions.sql
 
-\i create.l_value_type.sql
-\i create.tbl_info_additional_type.sql
 \i create.info_additional.sql
 
 \i create.view.table_log_enabled_tables.sql
