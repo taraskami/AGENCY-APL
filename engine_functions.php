@@ -2211,6 +2211,25 @@ function form_generic($rec,$def,$control)
 
 function get_generic($filter,$order='',$limit='',$def,$table_post=false,$group='')
 {
+	/*
+	 * Hack for hacky objects
+	 * Send to get_{hacky_object}
+	 * as get_generic just blindly queries db
+	 * should be more configurable,
+	 * as in config option non_db_objects(array).
+	 *
+	 * Alternatively, not sure if it would always be
+	 * better to call get_{object}, if that function
+	 * exists.
+	 */
+
+	$ho=is_array($def) ? $def['object'] : $def;
+	if (in_array($ho,array('config_file','def_array'))) {
+		$func="get_$ho";
+		return $func($filter,$order,$limit,$def,$table_post,$group);
+	}
+	/* End hack */
+
 	if ($group) {
 		$group_fields = $group['fields'];
 		$order=implode(',',orr($group['order'],$group_fields)); // if no explicit order, use group fields
@@ -3340,18 +3359,25 @@ function get_table_switch_object_id($id,$def,$key='')
 
 function get_client_refs_generic($rec,$action,$def)
 {
+outline("Action - $action");
 	switch ($action) {
 	case 'view':
 		$id    = $rec[$def['id_field']];
 		$table = $def['table'];
+outline("Id = $id");
+outline("table = $table");
+toggle_query_display();
+return object_references_f($table,$id,$sep='','from',array('client'));
+
 		
 		//------ extract table and id from joint views -------//
 		if ($def['fields'][$def['id_field']]['data_type']=='table_switch' ) {
 			list($id,$table) = get_table_switch_object_id($id,$def);
 		}
 		if (!is_numeric($id)) { return false; }
+outline("Id = $id");
 
-		$filter = array('ref_table' => strtoupper($table), //fixme: testing
+		$filter = array('ref_table' => strtolower($table), //fixme: testing
 				    'ref_id'    => $id);
 		$res = get_generic($filter,'added_at DESC','','client_ref');
 		if (sql_num_rows($res) < 1) { return false; }
