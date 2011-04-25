@@ -910,6 +910,10 @@ function sql_metadata_wrapper($sql_metadata)
 	    if ( (!preg_match('/_id$/i',$field)) and $l_field = $metadata['lookup_column'] and $l_table = $metadata['lookup_table']
 		  and is_table($l_table) and is_field($l_table,$l_field)) {
 
+			if (preg_match('/^tbl_(.*)$/',$l_table,$m) and is_view($m[1]) and is_field($m[1],$l_field)) {
+				// Check for matching view and use instead of raw table
+				$l_table=$m[1];
+			}
 		    $l_label = is_field($l_table,'description') ? 'description' : $l_field;
 		    $sql_metadata[$field]['data_type'] = 'lookup';
 		    $sql_metadata[$field]['lookup'] = array('table'=>$l_table,
