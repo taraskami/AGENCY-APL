@@ -46,33 +46,6 @@ function log_link( $idnum, $label="lookup" )
 }
 
 /*
-function which_logs_f( $log, $sep=", ")
-{
-// take a log record, and return a formatted string of which logs it's in
-	global $log_types;
-	$in_logs=which_logs( $log );
-	foreach ($in_logs as $l) {
-		$in_logs_f[] = $log_types[$l];
-	}
-	$in_logs_text=implode($sep,orr($in_logs_f,array()));
-	return blue(orr($in_logs_text,AG_MAIN_OBJECT." record only"));
-}
-
-function which_logs( $log,$pre="" )
-{
-// take a log record, and return an array of which logs it's in
-	global $log_types;
-	$in_logs_list=array();
-	foreach ($log_types as $key=>$value)
-	{
-		if ($log["in_$key"]==sql_true())
-		{
-			array_push($in_logs_list,"$pre$key");
-		}
-	}
-	return $in_logs_list;
-}
-
 function engine_record_perm_log($control,$rec,$def) {
 
 	global $UID;
@@ -106,7 +79,7 @@ function engine_record_perm_log($control,$rec,$def) {
 			|| in_array($UID,$cm); //staff assigned to client
 	return $perm;
 }
-
+/*
 function db_links_array($arr)
 {
 	foreach ($arr as $key=>$link)
@@ -135,9 +108,9 @@ function generate_list_long_log($result,$fields,$max,$position,$total,$control,$
       $mx=$control['list']['max'];
 
       while ( $x<$mx and $pos<$total) {
-		$a = sql_fetch_assoc($result,$pos);
+		$a = sql_to_php_generic(sql_fetch_assoc($result,$pos),$def);
 		$link = link_engine(array('object'=>$def['object'],'id'=>$a[$def['id_field']]),'View');
-		$out .= div(view_generic($a,$def,'list',$control) . html_heading_6($link)); 
+		$out .= div(view_log($a,$def,'view',$control) . html_heading_6($link)); 
 		$pos++;
 		$x++;
 	}
@@ -192,91 +165,55 @@ function get_log($filter,$order='',$limit='',$def,$control=null) //same params a
 }
 */
 
-/*
-function get_log($filter,$order='',$limit='',$def,$control=null) //same params as get_generic
-{ //this would be named get_log, but that function already exists
-	$filter=orr($filter,array());
-	$log_table = $def['table'];
-
-	$ref_def = get_def('client_ref');
-	$ref_table = $ref_def['table'];
-
-	$a_def = get_def('alert');
-	$alert_table = $a_def['table'];
-	if (array_key_exists('client_id',$filter)) { //we'll be requiring a left join on the client_ref table
-		$sql = "SELECT DISTINCT log.*,
-                          array(SELECT t.staff_id FROM $alert_table AS t WHERE t.ref_id=$log_table.log_id) AS _staff_alert_ids,
-array(SELECT distinct client_id FROM $ref_table WHERE ref_table='LOG' AND ref_id=log.log_id) AS _client_links,
-//						array(SELECT distinct client_link(client_id) FROM $ref_table WHERE ref_table='LOG' AND ref_id=log.log_id) AS _client_links,
-                          array(SELECT coalesce(staff_id,0) FROM staff_assign WHERE client_id IN 
-                                     (SELECT distinct client_id FROM $ref_table WHERE ref_table='LOG' AND ref_id=log.log_id)
-                                      AND staff_assign_date_end IS NULL
-                          ) AS _case_mgr_id
-                  FROM {$log_table} AS log 
-                     LEFT JOIN ${ref_table} AS ref ON (ref.ref_table='LOG' AND ref.ref_id=log.log_id)";
-		$def['sel_sql']=$sql;
-	} elseif ($control['action']=='list' && in_array('client_id',$control['list']['fields'])) {
-		$sql="SELECT DISTINCT log.*, ref.client_id 
-                  FROM {$log_table} AS log 
-                     LEFT JOIN ${ref_table} AS ref ON (ref.ref_table='LOG' AND ref.ref_id=log.log_id)";
-		$def['sel_sql']=$sql;
-	}
-
-	return get_generic($filter,$order,$limit,$def,$control);
-}
-*/
-
-/*
-function show_log_heads( $logs, $photos="N", $reverse=false)
+function view_log($rec,$def,$action,$control='',$control_array_variable='control')
 {
-	global $colors, $UID;
-// needs added_at, added_by, log_id, Snippet, subject
-	if (sql_num_rows($logs)==0 )
-	{
-		$result .= oline("No Logs to Display");
-		return $result;
-	}
-	$result .= tablestart("","border=5")
-		. row( 
-		cell(bold(oline('When/') . 'Log #')) .
-		cell(bold(oline('By Whom/') . 'Log(s)')) .
-		cell(bold(ucwords(AG_MAIN_OBJECT)."s")) .
-		cell(bold("subject")) ); 
- 
-	$rows = '';
-	while($log=sql_fetch_assoc($logs)) {
-		$st=get_alerts_for_log( $log["log_id"],"NF" );
-		$cl=get_clients_for_log( $log["log_id"],"NF");
-		// if alert to this staff, use $alert_color:
-		$color_ref = (in_array($UID,$st)) ? " bgcolor=${colors["alert"]}" : "";
-		// if log by this staff, use $alert_color:
-		$color_by = ($UID==$log['added_by']) ? " bgcolor=${colors["alert"]}" : "";
-		$Snippet = orr($log["subject"],$log["snippet"]);
-		$in_logs=which_logs($log,"log_");
-		$authorized = (!$in_logs) // client_only entry
-			|| has_perm($in_logs,"R") // log_specific permission
-			|| in_array($UID,$st)  // Flagged to user's attention
-			|| in_array($UID,get_staff_clients($cl)); //staff assigned to client
-		$tmp_row = row( 
-				   cell( smaller(oline(dateof($log["added_at"])) . 
-					   oline(timeof($log["added_at"]))
-						. bold(italic("#" . $log["log_id"])),2))
-				   . cell( smaller(oline(staff_link($log["added_by"]))
-										. which_logs_f($log),1), $color_by ) 
-				   . cell( orr( get_clients_for_log( $log["log_id"],"<br>",$photos), 
-						    "(no ".AG_MAIN_OBJECT."s referenced)" ),'class="client"')
-				   . cell( $authorized
-					     ? log_link($log["log_id"],webify($Snippet))
-					     : "(Not authorized to view)" ,$color_ref));
-		if ($reverse) { 
-			$rows = $tmp_row . $rows; 
-		} else {
-			$rows .= $tmp_row;
+	foreach ($rec as $key => $value) {
+		if (in_array($key,array('log_text','subject'))) {
+			$def['fields'][$key]['data_type'] = 'text';
+			$$key = value_generic($value,$def,$key,'view');
 		}
-    }
-	$result .= $rows . tableend();
-	return $result;
-}
+	}
+
+
+	//post times
+	$added_at    = dateof($rec['added_at']).' '.timeof($rec['added_at']);
+	$post_times = 'Posted at '.bold($added_at);
+
+	if ($occurred_at = $rec['occurred_at']) {
+		$occurred_at = dateof($occurred_at).' '.timeof($occurred_at);
+		$post_times .= oline().'Event time was '.bold($occurred_at);
+	}
+	$c_def=get_def(AG_MAIN_OBJECT_DB);
+	$client_refs = ($a=object_references_f('log',$rec['log_id'],NULL,'','to',array('client')))
+	? oline($c_def['plural'] . ':') . $a
+	: '(no '.$c_def['plural'].' are referenced in this log entry)';
+
+	$staff_alerts = ($a=staff_alerts_f('log',$rec['log_id']))
+		? oline(bold('Staff Alerts:')).$a
+		: 'No Staff Alerts';
+	$in_logs = smaller(implode(oline(),$rec['log_type_code']));
+/*
+	foreach( $rec['log_type_code'] as $a) {
+		$in_logs.=html_list_item($a);
+	}
+	$in_logs = $in_logs ? html_list($in_logs) : '';
 */
+	$title = (($action=='list')
+			 	? bold(bigger('Log '.$rec['log_id'].' ',2)) 
+				: '' )
+			 .'(logs: '.$in_logs.')';
+	$out = //oline($title,2)
+		//refs/author info
+		  table(row(
+				cell($in_logs)
+				. cell($client_refs,'class="client"') //client refs
+				. cell($staff_alerts,'class="staff"') //staff alerts
+				. cell(oline('Posted by '.staff_link($rec['added_by']))
+					 . $post_times,'class="info"')),'','class="logHeader"')
+
+		. div(html_heading_2($subject,' class="logSubject"')
+			. $log_text,'','class="logText generalTable"');
+	return $out;
+}
 
 ?>

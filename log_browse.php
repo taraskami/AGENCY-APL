@@ -361,7 +361,7 @@ case 'view' :
 					'position'=>$LOG_POS,
 					'max'=>$logs_per_screen,
 					'display_add_link'=>true,
-					'no_controls'=>true));
+					'no_controls'=>false));
 //outline("Control: " . dump_array($control));
 
 	$nav_links=list_links($logs_per_screen,$LOG_POS,$log_count,$control,'control');

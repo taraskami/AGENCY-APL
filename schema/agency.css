@@ -109,6 +109,29 @@ tr.staffData2 { background-color: #cff2cf; }
 .clientCommentNote { background-color: #efefef; }
 .clientCommentFlag { color: #f00; }
 
+/* Logs */
+.logSubject {
+	font-size: 200%;
+	font-weight: bold;
+	font-color: #4D053e;
+}
+
+.logText {
+	font: universal;
+}
+
+.logHeader td {
+	padding: 6px;
+	vertical-align: bottom;
+}
+
+.logHeader ul {
+	list-style: none;
+	vertical-align: bottom;
+	margin-bottom: 0px;
+	margin-left: 0px;
+}
+
 /* Engine */
 td.listControl { color: #fff; }
 input.listControl, select.listControl { background-color: #fff; }
