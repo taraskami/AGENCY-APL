@@ -158,6 +158,12 @@ tr.engineFormSelected { background-color: #1BEDDF; }
 
 /* End Engine */
 
+/* multiAdd */
+table.multiAddForm input,table.multiAddForm select { font-size: 70%; }
+table.multiAddForm select { width: 120px; }
+table.multiAddForm input[type=text] { width: 50px; }
+div.multiAddForm { margin: 25px; width: 70%; }
+
 /* Widget */
 
 .widgetChanged { background-color: #92c4ef; }

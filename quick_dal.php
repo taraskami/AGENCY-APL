@@ -62,16 +62,6 @@ function generate_multi_add_id()
 	return $_SESSION['current_multi_add_id'];
 }
 
-/* 
- * Custom styles, could be moved to css file at some point, or merged with existing classes
- */
-$style = 'table.multiAddForm input,table.multiAddForm select { font-size: 70%; }
-          table.multiAddForm select { width: 120px; }
-          table.multiAddForm input[type=text] { width: 50px; }
-          div.multiAddForm { margin: 25px; width: 70%; }
-';
-$AG_HEAD_TAG .= style($style);
-
 $rec_init_tmp = $_REQUEST['rec_init'];
 
 //if ALL fields have been selected, only 1 record is presented
