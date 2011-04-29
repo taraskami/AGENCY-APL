@@ -2018,9 +2018,9 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 	    break;
 	case 'text':
 
-		$options = ($len ? "maxlength=\"$len\"" : '').$element_options;
+		$options = ($len ? "maxlength=\"$len\"" : '').' class="engineTextarea" '.$element_options;
 		$textarea_x = orr($pr['textarea_width'],60);
-		$textarea_y = orr($pr['textarea_height'],10);
+		$textarea_y = orr($pr['textarea_height'],1);
 
 		if ($pr['append_only']) {
 

@@ -170,3 +170,8 @@ $(function() {
 	});
 });
 
+$(function() {
+	/* Elastic text boxes */
+	$(".engineTextarea").elastic();
+});
+
