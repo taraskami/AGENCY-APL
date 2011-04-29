@@ -38,6 +38,7 @@ link_javascript('jquery-1.4.4.min.js');
 link_javascript('jquery-ui-1.8.custom.min.js');
 link_javascript('jquery.datepick.pack.js');
 link_javascript('jquery.clockpick.js');
+link_javascript('jquery.elastic.js');
 link_javascript('jquery_agency.js');
 link_javascript('object_reference.js');
 ?>
