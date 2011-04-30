@@ -4012,11 +4012,17 @@ function engine_browser_control() {
 						    'action'=>'list'),'List all AGENCY functions','','target="_blank"'))
 		. formto('display.php','','target="_blank"')
 		. oline('Or, enter a table name:')
-		. form_field('text','control[object]','','class="agencyForm"') . $button
+		. form_field('text','control[object]','','class="agencyForm"') .div(json_encode(all_db_objects()),NULL,'class="autoComplete"'). $button
 		. hiddenvar('control[action]','list')
 		. hiddenvar('control[format]','raw')
 		. formend();
 }	
+
+function all_db_objects( $filter=NULL ) {
+	$filter=orr($filter,array('type'=>array('view','table')));
+	$objects = sql_fetch_column(get_generic($filter,NULL,NULL,'db_agency_relations'),'name');
+	return $objects;
+}
 
 function link_all_db_views($label='List all DB Views')
 {

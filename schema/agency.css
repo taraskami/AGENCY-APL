@@ -304,3 +304,7 @@ div#noStaffEmployment {
 	text-align: left;
 	background-color: 	#00FF00;
 }
+
+.autoComplete {
+	display: none;
+}
