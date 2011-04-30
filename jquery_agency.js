@@ -175,6 +175,7 @@ $(function() {
 	$(".engineTextarea").elastic();
 });
 
+$(function() {
 /* Process autocomplete options */
 	$(".autoComplete").each( function() {
 		var opts=eval($(this).html());
