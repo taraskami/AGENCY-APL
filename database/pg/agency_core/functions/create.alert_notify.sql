@@ -102,9 +102,20 @@ CREATE OR REPLACE FUNCTION table_alert_notify() RETURNS trigger AS $$
 	switch $TG_op {
 		DELETE {
 			array set record [array get OLD]
+			set human_action "Deleted"
+		}
+		INSERT {
+			array set record [array get NEW]
+			set human_action "Added"
+		}
+		UPDATE {
+			array set record [array get NEW]
+			set human_action "Edited"
 		}
 		default {
+			/* Shouldn't get here */
 			array set record [array get NEW]
+			set human_action "UNKNOWN OPERATION: $TG_op"
 		}
 	}
      set object_id $record($object_id_column)
@@ -247,20 +258,6 @@ CREATE OR REPLACE FUNCTION table_alert_notify() RETURNS trigger AS $$
 				lappend staff $notify_staff(staff_id)	
 		 	}
 		}
-     }
-
-     if {$action=="INSERT"} {
-
-          set human_action "Added"
-
-     } elseif {$action=="UPDATE"} {
-
-          set human_action "Edited"
-
-     } else {
-
-          set human_action "Deleted"
-
      }
 
      set alert_subject "$object $object_id has been $human_action"

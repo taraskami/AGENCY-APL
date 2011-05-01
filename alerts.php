@@ -209,6 +209,9 @@ EOF
 								$user2=$x['changed_by'];
 							}
 							break;
+						default :
+							$user=orr($ref['written_by'],$ref['changed_by']);
+							break;
 					}
 				}
  				$alert_description = strtoupper($x['ref_table'])=='LOG' ? "Log: " . $ref['subject'] : engine_translate_singular($x['ref_table']);

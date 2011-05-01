@@ -428,6 +428,8 @@ function engine($control='',$control_array_variable='control')
 				  $adef = get_def('alert');
 				  foreach ($alerts as $alert_staff_id) {
 					  $n_alert = array();
+					  $n_alert['alert_subject'] = $def['singular'] .' (id '.$control['id'].') has been added';
+					  $n_alert['alert_text'] = staff_name(orr($a['written_by'],$a['added_by'])) . ' has added '.aan($def['singular']).' '.$def['singular'].' (id '.$control['id'] . ') for your attention';
 					  $n_alert['staff_id']   = $alert_staff_id;
 					  $n_alert['ref_table']  = $def['object'];
 					  $n_alert['ref_id']     = $a[$def['id_field']];
