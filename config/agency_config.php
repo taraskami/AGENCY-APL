@@ -498,7 +498,7 @@ for ($x=129; $x < 255; $x++)
 	{
 		$AG_OPEN_OFFICE_TRANSLATIONS[chr($x)] =
 			'</text:p><text:p></text:p><text:p>'
-			. "UNKNOWN TRANSLATION:  PLEASE REPORT RECORD TYPE, ID and Character $x IN BUG 6009"
+			. "UNKNOWN TRANSLATION:  PLEASE REPORT RECORD TYPE, ID and Character $x TO YOUR AGENCY SUPPORT STAFF OR SYSTEM ADMINISTRATOR, and/or FORWARD TO THE AGENCY MAILING LIST: agency-general@lists.sourceforge.net"
 			. '</text:p><text:p></text:p><text:p>';
 	}
 }
