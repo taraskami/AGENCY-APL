@@ -72,6 +72,7 @@ function quick_searches_all()
 				  'id ="QuickSearchText" onclick="this.value = (this.value==\''.AG_DEFAULT_QUICKSEARCH_TEXT.'\') ? \'\' : this.value"')
 		. button('Go!')
 		. hiddenvar('QSType',$current_type,'id="QuickSearchType"')
+		. hiddenvar('QuickSearchAutocompleteMinLength',AG_QUICKSEARCH_AUTOCOMPLETE_MIN_LENGTH,'id="QuickSearchAutocompleteMinLength"')
 		. formend();
 
 	$links = help('QuickSearch',null,'help',' class="fancyLink"',false,true) . ' | ' .hlink($GLOBALS['agency_search_url'],'advanced search');

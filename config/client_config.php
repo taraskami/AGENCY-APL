@@ -191,6 +191,15 @@ $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
 $AG_QUICK_SEARCHES = array(AG_MAIN_OBJECT_DB=>ucwords(AG_MAIN_OBJECT),'staff'=>'Staff','log'=>'Log'/*,'iandr'=>'I &amp; R'*/);
 define('AG_DEFAULT_QUICKSEARCH_TEXT','Quick Search');
 
+// Number of characters typed before database match is
+// triggered for auto complete.
+
+// Smaller organizations might want to reduce this to 2.
+// The smaller the number, the more database utilization,
+// and with larger databases 2 or 3 letter matches might not
+// be very meaningful or specific.
+define('AG_QUICKSEARCH_AUTOCOMPLETE_MIN_LENGTH',4);
+
 // flag table--used for bed_rereg
 $flag_table = "sys_flag";
 $nobedreg = "lock_bed_";

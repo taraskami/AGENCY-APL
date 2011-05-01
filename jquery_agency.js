@@ -192,7 +192,7 @@ $(function() {
 				}
 			});
 		},
-		minLength: 2
+		minLength: $("#QuickSearchAutocompleteMinLength").val()
 	});
 
 /* Trim autocomplete result down to ID */
