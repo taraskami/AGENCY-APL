@@ -46,7 +46,7 @@ $sql_gate_shelter="SELECT DATE(entered_at) AS date,
                 'Gate (Shelter)'::text AS description
            FROM entry
            WHERE
-                scanner_location_code ~ '^SHEL' 
+                entry_location_code ~ '^SHEL' 
                 AND DATE(entered_at) BETWEEN '$startdate' AND '$enddate'";
 
 $sql_housing="SELECT residence_date AS date,

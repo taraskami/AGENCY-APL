@@ -47,7 +47,7 @@ while (true)
 	}
 	if (!maintain_connection()) { continue; }
 	$entry['source']='X';
-	$entry['scanner_location_code']=$scanner_location_code;
+	$entry['entry_location_code']=$entry_location_code;
 	$DEBUG && outline("Read Entry: " . dump_array($entry));
 
 	// look for already-existing record

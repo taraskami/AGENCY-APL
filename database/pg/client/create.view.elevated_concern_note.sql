@@ -105,7 +105,7 @@ SELECT entry_id||'::entry' AS elevated_concern_note_id,
 	entered_at AS added_at,
 	761 AS added_by
 FROM entry
-	LEFT JOIN l_scanner_location sl USING (scanner_location_code)
+	LEFT JOIN l_entry_location sl USING (entry_location_code)
 
 UNION ALL
 

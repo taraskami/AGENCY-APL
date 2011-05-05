@@ -195,6 +195,32 @@ $(function() {
 		minLength: $("#QuickSearchAutocompleteMinLength").val()
 	});
 
+/* TEST Client Form autocomplete */
+	$(".enterClient").autocomplete( {
+		source: function( request, response ) {
+			//request.type = $("#QuickSearchType").val();
+			request.type = 'client';
+			lastXhr = $.getJSON( "live_search.php", request, function( data, status, xhr ) {
+				if ( xhr === lastXhr ) {
+					response( data );
+				}
+			});
+		},
+		//minLength: $("#QuickSearchAutocompleteMinLength").val()
+		minLength: 2
+	});
+
+/* Test Entry Client trim autocomplete result down to ID */
+	$("form.enterClient").submit( function (e) {
+		var id_repl = /^.* \(([0-9]+)\)$/;
+		var search_val=$(this).find("input:first").val();
+		var m;
+		m = id_repl.exec(search_val);
+		if ( m[1] ) {
+			$(this).find("input:first").val( m[1] );
+		}
+	});
+
 /* Trim autocomplete result down to ID */
 	$("form.QuickSearchForm").submit( function (e) {
 		var id_repl = /^.* \(([0-9]+)\)$/;

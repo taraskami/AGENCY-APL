@@ -93,7 +93,7 @@ while (true)
 			  $residence=get_last_housing_history($client["client_id"]);
 			  $DEBUG && outline("looked up residence");
 			  $note_filter = array('client_id'=>$client['client_id'],
-						     'ARRAY_CONTAINS:flag_entry_codes'=>array($scanner_location_code));
+						     'ARRAY_CONTAINS:flag_entry_codes'=>array($entry_location_code));
 			  $notes = get_generic($note_filter,'','','client_note');
 		  }
 		  $msg .=dateof($entry["entered_at"]) . " "

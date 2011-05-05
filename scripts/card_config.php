@@ -34,11 +34,11 @@ should be included in this distribution.
 $root_install_dir='/home/gate';
 
 //SET SCANNER LOCATION HERE
-//$scanner_location_code = 'CONN505';
-//$scanner_location_code = 'SHEL517';
+//$entry_location_code = 'CONN505';
+//$entry_location_code = 'SHEL517';
 
 //location-specific checks
-switch ($scanner_location_code) {
+switch ($entry_location_code) {
  case 'CONN505': //connections
 	 $bar_locations     = array('connections');
 	 $priority_function = 'has_priority_connections';
@@ -54,7 +54,7 @@ switch ($scanner_location_code) {
 	 $indicate_housed_function = 'indicate_barred';
 	 break;
  default:
-	 die('Unknown scanner location code: '.$scanner_location_code);
+	 die('Unknown scanner location code: '.$entry_location_code);
 } 
 
 

@@ -93,7 +93,7 @@
 \i create.view.l_hospital.sql
 
 /* Entry Table */
-\i create.l_scanner_location.sql
+\i create.l_entry_location.sql
 \i create.tbl_entry.sql
 
 /* Bed table */

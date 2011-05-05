@@ -959,7 +959,7 @@ function client_note_f ($id)
 			if ($flag_entries = $a['flag_entry_codes']) {
 				$flag_title = array();
 				foreach ($flag_entries as $location) {
-					$flag_title[] = sql_lookup_description($location,'l_scanner_location');
+					$flag_title[] = sql_lookup_description($location,'l_entry_location');
 				}
 				$flag_title = 'this note is displayed on gatekeeping ('.implode(' &amp; ',$flag_title).') when '.AG_MAIN_OBJECT.'\'s card is swiped.';
 				$flag = span('flagged for entry',' title="'.$flag_title.'" class="clientCommentFlag"');

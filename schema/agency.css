@@ -308,3 +308,19 @@ div#noStaffEmployment {
 .autoComplete {
 	display: none;
 }
+
+#deleteClientResult {
+	font: 120%;
+	background-color: #FFEEEE;
+	padding: 8px;
+	margin-bottom: 30px;
+	width: 50%;
+}
+
+#postClientResult {
+	font: 120%;
+	background-color: #EEFFEE;
+	padding: 8px;
+	margin-bottom: 30px;
+	width: 50%;
+}

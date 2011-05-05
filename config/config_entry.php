@@ -31,17 +31,18 @@ should be included in this distribution.
 */
 
 $engine['entry'] = array(
-				 'singular'=>'entry record',
-				 'list_fields' => array('entered_at','scanner_location_code'),
+				 'singular'=>'entry',
+				 'plural'=>'entries',
+				 'list_fields' => array('entered_at','entry_location_code'),
 				 'list_order' => array('entered_at'=>true),
-				 'list_max'=>100,
-				 'list_columns'=>4,
+				 'list_max'=>20,
+				 'list_columns'=>2,
 				 'fields' => array(
 							 'entered_at'=> array(
 										    'value_format_list' => 'datetimeof($x,"US","TWO")',
 										    'label_format_list'=>'smaller($x,2)'
 										    ),
-							 'scanner_location_code'=>array(
+							 'entry_location_code'=>array(
 												  'label_format_list'=>'smaller($x,2)',
 												  'value_format_list'=>'smaller($x,2)')
 							 )

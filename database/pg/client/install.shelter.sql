@@ -10,7 +10,7 @@
 \i create.tbl_shelter_reg.sql
 
 /* gatekeeping */
-\i create.l_scanner_location.sql
+\i create.l_entry_location.sql
 
 \i create.tbl_entry.sql
 
