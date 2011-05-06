@@ -211,6 +211,7 @@ $(function() {
 	});
 
 /* Test Entry Client trim autocomplete result down to ID */
+	$("form.enterClient input:first").focus();
 	$("form.enterClient").submit( function (e) {
 		var id_repl = /^.* \(([0-9]+)\)$/;
 		var search_val=$(this).find("input:first").val();
