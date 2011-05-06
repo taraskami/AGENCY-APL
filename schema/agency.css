@@ -324,3 +324,12 @@ div#noStaffEmployment {
 	margin-bottom: 30px;
 	width: 50%;
 }
+
+#enterClientForm {
+	font: 200%;
+	font-weight: bold;
+	background-color: #EEEEFF;
+	padding: 8px;
+	margin-bottom: 30px;
+	width: 50%;
+}
