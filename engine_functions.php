@@ -1962,6 +1962,11 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 			//the lookup fields will be populated dynamically
 		} else {
 			$query = build_lookup_query($pr,$action);
+			/* Adding bad (expensive, extra query) hack to force default if only 1 option */
+			if (be_null($value) and ($pr['null_ok']==false) and sql_num_rows(($junk=agency_query($query)))==1) {
+				$junk=sql_fetch_assoc($junk);
+				$value=$junk['value'];
+			}
 			switch ($pr['lookup_format']) {
 			case 'radio_v':
 			case 'radio':
@@ -1975,11 +1980,6 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 				// null option should always be present, even if null is not ok
 				// that way, users are forced to choose a value rather than defaulting to first on list
 
-				/* Adding bad (expensive, extra query) hack to force default if only 1 option */
-                if (be_null($value) and ($pr['null_ok']==false) and sql_num_rows(($junk=agency_query($query)))==1) {
-					$junk=sql_fetch_assoc($junk);
-					$value=$junk['value'];
-				}
 				$select=do_pick_sql($query,$value,true);
 				$tmp_field = $select
 					? selectto($formvar.'['.$key.']',$element_options) . $select . selectend()
@@ -1990,6 +1990,11 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 		break;
 	case 'lookup_multi':
 		$query = build_lookup_query($pr,$action);
+		/* Adding bad (expensive, extra query) hack to force default if only 1 option */
+		if (be_null($value) and ($pr['null_ok']==false) and sql_num_rows(($junk=agency_query($query)))==1) {
+			$junk=sql_fetch_assoc($junk);
+			$value=$junk['value'];
+		}
 		switch ($pr['lookup_format']) {
 		case 'checkbox_v':
 		case 'checkbox':
