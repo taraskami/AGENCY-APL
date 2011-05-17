@@ -3793,8 +3793,11 @@ function hot_link_objects( $text, $type="" )
 	$engine_types = array('bar','note','client_note','dal','service','news');
 	global $show_bugzilla_url;
 	if (in_array($type,$engine_types)) {
-
-		$noun="($type)";
+		// Pull label, and match on label or object
+		$def=get_def($type);
+		$noun=$def['singular']
+		?  '('.$def['singular'].'|'.$type.')'
+		: "($type)";
 
 	} elseif ( ($type=='bug')) {
 
