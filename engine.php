@@ -77,7 +77,7 @@ function engine($control='',$control_array_variable='control')
 	/*
 	 * MAINTAIN OLD STATE SO THAT STEP IS PROPERLY SET BELOW
 	 */
-	$old_action = $CONTROL['action'];
+	$old_action = ($CONTROL['action']=='clone') ? 'add' : $CONTROL['action'];
 	$old_object = $CONTROL['object'];
 	$old_id     = $CONTROL['id'];
 
@@ -116,7 +116,7 @@ function engine($control='',$control_array_variable='control')
 	 * $action must be checked prior to calling is_protected_generic or an error will
 	 * be thrown on adds.
 	 */
-	if ( in_array($action,array('edit','delete')) and is_protected_generic($object,$id) ) {
+	if ( in_array($action,array('clone','edit','delete')) and is_protected_generic($object,$id) ) {
 		return array('message'=>oline('Protected Record'));
 	}
 
@@ -175,6 +175,7 @@ function engine($control='',$control_array_variable='control')
       $submit_text      = $text_options['submit_button'];
       $cancel_text      = $text_options['cancel_button'];
       $edit_text        = $text_options['edit_text'];
+      $clone_text       = $text_options['clone_text'];
       $delete_text      = $text_options['delete_text'];
 	$view_text        = $text_options['view_text'];
       $post_text        = $text_options['post'];
@@ -270,6 +271,7 @@ function engine($control='',$control_array_variable='control')
 	 */
       switch ($action) {
       case 'add' :
+      case 'clone' :
 	    if (!$write_perm) {
 		  $message .= oline("You aren't allowed to $action $object records. Contact your system administrator.");
 		  break;
@@ -586,7 +588,7 @@ function engine($control='',$control_array_variable='control')
 			    unset($REC_LAST);
 			    $_SESSION['REC_LAST'.$session_identifier]=null;
 			    $step='continued';	
-		    } elseif ($action=='edit') {
+		    } elseif ($action=='edit' or $action=='clone') {
 			    /*
 			     * Get existing record
 			     * For generic get, call function w/ select sql:
@@ -597,11 +599,23 @@ function engine($control='',$control_array_variable='control')
 				    : $def['fn']['get']($filter,'','',$def,$def['use_table_post_edit']); //optional order and limit parameters
 			    $cnt=sql_num_rows($REC);
 			    if ($cnt == 1) {
-
 				    $REC = sql_to_php_generic(sql_fetch_assoc($REC),$def);
+					if ($action=='clone') {
+						$sys_log_tmp="$object record cloned from ID $id";
+						// Unset ID field & System Fields
+						unset ($REC[$def['id_field']]);
+						foreach ($engine['system_fields'] as $k=>$dummy) {
+							$REC[$k]=NULL;
+						}
+						$REC['sys_log']=$sys_log_tmp;
+						$REC_INIT=$control['rec_init']=$REC;
+						$control['action']=$action='add';
+						$REC=$def['fn']['blank']($def,$REC_INIT,$control);
+					    unset($REC_LAST);
+					    $_SESSION['REC_LAST'.$session_identifier]=null;
+					}
 				    $control['rec_last'] = $REC_LAST = $_SESSION['REC_LAST'.$session_identifier] = $REC;
  				    $REC = grab_append_only_fields($REC,$def);
-
 				    $step='continued';	
 
 			    } elseif ($cnt == 0) {
@@ -761,6 +775,12 @@ function engine($control='',$control_array_variable='control')
 								  'object' => $object,
 								  'id'     => $id,
 								  'format' => 'data');
+				$clone_control_array=array('action' => 'clone',
+								  'step'   => 'new',
+								  'page'   => 'display.php',
+								  'object' => $object,
+								  'id'     => $id,
+								  'format' => 'data');
 				$delete_control_array=array('action' => 'delete',
 								    'object' => $object,
 								    'id'     => $id,
@@ -775,6 +795,7 @@ function engine($control='',$control_array_variable='control')
 						 * Normal record view
 						 */
 						$links = oline(link_engine($edit_control_array,$edit_text));
+						$links .= oline(link_engine($clone_control_array,$clone_text));
 						$links .= link_engine($delete_control_array,$delete_text);
 					} else {
 
