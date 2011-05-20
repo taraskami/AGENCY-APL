@@ -54,7 +54,7 @@ function ageof( $dob , $formatted="No",$end_date='now')
 	/* This function has been replaced by client_age() and could probably be axed. */
 //      take a date of birth, and return age in years (from today)
 //      assumes we're getting a "yyyy-mm-dd" string
-        if ( ! ereg( "[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}",$dob ) )
+        if ( ! preg_match( "/[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}/",$dob ) )
         {
                 return "Invalid Date '$dob' passed to age_of()";
         }

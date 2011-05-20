@@ -485,7 +485,7 @@ function timeof( $datetime, $format="ampm", $secs="" )
             . "(" . "(" . $re_sep . $re_secs . ")?"
             . "(" . $re_ampm . ")?" . ")?";
 	//outline("in timeof():  $datetime");
-	if( ereg( $re_time, $datetime, $results ) ) { // looser format?
+	if( preg_match( '/'.$re_time.'/', $datetime, $results ) ) { // looser format?
 		//outline("valid time found");
 		$hours=intval($results[1]);
 		$minutes=intval($results[2]);
@@ -494,7 +494,7 @@ function timeof( $datetime, $format="ampm", $secs="" )
 		//outline("Hours: $hours, Mins: $minutes, Seconds: $seconds, AMPM: $ampm");
 		
 		// added the extra !$ampm to allow for timestamps w/ an am/pm - jh 11/30/05
-		if ( ereg( $re_datetime, $datetime, $results ) and !$ampm) {
+		if ( preg_match( '/'.$re_datetime.'/', $datetime ) and !$ampm) {
 			$ampm="24";
 			//outline("valid datetime found");
 			//outline("Hours: $hours, Mins: $minutes, Seconds: $seconds, AMPM: $ampm");
@@ -696,16 +696,17 @@ function dateof( $datetime,$format="",$long="" )
 	$re_year   = '(19|20)?([0-9][0-9])';
 	$re_year4  = '(19|20)([0-9][0-9])';
 	$us_sep    = '/';
+	$re_us_sep    = '\/';
 	$eu_sep    = '-';
 	$sql_sep   = '-';
 	$re_anchor = '^';     //start of string
 	$re_term   = '(.*)$'; //end of string extra ( could be a time)
 
-    $re_us_date      = $re_anchor . $re_mon . $us_sep . $re_day . $us_sep . $re_year . $re_term;
+    $re_us_date      = $re_anchor . $re_mon . $re_us_sep . $re_day . $re_us_sep . $re_year . $re_term;
     $re_sql_date     = $re_anchor . $re_year4 . $sql_sep . $re_mon . $sql_sep . $re_day . $re_term;
     $re_sql_date2    = $re_anchor . $re_year . $sql_sep . $re_mon . $sql_sep . $re_day . $re_term;
     $re_eu_date      = $re_anchor . $re_day . $eu_sep . $re_mon . $eu_sep . $re_year . $re_term;
-    // $re_us_date4 = $re_mon . $us_sep . $re_day . $us_sep . $re_year4;
+    // $re_us_date4 = $re_mon . $re_us_sep . $re_day . $re_us_sep . $re_year4;
     // $re_eu_date4 = $re_year4 . $eu_sep . $re_mon . $eu_sep . $re_day;
     // these currently not used...
 
@@ -717,7 +718,7 @@ function dateof( $datetime,$format="",$long="" )
 	    $datetime = date( 'Y-m-d H:i:s', $datetime );
     }
 
-    if ( ereg( $re_sql_date, $datetime, $results ) ) { // sql format?
+    if ( preg_match( '/'.$re_sql_date.'/', $datetime, $results ) ) { // sql format?
 
 	    // outline("matched sql");
 	    $century   = intval($results[1]);
@@ -726,7 +727,7 @@ function dateof( $datetime,$format="",$long="" )
 	    $day       = intval($results[4]);
 	    $remainder = $results[5];
 
-    } elseif ( ereg( $re_us_date, $datetime, $results )) { // us format?
+    } elseif ( preg_match( '/'.$re_us_date.'/', $datetime, $results )) { // us format?
 
 	    $month     = intval($results[1]);
 	    $day       = intval($results[2]);
@@ -735,7 +736,7 @@ function dateof( $datetime,$format="",$long="" )
 	    $remainder = $results[5];
 	    // outline("matched us");
 	    
-    } elseif ( ereg( $re_eu_date, $datetime, $results )) { // eu format?
+    } elseif ( preg_match( '/'.$re_eu_date.'/', $datetime, $results )) { // eu format?
 	    
 	    $day       = intval($results[1]);
 	    $month     = intval($results[2]);
@@ -744,7 +745,7 @@ function dateof( $datetime,$format="",$long="" )
 	    $remainder = $results[5];
 	    // outline("matched eu: $re_eu_date");
 	    
-    } elseif ( ereg( $re_sql_date2, $datetime, $results ) ) { // as a last attempt,
+    } elseif ( preg_match( '/'.$re_sql_date2.'/', $datetime, $results ) ) { // as a last attempt,
 	    
 	    // try mangled sql, with yy-mm-dd.
 	    // outline( "trying mangled sql");

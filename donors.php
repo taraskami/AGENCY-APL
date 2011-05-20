@@ -319,14 +319,9 @@ function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
 		$result .= tablestart("","border=1")
 			. header_row("ID","Name","Type");
 	}
-	if ( ereg("\?",$select_to_url) )// figure out whether to add vars to
-	{              // url with ? or &
-		$select_char = "&";
-	}
-	else
-	{
-		$select_char = "?";
-	}
+	$select_char = ( strpos($select_to_url,'?')===false) // figure out whether to add vars to
+		? '&'
+		: '?';
 	
 	for ($i=0; $i<sql_num_rows($clients); $i++)
 	{
