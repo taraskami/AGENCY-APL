@@ -68,7 +68,7 @@ function get_report_from_db( $report_id )
 }
 
 function report_parse_var_text( $text ) {
-	$vartypes=array('PICK','DATE','TEXT','TEXT_AREA','VALUE');
+	$vartypes=array('PICK','DATE','TIME','TIMESTAMP','TEXT','TEXT_AREA','VALUE');
 	$lines = preg_split('/\n/m',$text);
 	while ($line = array_shift($lines)) {
 		if (preg_match('/^\s$/',$line)) {
@@ -130,9 +130,27 @@ function report_valid_request($report, &$mesg)
 		$name  = $var['name'];
 		$value = report_get_user_var($name,$report['report_id']);
 		switch ($type) {
+		case 'VALUE' :
+			if (!is_numeric($value)) {
+				$mesg .= oline($value.' is an invalid value');
+				$valid = false;
+			}
+			break;
 		case 'DATE' :
 			if (!dateof($value,'SQL')) {
 				$mesg .= oline($value.' is an invalid date');
+				$valid = false;
+			}
+			break;
+		case 'TIME' :
+			if (!timeof($value,'SQL')) {
+				$mesg .= oline($value.' is an invalid time');
+				$valid = false;
+			}
+			break;
+		case 'TIMESTAMP' :
+			if (!datetimeof($value,'SQL')) {
+				$mesg .= oline($value.' is an invalid timestamp');
 				$valid = false;
 			}
 			break;
@@ -146,8 +164,13 @@ function report_valid_request($report, &$mesg)
 function report_get_user_var($name,$report_id)
 {
 	$varname = AG_REPORTS_VARIABLE_PREFIX.$name;
-	$val = $_SESSION['report_options_'.$report_id.'_'.$varname] =
-		$_REQUEST[$varname];
+	if (!isset($_REQUEST[$varname]) and isset($_REQUEST[$varname.'_date_']) and isset($_REQUEST[$varname.'_time_'])) {
+		// Reassemble timestamps
+		$val=$_REQUEST[$varname.'_date_'].' ' . $_REQUEST[$varname.'_time_'];
+	} else {
+		$val=$_REQUEST[$varname];
+	}	
+	$_SESSION['report_options_'.$report_id.'_'.$varname] = $val;
 	return $val;
 }
 
@@ -170,6 +193,14 @@ function report_generate($report)
 		case 'DATE' :
 			$value = dateof($value,'SQL');
 			$value_header = dateof($value);
+			break;
+		case 'TIME' :
+			$value = timeof($value,'SQL');
+			$value_header = timeof($value);
+			break;
+		case 'TIMESTAMP' :
+			$value = datetimeof($value,'SQL');
+			$value_header = dateof($value) . ' ' . timeof($value);
 			break;
 		default:
 			$value_header = $value;
@@ -384,6 +415,13 @@ function report_user_options_form($report)
 			break;
 		case 'DATE' :
 				 $opt .= row(cell($userprompt) . cell(formdate($varname,orr($default,$p['default'],dateof('now')))));
+				 break;
+		case 'TIME' :
+				 $opt .= row(cell($userprompt) . cell(formtime($varname,orr($default,$p['default'],timeof('now')))));
+				 break;
+		case 'TIMESTAMP' :
+				 $opt .= row(cell($userprompt) . cell(oline(formdate($varname.'_date_',orr(dateof($default),$p['default'],dateof('now'))))
+												. formtime($varname.'_time_',orr(timeof($default),timeof($p['default']),timeof('now')))));
 				 break;
 		case 'VALUE' :
 		case 'TEXT' :
