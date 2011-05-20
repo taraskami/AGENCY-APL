@@ -534,12 +534,12 @@ function timeof( $datetime, $format="ampm", $secs="" )
 	if ($hours >=12) {
 		$ampm="p";
 		$ampm_hours=$hours - 12;
-		if ($ampm_hours==0) {
-			$ampm_hours=12;
-		}
 	} else {
 		$ampm="a";
 		$ampm_hours = $hours;
+	}
+	if ($ampm_hours==0) {
+		$ampm_hours=12;
 	}
 
 	// Time to build output string
