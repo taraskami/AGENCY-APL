@@ -91,6 +91,7 @@ switch ($action) {
 	 break;
 
  default: // report list
+	$title = 'AGENCY Report Page';
 	 $out .= report_generate_menu($navigation);
 }
 
