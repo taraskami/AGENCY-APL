@@ -463,7 +463,7 @@ function timeof( $datetime, $format="ampm", $secs="" )
 	$re_secs24  = "([0-5][0-9])";
 	$re_mins    = "([0-5]?[0-9])";
 	$re_mins24  = "([0-5][0-9])";
-	$re_hours   = "([0-1]?[0-9]|2[0-3])";
+	$re_hours   = "(2[0-3]|1[0-9]|0[0-9]|[0-9])";
 	$re_hours24 = "([0-1][0-9]|2[0-3])";
 	$re_sep     = "[ ]?" . $sep . "[ ]?";
 	$re_ampm    = "[ ]?([aApP])[.]?[mM]?[.]?";
@@ -541,6 +541,7 @@ function timeof( $datetime, $format="ampm", $secs="" )
 	if ($ampm_hours==0) {
 		$ampm_hours=12;
 	}
+//outline("Hours: $hours, Mins: $minutes, Seconds: $seconds, AMPM: $ampm");
 
 	// Time to build output string
 	// outline("Format = $format");
@@ -692,19 +693,20 @@ function dateof( $datetime,$format="",$long="" )
 	//FIXME: should work with centuries other than 19 and 20...
 
 	$re_mon    = '(0?[1-9]|1[0-2])';
-	$re_day    = '([0-2]?[1-9]|31|[1-3]0)';
+	$re_day    = '(31|30|[12][0-9]|0?[1-9])';
 	$re_year   = '(19|20)?([0-9][0-9])';
 	$re_year4  = '(19|20)([0-9][0-9])';
 	$us_sep    = '/';
 	$re_us_sep    = '\/';
 	$eu_sep    = '-';
 	$sql_sep   = '-';
+	$re_sql_sep   = '-';
 	$re_anchor = '^';     //start of string
 	$re_term   = '(.*)$'; //end of string extra ( could be a time)
 
     $re_us_date      = $re_anchor . $re_mon . $re_us_sep . $re_day . $re_us_sep . $re_year . $re_term;
-    $re_sql_date     = $re_anchor . $re_year4 . $sql_sep . $re_mon . $sql_sep . $re_day . $re_term;
-    $re_sql_date2    = $re_anchor . $re_year . $sql_sep . $re_mon . $sql_sep . $re_day . $re_term;
+    $re_sql_date     = $re_anchor . $re_year4 . $re_sql_sep . $re_mon . $re_sql_sep . $re_day . $re_term;
+    $re_sql_date2    = $re_anchor . $re_year . $re_sql_sep . $re_mon . $re_sql_sep . $re_day . $re_term;
     $re_eu_date      = $re_anchor . $re_day . $eu_sep . $re_mon . $eu_sep . $re_year . $re_term;
     // $re_us_date4 = $re_mon . $re_us_sep . $re_day . $re_us_sep . $re_year4;
     // $re_eu_date4 = $re_year4 . $eu_sep . $re_mon . $eu_sep . $re_day;
