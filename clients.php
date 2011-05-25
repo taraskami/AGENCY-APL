@@ -452,8 +452,8 @@ function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
 
 
     $select_char = ( strpos($select_to_url,'?')===false) // figure out whether to add vars to
-        ? '&'
-        : '?';
+        ? '?';
+        : '&';
 
 	for ($i=0; $i<sql_num_rows($clients); $i++)
 	{
