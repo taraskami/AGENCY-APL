@@ -40,15 +40,15 @@ define('AG_PRODUCTION_DATABASE_SERVER','localhost');
 
 define('AG_LIST_EMPTY_HIDE',false); //show empty records by default
 
-$AG_TEXT['AGENCY_HOME_TITLE'] = 'Customer Database Home Page';
-$AG_TEXT['LINK_HOME'] = 'Customer DB Home';
+$AG_TEXT['AGENCY_HOME_TITLE'] = 'Donor Database Home Page';
+$AG_TEXT['LINK_HOME'] = 'Donor DB Home';
 
 $AG_IMAGES['AGENCY_LOGO_MEDIUM'] = $off.'images/donor_logo_medium.png';
 
 $AG_MENU_LINKS=array(
 	hlink($agency_home_url,'Home'),
 	hlink('client_reg.php','Add ' . AG_MAIN_OBJECT),
-	'',
+	hlink('menu.php','Menu'),
 	hlink(AG_REPORTS_URL,'Reports'));
 
 $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
@@ -61,6 +61,9 @@ $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
 				//---Engine & AGENCY---//
 				'info_additional',
 				'info_additional_type',
+				'def_array',
+				'config_file',
+				'report',
 				'generic_sql_query', // a pseudo object for handling generic SQL
 				'reference',
 				//---Postgresql---
