@@ -100,6 +100,7 @@ $donor_data_merge_select = formto($_SERVER['PHP_SELF'].'?action=print_donor_prof
      . formend();
 
 array_unshift($commands,bottomcell(smaller(oline(link_engine(array("object"=>AG_MAIN_OBJECT_DB,
+										 'format'=>'data',
 										 "id"=>$client[AG_MAIN_OBJECT_DB.'_id']),
 										 $AG_TEXT['LINK_VIEW_EDIT'])))
 							 .$donor_data_merge_select
