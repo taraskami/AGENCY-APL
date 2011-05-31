@@ -115,6 +115,16 @@ if (!$AG_AUTH->authenticate()) {
 //------management for super-user identity switching------//
 user_identity_management();
 
+//------Check for restricted user/pages, and redirect-----//
+
+$allowed_array=orr($GLOBALS['AG_USER_PAGE_RESTRICTIONS'],array());
+$name=$_SESSION['USER_INFO']['username'];
+$page_name=basename($_SERVER['PHP_SELF']);
+if (in_array($name,array_keys($allowed_array))) {
+	if (!in_array($page_name,$allowed_array[$name])) {
+		header('Location: ' . $allowed_array[$name][0]);
+	}
+}
 
 //-------non-output initialization------//
 

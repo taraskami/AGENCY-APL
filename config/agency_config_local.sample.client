@@ -101,10 +101,13 @@ $AG_HOME_BY_URL =  '/agency';
 
 // Client photos
 $AG_CLIENT_PHOTO_BY_FILE  = $AG_HOME_BY_FILE . '/photos';
-$AG_CLIENT_PHOTO_BY_URL = $AG_HOME_BY_URL . '/photos';
 
 // Stafff photos
 $AG_STAFF_PHOTO_BY_FILE = $AG_HOME_BY_FILE . '/photos/staff';
-$AG_STAFF_PHOTO_BY_URL = $AG_HOME_BY_URL . '/photos/staff';
+
+// Restrict certain users to certain pages
+// First page listed is where users will be
+// redirected on trying to load a non-listed page
+//$AG_USER_PAGE_RESTRICTIONS = array('demo'=>array('object_query.php','log_browse.php'));
 
 ?>
