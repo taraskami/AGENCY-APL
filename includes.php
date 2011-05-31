@@ -37,6 +37,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 // uncomment this line to disable AGENCY and give a "we're down" message instead;
 // $agency_down = 'AGENCY is currently down for maintenance. Thanks for your patience.';
+//$agency_down = 'AGENCY is currently down for maintenance while we switch to a new database. We should be back up in 30 minutes or less.  Thanks for your patience.';
 if ($agency_down){
 	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n";
 	echo "<html>\n";
@@ -121,7 +122,8 @@ $allowed_array=orr($GLOBALS['AG_USER_PAGE_RESTRICTIONS'],array());
 $name=$_SESSION['USER_INFO']['username'];
 $page_name=basename($_SERVER['PHP_SELF']);
 if (in_array($name,array_keys($allowed_array))) {
-	if (!in_array($page_name,$allowed_array[$name])) {
+	if ((!in_array($page_name,$allowed_array[$name]))
+		and ($page_name != 'live_search.php')) {
 		header('Location: ' . $allowed_array[$name][0]);
 	}
 }
