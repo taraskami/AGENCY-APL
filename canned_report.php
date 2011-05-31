@@ -55,11 +55,10 @@ switch ($action) {
 	break;
 
  case 'generate':
+	$var_save=$report['variables'];
 	$report['variables']=report_parse_var_text($report['variables']);
 	 $title  = 'Report - ' . $report['report_name'];
-	 if (!report_valid_request($report,$mesg)) {
-		 $out .= div($mesg,'','class="error"');
-	 } else {
+	 if (report_valid_request($report,$mesg)) {
 			 // navigate back to user options
 			 array_push($navigation,hlink($_SERVER['PHP_SELF'].'?action=options&report_id=' . $report_id,'Change options for this report'));
 			 array_push($navigation,link_engine(array('object'=>'report','action'=>'edit','id'=>$report_id),'Edit this report'));
@@ -70,6 +69,10 @@ switch ($action) {
 		
 			 $out .= report_generate($report);
 			 break;
+	 } else {
+		 $out .= div($mesg,'','class="error"');
+		 $report['variables']=$var_save;
+		 // Fall through to options
 	 }
 
  case 'options' : // set user options for report
@@ -88,6 +91,7 @@ switch ($action) {
 	 break;
 
  default: // report list
+	$title = 'AGENCY Report Page';
 	 $out .= report_generate_menu($navigation);
 }
 

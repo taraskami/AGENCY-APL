@@ -49,37 +49,6 @@ function today( $format="" )
 	return dateof( "now",$format );
 }
 
-function ageof( $dob , $formatted="No",$end_date='now')
-{
-	/* This function has been replaced by client_age() and could probably be axed. */
-//      take a date of birth, and return age in years (from today)
-//      assumes we're getting a "yyyy-mm-dd" string
-        if ( ! ereg( "[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}",$dob ) )
-        {
-                return "Invalid Date '$dob' passed to age_of()";
-        }
-        $now = getdate();
-	  var_dump($now);
-        $then_year = substr( $dob,0,4);
-        $then_month = substr( $dob,5,2);
-        $then_day = substr( $dob,8,2);
- 
-        $age = $now["year"] - $then_year;
-        if ( $now["mon"] < $then_month ||
-                ( $now["mon"] == $then_month && $now["mday"] <= $then_day ) )
-        {
-                $age--;
-        }
-	if ( $formatted=="No" )
-	{
-		return $age;
-	}
-	else
-	{
-		return dateof($dob) . " (" . blue("age=" . $age . ")");
-	}
-}
-
 function year_of( $date )
 {
 	return substr( dateof($date,"SQL"),0,4 );

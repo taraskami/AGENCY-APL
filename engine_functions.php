@@ -110,7 +110,12 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 				$perm = engine_perm($ctrl_temp);
 			}
 		} else {
-		    $perm = engine_perm($control_array);
+			$c_temp=$control_array;
+			if ($c_temp['action']=='clone') {
+				// Same perms as add needed for clone
+				$c_temp['action']='add';
+			}
+			$perm = engine_perm($c_temp);
 		}
 	    foreach($control_array as $key=>$value) {
 		  //initiallize things like object, action, rec_init and id
@@ -121,7 +126,7 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 	    }
 
 	    $def = get_def($object);
-	    $allow = $def['allow_'.$action];
+	    $allow = $def['allow_'.($action=='clone' ? 'add' : $action)];
 
       } else {
 	    return $url_only ? false : dead_link('LINK_ENGINE() REQUIRES AN ARRAY');
@@ -3798,8 +3803,11 @@ function hot_link_objects( $text, $type="" )
 	$engine_types = array('bar','note','client_note','dal','service','news');
 	global $show_bugzilla_url;
 	if (in_array($type,$engine_types)) {
-
-		$noun="($type)";
+		// Pull label, and match on label or object
+		$def=get_def($type);
+		$noun=$def['singular']
+		?  '('.$def['singular'].'|'.$type.')'
+		: "($type)";
 
 	} elseif ( ($type=='bug')) {
 

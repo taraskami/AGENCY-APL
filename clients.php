@@ -247,7 +247,7 @@ function client_show( $id )
 	// Basic Info
 	$out .= row( rightcell(oline('Date of Birth')
 				     . 'Gender, Ethnicity, SS, Vet Status')
-			 . leftcell( //oline(ageof($client['dob'],'Formatted') ) 
+			 . leftcell( 
 					oline($deceased_f
 						? red('Deceased. '.dateof($client['dob']).' - '.dateof($deceased_date).' ('.client_age($id,'NO',$deceased_date).' years old)')
 						: client_age($client,'DOB') 
@@ -451,14 +451,9 @@ function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
 	}
 
 
-	if ( ereg("\?",$select_to_url) )// figure out whether to add vars to
-	{			   // url with ? or &
-		$select_char = "&";
-	}
-	else
-	{
-		$select_char = "?";
-	}
+    $select_char = ( strpos($select_to_url,'?')===false) // figure out whether to add vars to
+        ? '?';
+        : '&';
 
 	for ($i=0; $i<sql_num_rows($clients); $i++)
 	{
@@ -669,9 +664,6 @@ function has_priority($clientid, $ptype="ANY")
 		// check for 60+ or female
 	case "ANY" :
 	case "OPEN" :
-// 		if ((ageof($client["dob"]) >= 60) || is_female($client)
-// 		    || sql_true($client["priority_open"]))
-// 		{
 		if (sql_true($reg['priority_elderly']) || sql_true($reg['priority_female'])) {
 			$priority = $reg;
 		}
@@ -719,7 +711,6 @@ function priority_status_f( $client_id, $sep="<br>", $format="" )
 	}
 	// Open Status?
 	if (be_null($enddate) || sql_true($priority_rec['priority_elderly'])) {
-	// 	if (sql_true($priority_rec['priority_open']) || (ageof($client_rec["dob"]) >= 60)) {
 		$str= bold(red("OPEN"));
 		if ($format<>"terse" && !$expired)
 		{
@@ -742,7 +733,6 @@ function priority_status_f( $client_id, $sep="<br>", $format="" )
 			$str .= blue(" Fem");
 		}
 		// 60+?
-		// 	if (ageof($client_rec["dob"]) >= 60) {
 		if (sql_true($priority_rec['priority_elderly'])) {
 			$str .= blue(" 60+");
 		}

@@ -38,6 +38,7 @@ $engine['text_options'] = array(
 				'cancel_button'=>'Cancel',
 				'reset_button'=>'Reset',
 				'edit_text' => 'Edit this Record',
+				'clone_text' => 'Clone this Record',
 				'delete_text' => 'Delete this Record',
 				'view_text'=> 'View/Edit Data Record',
 				'add_another' => 'Post Record and Add Another',
