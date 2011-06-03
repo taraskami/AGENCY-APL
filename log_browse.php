@@ -251,7 +251,6 @@ switch( $action ) {
  case 'show_client_logs' :
 	 	
 	 $view_filter=array('log_id'=>$CID);
-	 //$a          = get_logs_client( $CID );
 	 $page_title = 'Displaying all logs for ' . client_link($CID) . "(ID # $CID)";
 	 $mode  = 'view';
 	 break;

@@ -126,13 +126,6 @@ function show_log_types($picks="",$formvar="",$sep="")
 	return do_checkbox_sql('SELECT log_type_code AS value,description AS label FROM l_log_type',$formvar,$picks);
 }
 
-function get_logs( $filter, $order="" )
-{
-    global $log_table, $log_table_id,$log_select_sql;
-    //return agency_query( $log_select_sql, $filter, $order );
-    return get_generic( $filter, $order,NULL,get_def('log') );
-}
-
 function show_pick_logs()
 {
 // allow user to select which logs to view
@@ -156,14 +149,6 @@ function show_pick_logs()
 			  ,'',' cellpadding="0" cellspacing="0" width=100% class="pick"');
 	return $output;
 }
-
-/*
-
-function get_log($filter,$order='',$limit='',$def,$control=null) //same params as get_generic
-{
-	outline("FIXME:  Called get_log.  Don't delete me so fast!!!");
-}
-*/
 
 function view_log($rec,$def,$action,$control='',$control_array_variable='control')
 {
