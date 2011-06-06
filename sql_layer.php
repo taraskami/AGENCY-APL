@@ -626,14 +626,24 @@ function sql_num_fields($res)
 	}
 }
 
+function array_fetch_column( $array, $field_name )
+{
+// Take an associative array, return a column
+// Taken from sql_fetch_column
+        while ( $row=array_shift( $array) )
+        {
+                $col[]=$row[$field_name];
+
+        }
+        return $col;
+}
+
 function sql_fetch_column( $result, $field_name )
 {
 // Take a sql result, return an array
-		$col=array();
         while ( $row=sql_fetch_assoc( $result) )
         {
-                array_push($col,$row[$field_name]);
-
+                $col[]=$row[$field_name];
         }
         return $col;
 }

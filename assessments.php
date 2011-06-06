@@ -47,11 +47,11 @@ function assessment_of( $client )
 	}
 // 	$ass = get_assessment( array("client_id"=>$client),"assessed_at DESC, added_at DESC LIMIT 1");
 	$ass = get_generic( client_filter($client),'assessed_at DESC, added_at DESC','1','assessment');
-	if (sql_num_rows($ass)==0)
+	if (count($ass)==0)
 	{
 		return -1; //indicate no assessment
 	}
-	$ass=sql_fetch_assoc($ass);
+	$ass=array_shift($ass);
 	return $ass["total_rating"];
 }	
 
@@ -95,13 +95,13 @@ function assessment_f( $client, $format="normal" )
 	}
 // 	$ass_rec = get_assessment( array("client_id"=>$client),"assessed_at DESC, added_at DESC LIMIT 1");
 	$ass_rec = get_generic( client_filter($client),'assessed_at DESC, added_at DESC','1','assessment');
-	if (sql_num_rows($ass_rec)==0)
+	if (count($ass_rec)==0)
 	{
 		return smaller("No assessments");
 	}
 	else
 	{
-		$ass_rec=sql_fetch_assoc($ass_rec);
+		$ass_rec=array_shift($ass_rec);
 		$ass_date=$ass_rec["assessed_at"];
 		$ass_old = days_interval($ass_date,today())>365;
 		$ass_text = assessment_group_of( (is_array($cl_rec) ? $cl_rec : $client) ,$ass_rec);

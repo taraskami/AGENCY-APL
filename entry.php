@@ -35,7 +35,7 @@ function last_entry_f($clientid, $java=false) {
 
  	$def = get_def('entry');
 	$res = get_generic(client_filter($clientid),'entered_at DESC','1',$def);
-	if (!($entry=sql_fetch_assoc($res))) {
+	if (!($entry=array_shift($res))) {
 		return smaller('(no Entries)');
 	}
 	$entered = value_generic($entry['entered_at'],$def,'entered_at','view');

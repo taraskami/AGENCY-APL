@@ -46,19 +46,19 @@ class Safe_Harbors_Client {
 
 		//test for safe harbors consent
 		$shc_res = get_generic(client_filter($client_id),'','','safe_harbors_consent');
-		if (sql_num_rows($shc_res)>0) {
+		if (count($shc_res)>0) {
 			global $engine;
 			$shc_def = $engine['safe_harbors_consent'];
-			$this->shc_rec = sql_to_php_generic(sql_fetch_assoc($shc_res),$shc_def);
+			$this->shc_rec = sql_to_php_generic(array_shift($shc_res),$shc_def);
 		}
 		
 		$this->start = $start;
 		$this->end = $end;
 
-		if (sql_num_rows($res)==1) {
+		if (count($res)==1) {
 		     
 
-			$rec = sql_fetch_assoc($res);
+			$rec = array_shift($res);
 			$rec = $this->scrub_safe_harbors_record($rec);
 
 			foreach ($rec as $key=>$value) {
@@ -120,8 +120,8 @@ class Safe_Harbors_Client {
 		$res = get_generic($filter,'bed_date','','bed');
 
 		$nights = array();
-		if (sql_num_rows($res) > 0) {
-			while ($a = sql_fetch_assoc($res)) {
+		if (count($res) > 0) {
+			while ($a = array_shift($res)) {
 				$nights[] = new Safe_Harbors_Program_Participation($a,$this);
 			}
 		} else {
@@ -134,7 +134,7 @@ class Safe_Harbors_Client {
 	function get_shelter_reg()
 	{
 		$filter = $this->generate_filter('shelter_reg');
-		$rec = sql_fetch_assoc(get_generic($filter,'shelter_reg_date DESC','1','shelter_reg'));
+		$rec = array_shift(get_generic($filter,'shelter_reg_date DESC','1','shelter_reg'));
 		if ($rec) {
 			/* set shelter reg dependent vars */
 			$this->domestic_violence = trim($rec['svc_need_code'])=='3'
@@ -150,7 +150,7 @@ class Safe_Harbors_Client {
 		$filter = $this->generate_filter('income');
 		$res = get_generic($filter,'income_date DESC','1',SAFE_HARBORS_INCOME_VIEW);
 
-		$rec = sql_fetch_assoc($res);
+		$rec = array_shift($res);
 
 		return new Safe_Harbors_Income(orr($rec,array()));
 	}
@@ -170,7 +170,7 @@ class Safe_Harbors_Client {
 		
 		$res = get_generic($filter,'','','disability');
 
-		return sql_num_rows($res)<1
+		return count($res)<1
 			? '8'
 			: '1';
 	}
@@ -190,7 +190,7 @@ class Safe_Harbors_Client {
 		$filter['export_organization_code'] = 'SAFE_HARB';
 
 		$res = get_generic($filter,'','','client_export_id');
-		if ( sql_num_rows($res)<1 ) {
+		if ( count($res)<1 ) {
 			$rec = array('client_id'=>$id,
 					 'export_organization_code'=>'SAFE_HARB',
 					 'FIELD:export_id'=>'make_safe_harbors_id()',
@@ -337,14 +337,14 @@ class Safe_Harbors_Program_Participation {
 			//get living situation record (most recent record _prior_ to bednight)
 			$filter = client_filter($this->client_id);
 			$filter['<=:residence_date'] = $this->bed_date;
-			$residence = sql_fetch_assoc(get_generic($filter,'residence_date DESC','1','housing_history'));
+			$residence = array_shift(get_generic($filter,'residence_date DESC','1','housing_history'));
 			
-			if(sql_num_rows($first)==1) /* not first stay, check living situation*/ {
+			if(count($first)==1) /* not first stay, check living situation*/ {
 				if ($residence) {
 					$report = 'HOMELESS' == sql_lookup_description($residence['living_situation_code'],'l_living_situation','','housing_status');
 					$res_rec = $report ? $residence : false;
 				}
-			} elseif (sql_num_rows($first)<1) /* first stay, always report */{
+			} elseif (count($first)<1) /* first stay, always report */{
 				$res_rec = $residence;
 			}
 

@@ -200,10 +200,10 @@ if ($action == "voidform")
     $form_title = bigger(bold("Describe why the charge is being voided"));
     if (!empty($charge_id))
     {
-        $charge_results = get_charge($charge_id);
+        $charge_results = get_charges( array( 'charge_id'=>$charge_id );
         $charge = sql_fetch_assoc($charge_results);
         $charge_form = show_charges_void_form($charge["charge_id"]);
-        $charge_results = get_charge($charge_id);
+        $charge_results = get_charges( array( 'charge_id'=>$charge_id );
     }
     else
     { 

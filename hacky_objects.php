@@ -38,18 +38,13 @@ should be included in this distribution.
  */
 
 function get_config_file($filter) {
-/*
- * OMG This is a ridiculous hack.
- * get_generic retrieves a query, so to mimic
- * that, we run the config file through the database
- */
 
 	// This only supports view, so should only ever
 	// be a simple filter, id=>object
 	$object=array_pop($filter);
 	if ($filename= config_object_file_name($object)
 	and ($c_f = file_get_contents( $filename ))) {
-		return sql_query("SELECT '$object' AS object,'" . sql_escape_string(trim($c_f)) . "' AS config_file_text");
+		return array(array('object'=>$object,'config_file_text'=>trim($c_f)));
 	} else {
 		return false;
 	}
@@ -59,7 +54,7 @@ function get_def_array($filter) {
 	/* copied from get_config_object, see comments there */
 	$object=array_pop($filter);
 	if ($def = get_def($object) ) {
-		return sql_query("SELECT '$object' AS object,'" . sql_escape_string(dump_array($def)) . "' AS def_array_text");
+		return array(array('object'=>$object,'def_array_text'=>dump_array($def)));
 	} else {
 		return false;
 	}

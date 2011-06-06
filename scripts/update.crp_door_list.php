@@ -61,7 +61,7 @@ while ($cl=sql_fetch_assoc($crp_clients))
 	$list .= oline($access . " " . $cl["client_id"] . "-" . substr("0".$cl["issue_no"],-2));
 }
 $staff = get_staff(array("is_active"=>"true"));
-while ($st=sql_fetch_assoc($staff))
+while ($st=array_shift($staff))
 {
 	$list .= oline("LMW " . $st["staff_id"]);
 }

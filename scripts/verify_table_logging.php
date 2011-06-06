@@ -98,7 +98,7 @@ foreach ($random_objects as $random_object) {
 
 	//3) does update work
 	
-	$sample_rec = array_filter(sql_fetch_assoc(get_generic(array(),'','1',$table))); //get record (used to order by random(), but was slow for large tables
+	$sample_rec = array_filter(array_shift(get_generic(array(),'','1',$table))); //get record (used to order by random(), but was slow for large tables
 	$id = $sample_rec[$def['id_field']];
 	
 	$count_query = 'SELECT trigger_id FROM '.$log_table.' WHERE '.$def['id_field'].'=\''.$id.'\'';
@@ -120,7 +120,7 @@ foreach ($random_objects as $random_object) {
 	
 	//4) does delete work
 	
-	$sample_rec = array_filter(sql_fetch_assoc(get_generic(array(),'','1',$table))); //get record (used to order by random(), but was slow for large tables
+	$sample_rec = array_filter(array_shift(get_generic(array(),'','1',$table))); //get record (used to order by random(), but was slow for large tables
 	$id = $sample_rec[$def['id_field']];
 	
 	$count_query = 'SELECT trigger_id FROM '.$log_table.' WHERE '.$def['id_field'].'=\''.$id.'\'';

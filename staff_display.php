@@ -72,8 +72,7 @@ if (!engine_perm(array('action'=>'view','object'=>'staff','id'=>$id))) {
 	page_close();
 	exit;
 }
-	
-if (sql_num_rows(staff_get($id) < 1)) {
+if (count(staff_get($id)) < 1) {
 	agency_top_header();
 	outline(alert_mark('No Staff found'));
 	page_close();
@@ -117,7 +116,7 @@ if ($action == 'set_password') {
 	if (can_change_password($id) || password_check($pass_old,$hash_method,$id)) {
 
 		// get username
-		$tmp_staff = sql_fetch_assoc(staff_get($id));
+		$tmp_staff = array_shift(staff_get($id));
 		
 		if ($pass_new != $pass_new1) {
 
@@ -182,7 +181,7 @@ if ($action=='reg_kc' && has_perm('clinical_data_entry','RW')) {
 	
 	// 1) verify mh id is blank
 	$res = get_generic(array('staff_id'=>$id,'NULL:old_mh_id' => ''),'','','staff');
-	if (sql_num_rows($res) == 1) {
+	if (count($res) == 1) {
 		sql_begin();
 		$old_mh_id = sql_get_sequence('seq_staff_king_county_linkage_id');
 

@@ -98,10 +98,10 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 			$aa_def=get_def('attachment_link');
 			$filter=array($aa_def['id_field']=>$ctrl_temp['id']);
 			$att=get_generic($filter,'','',$aa_def);
-			if (sql_num_rows($att)<>1) {
+			if (count($att)<>1) {
 				$perm=false;
 			} else {
-				$a=sql_fetch_assoc($att);
+				$a=array_shift($att);
 				$ctrl_temp['object']=$a['parent_object'];
 				//FIXME: Do we really need to fetch this record?
 				$pr_filt=array($a['parent_field_name']=>$a['attachment_link_id']);
@@ -308,7 +308,7 @@ function engine_perm($control,$access_type='')
 		if ($permission=='self') {
 			global $UID;
 			//must fetch record to determine if self
-			if ( (sql_num_rows(get_generic(build_self_filter($control),'','',$def)) > 0) 
+			if ( (count(get_generic(build_self_filter($control),'','',$def)) > 0) 
 			     || ($action=='list' && in_array($UID,$control['list']['filter'])) ) {
 				$tPERM = true;
 				//$tPERM = is_self($control['id']); //is this person editing or accessing their own record?
@@ -342,8 +342,8 @@ function engine_perm($control,$access_type='')
 
 		if (!is_numeric($id) || $id < AG_POSTGRESQL_MAX_INT) {
 			$res = get_generic(array($def['id_field']=>$id),'','',$def);
-			if (sql_num_rows($res) > 0) {
-				$rec = sql_fetch_assoc($res);
+			if (count($res) > 0) {
+				$rec = array_shift($res);
 			}
 		}
 	}
@@ -396,10 +396,10 @@ function staff_client_relation_generic($control,$type)
 		//grab record and check for client id
 		$id  = $control['id'];
 		$res = get_generic(array($def['id_field']=>$id),'','',$def);
-		if (sql_num_rows($res)<1) {
+		if (count($res)<1) {
 			return false;
 		}
-		$rec = sql_fetch_assoc($res);
+		$rec = array_shift($res);
 		$cid = $rec[AG_MAIN_OBJECT_DB.'_id'];
 		$sid = $rec['staff_id'];
 		break;
@@ -1377,7 +1377,7 @@ function blank_generic(&$def, &$rec_init,&$control)
 	// merging blank with clients previous record
 	$id_field = AG_MAIN_OBJECT_DB.'_id';
 	if ($def['rec_init_from_previous'] && !be_null($rec_init[$id_field]) ) {
-		if ($old_rec = sql_fetch_assoc(get_generic(array($id_field=>$rec_init[$id_field])
+		if ($old_rec = array_shift(get_generic(array($id_field=>$rec_init[$id_field])
 									 , $def['id_field'].' DESC','1',$def)) ) {
 			$old_rec_merge = array();
 			foreach ($old_rec as $o_key=>$o_val) {
@@ -1687,7 +1687,7 @@ function data_dictionary($object=NULL,$field=NULL) {
 	  //$GLOBALS['query_display']='Y';
       $dd_records = get_generic($filter,'','','data_dictionary');
 	  $GLOBALS['query_display']=false;
-	  while ($data_dict=sql_fetch_assoc($dd_records)) {
+	  while ($data_dict=array_shift($dd_records)) {
 		$out .= $data_dict['comment_general'];
 	  }
 	  return $out;
@@ -2229,7 +2229,7 @@ function form_generic($rec,$def,$control)
 		return $out;
 }
 
-function get_generic($filter,$order='',$limit='',$def,$table_post=false,$group='')
+function get_generic($filter,$order='',$limit='',$def,$table_post=false,$group='',$return_sql_result=false)
 {
 	/*
 	 * Hack for hacky objects
@@ -2246,7 +2246,7 @@ function get_generic($filter,$order='',$limit='',$def,$table_post=false,$group='
 	$ho=is_array($def) ? $def['object'] : $def;
 	if (in_array($ho,array('config_file','def_array'))) {
 		$func="get_$ho";
-		return $func($filter,$order,$limit,$def,$table_post,$group);
+		return $func($filter,$order,$limit,$def,$table_post,$group,$return_sql_result);
 	}
 	/* End hack */
 
@@ -2263,8 +2263,14 @@ function get_generic($filter,$order='',$limit='',$def,$table_post=false,$group='
 	} else {
 		$sql = "SELECT * FROM $def";
 	}
-      // $def should be an def array, but you can stuff a table name in here too.
-	  return agency_query($sql,$filter,$order,$limit,'',$group);
+	$a=agency_query($sql,$filter,$order,$limit,'',$group);
+	if ($return_sql_result) {
+		return $a;
+	}
+	while ($r=sql_fetch_assoc($a)) {
+		$result[]=$r;
+	}
+	return orr($result,array());
 }
 
 function get_active_generic(&$filter,$rec,$def,$order='')
@@ -2538,7 +2544,7 @@ function rec_collision_generic($rec,$rec_last,$def,$action,&$mesg)
 	 * Using get_generic() since custom get functions tend to modify they record,
 	 * which doesn't work for determining a record collision
 	 */
-	$old_rec = sql_fetch_assoc(get_generic($filter,'','',$def,$def['use_table_post_'.$action]));
+	$old_rec = array_shift(get_generic($filter,'','',$def,$def['use_table_post_'.$action]));
 	$old_rec = unset_system_fields($old_rec);
 
 	if ($rec_last == $old_rec) {
@@ -2633,7 +2639,7 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
 		     */
 		    if ($action =='edit' && $posted_new_attachment) {
 
-			    $old_rec = sql_fetch_assoc(get_generic($filter, '','',$def));
+			    $old_rec = array_shift(get_generic($filter, '','',$def));
 
 			    if (is_numeric($old_rec[$key])) {
 				    $assoc_attachment_def = get_def('attachment_link');
@@ -2737,7 +2743,7 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
 		// just to be safe, the record is re-queried from the table using the primary key
 		if ($id = $tmp_new_rec[$def['id_field']]) {
 
-			$NEW_REC = sql_to_php_generic(sql_fetch_assoc(get_generic(array($def['id_field'] => $id),'','',$def)),$def);
+			$NEW_REC = sql_to_php_generic(array_shift(get_generic(array($def['id_field'] => $id),'','',$def)),$def);
 
 		} else {
 
@@ -2797,7 +2803,7 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
 		}
 	
 		$new_rec = get_generic($test_rec,'','',$def,$def['use_table_post_'.$action]);
-		$NEW_REC = sql_to_php_generic(sql_fetch_assoc($new_rec),$def);
+		$NEW_REC = sql_to_php_generic(array_shift($new_rec),$def);
 
 	}
       if (isset($multi_records)) {
@@ -2834,7 +2840,7 @@ function delete_generic($filter,$def,$delete_comment='')
 		$stamp_rec_child=$stamp_rec;
 		$stamp_rec_child['deleted_comment'] .= ' (Auto-deleting child records.)';
 		$del_recs=get_generic($filter,'','',$def);
-		while ($del_rec=sql_fetch_assoc($del_recs)) {
+		while ($del_rec=array_shift($del_recs)) {
 			$ids[]=$del_rec[$def['id_field']];
 		}
 		$c_filter=array('IN:'.$def['id_field']=>$ids);
@@ -3180,7 +3186,7 @@ function is_protected_generic($object,$id=null)
 		//this object type has records of protected nature
 		//the record must now be fetched to determine status
 		$filter = array($def['id_field']=>$id);
-		$rec = sql_fetch_assoc(get_generic($filter,'','',$def));
+		$rec = array_shift(get_generic($filter,'','',$def));
 		if (sql_true($rec['is_protected_id'])) {
 			//record is protected
 			return true;
@@ -3337,7 +3343,7 @@ function process_staff_alert_generic($def,$rec,&$control)
 		$alert['staff_id']=$alert_staff;
 	//verify alert doesn't exist
 	$res = get_generic($alert,'','','alert');
-	if (sql_num_rows($res) > 0) {
+	if (count($res) > 0) {
 		$_REQUEST['engineStaffAlert'] = null;
 //			return 'Error: Alert already exists for this staff and id';
 			$mesg .= oline('Alert already exists for ' . staff_link($alert['staff_id']))
@@ -3400,7 +3406,7 @@ outline("Id = $id");
 		$filter = array('ref_table' => strtolower($table), //fixme: testing
 				    'ref_id'    => $id);
 		$res = get_generic($filter,'added_at DESC','','client_ref');
-		if (sql_num_rows($res) < 1) { return false; }
+		if (count($res) < 1) { return false; }
 
 		$clients = array();
 		while ($a = sql_fetch_assoc($res)) {
@@ -3448,7 +3454,7 @@ function get_staff_alerts_generic($rec,$action,$def,$control)
 		$filter = array('ref_table'=>$table,
 				    'ref_id'=>$id);
 		$res = get_generic($filter,'added_at DESC','','alert_consolidated');
-		if (sql_num_rows($res) < 1) {
+		if (count($res) < 1) {
 			return false;
 		}
 
@@ -3459,7 +3465,7 @@ function get_staff_alerts_generic($rec,$action,$def,$control)
 					    ,' class="staff"');
 
 		static $i = 0;
-		while ($a = sql_fetch_assoc($res)) {
+		while ($a = array_shift($res)) {
 			//3rd argument should be 'table-row', but blank works just as well for compliant browsers, 
 			//and it also works for IE (while 'table-row' does not)
 			$button = Java_Engine::toggle_id_display(smaller('+/- ',2),'hiddenAlertRow'.$i,'');
@@ -3765,8 +3771,8 @@ function service_note_object_by_id($id)
 
 	$res = get_generic(array('service_id'=>$id),'','','tbl_service');
 
-	if (sql_num_rows($res)==1) {
-		$a = sql_fetch_assoc($res);
+	if (count($res)==1) {
+		$a = array_shift($res);
 		switch ($a['service_project_code']) {
 		default :
 			return 'service_'.strtolower($a['service_project_code']);
@@ -4039,7 +4045,7 @@ function engine_browser_control() {
 
 function all_db_objects( $filter=NULL ) {
 	$filter=orr($filter,array('type'=>array('view','table')));
-	$objects = sql_fetch_column(get_generic($filter,NULL,NULL,'db_agency_relations'),'name');
+	$objects = array_fetch_column(get_generic($filter,NULL,NULL,'db_agency_relations'),'name');
 	return $objects;
 }
 

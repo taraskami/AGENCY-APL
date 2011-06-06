@@ -516,9 +516,7 @@ function multi_objects_f( $recs, $object, $field, $sep=", " )
 	// Returns formatted object info, passed array of records (from get_generic.  Genericized from disabilities_f())
 	$def = get_def($object);
 	$c_def = get_def(AG_MAIN_OBJECT_DB);
-	$output = array();
-	$count = sql_num_rows( $recs );
-	if ($count == 0)
+	if (count($recs) == 0)
 	{
 		return (smaller("(no {$def['plural']})"));
 	}
@@ -529,11 +527,10 @@ function multi_objects_f( $recs, $object, $field, $sep=", " )
 			$add_on = in_array($y[$field],$def['fields'][$field]['require_comment_codes']) 
 				? smaller(' ('.$y['comment'].')',2)
 				: '';
-			array_push($output,elink($object,$y[$def['id_field']],$link_text).$add_on);
+			$output[]=elink($object,$y[$def['id_field']],$link_text).$add_on;
 		}
-		$output = implode($sep,$output);
 	}
-	return $output;
+	return implode($sep,$output);
 }
 
 function is_male( $client ) // client rec or id
@@ -593,7 +590,7 @@ function volunteer_status_f($client)
 		$filt['>:bar_date_end-bar_date']='3';
 		$filt['FIELD>:bar_date_end']='CURRENT_DATE - 30';
 		$bars=get_generic($filt,'','','bar');
-		$barred=(sql_num_rows($bars) > 0);
+		$barred=(count($bars) > 0);
 	}
 	return smaller( ($barred ? "Not " : "") . "Eligible to Volunteer");
 }
@@ -824,7 +821,7 @@ function client_locker_assignment_f($id)
 	}
 
 	$res = get_generic(client_filter($id),'','','client_locker_assignment_current');
-	if (sql_num_rows($res) < 1) {
+	if (count($res) < 1) {
 		$get_locker = client_locker_priority($id);
 		$label = smaller('Add Client Locker Assignment',2);
 		return $get_locker
@@ -833,7 +830,7 @@ function client_locker_assignment_f($id)
 			: dead_link($label);
 	}
 
-	$a = sql_fetch_assoc($res);
+	$a = array_shift($res);
 
 	$link = elink('client_locker_assignment',$a['client_locker_assignment_id'],'Locker #'.$a['client_locker_code']);
 
@@ -887,9 +884,9 @@ function income_f($client_id, &$has_inc) {
 			  array('NULL:income_date_end'=>'',
 				  'FIELD>=:income_date_end'=>'CURRENT_DATE'));
 	$res = get_generic($filter,'income_date DESC',1,$def);
-	if (sql_num_rows($res) > 0) {
+	if (count($res) > 0) {
 		$has_inc = true;
-		$income=sql_fetch_assoc($res);
+		$income=array_shift($res);
 		$annual_income = $income['annual_income'];
 
 		$output .= oline(blue(currency_of($annual_income/12))
@@ -937,12 +934,12 @@ function client_note_f ($id)
 	$filter = client_filter($id);
 // 	$filter['is_front_page'] = sql_true();
 	$res = get_generic($filter,' added_at DESC','','client_note');
-	if (sql_num_rows($res) < 1) {
+	if (count($res) < 1) {
 		return html_no_print(link_engine(array('object'=>'client_note','action'=>'add','rec_init'=>client_filter($id)),'Add a Note'));
 
 	}
  	$out = html_no_print(jump_to_object_link('client_note'));
-	while ($a = sql_fetch_assoc($res)) {
+	while ($a = array_shift($res)) {
 		$a = sql_to_php_generic($a,$def); //convert sql arrays to php arrays
 		if (sql_true($a['is_front_page'])) {
 			$flag = '';
@@ -1087,7 +1084,7 @@ function client_search($allow_other="N",$auto_forward=true)
 			 * KC clinical authorization number search
 			 */
 
-			$rec = sql_fetch_assoc(get_generic(array('kc_authorization_id'=>$matches[2]),'','','clinical_reg'));
+			$rec = array_shift(get_generic(array('kc_authorization_id'=>$matches[2]),'','','clinical_reg'));
 
 			if ( $x = $rec[AG_MAIN_OBJECT_DB . '_id'] ) {
 
@@ -1201,10 +1198,10 @@ function client_search($allow_other="N",$auto_forward=true)
 function client_death_f ($id,&$deceased_date,$small=false)
 {
 	$res = get_generic(client_filter($id),'','','client_death');
-	if (sql_num_rows($res)<1) {
+	if (count($res)<1) {
 		return false;
 	}
-	$rec = sql_fetch_assoc($res);
+	$rec = array_shift($res);
 	$deceased_date = $rec['client_death_date'];
 	$app = $rec['client_death_date_accuracy']=='E' ? '' : '(approximately)';
 	$age = client_age($id,'NO',$deceased_date);
@@ -1376,11 +1373,11 @@ function safe_harbors_consent_f($id)
 	$def = get_def('safe_harbors_consent');
 	$res = get_generic(client_filter($id),'','',$def);
 
-	if (sql_num_rows($res) < 1) {
+	if (count($res) < 1) {
 		return smaller(link_engine(array('object'=>$def['object'],'action'=>'add','rec_init'=>client_filter($id)),
 		       red('Record This Person\'s Safe Harbors Preference')),2);
 	} else {
-		$a = sql_fetch_assoc($res);
+		$a = array_shift($res);
 		$val = $a['safe_harbors_consent_status_code'];
 		$control = array('object'=>'safe_harbors_consent','id'=>$a['safe_harbors_consent_id']);
 	}
@@ -1408,11 +1405,11 @@ function chronic_homeless_status_f($id)
 	$def = get_def('chronic_homeless_status_asked');
 	$res = get_generic(client_filter($id),'','',$def);
 
-	if (sql_num_rows($res) < 1) {
+	if (count($res) < 1) {
 	  return smaller(link_engine(array('object'=>$def['object'],'action'=>'add','rec_init'=>client_filter($id)),
 		 red('Record This Person\'s Chronic Homeless Status')),2);
 	} else {
-		$a = sql_fetch_assoc($res);
+		$a = array_shift($res);
 		$val = $a['chronic_homeless_status_code'];
 		$control = array('object'=>'chronic_homeless_status_asked','id'=>$a['chronic_homeless_status_asked_id']);
 	}
@@ -1547,10 +1544,10 @@ function nicotine_distribution_f($id)
 	}
 
 	$res = get_generic(client_filter($id),'dispensed_on DESC',1,$def);
-	if (sql_num_rows($res) < 1) {
+	if (count($res) < 1) {
 		return false;
 	}
-	$a = sql_fetch_assoc($res);
+	$a = array_shift($res);
 	$out = 'Received '.$a['nicotine_count'].' patches on '.value_generic($a['dispensed_on'],$def,'dispensed_on','list');
 
 	// pre-populate new record with existing values for certain fields
@@ -1581,10 +1578,10 @@ function cd_reg_f($id)
 	}
 
 	$res = get_generic(client_filter($id),'cd_reg_date DESC',1,$def);
-	if (sql_num_rows($res) < 1) {
+	if (count($res) < 1) {
 		$out = smaller('(No '.$def['plural'].')');
 	} else {
-		$a = sql_fetch_assoc($res);
+		$a = array_shift($res);
 
 		if (be_null($a['cd_reg_date_end']) 
 		    || (dateof($a['cd_reg_date_end'],'SQL') >= dateof('now','SQL'))) {
@@ -1715,8 +1712,7 @@ function client_elevated_concern_short_f($id)
 	 */
 
 	$res = get_generic(client_filter($id),'','','elevated_concern_current');
-
-	if (sql_num_rows($res) < 1) {
+	if (count($res) < 1) {
 		//not on list
 		return false;
 
@@ -1725,7 +1721,7 @@ function client_elevated_concern_short_f($id)
 	$def = get_def('elevated_concern');
 	$f_def = $def['fields'];
 
-	$a = sql_to_php_generic(sql_fetch_assoc($res),$def);
+	$a = sql_to_php_generic(array_shift($res),$def);
 
 	//a help box
 	$help = link_wiki('Elevated_Concern_List',smaller(italic('Tell me more about the Elevated Concern List'),2),'target="_blank"');
@@ -1751,7 +1747,7 @@ function client_elevated_concern_f($id)
 
 	$res = get_generic(client_filter($id),'','','elevated_concern_current');
 
-	if (sql_num_rows($res) < 1) {
+	if (count($res) < 1) {
 		//not on list
 		return false;
 	}
@@ -1759,7 +1755,7 @@ function client_elevated_concern_f($id)
 	$def = get_def('elevated_concern');
 	$f_def = $def['fields'];
 
-	$a = sql_to_php_generic(sql_fetch_assoc($res),$def);
+	$a = sql_to_php_generic(array_shift($res),$def);
 
 	//a help box
 //	$help = link_wiki('Elevated_Concern_List',smaller(italic('Tell me more about the Elevated Concern List'),2),'target="_blank"');
@@ -1843,7 +1839,7 @@ function client_elevated_concern_list()
 		// get all clients
 		$res = get_generic('','client_name(client_id)','','elevated_concern_current');
 
-		while ($a = sql_to_php_generic(sql_fetch_assoc($res),$def)) {
+		while ($a = sql_to_php_generic(array_shift($res),$def)) {
 			$color = $color=='1' ? '2' : '1';
 //			$unit = ($tmp=unit_no($a['client_id'])) ? ' ('.$tmp.')':'';
 			$out .= row(cell(div(smaller(bold(value_generic($a['elevated_concern_date'],$def,'elevated_concern_date','list')),2),'','style="float: right;"')
@@ -1887,7 +1883,7 @@ function elevated_concern_past_meetings($rec)
 
 	}
 */
-	while ($a = sql_fetch_assoc($res_service)) {
+	while ($a = array_shift($res_service)) {
 
 		$type = strtolower($a['service_project_code']);
 		$def = get_def('service_'.$type);

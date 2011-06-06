@@ -52,25 +52,6 @@ function total_payments( $filter )
     return $result["total"];
 }
 
-
-function get_payment( $pay_id )
-{
-	$pay=get_payments( array("payment_id"=>$pay_id));
-	if (sql_num_rows($pay)==0)
-	{
-		return false;
-	}
-	elseif (sql_num_rows($pay)==1)
-	{
-		return sql_fetch_assoc($pay);
-	}
-	else
-	{
-		log_error("ERROR.  Get_payment looked for Payment #$pay_id.  The Query should return 0 or 1 rows, but instead we got this many: " . sql_num_rows($pay));
-		die;
-	}
-}
-
 function post_payment( $payment )
 {
 // this is copied almost verbatim from post_log.
@@ -96,12 +77,10 @@ function void_payment( $payment_id, $comment )
         outline("You must supply a comment to void a payment.");
         return false;
     }
-    $pay = get_payment( $payment_id );
+    $pay = get_payments(  array("payment_id"=>$payment_id ));
     if ($pay)
     {
 		$amt = $pay["amount"];
-		unset ($pay["amount"]);
-		$pay["amount"]=0;
         $sql = "UPDATE $payments_table SET is_void='Y', amount='0.00',
                         void_comment='$comment  (Original Amount was $amt)',
 			voided_at=" . enquote1(datetimeof("now","SQL")) . ", 

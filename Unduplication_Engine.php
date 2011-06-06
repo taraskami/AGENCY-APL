@@ -248,7 +248,7 @@ class Unduplication_Engine {
 		foreach ($this->IDs as $which => $id) {
 			$filter = array($this->object.'_id'=>$id);
 			$res = get_generic($filter,'','',$engine[$this->object]);
-			$records[$which] = sql_fetch_assoc($res);
+			$records[$which] = array_shift($res);
 			foreach ($this->ignore_fields[$this->object] as $field) {
 				unset ($records[$which][$field]);
 			}

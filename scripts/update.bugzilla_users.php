@@ -118,9 +118,8 @@ function update_bugzilla( $staff )
 
 // get list of active staff
 
-$res = get_generic('','','','export_staff_bugzilla');
 
-$staff_array = sql_fetch_to_array($res);
+$staff_array = get_generic('','','','export_staff_bugzilla');
 
 //connect to mysql
 

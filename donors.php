@@ -105,12 +105,9 @@ function address( $id )
 function donor_flags_f( $id, $sep=", " )
 {
 	$flags=get_generic( client_filter($id),"","","donor_flag");
-	$f=array();
-	while ($r=sql_fetch_assoc($flags))
+	while ($r=array_shift($flags))
 	{
-		array_push($f,link_engine(array("id"=>$r["donor_flag_id"],
-										"object"=>"donor_flag"
-),$r["donor_flag_type_code"]));
+		$f[]=link_engine(array("id"=>$r["donor_flag_id"], "object"=>"donor_flag"),$r["donor_flag_type_code"]);
 	}
 	return implode($sep,$f);
 }
@@ -118,7 +115,7 @@ function donor_flags_f( $id, $sep=", " )
 function donor_stat_f ($id)
 {
 	$def = get_def('donor_stat');
-	$rec = sql_fetch_assoc(get_generic(client_filter($id),'','','donor_stat'));
+	$rec = array_shift(get_generic(client_filter($id),'','','donor_stat'));
 	unset($rec['donor_id']);
 	foreach ($rec as $item=>$value) {
 		$out .= oline(label_generic($item,$def,'list').': '.value_generic($value,$def,$item,'list'));
@@ -132,11 +129,11 @@ function donor_note_f ($id)
 	$filter['is_front_page'] = sql_true();
 	$res = get_generic($filter,' added_at DESC','','donor_note');
 	$add_link = link_engine(array('object'=>'donor_note','action'=>'add','rec_init'=>client_filter($id)),'Add a Note');
-	if (sql_num_rows($res) < 1) {
+	if (count($res) < 1) {
 		return $add_link;
 	}
 	$out = $add_link;
-	while ($a = sql_fetch_assoc($res)) {
+	while ($a = array_shift($res)) {
 		$link = link_engine(array('object'=>'donor_note','id'=>$a['donor_note_id'],'action'=>'edit'),'Edit/Remove');
 		$out .= row(cell(value_generic($a['added_at'],$def,'added_at','list'),' valign="top" class="donorCommentDate"')
 			. cell(oline($link).webify($a['note']),' class="donorCommentNote"'));
@@ -151,7 +148,7 @@ function volunteer_status_f ($id)
 	$filter['donor_id']=$id;
 	$res = get_generic($filter,'','',$def);
 	$hours = 0;
-	while ($a = sql_fetch_assoc($res)) {
+	while ($a = array_shift($res)) {
 		$hours += $a['volunteer_hours'];
 	}
 
@@ -162,8 +159,8 @@ function volunteer_status_f ($id)
 	$filter['FIELD<=:volunteer_reg_date']='CURRENT_DATE';
 	$filter[] = array('NULL:volunteer_reg_date_end'=>'','FIELD>=:volunteer_reg_date_end'=>'CURRENT_DATE');
 	$res = get_generic($filter,' added_at DESC','1','volunteer_reg');
-	if (sql_num_rows($res)>0) {
-		$a = sql_fetch_assoc($res);
+	if (count($res)>0) {
+		$a = array_shift($res);
 		$regs = $a['length_commitment_code'] 
 			? value_generic($a['length_commitment_code'],$def,'length_commitment_code','list')
 			: value_generic($a['minimum_hour_commitment'],$def,'minimum_hour_commitment','list').' hours';
@@ -196,7 +193,7 @@ function client_show( $id )
 	$id=$client[$ID_FIELD];
 	$stat_filter=client_filter($id);
 	$stat_filter["NULL:year"]="placeholder";
-	$stats=sql_fetch_assoc(get_generic( $stat_filter,"","","donor_total"));
+	$stats=array_shift(get_generic( $stat_filter,"","","donor_total"));
 	$add_flag=smaller(link_engine(array("object"=>"donor_flag","action"=>"add","rec_init"=>client_filter($id)),"Add a flag"));
 
 	$address=address($id);
@@ -438,7 +435,7 @@ function client_search($allow_other="N",$auto_forward=true,$use_old=false)
 			$client=sql_fetch_assoc(get_clients(array("trim(king_cty_id)"=>$king_cty_idText))); //hack to get around our varchar kcids
 			$jump=$client["client_id"];
 		} elseif (preg_match('/a(uth)?[: ]*([0-9]{1,7})/i',$QuickSearch,$matches)) {
-			$rec = sql_fetch_assoc(get_generic(array('auth_id'=>$matches[2]),'','','auth'));
+			$rec = array_shift(get_generic(array('auth_id'=>$matches[2]),'','','auth'));
 			if ( $x = $rec["client_id"] )
 			{
 				global $client_idType, $client_idText;
@@ -460,8 +457,8 @@ function client_search($allow_other="N",$auto_forward=true,$use_old=false)
 		//auto redirect on 1 result
 		$filter = array('ILIKE:donor_name'=>'%'.$QuickSearch.'%');
 		$res = get_generic($filter,'','','donor');
-		if (sql_num_rows($res)==1) {
-			$tmp = sql_fetch_assoc($res);
+		if (count($res)==1) {
+			$tmp = array_shift($res);
 			$jump = $tmp['donor_id'];
 		}
 

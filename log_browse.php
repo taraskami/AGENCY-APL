@@ -233,7 +233,7 @@ switch( $action ) {
 	 include 'openoffice.php';
 	 include 'zipclass.php';
 	 
-	 $a = sql_fetch_assoc(get_generic( array('log_id'=>$id),NULL,NULL,get_def('log') ));
+	 $a = array_shift(get_generic( array('log_id'=>$id),NULL,NULL,get_def('log') ));
 	 
 	 office_mime_header('writer');
 	 $x=oowriter_merge($a,'log_print.sxw');
@@ -307,7 +307,7 @@ switch ($mode) {
  //case 'view' :
  case 'disabled view' :
 	 $a = get_generic($view_filter,NULL,NULL,$l_def);
-	 if ( !$a || (sql_num_rows($a)<1)) {
+	 if ( !$a || (count($a)<1)) {
 
 		 $commands   = array(bottomcell(log_view_navbar( $id,'bogus','bogus' )));
 		 $page_title = "Requested Log ($id) Does Not Exist";
@@ -375,7 +375,7 @@ case 'view' :
 		$out .= alert_mark($msg);
 	} elseif (!isset($LOG_FILTER)) {
 		$out .= alert_mark('Open Settings to Select Log(s) to view');
-	} elseif (isset($LOG_FILTER) && sql_num_rows($a)==0) {
+	} elseif (isset($LOG_FILTER) && count($a)==0) {
 		$out .=alert_mark('Your selection contains no log entries');
 	} elseif ($LOG_FILTER) { // ??? (OK, if no LOG_FILTER, user needs to select logs first)
 

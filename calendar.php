@@ -121,7 +121,7 @@ class Calendar {
 	{
 		$filter = array('calendar_type_code'=>$type);
 		$res = get_generic($filter,' calendar_id','','calendar_current');
-		return sql_fetch_column($res,'calendar_id');
+		return array_fetch_column($res,'calendar_id');
 	}
 
 	function get_spanning_event($cr,$current_day)
@@ -146,7 +146,7 @@ class Calendar {
 				    '<:event_start' => $start_timestamp,
 				    '>:event_end' => $end_timestamp);
 		$res = get_generic($filter,'','',$this->appointment_view);
-		if ($a = sql_fetch_assoc($res)) {
+		if ($a = array_shift($res)) {
 			$this->display_spanning_type = 'complete';
 			return $a;
 		} elseif (($a=$cr->end_blocker_records[$current_day.' 23:59:00']) && ($a['event_start'] < $start_timestamp)) {
@@ -535,9 +535,9 @@ class Calendar {
 							     'event_end'=>$rec['event_end'],
 							     'allow_overlap'=>sql_true());
 			$res = get_generic($filter,'','',$this->appointment_view);
-			if (sql_num_rows($res) > 1) { //the initial record is included in the result set
+			if (count($res) > 1) { //the initial record is included in the result set
 				$overlap_recs = array();
-				while ($a = sql_fetch_assoc($res)) {
+				while ($a = array_shift($res)) {
 					$overlap_recs[] = $a;
 				}
 				return $this->format_block_overlap($overlap_recs,$blocks);
@@ -682,7 +682,7 @@ class Calendar {
 		}
 
 		$res = get_generic('','','','calendar_current');
-		while ($a=sql_fetch_assoc($res)) {
+		while ($a=array_shift($res)) {
 			$label = Calendar_Record::name($a);
 			$indi_s .= selectitem($a['calendar_id'],$label,$id==$a['calendar_id']);
 		}
@@ -826,7 +826,7 @@ class Calendar {
 		$out .= div('Individual Calendars','',' class="calMenu"');
 		$li = '';
 
-		while ($a = sql_fetch_assoc($res)) {
+		while ($a = array_shift($res)) {
 			$label = Calendar_Record::name($a);
 			$text = Calendar::link_calendar($a['calendar_id'],'',$label);
 			$link = link_engine(array('object'=>'calendar','id'=>$a['calendar_id']),smaller('(config)',2));
@@ -894,12 +894,12 @@ class Calendar {
 		$def = get_def('calendar_appointment');
 		$res = get_generic(staff_filter($UID),'','','calendar_current');
 
-		if (sql_num_rows($res) < 1) {
+		if (array_shift($res) < 1) {
 			return '';
 		}
 
 
-		$c_rec = sql_fetch_assoc($res);
+		$c_rec = array_shift($res);
 		$c_id = $c_rec['calendar_id'];
 		
 		//upcoming appointments
@@ -920,7 +920,7 @@ class Calendar {
 						     'FIELD>=:event_start'=>'CURRENT_TIMESTAMP');
 			$future_res = get_generic($future_filter,'event_start',15,'calendar_appointment_current');
 			
-			while ($a = sql_fetch_assoc($future_res)) {
+			while ($a = array_shift($future_res)) {
 				$color = $color=='1' ? '2' : '1';
 				$out .= row(topcell(value_generic($a['event_start'],$def,'event_start','list'))
 						.topcell(smaller(client_link($a['client_id'],client_name($a['client_id'],25))
@@ -949,7 +949,7 @@ class Calendar {
 						   'FIELD<=:event_start'=>'CURRENT_TIMESTAMP');
 			$past_res = get_generic($past_filter,'event_start DESC',15,'calendar_appointment_current');
 			
-			while ($a = sql_fetch_assoc($past_res)) {
+			while ($a = array_shift($past_res)) {
 				$color = $color=='1' ? '2' : '1';
 				$out .= row(topcell(value_generic($a['event_start'],$def,'event_start','list'))
 						.topcell(smaller(client_link($a['client_id'],client_name($a['client_id'],25))
@@ -1002,16 +1002,16 @@ class Calendar_Record {
 			//this will get a configuration for a calendar of same type
 			//this is mainly used for permissions, which really shouldn't be varying very much
 			//between calendars of same type
-			$id = sql_fetch_assoc(get_generic(array('calendar_type_code'=>$id),'','1','calendar'));
+			$id = array_shift(get_generic(array('calendar_type_code'=>$id),'','1','calendar'));
 			$id = $id['calendar_id'];
 		}
 		if ($id) {
 			$res = get_generic(array('calendar_id'=>$id),'','','calendar');
-			if (sql_num_rows($res) !== 1) {
+			if (count($res) !== 1) {
 				outline('Couldn\'t find configuration for calendar id "'.$id.'".');
 				exit;
 			}
-			return sql_fetch_assoc($res);
+			return array_shift($res);
 		}
 		return false;
 	}
@@ -1024,7 +1024,7 @@ class Calendar_Record {
 					    'BETWEEN:event_end'=>$dates));
 		$res = get_generic($filter,'event_start','','calendar_appointment'.($this->get_cancelled ? '_cancelled': '_current'));
 		$events = $ends = array();
-		while ($a = sql_fetch_assoc($res)) {
+		while ($a = array_shift($res)) {
 			$events[$a['event_start']] = $a;
 			$ends[$a['event_end']] = $a;
 		}
@@ -1237,13 +1237,13 @@ function form_row_calendar_appointment($key,$value,&$def,$control,&$Java_Engine,
 		//----determine max time----//
 		$filter = array('calendar_id'=>$rec['calendar_id'],'>:event_start'=>$st,':event_start<----->date'=>dateof($st,'SQL'));
 		$res = get_generic($filter,' event_start','1','calendar_appointment_current');
-		if ($a=sql_fetch_assoc($res)) {
+		if ($a=array_shift($res)) {
 			$max_timestamp = $a['event_start'];
 		}
 		//----determine minimum time----//
 		$filter = array('calendar_id'=>$rec['calendar_id'],'<=:event_end'=>$st,':event_start<----->date'=>dateof($st,'SQL'));
 		$res = get_generic($filter,' event_start DESC','1','calendar_appointment_current');
-		if ($a=sql_fetch_assoc($res)) {
+		if ($a=array_shift($res)) {
 			$min_timestamp = $a['event_end'];
 		}
 	}
@@ -1307,8 +1307,8 @@ function valid_calendar_appointment($rec,&$def,&$mesg,$action,$rec_last)
 		$filter['<>:calendar_appointment_id'] = $rec['calendar_appointment_id'];
 	}
  	$res = get_generic($filter,' event_start','','calendar_appointment_current');
-	if (sql_num_rows($res) > 0) { //records exist
-		$a =sql_fetch_assoc($res);
+	if (count($res) > 0) { //records exist
+		$a =array_shift($res);
 		$link = Calendar::link_calendar($a['calendar_id'],$a['event_start'],'View Calendar');
 		$m = $a['event_start'] < $rec['event_start'] 
 			? 'Ending at: '.datetimeof($a['event_end'],'US')
@@ -1381,7 +1381,7 @@ function title_calendar_appointment($action,$rec,$def)
 	$id = $rec['calendar_id'];
 	if ($id) {
 		$res = get_generic(array('calendar_id'=>$id),'','','calendar');
-		$a = sql_fetch_assoc($res);
+		$a = array_shift($res);
 		$title = ucfirst($action).'ing '.$def['singular'].' for '.Calendar_Record::name($a,true);
 		return bigger(bold($title));
 	}
@@ -1515,7 +1515,7 @@ function calendar_to_ics( $cal_id)
                 'calendar_id'=>$cal_id);
 	$cal_def = get_def('calendar_appointment');
 	$recs=get_generic($filter,'','',$cal_def);
-	while ( $x=sql_fetch_assoc( $recs ) ) {
+	while ( $x=array_shift( $recs ) ) {
             $file .= oline(calendar_appointment_to_ics($x),2);
 	}
 	return $cal_head . $file;

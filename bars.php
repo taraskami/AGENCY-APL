@@ -73,7 +73,7 @@ function bar_status( $client, $group="",$start="",$end="",$brc="",$which=array()
 	foreach ($which as $barred_from) {
 		$filt['barred_from_'.$barred_from] = sql_true();
 	}
-	return sql_num_rows($func($filt,'','','bar'))>0;
+	return count($func($filt,'','','bar'))>0;
 }
 
 function bar_status_f( $client,$format='',&$is_provisional)
@@ -92,8 +92,8 @@ function bar_status_f( $client,$format='',&$is_provisional)
 	$def = get_def('bar');
 	$verb_passive=$def['verb_passive'];
 	$noun = $def['singular'];
-	if (sql_num_rows($bars) > 0) {
-		while($curr_bar = sql_fetch_assoc($bars)) {
+	if (count($bars) > 0) {
+		while($curr_bar = array_shift($bars)) {
 			$days_barred = $curr_bar['days_barred'];
 			$enddate = $curr_bar['bar_date_end'];
 			$brc_resolution = $curr_bar['brc_resolution_code'];
@@ -164,7 +164,7 @@ function gatemail_status_f($client)
 	$filter['bar_date_end']=array('FIELD>=:bar_date_end'=>'CURRENT_DATE',
 						'NULL:bar_date_end'=>'');
 	$cbars = get_generic($filter,'bar_date DESC, bar_date_end DESC','','bar');
-	while($bar = sql_fetch_assoc($cbars))
+	while($bar = array_shift($cbars))
 	{
 		if ($gdate = $bar["gate_mail_date"])
 		{

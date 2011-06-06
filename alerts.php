@@ -34,30 +34,19 @@ should be included in this distribution.
 function get_alerts_for_staff( $id, $limit=25,$unread_only=false )
 {
 	$fil = staff_filter($id);
-
 	if ($unread_only) {
-
 		// testing for !has_read so that null values are counted as unread.
 		$fil['!has_read'] = sql_true();
-
 	}
-
 	$alerts = get_alerts($fil,"",$limit);
-
 	// This loop could become a function, sql_fetch_to_array(), 
 	// except for the custom tweaking of the summary field
-	$results = array();
-	while($rec = sql_fetch_assoc( $alerts )) {
-
-		if (strtoupper($rec['ref_table'])=='LOG') {
-
-			$rec['summary']=orr($rec["summary"],substr($rec["log_text"],0,60));
-
+	for ($x=0;$x<count($alerts);$x++) {
+		if (strtoupper($alerts[$x]['ref_table'])=='LOG') {
+			$alerts[$x]['summary']=orr($alerts[$x]['summary'],substr($alerts[$x]["log_text"],0,60));
 		}
-		array_push($results,$rec);
 	}
-	return $results;
-
+	return $alerts;
 }	
 
 function get_alerts($filter,$order="",$limit="")
@@ -177,7 +166,7 @@ EOF
 				$action=strtolower($matches[1]);
 				$ref_def=get_def($x['ref_table']);
 				$ref=get_generic(array($ref_def['id_field']=>$x['ref_id']),'','',$x['ref_table']);
-				if ($ref=sql_fetch_assoc($ref)) {
+				if ($ref=array_shift($ref)) {
 					if (array_key_exists('staff_id',$ref)) {
 						$extra = staff_link($ref['staff_id']);
 					}
@@ -263,14 +252,14 @@ function acknowledge_alert($alert_id,$undo=false)
 	$alert_fil = array('alert_id' => $alert_id);
 	$alert     = get_alerts($alert_fil);
 
-	if (!($alert && (sql_num_rows($alert)==1))) {
+	if (!($alert && (count($alert)==1))) {
 
 		log_error("Acknolwedge alert couldn't retrieve alert #$alert_id.");
 		return false;
 
 	}
 
-	$alert = sql_fetch_assoc($alert);
+	$alert = array_shift($alert);
 
 	if (!($alert['staff_id'] == $UID)) { // acknolwedge your own alerts only, but could add sys perms
 
@@ -344,7 +333,7 @@ function view_alert($rec,$def,$action,$control='',$control_array_variable='contr
 function staff_alerts_f($object,$id,$sep='') {
 	$sep=orr($sep,$GLOBALS['NL']);
 	if ($id>0 and (intval($id)==$id)) { $alerts=get_alerts(array('ref_table'=>$object,'ref_id'=>$id)); }
-	while ($rec=sql_fetch_assoc($alerts)) {
+	while ($rec=array_shift($alerts)) {
 		$link=staff_link($rec['staff_id']);
 		if ($rec['staff_id']==$GLOBALS['UID']) { //Alert to user
 			$to_me=true;

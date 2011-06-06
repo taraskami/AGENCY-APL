@@ -99,7 +99,7 @@ $_SESSION['LAST_CALLED_CONTROL_VARIABLE'] = $tmp_control;
 
 /* find current entry locations */
 $e_locations=get_generic(array('is_current'=>sql_true()),NULL,NULL,get_def('l_entry_location'));
-while ($loc=sql_fetch_assoc($e_locations)) {
+while ($loc=array_shift($e_locations)) {
 	$AG_ENTRY_LOCATIONS[$loc['entry_location_code']]=$loc['description'];
 }
 

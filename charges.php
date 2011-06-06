@@ -67,7 +67,7 @@ function void_charge( $charge_id, $comment )
 		return false;
 	}
 
-	$charge = get_charge( $charge_id );
+	$charge = get_charges( array( 'charge_id'=>$charge_id ));
 	if ($charge) {
 		$values['is_void']=sql_true(); 
 		$values['void_comment'] = $comment;
@@ -85,11 +85,6 @@ function void_charge( $charge_id, $comment )
 		return false;
 	}
 }
-
-function get_charge( $charge_id )
-{
-	return get_charges( array('charge_id'=>$charge_id));
-}	
 
 function get_charges( $filter )
 {
@@ -493,7 +488,7 @@ function post_security_deposit( $client_id, $project, $Unit, $InDate )
 		log_error( oline("Failed to get unit $Unit.  Can't post security deposit for $client_id"));
 		return false;
 	}
-	$unit_rec = sql_fetch_assoc( $unit_rec );
+	$unit_rec = array_shift( $unit_rec );
 	$sec_amount = $unit_rec["security_deposit"];
 	$charge = "";
 	$charge["charge_type_code"]="SECURITY";
@@ -526,7 +521,7 @@ function post_security_deposit_reverse( $client_id, $project, $Unit, $OutDate )
 		log_error( oline("Failed to get unit $Unit.  Can't post reverse security deposit for $client_id"));
 		return false;
 	}
-	$unit_rec = sql_fetch_assoc( $unit_rec );
+	$unit_rec = array_shift( $unit_rec );
 	$sec_amount = $unit_rec["security_deposit"];
 	$charge = "";
 	$charge["charge_type_code"]="SECURITY";

@@ -229,12 +229,12 @@ function link_attachment($value, $key, $short_format=false)
 	//get attachment_link record:
 	$a_attachment_def = get_def('attachment_link');
 	$a_attachment_filter = array($a_attachment_def['id_field'] => $a_attachment_id);
-	$a_attachment_rec = sql_fetch_assoc(get_generic($a_attachment_filter, '', '', $a_attachment_def));
+	$a_attachment_rec = array_shift(get_generic($a_attachment_filter, '', '', $a_attachment_def));
 		
 	//get attachment record:
 	$file_def = get_def('attachment');
 	$file_filter = array($file_def['id_field'] => $a_attachment_rec['attachment_id']);
-	$file_rec = sql_fetch_assoc(get_generic($file_filter, '', '', $file_def));
+	$file_rec = array_shift(get_generic($file_filter, '', '', $file_def));
 
 	//check if null and return $attachment_id
 	if (!$file_rec) {
@@ -303,7 +303,7 @@ function attachment_label($a_attachment_rec, $a_attachment_id, $extension, $date
 	//get parent record:
 	$parent_def = get_def($a_attachment_rec['parent_object']);
 	$parent_filter = array($a_attachment_rec['parent_field_name'] => $a_attachment_id);
-	$parent_rec = sql_fetch_assoc(get_generic($parent_filter, '', '', $parent_def));
+	$parent_rec = array_shift(get_generic($parent_filter, '', '', $parent_def));
 
 	$parent_id_field = $parent_def['id_field'];
 
@@ -343,7 +343,7 @@ function get_attachment_content($id, &$mesg)
 		//retrieve attachment_link record corresponding to this attachment link ID
 		$a_attachment_def = get_def('attachment_link');
 		$a_attachment_filter = array($a_attachment_def['id_field'] =>$id);
-		$a_attachment_rec = sql_fetch_assoc(get_generic($a_attachment_filter, '', '', $a_attachment_def));
+		$a_attachment_rec = array_shift(get_generic($a_attachment_filter, '', '', $a_attachment_def));
 		
 		//needed for permission checking:
 		$parent_def = get_def($a_attachment_rec['parent_object']);
@@ -357,7 +357,7 @@ function get_attachment_content($id, &$mesg)
 		//retrieve attachment record referred to by this attachment_link record
 		$att_def = get_def('attachment');
 		$att_filter = array($att_def['id_field'] => $a_attachment_rec['attachment_id']);
-		$att_rec = sql_fetch_assoc(get_generic($att_filter, '', '', $att_def));
+		$att_rec = array_shift(get_generic($att_filter, '', '', $att_def));
 			
 		$extension = $att_rec['extension'];
 		$datetime = dateof($att_rec['added_at'], 'SQL'). '_'. timeof($att_rec['added_at'], '24');

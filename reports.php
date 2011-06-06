@@ -46,11 +46,11 @@ function report_generate_menu(&$navigation)
 function get_report_from_db( $report_id )
 {
 	$rpt=get_generic(array('report_id'=>$report_id),'','',get_def('report'));
-	if (sql_num_rows($rpt) <> 1)
+	if (count($rpt) <> 1)
 	{
 		return false;
 	}
-	$rec=sql_fetch_assoc($rpt);
+	$rec=array_shift($rpt);
 	/* Split multiple SQL statements into array */
 	$rec['sql'] = preg_split( '/\n\s?SQL\s?\n/im',$rec['sql'] );
 	if (!be_null($rec['output'])) {

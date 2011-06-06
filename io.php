@@ -1866,7 +1866,7 @@ function help($title='',$text='',$label='',$options=null,$expanded=false,$new_wi
 	static $i = 0;
 	$i ++;
 	if ( (!$text)
-		&& ($rec=sql_fetch_assoc(get_generic(array('help_title'=>$title),'','','help'))) ) {
+		&& ($rec=array_shift(get_generic(array('help_title'=>$title),'','','help'))) ) {
 			$text = sql_true($rec['is_html']) ? $rec['help_text'] : str_replace('<br/>','<p>',webify($rec['help_text']));
 	}
 	$label = orr($label,'Help');

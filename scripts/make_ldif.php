@@ -115,7 +115,7 @@ function ldap_phones($id)
 	$filter[] =array('FIELD>=:staff_phone_date_end'=>'CURRENT_DATE',
 			     'NULL:staff_phone_date_end'=>true);
 	$res = get_generic($filter,'','',$def);
-	if (sql_num_rows($res)<1) {
+	if (count($res)<1) {
 		return '';
 	}
 
@@ -125,7 +125,7 @@ function ldap_phones($id)
 			     'MOBILE'=>'mobile');
 
 	$phones=array();
-	while ($a = sql_fetch_assoc($res)) {
+	while ($a = array_shift($res)) {
 		if (array_key_exists($a['phone_type_code'],$mapping)) {
 			$phones[$mapping[$a['phone_type_code']]] = $a['number'] . 
 				($a['extension'] ? ' x'.$a['extension'] : '');
@@ -146,7 +146,7 @@ function ldap_password($id)
 
 $staff=get_staff(array());
 
-while ($s=sql_fetch_assoc($staff)) {
+while ($s=array_shift($staff)) {
 	$arr=array('name_first','name_last','staff_email','_staff_position_code','_agency_project_code');
 	$arr1=array();
 	$arr2=array();

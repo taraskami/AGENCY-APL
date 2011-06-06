@@ -50,11 +50,10 @@ $copy_command = "scp -r $source/* $destination";
 
 function get_staff_list( $filter )
 {
-	$group=array();
 	$list = get_staff($filter,"username_unix");
-	while ( $rec = sql_fetch_assoc($list) )
+	while ( $rec = array_shift($list) )
 	{
-		array_push($group, $rec["username_unix"]);
+		$group[]=$rec["username_unix"];
 	}
 	return $group;
 }

@@ -126,7 +126,7 @@ while (true)
 			  $def = $engine['safe_harbors_consent'];
 			  $shres = get_generic(client_filter($id),'','',$def);
 
-			  if (sql_num_rows($shres) < 1) { //no safe harbors consent
+			  if (count($shres) < 1) { //no safe harbors consent
 				  $flag = true;
 				  indicate_client_note();
 				  $msg .= "{$RED}Missing Safe Harbors Consent{$NORM}";
@@ -137,7 +137,7 @@ while (true)
 			  $def = $engine['chronic_homeless_status_asked'];
 			  $chres = get_generic(client_filter($id),'','',$def);
 
-			  if (sql_num_rows($chres) < 1) { //chronic homeless not asked
+			  if (count($chres) < 1) { //chronic homeless not asked
 				  $flag = true;
 				  indicate_client_note();
 				  $msg .= "{$RED}Not yet asked about chronic homeless status{$NORM}";
@@ -175,9 +175,9 @@ while (true)
 
 
 		  //client note display
-		  if (sql_num_rows($notes) > 0) {
+		  if (count($notes) > 0) {
 			  $out_notes = $RED."\n".'===Client has notes flagged for entry. Edit note(s) to remove from this screen in the future.==='.$NORM;
-			  while ($a = sql_fetch_assoc($notes)) {
+			  while ($a = array_shift($notes)) {
 				  $out_notes .= $WHITE."\n client_note id ".$a['client_note_id'].' ('.dateof($a['added_at'])."):\n      "
 					  .str_replace("\n","\n      ",$a['note']).$NORM;
 			  }

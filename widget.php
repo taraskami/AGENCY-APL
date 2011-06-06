@@ -194,9 +194,9 @@ class Widget {
 				$recs[$val] = $REC;
 			} else {
 				$active_filter = $this->get_active_filter($val);
-				if ( ($res = call_user_func($this->def['fn']['get_active'],$active_filter,$rec=array(),$this->def))
-				     and (sql_num_rows($res)===1) ) {//record exists
-					$recs[$val] = sql_fetch_assoc($res);
+				if ( ($res = $this->def['fn']['get_active']($active_filter,$rec=array(),$this->def))
+				     and (count($res)===1) ) {//record exists
+					$recs[$val] = array_shift($res);
 					$passed_records[$val] = true;
 					$recs_last[$val] = $recs[$val];
 				} else {
@@ -243,7 +243,7 @@ class Widget {
 			 */
 			$active_filter = $this->get_active_filter($key);
 			$rec_last = $this->recs_last[$key];
-			$interim_record = sql_num_rows(call_user_func($this->def['fn']['get_active'],$active_filter,$rec=array(),$this->def)); 
+			$interim_record = count($this->def['fn']['get_active']($active_filter,$rec=array(),$this->def)); 
 			$success = true;
 			$errors = $mesg = '';
 			if ( ($rec_last and ($old = rec_collision_generic($rec,$rec_last,$this->def,'edit',&$errors)))

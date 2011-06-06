@@ -86,7 +86,7 @@ function navigate_news($def)
 {
 	//get 10 most recent
 	$res=get_generic('','posted_at DESC',10,'news');
-	while ($a = sql_fetch_assoc($res)) {
+	while ($a = array_shift($res)) {
 		$latest .= html_list_item(link_engine(array('object'=>'news','id'=>$a['news_id']),$a['subject']));
 	}
 

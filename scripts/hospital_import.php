@@ -82,13 +82,13 @@ while ($hospital = array_shift($hospitals))
 
 		//find client_id
 		$client = get_generic(array('clinical_id'=>$case_id),'','','client');
-		if (sql_num_rows($client) !== 1) {
+		if (count($client) !== 1) {
 			$error = 'There is no corresponding client_id for case_id '.$case_id.' in tbl_client';
 			$page_errors .= $error."\n";
 			log_error($error);
 			continue;
 		}
-		$client = sql_fetch_assoc($client);
+		$client = array_shift($client);
 		$client_id = $client['client_id'];
 		$filter = array("client_id"=>$client_id, $db_start_field=>$date_in);
 		$existing = get_generic($filter,'','','hospital');
@@ -97,14 +97,14 @@ while ($hospital = array_shift($hospitals))
 		// 1 Rows = yes, check whether end date is missing (and gets added)
 		//          or if it exists, in which case it should match
 		// 2 Rows = problem!
-		if (sql_num_rows($existing)>1)
+		if (count($existing)>1)
 		{
 			log_error("Found more than one record for Case ID $client_id on $date_in.");
 			continue;
 		}
-		elseif (sql_num_rows($existing)==1)
+		elseif (count($existing)==1)
 		{
-			$existing = sql_fetch_assoc($existing);
+			$existing = array_shift($existing);
 			if ($existing[$db_end_field]) // release record already exists
 			{
 				if (!$date_out)

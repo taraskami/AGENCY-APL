@@ -315,11 +315,11 @@ function engine($control='',$control_array_variable='control')
 			    $action = 'view';
 		    } elseif ( ($action=='add') and $def['single_active_record']
 				   and ($res = $def['fn']['get_active']($filter=$REC_INIT,$REC,$def))
-				   and (sql_num_rows($res) > 0) ) {
+				   and (count($res) > 0) ) {
 			    /*
 			     * Verify/close active record
 			     */
-			    $a = sql_to_php_generic(sql_fetch_assoc($res),$def);
+			    $a = sql_to_php_generic(array_shift($res),$def);
 			    $out_control='';
 			    foreach ($CONTROL_PASS as $key) {
 				    $out_control .= hiddenvar($control_array_variable.'['.$key.']',$$key);
@@ -597,9 +597,9 @@ function engine($control='',$control_array_variable='control')
 			    $REC = ($format=='data')
 				    ? get_generic($filter,'','',$def,$def['use_table_post_edit'])
 				    : $def['fn']['get']($filter,'','',$def,$def['use_table_post_edit']); //optional order and limit parameters
-			    $cnt=sql_num_rows($REC);
+			    $cnt=count($REC);
 			    if ($cnt == 1) {
-				    $REC = sql_to_php_generic(sql_fetch_assoc($REC),$def);
+				    $REC = sql_to_php_generic(array_shift($REC),$def);
 					if ($action=='clone') {
 						$sys_log_tmp="$object record cloned from ID $id";
 						// Unset ID field & System Fields
@@ -717,7 +717,7 @@ function engine($control='',$control_array_variable='control')
       case 'view' :
 		if ( $read_perm ) {
 			$filter = array($def['id_field']=>$id);
-			$REC = sql_fetch_assoc($def['fn']['get']($filter,'','',$def));
+			$REC = array_shift($def['fn']['get']($filter,'','',$def));
 			if (!$REC) {
 				$message .= oline("ID $id not found for record type $object.  Can't $action.");
 			} else {
@@ -922,7 +922,7 @@ function engine($control='',$control_array_variable='control')
 		}
 
 		$filter = array($def['id_field']=>$id);
-		$REC = sql_to_php_generic(sql_fetch_assoc(get_generic($filter,'','',$def)),$def);
+		$REC = sql_to_php_generic(array_shift(get_generic($filter,'','',$def)),$def);
 		if ($step=='confirm_pass' || $step=='delete_confirmed') { //foil fakers trying to bypass password
 			if ($passed_password && (!be_null(trim($_REQUEST['delete_comment'])) || !$def['require_delete_comment'] )) {
 				$step='delete_confirmed';

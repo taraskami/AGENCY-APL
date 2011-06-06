@@ -157,10 +157,10 @@ function housing_status_f( $id )
 			$inc_filt = client_filter($id);
 			$inc_filt['housing_unit_code'] = $a['housing_unit_code'];
 			$res = get_generic($inc_filt,'income_date DESC','1',$engine['income']);
-			if (sql_num_rows($res)<1) {
+			if (count($res)<1) {
 				$address = oline('Error: no matching income record - can\'t determine Voucher Type') . $address;
 			} else {
-				$income = sql_fetch_assoc($res);
+				$income = array_shift($res);
 				$address = oline(smaller(bold('Voucher Type: ')).value_generic($income['fund_type_code'],$engine['income'],'fund_type_code','list')) . $address;
 			}
 		}
@@ -240,8 +240,8 @@ function get_last_housing_history($client_id)
 	global $engine;
 	$filter = client_filter($client_id);
 	$res = get_generic($filter,'residence_date DESC',1,$engine['housing_history']);
-	if (sql_num_rows($res) > 0) {
-		return sql_fetch_assoc($res);
+	if (count($res) > 0) {
+		return array_shift($res);
 	}
 	return false;
 }
@@ -268,7 +268,7 @@ function get_unit( $unit )
 
 	$unit_rec = get_units(array('housing_unit_code' => $unit));
 
-	$x = sql_num_rows($unit_rec);
+	$x = count($unit_rec);
 
 	if ($x != 1) {
 
@@ -350,7 +350,7 @@ function unit_history($unit_no, $daterange_obj='',$sep='<br>')
 
 	if (!$u) { return false; }
 
-	$u = sql_fetch_assoc($u);
+	$u = array_shift($u);
 
 	$filter['housing_unit_code'] = $unit_no;
 	

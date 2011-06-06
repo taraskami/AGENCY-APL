@@ -34,10 +34,10 @@ function jail_status_f($id)
 {
 	$def = get_def('jail');
 	$res = get_generic(client_filter($id),'jail_date DESC','1',$def);
-	if (sql_num_rows($res) < 1) {
+	if (count($res) < 1) {
 		return false;
 	}
-	$rec = sql_fetch_assoc($res);
+	$rec = array_shift($res);
 	if (be_null($rec['jail_date_end'])) {
 		$days = $rec['days_in_jail'] . ($rec['days_in_jail'] > 1 ? ' days' : ' day');
 		$text = 'Incarcerated since '.dateof($rec['jail_date']).' ('.$days.')';

@@ -93,8 +93,7 @@ $res = get_generic($gift_filter,'','',$gdef['table']);
 
 $num = $fname = $export = array();
 
-$ini_num = sql_num_rows($res);
-if ($ini_num < 1) {
+if (count($res) < 1) {
 	outline(bold('No gifts to export.'));
  } else {
 
@@ -112,7 +111,7 @@ if ($ini_num < 1) {
 	 * 0.5) export any donors that haven't been exported before
 	 */
 	$dres = get_generic(array(),'','','export_donor_mip');
-	$dcount = sql_num_rows($dres);
+	$dcount = count($dres);
 
 	if ($dcount > 0) {
 
@@ -149,7 +148,7 @@ if ($ini_num < 1) {
 		 */
 		$res = get_generic(array('mip_export_session_id' => $d_session_id),'','','donor');
 
-		$num['donor'] = sql_num_rows($res);
+		$num['donor'] = count($res);
 		outline('Updated '.$num['donor'].' donor records');
 
 	}
@@ -181,7 +180,7 @@ if ($ini_num < 1) {
 	
 	$res = get_generic(array('mip_export_session_id' => $session_id),'','',$gdef['table']);
 
-	$num['gift'] = sql_num_rows($res);
+	$num['gift'] = count($res);
 	
 	outline('Updated '.$num['gift'].' '.$gdef['singular'].' records');
 	

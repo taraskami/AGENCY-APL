@@ -811,7 +811,7 @@ function list_query($def,$filter='',$order='',$control,$group='')
 	if (is_array($def)) {
 
 		$fn = $group ? 'get_generic' : $def['fn']['get'];
-		return $fn($filter,$order,$limit,$def,false,$group);
+		return $fn($filter,$order,$limit,$def,false,$group,true); // returns query results, not array
 
 	} else { // a raw query is being passed in the $def variable
 

@@ -39,8 +39,8 @@ function staff_filter( $id )
 function staff_display( $idnum )
 {
         $rec = staff_get( $idnum );
-	  if (sql_num_rows($rec) < 1) { return red(bold('No Staff found with id #'.$idnum)); }
-        return view_staff( $rec );
+	  if (count($rec) < 1) { return red(bold('No Staff found with id #'.$idnum)); }
+        return view_staff( array_shift($rec) );
 }
 
 function staff_client_assignments($staff_id)
@@ -65,7 +65,7 @@ function staff_client_assigned($cid,$exclude_just_monitoring=true)
 			$filter['!IN:staff_assign_type_code']=array('MONITOR');
 		}
 		$res = get_generic($filter,'','','staff_assign_current');
-		$clients = sql_fetch_column($res,AG_MAIN_OBJECT_DB.'_id');
+		$clients = array_fetch_column($res,AG_MAIN_OBJECT_DB.'_id');
 	}
 
 	return in_array($cid,$clients);
@@ -161,7 +161,7 @@ function view_staff( $staff,$def='',$action='',$control='',$control_array_variab
 			. $staff['agency_position_code'])) {
 			//Likely no staff_employment record, confirm
 			$staff_emp=get_generic(staff_filter($id),NULL,NULL,get_def('staff_employment'));
-			if (sql_num_rows($staff_emp)==0) {
+			if (count($staff_emp)==0) {
 				$no_staff_emp=true;
 				if ($id==$sys_user) {
 					$is_sys_user=true;
@@ -192,9 +192,9 @@ function view_staff( $staff,$def='',$action='',$control='',$control_array_variab
  	}
 	//get supervisees
 	$res = get_generic(array('supervised_by'=>$id,'is_active'=>sql_true()),'name_last','',$def);
-	if (sql_num_rows($res) > 0) {
+	if (count($res) > 0) {
 		$supervisees = array();
-		while ($a = sql_fetch_assoc($res)) {
+		while ($a = array_shift($res)) {
 			$supervisees[] = staff_link($a['staff_id'],staff_name($a['staff_id']))
 				. smaller(' ('.value_generic(staff_position($a['staff_id']),$def,'staff_position_code','list').')',2);
 		}
@@ -450,7 +450,10 @@ function get_staff( $filter, $order="name_last,name_first" )
 			return staff_get( $b['staff_id']);
 		}
 	}
-	return $a;
+	while ($rec=sql_fetch_assoc($a)) {
+		$result[]=$rec;
+	}
+	return $result;
 
 }
 
@@ -462,10 +465,10 @@ function staff_name( $sid )
 		return $sid;
 	}
 	$staff=get_staff(array("staff_id"=>$sid,"is_active"=>array(sql_true(),sql_false())));
-	if (sql_num_rows($staff)<>1) {
+	if (count($staff)<>1) {
 		return false;
 	}
-	$staff=sql_fetch_assoc($staff);
+	$staff=array_shift($staff);
 	return $staff['name_first'] . ' ' . $staff['name_last'];
 }
 
@@ -613,7 +616,7 @@ function post_staff1($logid, $posterid, $staffid)
 
 	$alerts = get_alerts($filter);
 
-	if (sql_num_rows( $alerts ) > 0 ) {
+	if (count( $alerts ) > 0 ) {
 
 		outline( alert_mark() .
 			   "Alert for staff " . staff_link( $staffid )
@@ -720,11 +723,11 @@ function staff_phone_f($id)
 	$filter[] =array('FIELD>=:staff_phone_date_end'=>'CURRENT_DATE',
 			     'NULL:staff_phone_date_end'=>true);
 	$res = get_generic($filter,'','',$def);
-	if (sql_num_rows($res)<1) {
+	if (count($res)<1) {
 		$phone = 'no phone numbers';
 	} else {
 		$indent = ' style="margin-left: 25px;"';
-		while ($a = sql_fetch_assoc($res)) {
+		while ($a = array_shift($res)) {
 			$type = value_generic($a['phone_type_code'],$def,'phone_type_code','list');
 			$link_rec = link_engine(array('object'=>'staff_phone','id'=>$a['staff_phone_id']),$type,'',' class="fancyLink"');
 			$tmp = $link_rec.': '
@@ -784,21 +787,21 @@ function form_row_staff_request($key,$value,&$def,$control,&$Java_Engine,$rec)
 
 function staff_project($id)
 {
-	$p = sql_fetch_column(get_generic(staff_filter($id),'','','staff'),'agency_project_code');
+	$p = array_fetch_column(get_generic(staff_filter($id),'','','staff'),'agency_project_code');
 	
 	return $p[0];
 }
 
 function staff_program($id)
 {
-	$p = sql_fetch_column(get_generic(staff_filter($id),'','','staff'),'agency_program_code');
+	$p = array_fetch_column(get_generic(staff_filter($id),'','','staff'),'agency_program_code');
 	
 	return $p[0];
 }
 
 function staff_position($id)
 {
-	$p = sql_fetch_column(get_generic(staff_filter($id),'','','staff'),'staff_position_code');
+	$p = array_fetch_column(get_generic(staff_filter($id),'','','staff'),'staff_position_code');
 	
 	return $p[0];
 }
@@ -906,8 +909,8 @@ function staff_id_from_username($uname)
 	foreach (array('username','username_unix') as $x)
 	{
 		$res = get_generic(array($x => $uname),' is_active = true DESC',1,'staff');
-		if (sql_num_rows($res) == 1) {
-			$rec = sql_fetch_column($res,'staff_id');
+		if (count($res) == 1) {
+			$rec = array_fetch_column($res,'staff_id');
 			return $rec[0];
 		}
 	
@@ -918,8 +921,8 @@ function staff_id_from_username($uname)
 function staff_id_from_email($email)
 {
 	$res = get_generic(array('staff_email' => $email),' is_active = true DESC',1,'staff');
-	if (sql_num_rows($res) == 1) {
-		$rec = sql_fetch_column($res,'staff_id');
+	if (count($res) == 1) {
+		$rec = array_fetch_column($res,'staff_id');
 		return $rec[0];
 	}
 	return false;
@@ -1071,7 +1074,7 @@ function staff_permission_check( $id )
 	$list = get_generic('','permission_type_code','','l_permission_type');
 	$out = header_row('Permission Type','Description','Read','Write','Super');
 
-	while( $item = sql_fetch_assoc( $list )) {
+	while( $item = array_shift( $list )) {
 		$ptc = $item['permission_type_code'];
 		$row = cell($ptc, 'class="generalData1"') . cell($item['description'], 'class="generalData1"');
 		foreach( array('R','W','S') AS $y ) {

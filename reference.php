@@ -41,7 +41,7 @@ function merge_object_reference_db($object,$id,&$control) {
 //outline("Trying for $object and $id");
 	$refs=get_object_references($object,$id);
 //outline("Got refcohnt: " . sql_num_rows($refs) );
-	while ($ref = sql_fetch_assoc($refs)) {
+	while ($ref = array_shift($refs)) {
 		$t_id = $ref['to_id'];
 		$t_obj = $ref['to_table'];
 		$f_id = $ref['from_id'];
@@ -387,7 +387,7 @@ function object_qs_filter($qs_text,$object=AG_MAIN_OBJECT_DB)
 				$filter['king_cty_id'] = $matches[2];
 			} elseif (preg_match('/a(uth)?[: ]*([0-9]{1,7})/i',$qs_text,$matches)) {
 				/* KC clinical authorization number */
-				$rec = sql_fetch_assoc(get_generic(array('kc_authorization_id'=>$matches[2]),'','','clinical_reg'));
+				$rec = array_shift(get_generic(array('kc_authorization_id'=>$matches[2]),'','','clinical_reg'));
 				if ( $x = $rec[AG_MAIN_OBJECT_DB . '_id'] ) {
 					$filter['client_id']=$x;
 				}

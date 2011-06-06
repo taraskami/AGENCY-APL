@@ -542,7 +542,7 @@ class Auth {
 		global $AUID,$UID;
 		$check_pwd = $_REQUEST[$this->var_password];
 		if (isset($AUID) and ($AUID !== $UID)) { //identity switching
-			$rec = sql_fetch_assoc(staff_get($UID));
+			$rec = array_shift(staff_get($UID));
 			$username = $rec['username'];
 		} else {
 			$username = $_SESSION['USER_INFO']['username'];
@@ -651,7 +651,7 @@ function has_perm($perm_list=null,$mode="R",$staff_id="")
 	static $uid_staff_array;
 	if (!$staff = $uid_staff_array[$staff_id]) {
 
-		$staff = $uid_staff_array[$staff_id] = sql_fetch_assoc(staff_get($staff_id));
+		$staff = $uid_staff_array[$staff_id] = array_shift(staff_get($staff_id));
 
 	}
 
@@ -1032,7 +1032,7 @@ function user_identity_management()
 			 */
 			$AUID  = $UID;
 			$UID   = $EUID;
-			$staff = sql_fetch_assoc(staff_get($UID));
+			$staff = array_shift(staff_get($UID));
 			$NICK  = $staff['name_first'];
 
 		}

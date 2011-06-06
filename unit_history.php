@@ -97,9 +97,8 @@ if ($unitslist || $start || $end) {
 		}
 
 		$units=get_units($filter);
-		for ($q=0;$q<sql_num_rows($units);$q++)
+		while ($ur=array_shift($units))
 		{
-			$ur = sql_fetch_assoc($units);
 			$unit=unit_history($ur['housing_unit_code'],$uh_daterange);
 			if ($showfull) { $res .= oline($unit["Formatted"]); }
 			if ($showsumm) { $res .= oline( $unit["Summary"]); }

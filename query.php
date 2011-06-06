@@ -405,7 +405,7 @@ function search_engine_object($obj,$id,$redirect=true)
 	if ( $redirect && (count($found) == 1) ) {
 		$def =& $engine[$found[0]];
 		$res = get_generic(array($def['id_field']=>$id),'','',$def);
-		if (sql_num_rows($res) > 0) {
+		if (count($res) > 0) {
 			header('Location: display.php?control[object]='.$found[0].'&control[action]=view&control[id]='.$id);
 			page_close();
 			exit;
@@ -414,7 +414,7 @@ function search_engine_object($obj,$id,$redirect=true)
 		foreach ($found as $o) {
 			$def =& $engine[$o];
 			$res = get_generic(array($def['id_field']=>$id),'','',$def);
-			if (sql_num_rows($res) > 0) {
+			if (count($res) > 0) {
 				$out .= oline(link_engine(array('object'=>$o,'id'=>$id),'View '.$o.' id #'.$id));
 			}
 		}

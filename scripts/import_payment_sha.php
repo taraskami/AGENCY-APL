@@ -111,7 +111,7 @@ if ($handle){
 
   $test_res = get_generic(array('check_number' => $check_number), '', '', $def);
   
-  if (sql_num_rows($test_res) > 0) {
+  if (count($test_res) > 0) {
     log_error("Payments for check number ".$check_number. " have already been imported.");
     page_close($silent=true);
     exit;

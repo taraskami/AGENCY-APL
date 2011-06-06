@@ -244,7 +244,7 @@ function show_client_mail_heads( $clients, $def_date="", $def_type="",$def_selec
 	//add last shelter entry. bug 22443
 	$entry_filter = array('client_id'=> $cl['client_id'],
 				    'entry_location_code' => 'SHEL517');
-	$res= sql_fetch_assoc(get_generic($entry_filter,'entered_at DESC', 1, $entry_def));
+	$res= array_shift(get_generic($entry_filter,'entered_at DESC', 1, $entry_def));
 	
 	$entry = $res ? bold(' LAST SHELTER ENTRY: ') . datetimeof($res['entered_at']) : 'No shelter entries';
 	$rows .= row(

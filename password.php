@@ -57,7 +57,7 @@ function can_change_password( $staff_id,$user_id="" )
 
 	$res = get_generic($filter,'','','staff_password');
 
-	if (sql_num_rows($res) < 1) {
+	if (count($res) < 1) {
 
 		$perm = $def['perm_add'];
 

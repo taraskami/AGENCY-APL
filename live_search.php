@@ -1,6 +1,6 @@
 <?php
 
-$AG_FULL_INI = false;
+//$AG_FULL_INI = false;
 $quiet='Y';
 include 'includes.php';
 

@@ -267,15 +267,15 @@ function clinical_medicaid_lookup_import($recs)
 		
 		// verify record exists
 		$res = get_generic($filter,'','','import_client_dshs_medicaid_lookup');
-		if (sql_num_rows($res) <1) {
+		if (count($res) <1) {
 			log_error('No record exists in import_client_dshs_medicaid_lookup for client '.$rec['client_id'].'. This data has not been imported: '
 				    . print_r($rec,true));
 			continue;
-		} elseif (sql_num_rows($res) > 1) {
+		} elseif (count($res) > 1) {
 			log_error('This client ('.$rec['client_id'].') has more than one record in import_client_dshs_medicaid_lookup for this time period.');
 		} else {
 			//get record back to find holding file name
-			$exp_rec = sql_fetch_assoc($res);
+			$exp_rec = array_shift($res);
 			$t_filename = $exp_rec['data_request_file'];
 			if (!in_array($t_filename,$holding_files)) {
 				$holding_files[] = $t_filename;
