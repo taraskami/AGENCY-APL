@@ -132,6 +132,10 @@ tr.staffData2 { background-color: #cff2cf; }
 	margin-left: 0px;
 }
 
+.revealedLogText {
+	display: none;
+}
+
 /* Engine */
 td.listControl { color: #fff; }
 input.listControl, select.listControl { background-color: #fff; }

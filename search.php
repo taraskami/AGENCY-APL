@@ -45,16 +45,15 @@ if (!in_array($qs_type,$tmp_searches)) {
 }
 
 switch ($qs_type) {
-	//custome type handling here
+	//custom type handling here
  default :
 	$func=$qs_type.'_search';
 	 $out = $func();
 }
 
-$label = $AG_QUICK_SEARCHES[$qs_type];
+$title = $AG_QUICK_SEARCHES[$qs_type];
 agency_top_header();
-headtitle(ucfirst($label).' Search Results');
-out($out);
+out(html_heading_1($title.' Search Results') .$out);
 page_close();
 
 ?>

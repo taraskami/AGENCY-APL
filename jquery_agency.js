@@ -135,25 +135,23 @@ $(function() {
    */
 
 $(function() {
-	//$(".hiddenLogText").hide().before('<a href="#" class="toggleLink">read</a>');
-	$(".hiddenLogText").each( function(i) { 
+	$(".hiddenLogText").each( function() { 
 		var row=$(this).closest('tr');
-		var cols=$(row).children().filter("td").length;
-		var text=$(this).next();
-		$(this).append("<br /><br />");
-		var pre='<tr><td colspan=' + cols + '>';
-		var post='</td></tr>';
-		var newrow=pre + post;
-		var nr = $(row).after(newrow);
-		$(nr).next().children().append($(this)).hide();
-	});
-	var link = $(".hiddenLogText").first().closest("table").before('&nbsp;<a href="#" class="toggleLogText">Show/hide text in place</a>');
-	$(".toggleLogText").click( function(event) {
-		event.preventDefault();
-		$(".hiddenLogText").parent().toggle();
+		var cols=$(row).children('td').length-1;
+		$(row).after( '<tr><td></td><td class="revealedLogText" colspan="' + cols +'">'
+			+ $(this).html()
+			+ '</td></tr>');
+		$(this).remove();
 	});
 });
 
+$(function() {
+	$(".listMain").first().before('&nbsp;<a href="#" class="toggleLogText">Show/hide text in place</a>');
+	$(".toggleLogText").click( function(event) {
+		event.preventDefault();
+		$(".revealedLogText").toggle();
+	});
+});
 $(function() {
 	// move staff alerts to command bar
 	//$("#engineStaffAlertForm").wrap("<td></td>").after($("#agencyTopLoginBox"));
