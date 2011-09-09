@@ -203,7 +203,7 @@ EOF
 							break;
 					}
 				}
- 				$alert_description = strtoupper($x['ref_table'])=='LOG' ? "Log: " . $ref['subject'] : engine_translate_singular($x['ref_table']);
+				$alert_description = strtoupper($x['ref_table'])=='LOG' ? "Log: " . $ref['subject'] : ucfirst($ref_def['singular']);
  				$alert_link=smaller(link_engine(array('object'=>'alert','id'=>$x['alert_id']),'detail'));
  				$ref_link=link_engine(array('object'=>$x['ref_table'],'id'=>$x['ref_id']),$alert_description);
 

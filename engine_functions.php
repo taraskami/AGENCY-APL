@@ -3901,23 +3901,6 @@ function hot_link_objects( $text, $type="" )
 	}
 }
 
-function engine_translate_singular($string)
-{
-	static $engine_objects;
-	if (!$engine_objects) {
-		global $engine;
-		$engine_objects = array();
-		foreach ($engine as $def) {
-			if ($def['object']) {
-				$engine_objects['/'.preg_quote($def['object']).'/i'] = $def['singular'];
-			}
-		}
-		uksort($engine_objects,'strlen_cmp_reverse');
-	}
-	//str_ireplace would be a better choice, but didn't come around until php 5
-	return preg_replace(array_keys($engine_objects),array_values($engine_objects),$string);
-}
-
 function jump_to_object_link($object,$parent=AG_MAIN_OBJECT_DB,$label='')
 {
 	$def = get_def($object);
