@@ -212,7 +212,7 @@ function get_last_residence($clientid)
 	{
 		$filter[AG_MAIN_OBJECT_DB . '_id']=$clientid;
 	}
-	return get_residencies($filter,'residence_date desc limit 1');
+	return get_residencies($filter,'(COALESCE(residence_date_end,current_date)>=current_date) DESC,residence_date desc limit 1');
 }
 
 function current_residence_own($client_id)
