@@ -32,6 +32,7 @@ should be included in this distribution.
 
 $engine['config_file'] = array(
 	'title'=>'"Viewing config file for " .$rec["object"]',
+	'title_format' =>'bigger(bold($x)) . " " . smaller(link_wiki_public("Config_file","Help with Config Files"))',
 	'perm'=>'admin',
 	'allow_edit'=>false,
 	'id_field'=>'object',
