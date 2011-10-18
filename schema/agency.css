@@ -337,3 +337,11 @@ div#noStaffEmployment {
 	margin-bottom: 30px;
 	width: 50%;
 }
+
+.mainMenuHeader {
+	border: solid 1px #afafaf;
+	margin: 15px;
+	padding: 5px;
+	background-color: #fff;
+	text-align: center;
+}

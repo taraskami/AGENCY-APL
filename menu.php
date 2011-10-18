@@ -107,19 +107,17 @@ foreach ($AG_MENU_TYPES as $t => $d) {
 agency_top_header();
 
 
-// main menu on each page
-$main_menu = div(implode(bold(' | '),$main_menu),
-		     '',' style="border: solid 1px #afafaf; margin: 15px; padding: 5px; background-color: #fff; text-align: center"');
+// Navigate to menu sections at top and bottom
+	$main_menu=implode(bold(' | '),$main_menu);
+	$menu_top=div(html_heading_1($title).$main_menu, '',' class="mainMenuHeader"');
+	$menu_bottom=div($main_menu, '',' class="mainMenuHeader"');
 
+out(
+	$menu_top
+	. div($out)
+	. $menu_bottom
+);
 
-out($main_menu);
-
-headtitle($title);
-
-
-out(div($out));
-
-out($main_menu);
 page_close();
 
 ?>
