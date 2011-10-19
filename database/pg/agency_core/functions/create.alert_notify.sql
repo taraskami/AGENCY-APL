@@ -137,7 +137,13 @@ CREATE OR REPLACE FUNCTION table_alert_notify() RETURNS trigger AS $$
 		match_supervisor_field,
 		match_supervisees_field,
 		alert_notify_field,
-		alert_notify_value
+		alert_notify_value,
+		alert_notify_field2,
+		alert_notify_value2,
+		alert_notify_field3,
+		alert_notify_value3,
+		alert_notify_field4,
+		alert_notify_value4
 		FROM alert_notify_current 
 		WHERE alert_object='$object' 
 		AND alert_notify_action_code IN ('$action','ANY')" {
