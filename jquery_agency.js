@@ -146,7 +146,7 @@ $(function() {
 });
 
 $(function() {
-	$(".listMain").first().before('&nbsp;<a href="#" class="toggleLogText">Show/hide text in place</a>');
+	$(".listObjectLog").first().before('&nbsp;<a href="#" class="toggleLogText">Show/hide text in place</a>');
 	$(".toggleLogText").click( function(event) {
 		event.preventDefault();
 		$(".revealedLogText").toggle();

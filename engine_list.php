@@ -310,7 +310,7 @@ function list_header($fields,$max,$position,$total,$control,$def,$control_array_
 	/*
 	 * Start the header output, table is closed in list_footer()
 	 */
-      $header = tablestart_blank('','cellpadding="0" cellspacing="0" class="listMain"');
+      $header = tablestart_blank('','cellpadding="0" cellspacing="0" class="listMain listObject'.ucfirst($def['object']).'"');
 
 	if ($total>1) {
 
