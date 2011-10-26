@@ -262,11 +262,7 @@ function client_show( $id )
 	//ids
 	$out .= row(rightcell(ucfirst(AG_MAIN_OBJECT).' ID #\'s').leftcell($ids));
 
-	$out .= row(cell(smaller(
-				   oline("Record Added By " . staff_link($client["added_by"]) . ", at " . datetimeof($client["added_at"],"US"))
-				   . "Record Last Edited By " . staff_link($client["changed_by"]) . ", at " . datetimeof($client["changed_at"],"US"))
-			 ,'colspan="2" class="systemField"'));
-
+	$out .=row(cell(smaller(system_fields_f($client,$def,array('action'=>'view'))),'colspan="2" class="systemField"'));
 
 	// End of Client Summary Table
 	$out .= tableend() . oline();
