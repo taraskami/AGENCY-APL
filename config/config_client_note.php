@@ -31,15 +31,22 @@ should be included in this distribution.
 */
 
 $engine['client_note']=array(
+					'allow_object_references'=>array('bar','client'),
 				     'list_fields'=>array('added_at','added_by','note','flag_entry_codes'),
 	 'fields'=>array(
 			     'is_front_page'=>array('label'=>'Front Page?',
 							    'comment'=>'Select "No" to archive this note'."\n".'(i.e. remove from prominent display)'
 							    ),
 			     'flag_entry_codes' => array('label'=>'Flag For Entry Notification',
-								   'lookup_format'=>'checkbox_v',
-								   'comment'=>'Selecting a location will display note on gatekeeping machine'."\n".'in that location\'s lobby when client\'s card is swiped.'),
-			     )
+					'data_type'=>'lookup_multi',
+					'lookup_format'=>'checkbox_v',
+					'lookup'=>array('table' => 'l_entry_location',
+						'value_field'=>'entry_location_code',
+						'label_field'=>'description'
+					),
+					'comment'=>'Selecting a location will display note at that location when ' . AG_MAIN_OBJECT . ' enters.'),
+				)
+
 	 );
 		
 ?>
