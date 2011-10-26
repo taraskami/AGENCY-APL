@@ -1535,7 +1535,7 @@ function staff_links()
 //		. client_elevated_concern_list()
 //		. recent_staff_dals_missing_pn_f()
 		. assignments_f($UID,true)
-		. Calendar::my_calendar()
+		. (is_enabled('calendar') ? Calendar::my_calendar() : '')
 //		. recent_medical_dals_f()
 //		. my_staff_dals_missing_pn_f()
 		;
