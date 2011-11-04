@@ -13,7 +13,10 @@ $def=get_def($type);
 
 if (has_perm($def['perm_view'])) {
 	$filter=array("ILIKE:{$type}_name({$type}_id) || ' (' || {$type}_id ||')'"=>'%'.$term.'%');
-	$results=sql_fetch_column(agency_query("SELECT {$type}_name({$type}_id) || ' (' || {$type}_id || ')' AS {$type}_name FROM {$type}",$filter,NULL,100),"{$type}_name");
+	$name = ( $GLOBALS['AG_DEMO_MODE'] and ($type==AG_MAIN_OBJECT_DB))
+		? "'XXXXXX'"
+		: $type . '_name('.$type.'_id)';
+	$results=sql_fetch_column(agency_query("SELECT $name || ' (' || {$type}_id || ')' AS {$type}_name FROM {$type}",$filter,NULL,100),"{$type}_name");
 	echo(json_encode($results));
 }
 

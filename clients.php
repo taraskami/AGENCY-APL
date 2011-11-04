@@ -392,7 +392,8 @@ function client_name($idnum,$max_length=0,$text_only=false)
 		$alias = trim($q["name_alias"]);
 		if ($text_only) {
 			$full = $name.($alias ? ' ( aka '.$alias.')' : '');
-			return $max_length ? substr($full,0,$max_length) : $full;
+			$full =$max_length ? substr($full,0,$max_length) : $full;
+			return $GLOBALS['AG_DEMO_MODE'] ? preg_replace('/[a-z]/','x',preg_replace('/[A-Z]/','X',$full)) : trim($full);
 		}
 		if (!$max_length)
 		{
