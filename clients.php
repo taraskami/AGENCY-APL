@@ -74,8 +74,8 @@ function show_query_row_client($fields,$position,$rec,$control,$def,$control_arr
 		   			. oline(multi_objects_f( 
 								 get_generic(client_filter($id),'','','ethnicity')
 								 ,'ethnicity','ethnicity_code'))
-				    . oline(dateof($rec['dob']))
-				    . oline($rec['ssn'])) ,'class="generalData1"')
+				    . oline($GLOBALS['AG_DEMO_MODE'] ? '9/9/9999' : dateof($rec['dob']))
+				    . oline($GLOBALS['AG_DEMO_MODE'] ? '999-99-9999' : $rec['ssn'])) ,'class="generalData1"')
             . cell( client_photo( sql_true($rec['is_protected_id']) ? 0 : $id, 0.5 ),'class="generalData1"'); //passing 0 for protected 
       return $out;
 }
@@ -250,14 +250,14 @@ function client_show( $id )
 			 . leftcell( 
 					oline($deceased_f
 						? red('Deceased. '.dateof($client['dob']).' - '.dateof($deceased_date).' ('.client_age($id,'NO',$deceased_date).' years old)')
-						: client_age($client,'DOB') 
+						: $GLOBALS['AG_DEMO_MODE'] ? client_age($client,'NO') . ' years' : client_age($client, 'DOB') 
 
 						) 
 					. blue(value_generic($client['gender_code'],$def,'gender_code','list')) . green("  |  ")
 		   			. multi_objects_f( 
 								 get_generic(client_filter($id),'','','ethnicity')
 								 ,'ethnicity','ethnicity_code') . green("  |  ")
-					. blue($client["ssn"]) . green("  |  ") 
+					. blue($GLOBALS['AG_DEMO_MODE'] ? '999-99-9999' : $client["ssn"]) . green("  |  ") 
 					. blue(value_generic($client['veteran_status_code'],$def,'veteran_status_code','list'))) );
 	//ids
 	$out .= row(rightcell(ucfirst(AG_MAIN_OBJECT).' ID #\'s').leftcell($ids));

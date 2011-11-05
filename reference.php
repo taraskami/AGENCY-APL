@@ -196,9 +196,13 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 	/* Get label */
 	switch ($object) {
 		// Objects with object_name() function in db:
-		case'client' :
+		case 'AG_MAIN_OBJECT' :
+			if ($GLOBALS['AG_DEMO_MODE']) {
+				$label_field='XXXXXX, XXX';
+				break;
+			} // else fall through...
+		case 'AG_MAIN_OBJECT' :
 		case'staff' :
-		case'donor' :
 			$label_field= $object . '_name(' . $id_field . ')';
 			$method='Search';
 			break;
