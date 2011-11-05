@@ -65,9 +65,10 @@ $engine['housing_unit']=array(
 														    'be_null($x) || unit_no_of($x)'=>'Not a valid unit number', //double-check
 														    '($action=="edit" and $rec_last["housing_unit_code"]==$x) or be_null($x) or (sql_num_rows(get_generic(array("housing_unit_code"=>$x),
 															  "","","tbl_housing_unit"))<1)'=>'This unit already exists.'),
-												 'value'=>'link_unit_history($x)',
+												 'value'=>'link_unit_history($x,false,true)',
 												 'label'=>'Unit'),
 							    'address_1'=>array(
+											 'row_before'=>"bigger(bold('Address')) . ' (for scattered sites units only)'",
 										     'valid'=>array('be_null($x) xor in_array($rec["housing_project_code"],array("SCATTERED","LEASED"))'
 													  =>'{$Y} required ONLY for Scattered Site Units')
 										     ),

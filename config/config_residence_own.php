@@ -86,7 +86,7 @@ $engine['residence_own']=array(
 												   'show_lookup_code'=>'CODE',
 												   'label'=>'Unit',
 												   'is_html'=>true,
-												   'value'=>'link_unit_history($x)',
+												   'value'=>'link_unit_history($x,true,false)',
 												   'valid' => array('be_null($x) || can_occupy_residence_own($rec["client_id"],$rec["housing_unit_code"],$rec["residence_date"])'=>'This unit is already fully occupied')
 												   ),
 								'chronic_homeless_status_code'=>array('label'=>'Chronic Homeless Status at time of Move-in',

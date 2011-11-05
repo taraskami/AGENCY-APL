@@ -120,7 +120,7 @@ function housing_status_f( $id )
 	} else {
 		$a=sql_fetch_assoc($res);
 	}
-	$project=value_generic($a['housing_project_code'],$def,'housing_project_code','list').smaller(' ('.link_unit_history($a['housing_unit_code']).')');
+	$project=value_generic($a['housing_project_code'],$def,'housing_project_code','list').smaller(' ('.link_unit_history($a['housing_unit_code'],false,false).')');
 	$project_date=$a['project_date'];
 	$own_date=$a['own_date'];
 	if ($project_date !== $own_date) {
@@ -515,41 +515,47 @@ function client_housing_unit($cid) {
 
 }
 
-function link_unit_history($unit, $show_unit_link=false, $show_unit_subsidy_link=false)
+function link_unit_history($unit, $show_unit_link=true, $show_unit_subsidy_link=true)
 {
 	if (!$unit) { return; }
-
+	static $unit_ids;
+	if (!$unit_ids[$unit]) {
+		$unit_ids[$unit] = sql_lookup_description($unit,'housing_unit','housing_unit_code','housing_unit_id');
+	}
+	$unit_id = $unit_ids[$unit];
 	$def_r = get_def('residence_own');
 
 	$fields = $def_r['list_fields'];
 	array_push($fields,AG_MAIN_OBJECT_DB . '_id','moved_to_unit');
 
+	$def_hu = get_def('housing_unit');
+	$def_hus = get_def('housing_unit_subsidy');
+	
+	$control2 = array('object'=>'housing_unit',
+				'action'=>'view',
+				'id'=>$unit_id);
+
+	$control3 = array('object'=>'housing_unit_subsidy',
+				'action'=>'list',
+				'list'=>array('filter'=>array('housing_unit_code'=>$unit)));
+
 	$control = array(
 			     'object'=>'residence_own',
 			     'action'=>'list',
+		 		 'title'=>'Unit history for ' .$unit,// . link_engine($control2,$unit),
 			     'list'=>array(
 						 'filter' => array('housing_unit_code'=>$unit),
 						 'fields' => $fields
 						 ));
 
-	$def_hu = get_def('housing_unit');
 	if ($show_unit_link && has_perm($def_hu['perm_view'])) {
-
-		$control2 = array('object'=>'housing_unit',
-					'action'=>'list',
-					'list'=>array('filter'=>array('housing_unit_code'=>$unit)));
 
 		$unit_link = smaller(' '.alt(link_engine($control2,red('+')),'View Unit Record'),2);
 
 	}
 
-	$def_hus = get_def('housing_unit_subsidy');
 
 	if ($show_unit_subsidy_link && has_perm($def_hus['perm_view'])) {
-
-		$control3 = array('object'=>'housing_unit_subsidy',
-					'action'=>'list',
-					'list'=>array('filter'=>array('housing_unit_code'=>$unit)));
 
 		$unit_subsidy_link = smaller(' '.alt(link_engine($control3,red('subsidy')),'View Unit Subsidy Record'),2);
 

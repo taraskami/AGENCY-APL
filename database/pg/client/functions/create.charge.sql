@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION validate_charge_modify() RETURNS trigger AS '
 			AND OLD.effective_date=NEW.effective_date
 			AND OLD.charge_type_code=NEW.charge_type_code
 			AND OLD.housing_unit_code=NEW.housing_unit_code
-			AND OLD.agency_project_code=NEW.agency_project_code
+			AND OLD.housing_project_code=NEW.housing_project_code
 			AND OLD.amount=NEW.amount
 			AND OLD.subsidy_type_code=NEW.subsidy_type_code
 			AND OLD.period_start=NEW.period_start
@@ -18,6 +18,18 @@ CREATE OR REPLACE FUNCTION validate_charge_modify() RETURNS trigger AS '
 		RETURN NEW;
 	END;
 	' LANGUAGE 'plpgsql';
+
+
+/*
+ * This is a sample function that can be used to send notification emails
+ * for miscellaneous charges.  Right now, the actual sending of email is
+ * commented out in the code, so it does nothing.
+ *
+ * It is also not invoked by default, as creation of the trigger is
+ * commented out in create.tbl_charge.sql.
+ *
+ * To make this work, you would need to uncomment those sections.
+ */
 
 CREATE OR REPLACE FUNCTION charge_notify_misc() RETURNS trigger AS '
 DECLARE
@@ -35,7 +47,7 @@ BEGIN
                         || ''\n   Charge Type: '' || COALESCE(NEW.charge_type_code,''(none)'')
                         || ''\nEffective Date: '' || COALESCE(text(NEW.effective_date),''(none)'')
                         || ''\n        Amount: '' || COALESCE(text(NEW.amount),''(none)'')
-                        || ''\n       Project: '' || COALESCE(NEW.agency_project_code,''(none)'')
+                        || ''\n       Project: '' || COALESCE(NEW.housing_project_code,''(none)'')
                         || ''\n       Unit No: '' || COALESCE(NEW.housing_unit_code,''(none)'')
                         || ''\n  Period Start: '' || COALESCE(text(NEW.period_start),''(none)'')
                         || ''\n    Period End: '' || COALESCE(text(NEW.period_end),''(none)'')
@@ -54,8 +66,8 @@ END;' language 'plpgsql';
 
 CREATE OR REPLACE FUNCTION charge_insert() RETURNS trigger AS '
 BEGIN
-	IF (NEW.agency_project_code IS NULL OR NEW.housing_unit_code IS NULL) THEN
-		RAISE EXCEPTION ''agency_project_code cannot be null'';
+	IF (NEW.housing_project_code IS NULL OR NEW.housing_unit_code IS NULL) THEN
+		RAISE EXCEPTION ''missing project or unit code'';
 	END IF;
 	RETURN NEW;
 END;' LANGUAGE 'plpgsql';

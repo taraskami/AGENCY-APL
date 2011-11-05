@@ -18,6 +18,9 @@ CREATE TABLE tbl_l_payment_type(
 INSERT INTO tbl_l_payment_type VALUES ('RENT', 'Rent Payments',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_payment_type VALUES ('SUBSIDY', 'Subsidy Payments',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_payment_type VALUES ('SECURITY', 'Security Deposit Payments',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_payment_type VALUES ('DAMAGE', 'Damage Payments',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_payment_type VALUES ('KEY', 'Key Payments',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_payment_type VALUES ('OTHER', 'Other Payments',sys_user(),current_timestamp,sys_user(),current_timestamp);
 
 CREATE VIEW l_payment_type AS (SELECT * FROM tbl_l_payment_type WHERE NOT is_deleted);
 

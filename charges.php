@@ -31,7 +31,7 @@ should be included in this distribution.
 </LICENSE>
 */
 
-function post_charge( $charge, $system=false )
+function post_charge_old( $charge, $system=false )
 {
 // this is copied almost verbatim from post_log.
 // Need to take the generic stuff and make a post_record function.
@@ -197,7 +197,7 @@ function show_charges( $charges, $format="short", $show_voids="N", $show_vbutton
 		}
         		$poster=staff_link($row["added_by"]);
                 $cells .=
-                                    $func($row['agency_project_code']).
+                                    $func($row['housing_project_code']).
                         $func($subs_text).
                    		$func(dateof($row['period_start'])).
                         $func(dateof($row['period_end'])).
@@ -278,13 +278,14 @@ function show_charges_add_form($clientid, $unit, $project, $default="")
 {
     // $default is the current charge a user is trying to add, but
     // they have validation errors, so we want to redisplay their 
+	$def=get_def('charge');
 	if (is_array($default))
     {
         $effective_date = $default["effective_date"];
         $type = $default["charge_type_code"];
         $amount = $default["amount"];
         $comment = dewebify($default["comment"]);
-        $project = $default["agency_project_code"];
+        $project = $default["housing_project_code"];
         $unit = $default["housing_unit_code"];
         $period_start = $default["period_start"];
         $period_end = $default["period_end"];
@@ -315,7 +316,9 @@ function show_charges_add_form($clientid, $unit, $project, $default="")
     $output .= row(cell("These Fields Are Set Automatically",
                         "colspan=2 align=center"));
     $output .= row(cell("Project:",$right)
-                . cell(show_project_pick($project)));
+//                . cell(show_project_pick($project)));
+				. cell(form_field_generic('housing_project_code',$project,$def,array('action'=>'add'),$dummy)));
+//form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='rec')
     $output .= row(cell("Unit:",$right) 
                 . cell(show_unit_pick($unit)));
     $output .= row(cell("The Fields Below Are For Rent, Subsidy & Vacancy Charges Only",
@@ -353,7 +356,7 @@ function validate_addcharge_data($charge)
     // not necessarily the same as $project
     $unit_project = sql_fetch_assoc(agency_query($unit_sql)); 
     $unit_project_code = $unit_project["housing_project_code"];
-    $project = $charge["agency_project_code"];
+    $project = $charge["housing_project_code"];
     $date = $charge["effective_date"];
     $type = strtoupper(trim($charge["charge_type_code"]));
     $amount = $charge["amount"];
@@ -458,7 +461,7 @@ function validate_addcharge_data($charge)
     // need to protect sql from quotes etc.
     $charge["comment"] = sqlify($charge["comment"]);
     $verify_charge = get_charges($charge);
-    if (sql_num_rows($verify_charge) > 0)
+    if (count($verify_charge) > 0)
     {
         $errors .= oline("Duplicate:  charge already exists in the system.");
     }
@@ -494,12 +497,12 @@ function post_security_deposit( $client_id, $project, $Unit, $InDate )
 	$charge["charge_type_code"]="SECURITY";
 	$charge["effective_date"]=$InDate;
 	$charge["client_id"]=$client_id;
-	$charge["agency_project_code"]=$project;
+	$charge["housing_project_code"]=$project;
 	$charge["housing_unit_code"]=$Unit;
 	$charge["amount"]=$sec_amount;
 	$charge["is_void"]=sql_false();
 	$test = get_charges($charge);
-	if (sql_num_rows($test)>0)
+	if (count($test)>0)
 	{
 		// security deposit already posted
 outline("Security Deposit Already Posted for $client_id, $Unit, $InDate.  Skipping.");
@@ -507,7 +510,7 @@ outline("Security Deposit Already Posted for $client_id, $Unit, $InDate.  Skippi
 	}
 	else
 	{
-		return post_charge( $charge,"SYSTEM" );
+		return post_charge_old( $charge,"SYSTEM" );
 	}
 }
 
@@ -527,12 +530,12 @@ function post_security_deposit_reverse( $client_id, $project, $Unit, $OutDate )
 	$charge["charge_type_code"]="SECURITY";
 	$charge["effective_date"]=$OutDate;
 	$charge["client_id"]=$client_id;
-	$charge["agency_project_code"]=$project;
+	$charge["housing_project_code"]=$project;
 	$charge["housing_unit_code"]=$Unit;
 	$charge["amount"]=0-$sec_amount;
 	$charge["is_void"]=sql_false();
 	$test = get_charges($charge);
-	if (sql_num_rows($test)>0)
+	if (count($test)>0)
 	{
 		// security deposit reverse already posted
 outline("Reverse Security Deposit Already Posted for $client_id, $Unit, $OutDate.  Skipping.");
@@ -540,7 +543,7 @@ outline("Reverse Security Deposit Already Posted for $client_id, $Unit, $OutDate
 	}
 	else
 	{
-		return post_charge( $charge,"SYSTEM" );
+		return post_charge_old( $charge,"SYSTEM" );
 	}
 }
 	
@@ -578,7 +581,7 @@ With the default pro_rate_days, this should work just fine.
 	$rent_subsidy_filter_copy['residence_own.housing_unit_code']=$unit;
 	$rent_subsidy_filter_copy["client_id"]=$clientid;
 	$rent_subsidy_filter_copy['is_income_certification']=sql_true();
-// 	$rent_subsidy_filter_copy["income.agency_project_code"]=$project;
+// 	$rent_subsidy_filter_copy["income.housing_project_code"]=$project;
 	// funky replacement to get daterange into query
 	$rs_sql=ereg_replace($placeholder_date_range->start,$month->start,$rent_subsidy_select_sql);
 	$rs_sql=ereg_replace($placeholder_date_range->end,$month->end,$rs_sql);
@@ -638,6 +641,8 @@ With the default pro_rate_days, this should work just fine.
 
 	$total_rent                  = round($total_rent);
 	$total_subsidy               = round($total_subsidy);
+	$charge['housing_unit_code'] = $unit; 
+	$charge['housing_project_code'] = $project;
 	$charge['effective_date']    = $period->start;
 	$charge['charge_type_code']  = 'RENT';
 	$charge['client_id']         = $clientid;
@@ -647,7 +652,7 @@ With the default pro_rate_days, this should work just fine.
 	$charge['period_end']        = $period->end;
 	$charge['comment']           = $rent_comments;
 
-	post_charge($charge,'SYSTEM');
+	post_charge_old($charge,'SYSTEM');
 
 	// now subsidy charge
 	if ($total_subsidy > 0) {
@@ -658,12 +663,13 @@ With the default pro_rate_days, this should work just fine.
 		$charge['is_subsidy']        = sql_true();
 		$charge['subsidy_type_code'] = $rec['subsidy_type_code'];
 
-		post_charge($charge,'SYSTEM');
+		post_charge_old($charge,'SYSTEM');
 	}
 }
 
 function landlord( $run_date, $recs_filter=array())
 {
+$DEBUG=true;
 // function to run and assess rent, subsidy & security charges
 	global $units_table, $residency_table,$unit_residency_select_sql,$unit_residency_filter,$UID;
 	// First, do a little date calculation
@@ -685,7 +691,7 @@ function landlord( $run_date, $recs_filter=array())
 	$unit_residency_filter_copy['l_housing_project.auto_calculate_rent_charges']=sql_true();
 
 	$unit_recs=agency_query($unit_residency_select_sql,$unit_residency_filter_copy,"housing_unit_code, residence_date");
-//$show_recs=agency_query($unit_residency_select_sql,$unit_residency_filter_copy,"housing_unit_code,moveindate");
+//$show_recs=agency_query($unit_residency_select_sql,$unit_residency_filter_copy,"housing_unit_code,residence_date");
 //out(display_recs( $show_recs )); unset($show_recs); 
 //outline(bold("Found this many total records to analyze" . sql_num_rows($unit_recs)));
 	$res_during_month=array();
@@ -721,7 +727,7 @@ function landlord( $run_date, $recs_filter=array())
 		$security_deposit_filter["client_id"]=$rec["client_id"];
 		$security_deposit_filter["charge_type_code"]="SECURITY";
 // Test 1:  existing manual charge?
-		if (sql_num_rows($manual_charges)>0) 
+		if (count($manual_charges)>0) 
 		{										
 			// Test 1: Yes
 			$DEBUG && outline("Test 1 is Yes");
@@ -745,7 +751,7 @@ function landlord( $run_date, $recs_filter=array())
 			unset($existing_rent_filter["period_start"]);
 			$existing_rent_filter["BETWEEN:period_start"]=$month;
 			$rc=get_charges($existing_rent_filter);
-			if (sql_num_rows($rc) > 0)
+			if (count($rc) > 0)
 			{
 				$DEBUG && outline("has charge, continue");
 				// charges found--continuing
@@ -771,16 +777,16 @@ function landlord( $run_date, $recs_filter=array())
 													prev_day($residency_period->end));
 				$rc=get_charges($existing_rent_filter);
 				// look for charge for this time period
-				if (sql_num_rows($rc)>0)
+				if (count($rc)>0)
 				{
 					continue;
 				}
 				$existing_rent_filter["period_end"]=$month->end;
 				$existing_rent_filter["charge_type_code"]=array("RENT","SUBSIDY");
 				$rc=get_charges($existing_rent_filter);
-				for ($cnt=0;$cnt<sql_num_rows($rc);$cnt++)
+				for ($cnt=0;$cnt<count($rc);$cnt++)
 				{
-					$rc=sql_fetch_assoc($rc);
+					$rc=array_shift($rc);
 					void_charge($rc["charge_id"],"Original whole month charge voided: Unit transfer in same building");
 				}
 /*
@@ -813,12 +819,12 @@ As of 11/12/03, SHA is doing traditional pro-rating, and this code is not needed
 				$existing_rent_filter["period_end"]=$residency_period->end;
 				$rc=get_charges($existing_rent_filter);
 				// look for charge for this time period
-				if (sql_num_rows($rc)==0) // no charges yet
+				if (count($rc)==0) // no charges yet
 				{
 					$existing_rent_filter["period_end"]=$month->end;
 					$existing_rent_filter["charge_type_code"]=array("RENT","SUBSIDY");
 					$rcs=get_charges($existing_rent_filter);
-					while ($rc=sql_fetch_assoc($rcs))
+					while ($rc=array_shift($rcs))
 					{
 						void_charge($rc["charge_id"],
 						'Original whole month charge voided: tranferred to other '.$GLOBALS['AG_TEXT']['ORGANIZATION'].' project');
@@ -847,7 +853,7 @@ As of 11/12/03, SHA is doing traditional pro-rating, and this code is not needed
 				$existing_rent_filter["BETWEEN:period_start"]=$month;
 				$existing_rent_filter["BETWEEN:period_end"]=$month;
 				$rc=get_charges($existing_rent_filter);
-				if (sql_num_rows($rc)==0)
+				if (count($rc)==0)
 				{
 					$DEBUG && outline("no rent found, making rent charges");
 					make_rent_charges($rec["housing_project_code"],$rec["housing_unit_code"],$rec["client_id"],$month,$month);
@@ -866,7 +872,7 @@ As of 11/12/03, SHA is doing traditional pro-rating, and this code is not needed
 //outline(dump_array($existing_rent_filter));
 		$rc=get_charges($existing_rent_filter);
 		// look for charge for this time period
-		if (sql_num_rows($rc)>0)
+		if (count($rc)>0)
 		{
 			continue;
 		}
@@ -883,7 +889,7 @@ As of 11/12/03, SHA is doing traditional prorating, and this code is not needed:
 		make_rent_charges($rec["housing_project_code"],$rec["housing_unit_code"],$rec["client_id"],$month->intersect($residency_period),$month);
 		$security_depost_filter["effective_date"]=$residency_period->start;
 		$sec=get_charges($security_deposit_filter);
-		if (sql_num_rows($sec)>0)
+		if (count($sec)>0)
 		{
 			continue;
 		}
@@ -916,9 +922,9 @@ As of 11/12/03, SHA is doing traditional prorating, and this code is not needed:
 	$orphan_charges=get_charges($orphan_charges_filter);
 //outline("I got this many orphans: " . sql_num_rows($orphan_charges));
 	// And void them
-	for ($w=0;$w<sql_num_rows($orphan_charges);$w++)
+	for ($w=0;$w<count($orphan_charges);$w++)
 	{
-		$orphan=sql_fetch_assoc($orphan_charges);
+		$orphan=array_shift($orphan_charges);
 //outline("I'm going to void this orphan charge " . dump_array($orphan));
 		void_charge($orphan["charge_id"],"Client not resident during month");
 	}
@@ -936,7 +942,7 @@ function balance_by_project($client_id) {
 
 	global $query_display;
 	//fixme: talkin' about your huge sql...perhaps this should be a db function...
-	$sql = "SELECT agency_project_code,
+	$sql = "SELECT housing_project_code,
 		subs_charge-subs_payment AS subsidy_balance,
 		non_subs_charge-non_subs_payment AS client_balance
 		FROM
@@ -945,32 +951,32 @@ function balance_by_project($client_id) {
              COALESCE(
              (SELECT SUM(amount) FROM charge c0 WHERE client_id={$client_id} AND NOT is_void 
                     AND NOT is_subsidy
-                    AND COALESCE(UPPER(c0.agency_project_code),'other')=COALESCE(UPPER(c.agency_project_code),'other')), 0) 
+                    AND COALESCE(UPPER(c0.housing_project_code),'other')=COALESCE(UPPER(c.housing_project_code),'other')), 0) 
              AS non_subs_charge,
              COALESCE(
              (SELECT SUM(amount) FROM charge c0 WHERE client_id={$client_id} AND NOT is_void 
                     AND is_subsidy
-                    AND COALESCE(UPPER(c0.agency_project_code),'other')=COALESCE(UPPER(c.agency_project_code),'other')), 0) 
+                    AND COALESCE(UPPER(c0.housing_project_code),'other')=COALESCE(UPPER(c.housing_project_code),'other')), 0) 
              AS subs_charge,
              COALESCE(
              (SELECT SUM(amount) FROM payment p0 WHERE client_id={$client_id} AND NOT is_void 
                     AND NOT is_subsidy
-                    AND COALESCE(UPPER(p0.agency_project_code),'other')=COALESCE(UPPER(c.agency_project_code),'other')), 0) 
+                    AND COALESCE(UPPER(p0.housing_project_code),'other')=COALESCE(UPPER(c.housing_project_code),'other')), 0) 
              AS non_subs_payment,
              COALESCE(
              (SELECT SUM(amount) FROM payment p0 WHERE client_id={$client_id} AND NOT is_void 
                     AND is_subsidy
-                    AND COALESCE(UPPER(p0.agency_project_code),'other')=COALESCE(UPPER(c.agency_project_code),'other')), 0)
+                    AND COALESCE(UPPER(p0.housing_project_code),'other')=COALESCE(UPPER(c.housing_project_code),'other')), 0)
              AS subs_payment,
-		 COALESCE(c.agency_project_code,'Other') AS agency_project_code
+		 COALESCE(c.housing_project_code,'Other') AS housing_project_code
 		 FROM 
-             (SELECT agency_project_code FROM charge WHERE client_id={$client_id}
-                    UNION SELECT agency_project_code FROM payment WHERE client_id={$client_id}) c ) as a
+             (SELECT housing_project_code FROM charge WHERE client_id={$client_id}
+                    UNION SELECT housing_project_code FROM payment WHERE client_id={$client_id}) c ) as a
 
 		UNION
 		
 		SELECT
-		'Total' AS agency_project_code, 
+		'Total' AS housing_project_code, 
 		(SELECT COALESCE(SUM(amount),0) FROM charge WHERE client_id={$client_id} AND NOT is_void AND is_subsidy)-
 		(SELECT COALESCE(SUM(amount),0) FROM payment WHERE client_id={$client_id} AND NOT is_void AND is_subsidy) AS subsidy_balance,
 		(SELECT COALESCE(SUM(amount),0) FROM charge WHERE client_id={$client_id} AND NOT is_void AND NOT is_subsidy)-
@@ -985,8 +991,9 @@ function balance_by_project($client_id) {
 	$rows=null;
 	$balances = array();
 	while($a=sql_fetch_assoc($res)) {
-		$proj = $a['agency_project_code'];
-		$program = orr(project_to_program($proj),'ALL_ACCESS'); //for has_perm
+		$proj = $a['housing_project_code'];
+//		$program = orr(project_to_program($proj),'ALL_ACCESS'); //for has_perm
+		$program = orr($a['housing_project_code'],'ALL_ACCESS'); //for has_perm
 		$cbal = $a['client_balance'];
 		$sbal = $a['subsidy_balance'];
 		$balances[$proj] = array($program,$cbal,$sbal);  //quick and dirty numeric indexing. Careful below.

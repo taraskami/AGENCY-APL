@@ -146,7 +146,7 @@ if ($action == "add")
     $post_it = validate_addcharge_data($addcharge);
     if ($post_it == "")
     {   
-        post_charge($addcharge);
+        post_charge_old($addcharge);
         // free variables for handling the next added charge
 	  $_SESSION['sess_confirm_project']=null;
 	  $_SESSION['sess_confirm_unit']=null;
@@ -200,10 +200,10 @@ if ($action == "voidform")
     $form_title = bigger(bold("Describe why the charge is being voided"));
     if (!empty($charge_id))
     {
-        $charge_results = get_charges( array( 'charge_id'=>$charge_id );
+        $charge_results = get_charges( array( 'charge_id'=>$charge_id ));
         $charge = sql_fetch_assoc($charge_results);
         $charge_form = show_charges_void_form($charge["charge_id"]);
-        $charge_results = get_charges( array( 'charge_id'=>$charge_id );
+        $charge_results = get_charges( array( 'charge_id'=>$charge_id ));
     }
     else
     { 

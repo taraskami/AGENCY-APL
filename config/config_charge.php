@@ -37,28 +37,27 @@ $engine['charge'] = array(
 				  'allow_add'=>false,
 				  'allow_edit'=>false,
 				  'allow_delete'=>false,
-				  'add_link_show'=>false,
 				  'perm'=>'rent',
 				  'subtitle_eval_code'=>array('smaller(hlink("charge_add.php?client_id=".$id, "Add/void charge for this client"))',
 									'balance_by_project($id)'),
 				  'label_format_list'=>'smaller($x)',
 				  'list_fields'=>array(
 							     'effective_date',
-							     'agency_project_code',
+							     'housing_project_code',
 							     'charge_type_code',
 							     'housing_unit_code',
 							     'amount',
 							     'comment'),
-				  'fn'=>array(
-						  'get'=>'get_generic',
-						  'post'=>'post_generic'
-						  ),
+				  'list_order'=>array('is_void'=>false,'effective_date'=>true),
 				  'fields'=>array(
+ 							'client_id'=>array('row_before'=>'bigger(bold("Basic Information"))'),
+							'housing_project_code'=>array('show_lookup_code'=>'CODE'),
+							'charge_type_code'=>array('show_lookup_code'=>'CODE'),
 							'housing_unit_code'=>array('label'=>'Unit #'),
 							'amount'=>array(
 									    'data_type'=>'currency',
 									    'is_html'=>true,
-									    'value_list'=> 'sql_true($rec["is_void"]) ? strike(currency_of($x)) : $x',
+									    'value_list'=> 'sql_true($rec["is_void"]) ? strike(currency_of($x)) : $x . smaller(" (".hlink("charge_add.php?action=voidform&charge_id=" .$rec["charge_id"],"Void").")",2) ',
 									    'total_value_list'=>'sql_true($rec["is_void"]) ? 0 : $x'
 									    ),
 							'comment'=>array(
@@ -66,19 +65,21 @@ $engine['charge'] = array(
 									     'value_list'=> 'sql_true($rec["is_void"]) ? strike($x) : $x',
 									     'value_format_list' => 'smaller($x)'),
  							'effective_date'=>array('default'=>'NOW'),
-// 							'voided_at'=>array(
-// 										 'display'=>'hide',
-// 										 'value_add'=>'sql_true($rec["is_void"]) ? "NOW" : null'
-// 										 ),
-// 							'is_void'=>array(			
-// 									     'java'=>array(
-// 												 'on_event'=>array(
-// 															 'disable_boolean'=>
-// 															 array('void_comment')
-// 															 )
-// 												 )
-// 									     ),
-// 							'void_button'=>array('value_list'=>'a button to void charge')
-							)
+ 							'subsidy_type_code'=>array('comment'=>'Leave blank, except for subsidy charges',
+								'row_before'=>'bigger(bold("Subsidy Information"))'),
+ 							'period_start'=>array('row_before'=>'bigger(bold("For Rent & Subsidy only:"))'),
+ 							'voided_at'=>array(
+ 										 'display_add'=>'hide',
+ 										 'display_edit'=>'hide',
+ 										 ),
+ 							'is_void'=>array(			
+										 'row_before'=>'bigger(bold("Use only to void charges"))',
+ 									     'java'=>array(
+ 												 'on_event'=>array(
+ 															 'disable_boolean'=>
+ 															 array('void_comment')
+ 															 )
+ 												 )
+ 									     ))
 				  );
 ?>

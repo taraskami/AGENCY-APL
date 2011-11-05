@@ -15,14 +15,14 @@ CREATE TABLE tbl_l_charge_type (
     sys_log                 TEXT
 );
 
-INSERT INTO tbl_l_charge_type (charge_type_code, description) VALUES ('ADJUST', 'Adjustment Charge',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_charge_type (charge_type_code, description) VALUES ('DAMAGE', 'Damage Charge',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_charge_type (charge_type_code, description) VALUES ('KEY', 'Key Charge',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_charge_type (charge_type_code, description) VALUES ('MISC', 'Miscellaneous/Other Charges',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_charge_type (charge_type_code, description) VALUES ('RENT', 'Rent Charges',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_charge_type (charge_type_code, description) VALUES ('SECURITY', 'Security Deposit',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_charge_type (charge_type_code, description) VALUES ('SUBSIDY', 'Subsidy Charge',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_charge_type (charge_type_code, description) VALUES ('VACANCY', 'Vacancy Charge',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_charge_type (charge_type_code, description) VALUES ('WRITEOFF', 'Write Off of Existing Charges',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_charge_type (charge_type_code, description, added_by, added_at, changed_by, changed_at) VALUES ('ADJUST', 'Adjustment Charge',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_charge_type (charge_type_code, description, added_by, added_at, changed_by, changed_at) VALUES ('DAMAGE', 'Damage Charge',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_charge_type (charge_type_code, description, added_by, added_at, changed_by, changed_at) VALUES ('KEY', 'Key Charge',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_charge_type (charge_type_code, description, added_by, added_at, changed_by, changed_at) VALUES ('MISC', 'Miscellaneous/Other Charges',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_charge_type (charge_type_code, description, added_by, added_at, changed_by, changed_at) VALUES ('RENT', 'Rent Charges',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_charge_type (charge_type_code, description, added_by, added_at, changed_by, changed_at) VALUES ('SECURITY', 'Security Deposit',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_charge_type (charge_type_code, description, added_by, added_at, changed_by, changed_at) VALUES ('SUBSIDY', 'Subsidy Charge',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_charge_type (charge_type_code, description, added_by, added_at, changed_by, changed_at) VALUES ('VACANCY', 'Vacancy Charge',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_charge_type (charge_type_code, description, added_by, added_at, changed_by, changed_at) VALUES ('WRITEOFF', 'Write Off of Existing Charges',sys_user(),current_timestamp,sys_user(),current_timestamp);
 
 CREATE VIEW l_charge_type AS (SELECT * FROM tbl_l_charge_type WHERE NOT is_deleted);

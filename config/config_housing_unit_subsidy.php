@@ -63,7 +63,7 @@ $engine['housing_unit_subsidy']=array(
 																'label_field'=>'housing_unit_code'),
 													  'show_lookup_code'=>'CODE',
 													  'is_html'=>true,
-													  'value'=>'link_unit_history($x)',
+													  'value'=>'link_unit_history($x,true,false)',
 													  'label'=>'Unit'),
 								     'address_1'=>array(
 												'valid'=>array('($rec["housing_project_code"]!=="SCATTERED" && be_null($x))

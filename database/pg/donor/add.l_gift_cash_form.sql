@@ -4,7 +4,7 @@ INSERT INTO tbl_l_gift_cash_form VALUES ('CCHK','Corporate Check',sys_user(),cur
 INSERT INTO tbl_l_gift_cash_form VALUES ('OCHK','Organization Check',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_gift_cash_form VALUES ('CASH','Cash',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_gift_cash_form VALUES ('MONO','Money Order',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_gift_cash_form VALUES ('3RDP','Third Party Check',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_gift_cash_form VALUES ('CHECK_3P','Third Party Check',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_gift_cash_form VALUES ('BANK','Bank Check',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_gift_cash_form VALUES ('SECU','Stock/other Securities',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_gift_cash_form VALUES ('INKI','In-kind (non-cash) donati',sys_user(),current_timestamp,sys_user(),current_timestamp);

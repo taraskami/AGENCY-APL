@@ -52,7 +52,7 @@ function total_payments( $filter )
     return $result["total"];
 }
 
-function post_payment( $payment )
+function post_payment_old( $payment )
 {
 // this is copied almost verbatim from post_log.
 // Need to take the generic stuff and make a post_record function.
