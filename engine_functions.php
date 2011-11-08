@@ -1693,14 +1693,6 @@ function data_dictionary($object=NULL,$field=NULL) {
 	  return $out;
 }	
 		
-function data_dictionary_hide_show( $object=NULL,$field=NULL,$hide=true,$element_id=NULL ) {
-	$element_id = orr($element_id,'dd.O'.$object.'.F'.$field);
-	$data_dict = data_dictionary($object,$field);
-	return !$data_dict ? '' :
-				Java_Engine::hide_show_button($element_id) 
-				. Java_Engine::hide_show_content(oline() . $data_dict,$element_id,$hide);
-}
-
 function view_generic($rec,$def,$action,$control='',$control_array_variable='control')
 {
       global $colors,$Java_Engine;
@@ -1714,11 +1706,10 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
       $out .= ($list_links) 
 	    ? row(cell($list_links,'colspan="2"'),'class="listHeader"')
 	    : '';
-	  $element_id = "dd.$object";
-	  //$data_dict = Java_Engine::hide_show_button($element_id) . Java_Engine::hide_show_content(data_dictionary($object,NULL),$element_id);
-	  $data_dict = data_dictionary_hide_show($object,NULL);
-	  $out .= $data_dict ? row(cell("Data dictionary for $object")  . cell($data_dict)) : '';
-
+	  $data_dict = data_dictionary($object,NULL);
+	  $out .= $data_dict 
+			? row(cell(div($data_dict . toggle_label("Data dictionary for $object"),'','class="hiddenDetail"'),'colspan=2'))
+			: '';
       foreach ($rec as $key=>$value) {
 	    $disp = $fields[$key]["display_{$action}"];
 	    if ($disp=='multi_disp') { // THIS STUFF ALL NEEDS TO GO SOON!!
@@ -1791,9 +1782,8 @@ function view_generic_row($key,$value,$def,$action,$rec)
 	if (($tmp = $def['fields'][$key]['comment']) && $def['fields'][$key]['comment_show_'.$action]) {
 		$comment = div(webify($tmp),'',' class="generalComment"');
 	}
-	$data_dict = data_dictionary_hide_show($def['object'],$key);
-	if ($data_dict) {
-		$comment .= $data_dict;
+	if ($data_dict = data_dictionary($def['object'],$key)) {
+		$label = div($data_dict .toggle_label('data dictionary...'),'','class="hiddenDetail"') . $label;
 	}
 
 	$l_opts = 'class="engineLabel"';
