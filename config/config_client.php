@@ -135,7 +135,9 @@ $engine["client"] = array(
 						),
 		/* Multi configuration moved to config_client_multi.php.  Included at end. */
 
-		"title" => 'ucwords($action) . "ing '.AG_MAIN_OBJECT.' record for " . client_link($rec["client_id"])',
+		"title" => 
+			'ucwords($action) . "ing '.AG_MAIN_OBJECT.' record"
+			. (($action=="list") ? "s" : " for " . client_link($rec["client_id"]))',
 		"title_add"=>'ucwords($action) . "ing a new '.AG_MAIN_OBJECT.' record."',
 		"fields" => array(
 					 'is_protected_id'=>array('display'=>'hide'),
