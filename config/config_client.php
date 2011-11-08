@@ -148,10 +148,16 @@ $engine["client"] = array(
 				  'resident_id'=>array(
 								'display'=>'hide'),
 				  "name_last" => array( 
+								'label'=>'Last name',
+								'value'=>'$GLOBALS["AG_DEMO_MODE"] ? preg_replace("/[a-z]/","x",preg_replace("/[A-Z]/","X",trim($x))) : $x',
 						       "force_case"=>"upper"),
 				  "name_first" => array( 
+								'label'=>'First name',
+								'value'=>'$GLOBALS["AG_DEMO_MODE"] ? preg_replace("/[a-z]/","x",preg_replace("/[A-Z]/","X",trim($x))) : $x',
 							"force_case"=>"upper"),
 				  "name_middle" => array( 
+								'label'=>'Middle name',
+								'value'=>'$GLOBALS["AG_DEMO_MODE"] ? preg_replace("/[a-z]/","x",preg_replace("/[A-Z]/","X",trim($x))) : $x',
 							"force_case"=>"upper"),
  					 'name_suffix' => array(
  									'data_type'=>'lookup',
@@ -160,12 +166,16 @@ $engine["client"] = array(
  											    'label_field'=>'description')
  									),
 					 'name_alias' => array(
+								'label'>'Alias',
+								'value_'=>'$GLOBALS["AG_DEMO_MODE"] ? preg_replace("/[a-z]/","x",preg_replace("/[A-Z]/","X",trim($x))) : $x',
 								     'valid'=>array('!preg_match("/^\s*\(?\s*(no|none\.?|n\.?k\.?a\.?)\s*\)?\s*$/i",$x)'=>'"NO", "NONE" or "NKA" are not valid aliases'),
 								     'confirm'=>array('!preg_match("/([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{2,4})|([0-9]{3}-?[0-9]{2}-?[0-9]{4})/",$x)'=>'alternate DOB and SSN should be stored in a client note, not the alias field.')),
 				  "dob" => array(			
+						'value'=>'$GLOBALS["AG_DEMO_MODE"] ? preg_replace("/[0-9]/","9",$x) : $x',
 						     "data_type" => "date_past",
 						     'confirm' => array('days_interval(dateof("now"),$x)/365 >= 18'=>'{$Y} contains a value that places the '.AG_MAIN_OBJECT.' under 18')),
 				  "ssn" => array(
+						'value'=>'$GLOBALS["AG_DEMO_MODE"] ? preg_replace("/[0-9]/","9",$x) : $x',
 						 "data_type"=>"ssn"),
 				  "last_photo_at" => array(
 							   'display'=>'display',
