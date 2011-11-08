@@ -1223,7 +1223,9 @@ function list_title_generic($control,$def)
 	$format=$def['title_format'];
 	$filter=orr($control['list']['filter'],array());
 	//	$title = title_generic('list',$filter,$def);
-	$x = eval('return '.$def['title_list'].';');
+	if (!($x=$control['title'])) {
+		$x = eval('return '.$def['title_list'].';');
+	}
 	if (array_key_exists(AG_MAIN_OBJECT_DB.'_id',$filter) && !strstr($x,' for ')) {
 		$x .= ' for '.client_link($filter[AG_MAIN_OBJECT_DB.'_id']);
 	} elseif ( (array_key_exists('staff_id',$filter)||array_key_exists('staff_id_name',$filter)) ) {
