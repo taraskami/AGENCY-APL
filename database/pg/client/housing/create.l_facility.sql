@@ -18,19 +18,25 @@ CREATE TABLE tbl_l_facility (
     sys_log                 TEXT
 );
 
+/*
+
+*/
+                 
+
 INSERT INTO tbl_l_facility VALUES ('OTHER', 'Other (please describe)', 'UNKNOWN', '', 'UNKNOWN',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_facility VALUES ('UNSUBHOUSE', 'Unsubsidized housing', 'Housing', '', 'HOUSED',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_facility VALUES ('SHEL-DESC', 'Emergency Shelter (DESC)', 'Emergency Shelter', '101', 'HOMELESS',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_facility VALUES ('SHEL-OTH', 'Emergency Shelter (not DESC)', 'Emergency Shelter', '103', 'HOMELESS',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_facility VALUES ('SHEL-OWN', 'Emergency Shelter (own)', 'Emergency Shelter', '101', 'HOMELESS',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_facility VALUES ('SHEL-OTH', 'Emergency Shelter (not own)', 'Emergency Shelter', '103', 'HOMELESS',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_facility VALUES ('HOSPITAL', 'Hospital', 'Hospital', '25', 'INSTITUT',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_facility VALUES ('PSYCH', 'Hospital - Psychiatric Facility', 'Psychiatric Facility', '62', 'INSTITUT',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_facility VALUES ('INDEPEND', 'Independent Permanent Housing', 'Permanent Housing', '', 'HOUSED',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_facility VALUES ('TREATMENT', 'Inpatient Drug & Alcohol Treatment', 'Substance Abuse Treatment Facility', '24', 'INSTITUT',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_facility VALUES ('FAM_FRIEND', 'Stay with family/friends, not on lease', 'Living with relatives/friends', '105', 'HOMELESS',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_facility VALUES ('STREETS', 'Street, car or other public place', 'Streets', '104', 'HOMELESS',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_facility VALUES ('SUPP-DESC', 'Supportive Housing (DESC)', 'Supportive Housing', '', 'HOUSED',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_facility VALUES ('SUPP-OTH', 'Supportive Housing (non-DESC)', 'Supportive Housing', '', 'HOUSED',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_facility VALUES ('TRANS-OTH', 'Transitional Housing (not DESC)', 'Transitional Housing', '207', 'TRANSITION',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_facility VALUES ('SUPP-OWN', 'Supportive Housing (own)', 'Supportive Housing', '', 'HOUSED',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_facility VALUES ('SUPP-OTH', 'Supportive Housing (not own)', 'Supportive Housing', '', 'HOUSED',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_facility VALUES ('TRANS-OWN', 'Transitional Housing (own)', 'Transitional Housing', '207', 'TRANSITION',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_facility VALUES ('TRANS-OTH', 'Transitional Housing (not own)', 'Transitional Housing', '207', 'TRANSITION',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_facility VALUES ('UNKNOWN', 'Unknown', 'UNKNOWN', '', 'UNKNOWN',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_facility VALUES ('NURSING', 'Skilled Nursing Facility', 'Assisted Living', '211', 'INSTITUT',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_facility VALUES ('SLAMMER', 'Incarcerated (Jail or Prison)', 'Jail', NULL, 'INSTITUT',sys_user(),current_timestamp,sys_user(),current_timestamp);
