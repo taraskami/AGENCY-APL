@@ -33,13 +33,12 @@ should be included in this distribution.
 
 $engine['jail'] = array(
 				'singular'=>'Jail Record',
+				'enable_staff_alerts_view'=>true,
 				'list_fields'=>array('jail_date','jail_date_end','days_in_jail','ba_number','custom1'),
 				'perm_list'=>'any',
 				'perm_view'=>'any',
 				'perm'=>'admin',
 				'fields'=>array(
-						    'jail_id'=>array('value_view'=>'$x . " (" . smaller("Download: " . hlink("http://iww.desc.org/docs/forms/clinical/jail_health_fax_form.pdf","Jail Health MH Info Form")) . ")"',
-										 'is_html'=>true),
 						    'days_in_jail'=>array(
 									   'is_html'=>true,
 									   'value'=>'$rec["date_date_end"] 

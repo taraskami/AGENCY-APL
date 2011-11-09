@@ -41,12 +41,8 @@ function jail_status_f($id)
 	if (be_null($rec['jail_date_end'])) {
 		$days = $rec['days_in_jail'] . ($rec['days_in_jail'] > 1 ? ' days' : ' day');
 		$text = 'Incarcerated since '.dateof($rec['jail_date']).' ('.$days.')';
-	} elseif (days_interval($rec['dal_due_date'],'now',true) < 8 ) { //show up to 7 days late
-		// if dal done, we should say that
-		// so wed need to query the dal table
-		$range = new date_range( $rec['jail_date_end'], $rec['dal_due_date'] );
-		$text = 'Released from jail on '.dateof($rec['jail_date_end']). '. ' 
-		. bold(dal_due_between_date_f($id,$range));
+	} elseif (days_interval($rec['jail_date_end'],'now',true) < 31 ) { //show up to 30 days after release
+		$text = 'Released from jail on '.dateof($rec['jail_date_end']);
 	} else {
 		return false;
 	}

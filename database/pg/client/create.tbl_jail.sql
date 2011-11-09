@@ -49,6 +49,7 @@ SELECT
 	j.jail_date_end_source_code,
 	j.ba_number,
 	COALESCE(j.jail_date_end::date,CURRENT_DATE) - j.jail_date::date AS days_in_jail,
+/* FIXME: dal_due_date could probably get removed */
 	j.jail_date_end::date + 7 AS dal_due_date,
 	CASE
 		WHEN j.jail_date_end IS NOT NULL
