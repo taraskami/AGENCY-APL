@@ -4014,14 +4014,20 @@ function update_engine_control($noexists=false)
 	$tables=$GLOBALS['AG_ENGINE_TABLES'];
 	sort($tables);
 
-	$update_list = selectto('UPDATE_ENGINE_OBJECT')
+	$update_head = selectto('UPDATE_ENGINE_OBJECT')
 			. selectitem('UPDATE_ALL','Full Engine Array');
 	foreach ($tables as $table) {
-		$update_list .= selectitem($table,$table,orr($_REQUEST['UPDATE_ENGINE_OBJECT'],
+		$label = $GLOBALS['engine'][$table]['singular'];
+		if (!(strtolower($label)==strtolower(str_replace('_',' ',$table)))) {
+			$label .= " ($table)";
+		}
+		$update_list[$label] = selectitem($table,$label,
+						orr($_REQUEST['UPDATE_ENGINE_OBJECT'],
 						$_SESSION['UPDATE_ENGINE_OBJECT'])==$table);
 	}
-	$update_list .= selectend() . oline() . button('update!') . formend();
-
+	uksort($update_list);
+	$update_list = $update_head . implode('',$update_list)
+					 . selectend() . oline() . button('update!') . formend();
 	return ( ($noexists or has_perm('update_engine,admin','RW'))
 	?  smaller( formto('update_engine_config.php','',' target="_blank"')
 	. oline('Update Engine Object') . $update_list)
