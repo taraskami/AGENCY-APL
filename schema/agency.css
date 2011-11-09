@@ -255,6 +255,23 @@ div.client_elevated_concern_short {
 	background-color: #ffafaf;
 }
 
+.clientQuickLook {
+	/* staff assignments/housing status on client page */
+	border: 2px;
+	border-color: solid black 8px;
+/*	border-right: solid gray 1px; 
+*/
+	vertical-align: bottom;
+/*
+ * padding: 0px;
+	margin: 0px;
+	padding-bottom: 0px;
+*/
+	background-color: #D5FF97;
+	float: bottom;
+	height: auto;
+}
+
 /* Test Warning Box */
 .agencyTestWarningBox {
 	background-color: red;

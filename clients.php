@@ -142,19 +142,24 @@ function client_show( $id )
 														'action'=>'add',
 														'rec_init'=>array(AG_MAIN_OBJECT_DB.'_id'=>$id))
 													,smaller('Add new staff assignment'))))
-					     ,' style="vertical-align: top; border-right: solid 1px gray; padding: 4px;"') //style here until such time as style sheet
-				 .leftcell(client_staff_assignments_f($id),' style="vertical-align: top; padding: 4px;"')); //and here as well
+)
+				 .leftcell(client_staff_assignments_f($id)),'class="clientQuickLook"');
 	$bar_status = bar_status($client[$ID_FIELD])
 				  ? row( cell(bar_status_f($client,'long',$is_provisional) . gatemail_status_f($client) .smaller(oline()),'colspan="2"')) : '';
-	$quick_look = table($bar_status . $staff_assigns . $calendar_appointments,'',' class="" cellspacing="0"');
+	$housing= (sql_num_rows(get_last_residence($id)) == 1) ? housing_status_f($id) : '';
+	$quick_look = $housing . $bar_status . $staff_assigns . $calendar_appointments;
 	$name = $deceased_f
 		? gray(client_name($client,0,true))
 		: client_name($client);
+
 	$out .= tablestart("",'class=""')
-		. row(cell(oline(client_photo( $protected ? 0 : $client[$ID_FIELD]),.25),'rowspan="2"') //passing 0 for protected clients
-			. topcell( $elevated_concern . $protected_f . oline(bold(bigger($name,3)).smaller(blue(' (ID #'.$id.')'))). $deceased_f  
-				    . $quick_look ) )
-		. row("") 
+		. row(cell(oline(client_photo( $protected ? 0 : $client[$ID_FIELD]),.25),'rowspan="3"') //passing 0 for protected clients
+			. topcell( $elevated_concern . $protected_f . oline(bold(bigger($name,3)).smaller(blue(' (ID #'.$id.')'))). $deceased_f,'colspan=2')) 
+		.row(cell(oline('')))
+		. row(cell(table(
+		row(cell($housing . $bar_status . $calendar_appointments,'colspan=2'),' class="clientQuickLook"')
+		. $staff_assigns 
+		,'','class="clientQuickLook"')),'class="clientQuickLook"')
 		. row(
 			cell(
 			     ($client["last_photo_at"] 
