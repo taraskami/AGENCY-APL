@@ -35,6 +35,7 @@ should be included in this distribution.
 $engine['alert_notify'] = array(
   /* FIXME: self perm not working. Not strictly needed, as valid on staff_id enforces own only */
   //'perm'=>'self',
+  'title_format' =>'bigger(bold($x)) . " (" . smaller(link_wiki_public("alert_notifications","Help with Alert Notifications")).")"',
   'singular' =>'Alert Notify Record',
   'add_another' => true,
   'list_fields' => array('alert_notify_date','alert_object','alert_notify_action_code','alert_notify_basis'),
