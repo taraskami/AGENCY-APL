@@ -342,24 +342,32 @@ div#noStaffEmployment {
 	display: none;
 }
 
-#deleteClientResult {
-	font: 120%;
+div#deleteClientResult {
+	font-size: 120%;
 	background-color: #FFEEEE;
 	padding: 8px;
 	margin-bottom: 30px;
 	width: 50%;
 }
 
-#postClientResult {
-	font: 120%;
+div#postClientResult {
+	font-size: 120%;
 	background-color: #EEFFEE;
 	padding: 8px;
 	margin-bottom: 30px;
 	width: 50%;
 }
 
+div#overrideClientResult {
+	font: 120%;
+	background-color: #E2EB0A;
+	padding: 8px;
+	margin-bottom: 30px;
+	width: 50%;
+}
+
 #enterClientForm {
-	font: 200%;
+	font-size: 200%;
 	font-weight: bold;
 	background-color: #EEEEFF;
 	padding: 8px;
@@ -373,4 +381,33 @@ div#noStaffEmployment {
 	padding: 5px;
 	background-color: #fff;
 	text-align: center;
+}
+
+#enterVisitorForm {
+	font-size: 200%;
+	font-weight: bold;
+	padding: 8px;
+	margin-bottom: 30px;
+	width: 50%;
+	display: none;
+}
+
+div#deleteVisitorResult {
+	font-size: 120%;
+	background-color: #FFDDEE;
+	padding: 8px;
+	margin-bottom: 30px;
+	width: 50%;
+}
+
+div#postVisitorResult {
+	font-size: 120%;
+	background-color: #DDFFDD;
+	padding: 8px;
+	margin-bottom: 30px;
+	width: 50%;
+}
+
+#enterVisitorLink {
+	font-size: 200%;
 }

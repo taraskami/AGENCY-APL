@@ -36,55 +36,11 @@ should be included in this distribution.
 
 $quiet='Y';
 include 'includes.php';
-
+$visitor_fields=array('visitor_name','visit_purpose','visit_type_code','visiting_who','comment');
 $def=get_def('entry');
+$ev_def=get_def('entry_visitor');
+$ef_def=get_def(AG_MAIN_OBJECT_DB);
 
-if (isset($_REQUEST['enterClientUndo'])) {
-	// Delete most recent post
-	$d_c=$_REQUEST['enterClientUndo'];
-	$d_filter=$_SESSION['ENTRY_BROWSE_UNDO_RECORD'];
-	if ($d_c==$d_filter[$_SESSION['ENTRY_BROWSE_UNDO_FIELD']]) {
-		if (delete_generic($d_filter,$def,'Auto-deleted by entry_browse undo')) {
-			$delete_result = 'Deleted entry record for ' . client_link($d_c) . '@' . datetimeof($d_filter['entered_at']);
-		} else {
-			$delete_result = oline('Failed to delete entry record for ' . client_link($d_c) . '@' . datetimeof($d_filter['entered_at']));
-		}
-	}
-	unset($_SESSION['ENTRY_BROWSE_UNDO_RECORD']);
-	unset($_SESSION['ENTRY_BROWSE_UNDO_FIELD']);
-}
-
-if (isset($_REQUEST['enterClient'])) {
-	// Client has been entered and sent from previous page
-	$e_c=$_REQUEST['enterClient'];
-	$id_field=$_REQUEST['enterClientField'];
-	if (is_numeric($e_c) and $e_c==intval($e_c) and preg_match('/^([a-z_0-9])+$/i',$id_field)
-		// don't allow same client to be entered twice, consecutively
-		and($_SESSION['ENTRY_BROWSE_LAST_RECORD'][$id_field] != $e_c)) {
-		$rec=array();
-		$cont=array('action'=>'add','object'=>'entry','id'=>'dummy');
-		blank_generic($def, $rec,$cont);
-		$rec[$id_field]=$e_c;
-		$rec['entered_at']=datetimeof('now','SQL');
-		$rec['entry_location_code']='SHELTER';  // FIXME
-		$rec['added_by']=$rec['changed_by']=$UID;
-		$rec['sys_log']='auto-added by entry_browse';
-		if (post_generic($rec,$def,$message)) {
-			$_SESSION['ENTRY_BROWSE_UNDO_RECORD']=$_SESSION['ENTRY_BROWSE_LAST_RECORD']=$rec;
-			$_SESSION['ENTRY_BROWSE_UNDO_FIELD']=$id_field;
-			$undo_link=hlink($_SERVER['PHP_SELF'].'?enterClientUndo='.$e_c,smaller(' (Undo)'));
-			$post_result='Posted ' . $def['singular'] .' for ' . client_link($e_c) . ' ' . $undo_link;
-		} else {
-			unset($_SESSION['ENTRY_BROWSE_UNDO_RECORD']);
-			unset($_SESSION['ENTRY_BROWSE_UNDO_FIELD']);
-			$post_result='Failed to post ' . $def['singular'] . 'for ' . client_link($e_c);
-		}		
-	} else {
-		unset($_SESSION['ENTRY_BROWSE_UNDO_RECORD']);
-		unset($_SESSION['ENTRY_BROWSE_UNDO_FIELD']);
-	}
-}
-	
 $c_req=$_REQUEST['control'];
 if (!is_array($c_req)) {
     $c_req = unserialize_control($c_req);
@@ -112,10 +68,119 @@ $USER_PREFS = $AG_USER_OPTION->get_option('ENTRY_DISPLAY_OPTIONS'); //get entry 
 $USER_PREFS['entry_location'] = orr($_REQUEST['entry_location'],$USER_PREFS['entry_location'],$tmp_entry_defaults);
 $AG_USER_OPTION->set_option('ENTRY_DISPLAY_OPTIONS',$USER_PREFS); //set entry prefs - if changed
 
+if (isset($_REQUEST['enterClientUndo'])) {
+	// Delete most recent post
+	$d_c=$_REQUEST['enterClientUndo'];
+	$d_filter=$_SESSION['ENTRY_BROWSE_UNDO_RECORD'];
+	if ($d_c==$d_filter[$_SESSION['ENTRY_BROWSE_UNDO_FIELD']]) {
+		if (delete_generic($d_filter,$def,'Auto-deleted by entry_browse undo')) {
+			$delete_result = 'Deleted entry record for ' . client_link($d_c) . '@' . datetimeof($d_filter['entered_at']);
+		} else {
+			$delete_result = oline('Failed to delete entry record for ' . client_link($d_c) . '@' . datetimeof($d_filter['entered_at']));
+		}
+	}
+	unset($_SESSION['ENTRY_BROWSE_UNDO_RECORD']);
+	unset($_SESSION['ENTRY_BROWSE_UNDO_FIELD']);
+}
+
+if (is_enabled('entry_visitor') and isset($_REQUEST['enterVisitorUndo'])) {
+	// Delete most recent post
+	$d_c=$_REQUEST['enterVisitorUndo'];
+	$d_filter=$_SESSION['ENTRY_VISITOR_BROWSE_UNDO_RECORD'];
+	if ($d_c==$d_filter[$_SESSION['ENTRY_VISITOR_BROWSE_UNDO_FIELD']]) {
+		if (delete_generic($d_filter,$ev_def,'Auto-deleted by entry_browse undo')) {
+			$delete_visitor_result = 'Deleted visitor record for ' . $d_filter['visitor_name'] .'@'. datetimeof($d_filter['entered_at']);
+		} else {
+			$delete_visitor_result = oline('Failed to delete visitor record for ' . $d_filter['visitor_name'] . '@' . datetimeof($d_filter['entered_at']));
+		}
+	}
+	unset($_SESSION['ENTRY_VISITOR_BROWSE_UNDO_RECORD']);
+	unset($_SESSION['ENTRY_VISITOR_BROWSE_UNDO_FIELD']);
+}
+
+if (isset($_REQUEST['enterClient'])) {
+	// Client has been entered and sent from previous page
+	$e_c=$_REQUEST['enterClient'];
+	$id_field=$_REQUEST['enterClientField'];
+	$skip=false;
+	if (is_numeric($e_c) and $e_c==intval($e_c) and preg_match('/^([a-z_0-9])+$/i',$id_field)
+		// don't allow same client to be entered twice, consecutively
+		and($_SESSION['ENTRY_BROWSE_LAST_RECORD'][$id_field] != $e_c)) {
+		// Find and show client notes flagged for this location	
+		$note_filter=array(
+			$ef_def['id_field']=>$e_c,
+			'ANY:flag_entry_codes'=>$USER_PREFS['entry_location']);
+		$rec=array();
+		$cont=array('action'=>'add','object'=>'entry','id'=>'dummy');
+		blank_generic($def, $rec,$cont);
+		$rec[$id_field]=$e_c;
+		$rec['entered_at']=datetimeof('now','SQL');
+//		$rec['entry_location_code']='FRONT_DOOR';  // FIXME hardcoded--default in DB
+		$rec['added_by']=$rec['changed_by']=$UID;
+		$rec['sys_log']='auto-added by entry_browse';
+//outline("Trying $e_c, override =" . $_REQUEST['enterClientOverride']. ", ineligible? " . call_sql_function('entry_ineligible',$e_c));
+		if ((call_sql_function('entry_ineligible',$e_c)==sql_true()) and (!$_REQUEST['enterClientOverride']=='Y') ) {
+			$override_result=oline(client_link($e_c) .' Please see a staff person before entering.').' ('
+			.hlink_if($_SERVER['PHP_SELF'] .'?enterClient='.$e_c.'&enterClientField='.$id_field.'&enterClientOverride=Y','Staff only:  Click to override',true) . ')';
+//outline("I am asking for override");
+			$skip=true;
+		}
+		if (post_generic($rec,$def,$message) and (!$skip)) {
+			$_SESSION['ENTRY_BROWSE_UNDO_RECORD']=$_SESSION['ENTRY_BROWSE_LAST_RECORD']=$rec;
+			$_SESSION['ENTRY_BROWSE_UNDO_FIELD']=$id_field;
+			$undo_link=hlink($_SERVER['PHP_SELF'].'?enterClientUndo='.$e_c,smaller(' (Undo)'));
+			$rec=sql_fetch_assoc(get_generic(client_filter($e_c),'','',$ef_def));
+			$post_result=oline('Posted ' . $def['singular'] .' for ' . client_link($e_c) . ' ' . $undo_link,2)
+						. bigger("Welcome " . $rec['name_first'].'!!');
+		} elseif (!$skip) {
+			unset($_SESSION['ENTRY_BROWSE_UNDO_RECORD']);
+			unset($_SESSION['ENTRY_BROWSE_UNDO_FIELD']);
+			$post_result='Failed to post ' . $def['singular'] . 'for ' . client_link($e_c);
+		}		
+	} else {
+		unset($_SESSION['ENTRY_BROWSE_UNDO_RECORD']);
+		unset($_SESSION['ENTRY_BROWSE_UNDO_FIELD']);
+	}
+}
+
+if (is_enabled('entry_visitor') and isset($_REQUEST['rec'])) {
+// Enter Visitor
+	$ev_id_field=$ev_def['id_field'];
+	foreach( $visitor_fields as $x) {
+		$ev_rec[$x]=dewebify($_REQUEST['rec'][$x]);
+	}
+	if ($ev_rec['visiting_who']=='-1') {
+		unset($ev_rec['visiting_who']);
+	}
+	$ev_rec['entered_at']=datetimeof('now','SQL');
+	$ev_rec['added_by']=$rec['changed_by']=$UID;
+	$ev_rec['sys_log']='auto-added by entry_browse';
+	$ev_rec['entry_location_code']='FRONT_DOOR';  // FIXME hardcoded--default in DB
+	if (!valid_generic($ev_rec,$ev_def,$message,'add')) {
+		$ev_post_result .= $message;
+		$continue_ev_rec=$ev_rec;
+		unset($continue_ev_rec['sys_log']);
+	} elseif ($new_ev_rec=post_generic($ev_rec,$ev_def,$message) ) {
+			$e_v=$ev_rec['entry_visitor_id']=$new_ev_rec['entry_visitor_id'];
+			$_SESSION['ENTRY_VISITOR_BROWSE_UNDO_RECORD']=$_SESSION['ENTRY_VISITOR_BROWSE_LAST_RECORD']=$ev_rec;
+			$_SESSION['ENTRY_VISITOR_BROWSE_UNDO_FIELD']=$ev_id_field;
+			$ev_undo_link=hlink($_SERVER['PHP_SELF'].'?enterVisitorUndo='.$e_v,smaller(' (Undo)'));
+			$rec=sql_fetch_assoc(get_generic(array('entry_visitor_id'=>$e_v),'','','entry_visitor'));
+			$ev_post_result=oline('Posted ' . $def['singular'] .' for ' . $ev_rec['visitor_name'] . ' ' . $ev_undo_link,2)
+						. bigger("Welcome " . $ev_rec['visitor_name'].'!!');
+		} else {
+			unset($_SESSION['ENTRY_VISITOR_BROWSE_UNDO_RECORD']);
+			unset($_SESSION['ENTRY_VISITOR_BROWSE_UNDO_FIELD']);
+			$post_result='Failed to post ' . $def['singular'] . 'for ' . $ev_rec['visitor_name'];
+	}
+//	outline(dump_array($ev_rec));
+}	
+	
 $control=array(
 	'action'=>'list',
-	'object'=>'entry',
+	'object'=>$def['object'],
 	'id'=>'list',
+	'title'=>'Listing recent ' . $def['plural'],
 	'page'=>$_SERVER['PHP_SELF'],
 	'list'=>array('filter'=>array('IN:entry_location_code'=>array_keys($USER_PREFS['entry_location'])),
 	'fields'=>array('entered_at','entry_location_code','client_id'),
@@ -130,20 +195,46 @@ $ef_step=orr($ef_step,'continue');  // don't think this does anything?
 $ef_rec=orr($ef_rec,array('client_id'=>NULL));
 $ef_control=array('action'=>'add','object'=>'client','id'=>'dummy');
 engine_process_quicksearch($ef_step,$ef_rec,$ef_control);
-$ef_def=get_def('client');
-$ef_def['fields']['client_id']['display_add']='edit';
-$entry_form='Record an ' .$def['singular'] .': '.formvartext('enterClient','','class="enterClient"').hiddenvar('enterClientField','client_id');
+$entry_form='Record a ' . $ef_def['singular'] . '\'s '.$def['singular'] .': '.formvartext('enterClient','','class="enterClient"').hiddenvar('enterClientField','client_id') . button('submit');
+$entry_form='Record a ' . $ef_def['singular'] . '\'s '.$def['singular'] .': '.formvartext('enterClient','','class="enterClient"').hiddenvar('enterClientField','client_id') . button('submit');
 $entry_form=form($entry_form,'','','class="enterClient"');
+
+if (is_enabled('entry_visitor')) {
+	$ev_def=get_def('entry_visitor');
+	$ev_control=array('action'=>'add');
+	$ev_dummy=array(); // for rec-init
+	$ev_rec=blank_generic($ev_def, $ev_dummy,$ev_control);
+	foreach($continue_ev_rec as $k=>$v){
+		$ev_rec[$k]=$v;
+	}
+	foreach($ev_def['fields'] as $k=>$dummy) {
+		if (!in_array($k,$visitor_fields)) {
+			$ev_def['fields'][$k]['display_add']='hide';
+		}
+	}
+	$ev_form=form_generic($ev_rec,$ev_def,$ev_control);
+
+	$entry_visitor_link=oline('OR, ',2) .hlink('#','Record a Visitor','','id="enterVisitorLink"');
+	$entry_visitor_form=$ev_form . button('submit');
+	$entry_visitor_form=oline($entry_visitor_link) . form($entry_visitor_form,'','','class="enterVisitor" id="enterVisitorForm"');
+}
 $entries=call_engine($control,'',true,false,$DUMMY,&$PERMISSION);
-$page_title = 'Viewing ' . ucfirst($def['plural']) . ' for ' . implode(', ',array_keys($USER_PREFS['entry_location']));
-html_header($page_title,$refresh_rate);
+//$title = 'Viewing ' . ucfirst($def['plural']) . ' for ' . implode(', ',array_keys($USER_PREFS['entry_location']));
+//$title = 'Viewing Front Door ' . ucfirst($def['plural']);
+$title = 'Welcome to ' . org_name();
 $commands=array(cell(show_pick_entry($AG_ENTRY_LOCATIONS,$USER_PREFS),'class="pick"'));
 agency_top_header($commands);	
-$out .= html_heading_1($page_title)
+$out .= html_heading_1($title)
 	. ($post_result ? div($post_result,'','id="postClientResult"') : '')
 	. ($delete_result ? div($delete_result,'','id="deleteClientResult"') : '')
+	. ($ev_post_result ? div($ev_post_result,'','id="postVisitorResult"') : '')
+	. ($delete_visitor_result ? div($delete_visitor_result,'','id="deleteVisitorResult"') : '')
+	. ($override_result ? div($override_result,'','id="overrideClientResult"') : '')
 	. div($entry_form,'','id="enterClientForm"')
-	. oline($entries);
+	. $entry_visitor_form
+	// comment out line below to not display recent entries
+	. oline() . $entries
+;
 out($out);
 page_close();
 

@@ -30,25 +30,14 @@ should be included in this distribution.
 </LICENSE>
 */
 
-/*
- * This file is for core AGENCY functions.
- * 
- * There are probably things in io.php and elsewhere that should be moved here.
- */
-
-function is_enabled( $feature ) {
-	switch ($feature) {
-		// Features can be disabled here
-		// FIXME:  This should be moved to a config file
-
-		case 'some_disabled_feature' :
-		case 'bar' :
-		case 'residence_own' :
-		case 'entry_visitor' :
-			return false;
-		default :
-			return true;
-	}
-}
+$engine['entry_visitor'] = array(
+				 'singular'=>'Visitor Entry',
+				 'plural'=>'Visitor Entries',
+				 'fields' => array(
+							 'visiting_who'=> array(
+										    'data_type'=>'staff'
+										    )
+							 )
+				 );
 
 ?>
