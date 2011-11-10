@@ -232,3 +232,11 @@ $(function() {
 		}
 	});
 });
+
+$(function() {
+/* Toggle visitor form on entry page */
+	$("#enterVisitorLink").click( function (event) {
+		event.preventDefault();
+		$("#enterVisitorForm").toggle("slow");
+	});
+});
