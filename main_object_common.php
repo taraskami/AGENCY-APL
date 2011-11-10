@@ -419,39 +419,7 @@ function client_reg_form()
 
 function client_photo_url( $idnum, $scale=1 )
 {
-
-	// $a = "photos/PC" . sprintf("%02d", intval($idnum/1000)) .
-
-	// Temporary hack to get all photo links to be drawn from
-	// main agency directory.  (i.e., /var/www/html/agency/photos..
-	// rather than photos.. from wherever cvs is checked out to.
-	// Immediate need for this is because CVS, at least by default,
-	// doesn't seem to preserve symbolic links.  There's really no
-	// harm to this anyway, except it depends on the photos being
-	// there!
-      global $AG_CLIENT_PHOTO_BY_FILE,$AG_CLIENT_PHOTO_BY_URL,$AG_DEMO_MODE,$AG_IMAGES;
-
-      $http = $AG_CLIENT_PHOTO_BY_URL;
-      $file = $AG_CLIENT_PHOTO_BY_FILE;
-	$path = "pc" . substr("0". intval($idnum/1000),-2) .  "/$idnum";
-	$ext = "jpg";
-	$thumb = "120x160";
-	if ($AG_DEMO_MODE)
-	{
-		return $AG_CLIENT_PHOTO_BY_URL.'/demo_photo.jpg';
-	}
-	elseif ( ($scale<=1) && is_file("$file/$path.$thumb.$ext" ))
-	{
-		return "$http/$path.$thumb.$ext";
-	}
-	if (is_file("$file/$path.$ext"))
-	{
-		return "$http/$path.$ext";
-	}
-	else
-	{
-		return $AG_IMAGES['NO_PHOTO'];
-	}
+	return object_photo_url($idnum,AG_MAIN_OBJECT_DB,$scale);
 }
 
 function client_photo_filename( $idnum,$ver="FULL",$timestamp="" )

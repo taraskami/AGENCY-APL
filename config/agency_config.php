@@ -196,6 +196,7 @@ array(
 	'ORGANIZATION_LOGO_MEDIUM' => 'images/organization_logo_medium.png',
 	'ORGANIZATION_LOGO_SMALL' => 'images/organization_logo_small.png',
 	'NO_PHOTO' => 'images/no_photo.jpg',
+	'DEMO_PHOTO' => 'images/demo_photo.jpg',
 	//js buttons
 	'JS_HIDE'=>$off.'images/hide_button.png',
 	'JS_SHOW'=>$off.'images/show_button.png',

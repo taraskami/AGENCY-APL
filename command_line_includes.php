@@ -119,6 +119,7 @@ include $off . 'reference.php';
 include $off . 'local.php';
 include $off . 'token.php';
 include $off . 'email.php';
+include $off . 'photo.php';
 
 /* read configuration */
 include $off . AG_CONFIG_DIR . '/agency_config.php';
