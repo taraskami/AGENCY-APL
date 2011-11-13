@@ -1914,14 +1914,6 @@ function get_flag($filename)
     return($ret);
 }
 
-function delete_file($file)
-{
-    if (file_exists($file))
-    {
-        return unlink($file);
-    }
-}
-
 function dig2( $int )
 {
 	// return a 2 digit number, either padded with 0 or truncated
