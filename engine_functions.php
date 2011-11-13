@@ -2208,7 +2208,9 @@ function form_generic($rec,$def,$control)
 function system_fields_f($rec,$def,$control,&$JAVA_ENGINE=NULL) {
 
 	$action=$control['action'];
-	$actions[]='added';
+	if ( $rec['added_at'] or $rec['added_by']) {
+		$actions[]='added';
+	}
 	if (!( ($rec['changed_at']==$rec['added_at']) and ($rec['changed_by']==$rec['added_by']))) {
 		$actions[]='changed';
 	}
