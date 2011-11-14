@@ -1482,7 +1482,7 @@ function blank_generic(&$def, &$rec_init,&$control)
       return $rec;
 }
 
-function value_generic($value,$def,$key,$action,$do_formatting=true)
+function value_generic($value,$def,$key,$action,$do_formatting=true,$rec=array())
 {
 	global $engine;
       $field=$def['fields'][$key];

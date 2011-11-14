@@ -657,7 +657,7 @@ function show_query_row_generic($fields,$position,$rec,$control,$def,$control_ar
 			$value = $def['fields'][$key] 
 				? eval('return '.$def['fields'][$key]['value_list'].';')
 				: $x;
-			$out .= cell(value_generic($value,$def,$key,'list'),'class="generalData1"');
+			$out .= cell(value_generic($value,$def,$key,'list',true,$rec),'class="generalData1"');
 
 		}
 
