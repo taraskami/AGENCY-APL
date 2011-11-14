@@ -248,7 +248,9 @@ function client_show( $id )
  		: smaller(jump_to_object_link('income'));
 	$out .= row(rightcell('Monthly Income'. html_no_print(oline().$jump_add)). leftcell($inc));
 	// Balances
-//	$out .= row(rightcell('Outstanding Balances').leftcell(balance_by_project($id)));
+	if (is_enabled('charge_and_payment') and ($bal=balance_by_project($id))) {
+		$out .= row(rightcell('Outstanding Balances').leftcell($bal));
+	}
 	// Basic Info
 	$out .= row( rightcell(oline('Date of Birth')
 				     . 'Gender, Ethnicity, SS, Vet Status')
