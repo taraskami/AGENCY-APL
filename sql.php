@@ -149,11 +149,13 @@ function sql_true( $bool="generate" )
 	switch (strtolower($bool))
     {
 	      case 't' :
+	      case 'true' :
 	      case 'y' :
 	      case 'on' :
               case '1' :
 		    return true;
 	      case 'f' :
+	      case 'false' :
 	      case 'n' :
 	      case 'off' :
               case '0' :
@@ -174,6 +176,7 @@ function sql_false( $bool="generate" )
 // if used w/o argument, generate a true for use in inserts,updates,etc.
 	switch (strtolower($bool))
 	      {
+	      case 'false' :
 	      case 'f' :
 	      case 'n' :
 	      case 'off' :
@@ -182,6 +185,7 @@ function sql_false( $bool="generate" )
 	      case 't' :
 	      case 'y' :
 	      case 'on' :
+	      case 'true' :
               case '1' :
 		    return false;
 	      case '' :
