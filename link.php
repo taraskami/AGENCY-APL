@@ -234,12 +234,13 @@ function httplink( $httpurl, $text )
     return ($hlink("http://" . urlencode("$httpurl"), $text ) );
 }
 
-function httpimage( $url, $width, $height, $border=0, $options="" )
+function httpimage( $url, $width=NULL, $height=NULL, $border=0, $options="" )
 {
-    return "<img src=\"" . $url .
-    "\" border=\"$border\" height=\"$height\" width=\"$width\""
+    return '<img src="'.$url .'" border="'.$border.'" '
+		. (($height===NULL) ? '' : 'height="'.$height.'" ')
+		. (($width===NULL)  ? '' : 'width="'.$width.'" ')
 	. ($options ? " $options" : "")
-	.  " />";
+	.  ' />';
 }
 
 function link_style_sheet($file,$media='screen',$opts='')
