@@ -61,7 +61,7 @@ $engine['charge'] = array(
 		'comment'=>array(
 			'is_html'=>true,
 			'value_list'=> 'sql_true($rec["is_void"]) ? strike($x) : $x',
-			'value_format_list' => 'smaller($x)'),
+            'value_format_list' => 'smaller(sql_true($rec["is_void"]) ? httpimage($GLOBALS["AG_IMAGES"]["RECORD_VOIDED"],30,30,0) .$x : $x)'),
 			'effective_date'=>array('default'=>'NOW'),
 			'subsidy_type_code'=>array('comment'=>'Leave blank, except for subsidy charges',
 			'row_before'=>'bigger(bold("Subsidy Information"))'),
