@@ -45,6 +45,7 @@ function is_enabled( $feature ) {
 		case 'bar' :
 		case 'residence_own' :
 		case 'entry_visitor' :
+		case 'charge_and_payment' :
 			return false;
 		default :
 			return true;
