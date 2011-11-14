@@ -1641,7 +1641,7 @@ function label_generic($key,$def,$action,$do_formatting=true)
 	}
  
       //FORMAT LABEL
-	if ( ($action=='add'||$action=='edit') and !$field['null_ok'] ) {
+	if ( ($GLOBALS['engine']['actions'][$action]=='write')  and (!$field['null_ok']) ) {
 		$req =' '.red('*');
 	}
 
@@ -1696,7 +1696,7 @@ function data_dictionary($object=NULL,$field=NULL) {
 function view_generic($rec,$def,$action,$control='',$control_array_variable='control')
 {
       global $colors,$Java_Engine;
-      $control=unserialize_control($control);
+      $control=$control ? unserialize_control($control) : array('action'=>$action);
       if (isset($control['list']['fields'])) {
 	    $list_links=right(bold(view_generic_links($control,$def,$control_array_variable)));
       }
@@ -4025,7 +4025,7 @@ function update_engine_control($noexists=false)
 						orr($_REQUEST['UPDATE_ENGINE_OBJECT'],
 						$_SESSION['UPDATE_ENGINE_OBJECT'])==$table);
 	}
-	uksort($update_list);
+	ksort($update_list);
 	$update_list = $update_head . implode('',$update_list)
 					 . selectend() . oline() . button('update!') . formend();
 	return ( ($noexists or has_perm('update_engine,admin','RW'))
