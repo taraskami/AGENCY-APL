@@ -141,6 +141,7 @@ $engine['income']=array(
 															     'Certification Type required for Income Certifications')
 													  ),
 						    'rent_amount_tenant'=>array(
+										 'data_type'=>'currency',
 										 'comment'=>'Required for Housing Cert.',
 										 'valid'=>array(
 												    'sql_false($rec["is_income_certification"]) || !be_null($x)'=>
@@ -156,8 +157,7 @@ $engine['income']=array(
 														'sql_false($rec["is_income_certification"]) || !be_null($x)'=>
 														'{$Y} required for Income Certifications')),
 						    'rent_date_end'=>array('data_type'=>'date'),
-						    'annual_income'=>array(
-										   'data_type'=>'currency'),
+						    'annual_income'=>array( 'data_type'=>'currency'),
 						    'housing_unit_code'=>array(
 											 'comment'=>'Required for Housing Cert.',
 											 'data_type'=>'lookup',
@@ -180,6 +180,7 @@ $engine['income']=array(
 													 =>'Fund Type required ONLY for Scattered Site')
 										    ),
 						    'rent_amount_total'=>array(
+										 	'data_type'=>'currency',
 										    'comment'=>'(Only for Scattered Site)',
 										    'valid'=>array('(be_null($x) && (strpos($rec["housing_unit_code"],"S")===false))
 													 ||(!be_null($x) && !(strpos($rec["housing_unit_code"],"S")===false))'
