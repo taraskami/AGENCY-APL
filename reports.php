@@ -222,6 +222,11 @@ function report_generate($report)
 		$pattern_replace['$'.$name.'_label'] = $label;
 		$pattern_replace_header['$'.$name.'_label'] = $label;
 	}
+	
+	foreach( report_system_variables() as $k=>$v) {
+		$pattern_replace['$'.$k ]=$v;
+		$pattern_replace_header['$'.$k ]=$v;
+	}
 
 	// sort longest to shortest keys so, for example, "date_end" is replaced before "date"
 	uksort($pattern_replace,'strlen_cmp');
@@ -301,6 +306,19 @@ function report_generate($report)
 	default:
 	}
 	return report_generate_openoffice($report,$template);
+}
+
+function report_system_variables() {
+// Fixme, I wanted this is agency_config.php, but the UID info not available before it is included.
+	$sys_vars = array(
+		'today'=>dateof('now'),
+		'now'=>timeof('now'),
+		'UID'=>$GLOBALS['UID'],
+		'UID_NAME'=>staff_name($GLOBALS['UID']),
+		'org'=>org_name('short'),
+		'org_label'=>org_name());
+	uksort($sys_vars, 'strlen_cmp');
+	return $sys_vars;
 }
 
 function report_generate_openoffice($report,$template)

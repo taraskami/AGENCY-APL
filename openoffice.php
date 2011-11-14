@@ -498,12 +498,7 @@ function oowriter_merge( $data_recs, $template, $data_eval="",$file_replace="",$
 	}
 
 	global $UID;
-	$sys_vars=array('now'      => dateof('now') . ' ' . timeof('now'),
-			    'today'    => dateof('now'),
-			    'UID_NAME' => staff_name($UID),
-			    'UID'      => $UID
-			    );
-
+	$sys_vars=report_system_variables();
 	$new_full= $head . $new_contents . $tail;
 	foreach( $sys_vars AS $key=>$value ) {
 
