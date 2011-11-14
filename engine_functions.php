@@ -1702,11 +1702,15 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
       }
       $fields=$def['fields'];
 	  $object=$def['object'];
+	  $system = system_fields_f($rec,$def,$control,$message);
       $out = tablestart('','class="engineForm"');
       $out .= ($list_links) 
 	    ? row(cell($list_links,'colspan="2"'),'class="listHeader"')
 	    : '';
 	  $data_dict = data_dictionary($object,NULL);
+      $out .= $message
+			? row(cell(bigger(bold($message),3),'class="systemField" colspan="2"'))
+			: '';
 	  $out .= $data_dict 
 			? row(cell(div($data_dict . toggle_label("Data dictionary for $object"),'','class="hiddenDetail"'),'colspan=2'))
 			: '';
@@ -1756,7 +1760,6 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 		  }
 	    }
       }
-	  $system = system_fields_f($rec,$def,$control);
       $out .= row(cell($system,'class="systemField" colspan="2"'));
       $out .= tableend();
 		// TACK ON MULTI RECORDS
@@ -2190,7 +2193,8 @@ function form_generic($rec,$def,$control)
 			$out .= $def['fn']['form_row']($key,$value,$def,$control,$Java_Engine,$rec);
 		}
       }
-	  $system=system_fields_f($rec,$def,$control,$JAVA_ENGINE);
+	  $system=system_fields_f($rec,$def,$control,$dummy,$JAVA_ENGINE);
+
       $out .= row(cell($system,'class="systemField" colspan="2"'));
 	  $out .= tableend();
 		if ($multi_out) {
@@ -2204,8 +2208,7 @@ function form_generic($rec,$def,$control)
 		$GLOBALS['AG_HEAD_TAG'].=$Java_Engine->get_javascript();
 		return $out;
 }
-
-function system_fields_f($rec,$def,$control,&$JAVA_ENGINE=NULL) {
+function system_fields_f($rec,$def,$control,&$important_header='',&$JAVA_ENGINE=NULL,$skip_view_links=false) {
 
 	$action=$control['action'];
 	if ( $rec['added_at'] or $rec['added_by']) {
@@ -2217,13 +2220,25 @@ function system_fields_f($rec,$def,$control,&$JAVA_ENGINE=NULL) {
 	if (sql_true($rec['is_deleted'])) {
 		$actions[]='deleted';
 	}
+	if (sql_true($rec['is_void'])) {
+		$actions[]='voided';
+	}
 	foreach( $actions as $act) {
-		$system .= oline(smaller(ucfirst($act) 
+		$line = ucfirst($act) 
 				. ' by ' .value_generic($rec[$act.'_by'],$def,$act.'_by',$action)
 				. ', at ' .blue(value_generic($rec[$act.'_at'],$def,$act.'_at',$action))
-				.'.'
-				));
+				.'.' ;
+		switch($act) {
+			case 'deleted' :
+				$com_field='deleted_comment';
+			case 'voided' :
+				$com_field=orr($com_field,'void_comment');
+				$line = bigger(bold($line)) . ' ' . div($rec[$com_field].toggle_label('show comment'),'','class="hiddenDetail"');
+				$important_header .= httpimage($GLOBALS['AG_IMAGES'][strtoupper('record_'.$act)],70,70,0) . span($line,'class="middleText"');
+		}
+		$system[]=$line;
 	}
+	$system=smaller(implode(oline(),$system));
 	if ((in_array($action,array('add','edit'))) and has_perm('system_log_field','W')) {
 		if (!be_null($rec['sys_log'])) {
 			$ex_class=' hiddenDetailShow';
@@ -2241,13 +2256,14 @@ function system_fields_f($rec,$def,$control,&$JAVA_ENGINE=NULL) {
 	if (!be_null($current) and has_perm('system_log_field')) {
 		$sys_log = div(smaller(oline(value_generic($current,$def,'sys_log',$action))).$sys_log.toggle_label('Show system log...'),'','class="hiddenDetail' . $ex_class .'"');
 	}
-	$system .= orr($sys_log,oline());
+	$system .= $sys_log ? (oline() . $sys_log) : '';
 
 	// Links to def array, and config file
-	if (has_perm('config_file,def_array')) {
+	if ((!$skip_view_links) and has_perm('config_file,def_array')) {
 		$system .= right(smaller('View ' . elink('config_file',$def['object'],'config file','target="_blank"')
 			. ' or ' . elink('def_array',$def['object'],'def array','target="_blank"') . ' for ' . $def['object']));
-	}
+	}	
+
 	return $system;
 }
 
@@ -2852,15 +2868,34 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
       return $NEW_REC;
 }
 
-function delete_generic($filter,$def,$delete_comment='')
+function delete_void_generic($filter,$def,$action,&$message,$stamp_rec=array())
 {
-	$stamp_rec['is_deleted']=sql_true();
-	$stamp_rec['deleted_by']=$GLOBALS['UID'];
-	$stamp_rec['FIELD:deleted_at']='CURRENT_TIMESTAMP';
-	$stamp_rec['deleted_comment']=$delete_comment;
-	if ($def['child_records']) {
+	// Munging delete and void here, as they do basically the same thing
+	if ($action=='delete') {
+		$bool_field='is_deleted';
+		$who_field='deleted_by';
+		$when_field='deleted_at';
+		$com_field='deleted_comment';
+	} elseif ($action='void') {
+		$bool_field='is_void';
+		$who_field='voided_by';
+		$when_field='voided_at';
+		$com_field='void_comment';
+	} else {
+		$message .= 'delete_void_generic expecting action of delete or void, got '.$action;
+		return false;
+	}
+
+	$stamp_rec[$bool_field]=sql_true();
+	$stamp_rec[$who_field]=$GLOBALS['UID'];
+	if (isset($when_field)) {
+		unset($stamp_rec[$when_field]);
+	}
+	$stamp_rec['FIELD:'.$when_field]='CURRENT_TIMESTAMP';
+	if ($def['child_records'] and ($action=='delete')) {
+		// Not sure how this would apply to voids, skipping for now
 		$stamp_rec_child=$stamp_rec;
-		$stamp_rec_child['deleted_comment'] .= ' (Auto-deleting child records.)';
+		$stamp_rec_child[$com_field] .= ' (Auto-deleting child records.)';
 		$del_recs=get_generic($filter,'','',$def);
 		while ($del_rec=array_shift($del_recs)) {
 			$ids[]=$del_rec[$def['id_field']];
@@ -2901,7 +2936,7 @@ outline(read_filter($c_filter));
 		}
 	}	
 	$table=orr($def['table_post'],$def['table']);
-	if ($def['stamp_deletes']) {
+	if ($def['stamp_deletes'] or ($action=='void')) {
 		$res = agency_query(sql_update($table,$stamp_rec,$filter));
 	} else {
 		$res = agency_query(sql_delete($table,$filter));
@@ -3064,12 +3099,7 @@ function title_generic($action,$rec,$def)
       $out = oline($b
 			 ? eval('return ' . $b. ';')
 			 : bigger(bold($x)))
-		. $required_note
-		. (sql_true($rec['is_deleted'])
-			? $GLOBALS['NL'] . italic(bold(red('(this record was deleted by '
-				. staff_link($rec['deleted_by']) . ' at ' . datetimeof($rec['deleted_at'],'US') 
-				. $GLOBALS['NL'] . ' with this comment: ' . underline($rec['deleted_comment']) . ')')))
-		   : '');
+		. $required_note;
 	return $out;
 }
 

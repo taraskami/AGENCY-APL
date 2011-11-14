@@ -193,10 +193,13 @@ array(
 	'TABLE_VERT' => $off.'images/table_vert.png',
 	'AGENCY_LOGO_SMALL' => $off.'images/agency_logo_small.png',
 	'AGENCY_LOGO_MEDIUM' => $off.'images/agency_logo_medium.png',
-	'ORGANIZATION_LOGO_MEDIUM' => 'images/organization_logo_medium.png',
-	'ORGANIZATION_LOGO_SMALL' => 'images/organization_logo_small.png',
-	'NO_PHOTO' => 'images/no_photo.jpg',
-	'DEMO_PHOTO' => 'images/demo_photo.jpg',
+	'ORGANIZATION_LOGO_MEDIUM' => $off.'images/organization_logo_medium.png',
+	'ORGANIZATION_LOGO_SMALL' => $off.'images/organization_logo_small.png',
+	'NO_PHOTO' => $off.'images/no_photo.jpg',
+	'DEMO_PHOTO' => $off.'images/demo_photo.jpg',
+	'RECORD_VOIDED' => $off.'images/record_voided.png',
+	'RECORD_DELETED' => $off.'images/record_deleted.png',
+
 	//js buttons
 	'JS_HIDE'=>$off.'images/hide_button.png',
 	'JS_SHOW'=>$off.'images/show_button.png',

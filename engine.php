@@ -116,7 +116,7 @@ function engine($control='',$control_array_variable='control')
 	 * $action must be checked prior to calling is_protected_generic or an error will
 	 * be thrown on adds.
 	 */
-	if ( in_array($action,array('clone','edit','delete')) and is_protected_generic($object,$id) ) {
+	if ( in_array($action,array('clone','edit','delete','void')) and is_protected_generic($object,$id) ) {
 		return array('message'=>oline('Protected Record'));
 	}
 
@@ -147,7 +147,7 @@ function engine($control='',$control_array_variable='control')
       $any_perm        = $def['perm_'.$action]=='any';
       $read_perm       = engine_perm($control,'R') or $super_perm or $any_perm;
       $write_perm      = engine_perm($control,'W') or $any_perm or $super_perm;
-
+	  $void_perm	   = has_perm('void','W') and $write_perm;
 	/*
 	 * Multi-records
 	 */
@@ -177,6 +177,7 @@ function engine($control='',$control_array_variable='control')
       $edit_text        = $text_options['edit_text'];
       $clone_text       = $text_options['clone_text'];
       $delete_text      = $text_options['delete_text'];
+      $void_text        = $text_options['void_text'];
 	$view_text        = $text_options['view_text'];
       $post_text        = $text_options['post'];
       $add_another_text = $text_options['add_another'];
@@ -217,9 +218,10 @@ function engine($control='',$control_array_variable='control')
 	/*
 	 * Allow add,edit and delete flags
 	 */
-      $allow_add    = orr($def['allow_add'],$super_user_perm);
-      $allow_edit   = orr($def['allow_edit'],$super_user_perm);
-      $allow_delete = orr($def['allow_delete'],$super_user_perm);
+	$allow_add    = orr($def['allow_add'],$super_user_perm);
+	$allow_edit   = orr($def['allow_edit'],$super_user_perm);
+	$allow_delete = orr($def['allow_delete'],$super_user_perm);
+	$allow_void   = $allow_edit and has_perm('void','W');
 
 	/*
 	 * Process form $rec and $REC
@@ -788,15 +790,29 @@ function engine($control='',$control_array_variable='control')
 								    'format' => 'data',
 								    'list'   => unserialize(urldecode(stripslashes($list)))
 								    );
+				$void_control_array=array('action' => 'void',
+								    'object' => $object,
+								    'id'     => $id,
+								    'page'   => 'display.php',
+								    'format' => 'data',
+								    'list'   => unserialize(urldecode(stripslashes($list)))
+								    );
 
 				if ( ($format=='data') or ($def['fn']['view'] == $engine['functions']['view']) ) {
 					if (be_null($def['object_union'])) {
 						/*
 						 * Normal record view
 						 */
-						$links = oline(link_engine($edit_control_array,$edit_text));
-						$links .= oline(link_engine($clone_control_array,$clone_text));
-						$links .= link_engine($delete_control_array,$delete_text);
+						$is_void = sql_true($REC['is_void']);
+						$is_deleted = sql_true($REC['is_deleted']);
+						$is_voidable  = (!($is_void or $is_deleted) and array_key_exists('is_void',$REC));
+						$links = ($is_void or $is_deleted) ? '' : oline(link_engine($edit_control_array,$edit_text));
+						$links .= ($is_void or $is_deleted) ? '' : oline(link_engine($clone_control_array,$clone_text));
+						$links .= $is_deleted ? '' : link_engine($delete_control_array,$delete_text);
+						$links .= $is_voidable
+								  ? oline() . link_engine($void_control_array,$void_text)
+								  : '';
+
 					} else {
 
 						/*
@@ -911,44 +927,75 @@ function engine($control='',$control_array_variable='control')
 
 		break;
 	
+		$com_field=$bool_field=$verb='';
       case 'delete' :
+		$com_field='deleted_comment';
+		$bool_field='is_deleted';
+		$verb = 'deleted';
+		// fall through
+	  case 'void'   :
+		if ($action=='void') {
+			// Awkward!
+			$com_field='void_comment';
+			$bool_field='is_void';
+			$verb='voided';
+		}
+		$reason_code_field=$action.'_reason_code';
+		$title = oline($def['fn']['title']($action,$REC,$def));
+		if ($def['require_'.$com_field]) {
+			$def['fields'][$com_field]['null_ok']=false;
+		}
+		if ($def['require_'.$action.'_reason']) {
+			$def['fields'][$reason_code_field]['null_ok']=false;
+		}
+		if (sql_true($REC[$bool_field])) {
+			$message .= oline(ucfirst($object).' #'.$id.' has already been ' . $verb);
+			break;
+		}
 		if (!$write_perm) {
 			$message .= oline("You aren't allowed to $action $object records. Contact your system administrator");
 			break;
 		}
-		if (!$allow_delete) {
-			$message .= oline('This record cannot be deleted.');
+		$allow_var = 'allow_' . $action;
+		if (!$$allow_var) {
+			$message .= oline('This record cannot be ' . $action . 'ed.');
 			break;
 		}
 
 		$filter = array($def['id_field']=>$id);
 		$REC = sql_to_php_generic(array_shift(get_generic($filter,'','',$def)),$def);
-		if ($step=='confirm_pass' || $step=='delete_confirmed') { //foil fakers trying to bypass password
-			if ($passed_password && (!be_null(trim($_REQUEST['delete_comment'])) || !$def['require_delete_comment'] )) {
-				$step='delete_confirmed';
+		$act_record=$_REQUEST[$action];
+		foreach ($act_record as $k=>$v) {
+			$act_record[$k]=dewebify($v);
+		}
+		if ($step=='confirm_pass' || ($step==($action.'_confirmed'))) { //foil fakers trying to bypass password
+			if ($passed_password && (valid_generic($act_record,$def,$message,$action))) {
+				$step=$action.'_confirmed';
 			} else {
 				$message .= (!$passed_password ? oline(red('Incorrect password for ' . staff_link($GLOBALS['UID']) ) ) : '');
-				$message .= ($def['require_delete_comment'] && be_null(trim($_REQUEST['delete_comment']))) 
-					? oline(red('A comment is required to delete this record.')) : '';
 				$step = 'confirm';
 			}
 		}
-		if ($step != 'delete_confirmed') {
+		if ($step != ($action.'_confirmed')) {
 			//PASS CONTROL ARRAY VARIABLES IN FORM
 			foreach ($CONTROL_PASS as $key) {
 				if ($key != 'action') { //this is set below
 					$out_control .= hiddenvar($control_array_variable.'['.$key.']',$$key);
 				}
 			}
-			$message .= 'Are you sure you want to delete this record?'
+			if (array_key_exists($com_field,$REC)) { $comment=$act_record[$com_field]; }
+			if (array_key_exists($reason_code_field,$REC)) { $reason=$act_record[$reason_code_field]; }
+			$message .= 'Are you sure you want to '.$action.' this record?'
 				. formto('','',$require_password ? $AG_AUTH->get_onsubmit('') : '') 
 				. hiddenvar($control_array_variable.'[step]','confirm_pass') 
-				. hiddenvar($control_array_variable.'[action]','delete')
+				. hiddenvar($control_array_variable.'[action]',$action)
 				. $out_control
 				. tablestart_blank()
-				. ($def['require_delete_comment'] 
-				   ? rowrlcell('Deletion Comment ('.red('*').')',formvartext('delete_comment',$_REQUEST['delete_comment']))
-				   :'')
+				. hiddenvar($action.'['.$bool_field.']',true)
+				. form_generic_row( $com_field,$comment,$def,$control,$dummy,$act_record,$action)
+				. (array_key_exists(($key=$action.'_reason_code'),$REC)
+					? rowrlcell(label_generic($key,$def,$action),form_field_generic($key,$reason,$def,$control,$dummy,$action))
+					: '')
 				. (($require_password) 
 				   ? rowrlcell(red('Enter password for '.staff_link($GLOBALS['UID']).' to confirm '.$action ),
 						   $AG_AUTH->get_password_field())
@@ -964,21 +1011,22 @@ function engine($control='',$control_array_variable='control')
 				. tableend();
 
 			// attempt to create a meaningful list
+			// I think this is safe to use for void too
 			if (be_null($control['list']) && $filter = engine_delete_filter($REC,$def)) {
 				$message .= form_encode($filter,$control_array_variable.'[list][filter]');
 			}
 
 			$message .= formend();
 
-			$output .= $def['fn']['view']($REC,$def,$action);
+			$output .= oline() . $def['fn']['view']($REC,$def,'view');
 
 		} else {
 			$control['step']='';
 
-			$res = $def['fn']['delete']($filter,$def,$_REQUEST['delete_comment']);
+			$res = $def['fn'][$action]($filter,$def,$action,$message,$act_record);
 			$message .= oline($res ?
-						'Record '.$id.' successfully deleted from '.$def['table'].'.'
-						: 'Error.  Record not deleted.');
+						'Record '.$id.' successfully ' .$action .'ed from '.$def['table'].'.'
+						: 'Error.  Record not ' .$action.'ed.');
 			/* generate a list of records as fall-through */
 			if ($list = $control['list']) {
 				$list['fields']=$def['list_fields'];

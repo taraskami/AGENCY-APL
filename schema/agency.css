@@ -90,7 +90,8 @@ div.hiddenDetail { font-size: 70%; background-color: #FFDDDD; display: none; }
 
 .generalTable { background-color: #ffffee; }
 
-.systemField { background-color: #eee; }
+.systemField { background-color: #eee; 
+				vertical-align: middle; }
 
 .agencyHelp { background-color: #ccedff; 
 	border: solid 1px black;
@@ -411,3 +412,5 @@ div#postVisitorResult {
 #enterVisitorLink {
 	font-size: 200%;
 }
+
+.middleText { vertical-align: middle; }

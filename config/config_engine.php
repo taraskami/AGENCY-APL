@@ -40,6 +40,7 @@ $engine['text_options'] = array(
 				'edit_text' => 'Edit this Record',
 				'clone_text' => 'Clone this Record',
 				'delete_text' => 'Delete this Record',
+				'void_text'=>'Void this record',
 				'view_text'=> 'View/Edit Data Record',
 				'add_another' => 'Post Record and Add Another',
 				'post' => 'Post Record',
@@ -52,6 +53,7 @@ $engine['no_record_flag']='5c22e4e1cf08b4a7862bff8079a1c53d';
 $engine['actions']=array('add' => 'write',
 			 'edit' => 'write',
 			 'delete' => 'write',
+			 'void' => 'write',
 			 'view' => 'read',
 			 'list' => 'read',
 			 'download' => 'read');
@@ -151,6 +153,9 @@ $engine['global_default'] = array(
 				  'prepend_finished_add_eval' => null, //evaluate code and prepend result to finished view
 				  'rec_init_from_previous'=>null,      //if true, this will fill in the form with the clients last record
 				  'require_delete_comment' => true,    //will force a comment to be entered when deleting a record
+				  'require_delete_reason' => true,   // only if delete_reason_code exists in table
+				  'require_void_comment' => true,    //will force a comment to be entered when voiding a record
+				  'require_void_reason' => true,   // only if void_reason_code exists in table
 				  'require_password' => true,
 				  'sel_sql' => null,
 
@@ -171,6 +176,7 @@ $engine['global_default'] = array(
 				  'widget'=>null, //hook for widget functionality -> see widget.php for more details
 				  'allow_add' => false,
 				  'allow_delete' => false,
+				  'allow_void' => false,
 				  'allow_edit' => false,
 				  'allow_list' => true,
 				  'allow_view' => true,
@@ -245,6 +251,7 @@ $engine['virtual_field_options'] = array( //set options here for virtual (config
 					   'post_add'=>false,
 					   'post_edit'=>false,
 					   'post_delete'=>false,
+					   'post_void'=>false,
 					   'display_add'=>'hide',
 					   'display_edit'=>'hide',
 					   'display_delete'=>'hide',
@@ -255,6 +262,7 @@ $engine['view_only_field_options'] = array( //set options here for fields that a
 					   'post_add'=>false,
 					   'post_edit'=>false,
 					   'post_delete'=>false,
+					   'post_void'=>false,
 					   'display_add'=>'hide',
 					   'display_edit'=>'hide',
 					   'display_delete'=>'hide',
@@ -264,7 +272,8 @@ $engine['functions']=array(
 			   'add_fields' => 'add_fields_generic',
 			   'auto_close' => 'auto_close_generic',
 			   'cancel_url' => 'cancel_url_generic',
-			   'delete' => 'delete_generic',
+			   'delete' => 'delete_void_generic',
+			   'void' => 'delete_void_generic',
 			   'form' => 'form_generic',
 			   'form_row' => 'form_generic_row',
 			   'view' => 'view_generic',
@@ -345,6 +354,8 @@ $engine['data_types'] = array(
 			      );
 			      //everything else is unknown
 $engine['system_fields'] = array(
+//FIXME: I think all the 'display_*' vars could be removed from
+//       these system field arrays, as the are handled by system_fields_f
 				 'deleted_by' => array(
 						       'system_field' => true,
 						       'data_type' => 'staff',
@@ -358,6 +369,7 @@ $engine['system_fields'] = array(
 						       'post_add' => false,
 						       'post_edit' => false,
 						       'post_delete' => true,
+						       'post_void' => false,
 						       'label' => 'Record Deleted By'
 // 						       'value_delete' => '$GLOBALS["UID"]'
 						       ),
@@ -372,6 +384,7 @@ $engine['system_fields'] = array(
 						       'post_add' => false,
 						       'post_edit' => false,
 						       'post_delete' => true,
+						       'post_void' => false,
 						       'null_ok' => true,
 						       'label' => 'Record Deleted At'
 						       ),
@@ -386,6 +399,7 @@ $engine['system_fields'] = array(
 						       'post_add' => false,
 						       'post_edit' => false,
 						       'post_delete' => true,
+						       'post_void' => false,
 						       'label' => 'Record Deleted'
 						       ),
 				 'deleted_comment' => array(
@@ -399,8 +413,70 @@ $engine['system_fields'] = array(
 							    'post_add' => false,
 							    'post_edit' => false,
 							    'post_delete' => true,
+						        'post_void' => false,
 							    'null_ok' => true,
 							    'label' => 'Deleted Comment'
+							    ),
+				 'voided_by' => array(
+						       'system_field' => true,
+						       'data_type' => 'staff',
+						       'display_add' => 'hide',
+						       'display_edit' => 'hide',
+						       'display_delete' => 'display',
+						       'display_view' => 'hide',
+						       'display_list' => 'hide',
+						       'null_ok' => true,
+						       'default' => '$GLOBALS["UID"]',
+						       'post_add' => false,
+						       'post_edit' => false,
+						       'post_void' => true,
+						       'post_delete' => false,
+						       'label' => 'Record Voided By'
+// 						       'value_delete' => '$GLOBALS["UID"]'
+						       ),
+				 'voided_at' => array( 
+						       'system_field' => true,
+						       'data_type' => 'timestamp',
+						       'display_add' => 'hide',
+						       'display_edit' => 'hide',
+						       'display_delete' => 'display',
+						       'display_view' => 'hide',
+						       'display_list' => 'hide',
+						       'post_add' => false,
+						       'post_edit' => false,
+						       'post_delete' => false,
+						       'post_void' => true,
+						       'null_ok' => true,
+						       'label' => 'Record Voided At'
+						       ),
+				 'is_void' => array(
+						       'system_field' => true,
+						       'data_type' => 'boolean',
+						       'display_add' => 'hide',
+						       'display_edit' => 'hide',
+						       'display_delete' => 'hide',
+						       'display_view' => 'hide',
+						       'display_list' => 'hide',
+						       'post_add' => false,
+						       'post_edit' => false,
+						       'post_delete' => false,
+						       'post_void' => true,
+						       'label' => 'Record Voided'
+						       ),
+				 'void_comment' => array(
+							    'system_field' => true,
+							    'data_type' => 'text',
+							    'display_add' => 'hide',
+							    'display_edit' => 'hide',
+							    'display_delete' => 'regular',
+							    'display_view' => 'hide',
+							    'display_list' => 'hide',
+							    'post_add' => false,
+							    'post_edit' => false,
+							    'post_delete' => false,
+						        'post_void' => true,
+							    'null_ok' => true,
+							    'label' => 'Void Comment'
 							    ),
 				 'added_at' => array(
 						     'system_field' => true,
@@ -413,6 +489,7 @@ $engine['system_fields'] = array(
 						     'post_add' => false,
 						     'post_edit' => false,
 						     'post_delete' => false,
+					         'post_void' => true,
 						     'null_ok' => true,
 						     'label' => 'Record Added At',
 						     'label_list' => 'Added At',
@@ -481,7 +558,7 @@ $engine['action_specific_vars']=array(
 						      ),
 				      'fields'=>array(
 						      'display'=>'regular',
-						      'comment_show'=>false,
+						      'comment_show'=>true,
 						      'post'=>true,
 						      'value'=>'$x',
 						      'value_format'=>'$x',
@@ -513,7 +590,7 @@ foreach ($engine['actions'] as $tmp => $value)
       }
       else // add/edit/delete/
       {
-	    if ($tmp<>'delete')
+	    if (in_array($tmp,array('delete','void'))) 
 	    {
 		  $engine['field_default']['comment_show_'.$tmp]=true;
 	    }
