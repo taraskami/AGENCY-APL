@@ -9,10 +9,10 @@ SELECT 	residence_own.residence_own_id::text || '::residence_own'::text AS housi
 	residence_own.housing_project_code AS living_situation_code, 
 	geography_code,
 	geography_detail_code,
-    city,
-	state_code,
-    zipcode, 
-	housing_unit_code, 
+    COALESCE(h.city,hp.city) AS city,
+	COALESCE(h.state,hp.state_code) AS state_code,
+    COALESCE(h.zipcode,hp.zipcode) AS zip_code, 
+	residence_own.housing_unit_code, 
 	residence_own.residence_date, 
 	'E'::varchar AS residence_date_accuracy, 
 	residence_own.residence_date_end,
@@ -35,12 +35,12 @@ SELECT 	residence_own.residence_own_id::text || '::residence_own'::text AS housi
 	residence_own.changed_by, 
 	residence_own.sys_log
 FROM residence_own
-LEFT JOIN housing_unit h USING (housing_unit_code)
 LEFT JOIN l_housing_project hp USING (housing_project_code)
+LEFT JOIN housing_unit h USING (housing_unit_code)
 
 UNION ALL
 
-SELECT 	residence_other.residence_id::text || '::residence_other'::text AS housing_history_id,
+SELECT 	residence_other.residence_other_id::text || '::residence_other'::text AS housing_history_id,
 	residence_other.client_id, 
 	residence_other.facility_code AS living_situation_code, 
 	residence_other.geography_code, 

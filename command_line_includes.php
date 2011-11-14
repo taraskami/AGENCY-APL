@@ -132,7 +132,6 @@ switch (AG_MAIN_OBJECT_DB) {
 	 include $off . 'assessments.php';
 	 include $off . 'bars.php';
 	 include $off . 'charges.php';
-	 include $off . 'payments.php';
 	 include $off . 'crp.php';
 	 include $off . 'jail.php';
 	 include $off . 'bedgroup.php';

@@ -55,7 +55,7 @@ function post_charge_old( $charge, $system=false )
 	return $a ? true : false;
 }
 
-function void_charge( $charge_id, $comment )
+function void_charge_old( $charge_id, $comment )
 {
 	global $UID;
     	if (! has_perm('rent','W')) {
@@ -92,17 +92,6 @@ function get_charges( $filter )
 	return $def['fn']['get']($filter,'effective_date DESC','',$def);
 }
 
-function total_charges( $filter )
-{
-	if (! isset($filter['is_void']))
-	{
-		$filter['is_void']=sql_false();
-	}
-	$def = get_def('charge');
-	$result = sql_fetch_assoc(agency_query('SELECT SUM(amount) AS total FROM '.$def['table'],$filter));
-	return $result['total'];
-}
-
 function get_charges_for( $client="ALL", $filter="" )
 {
 	if ($client <> "ALL")
@@ -110,363 +99,6 @@ function get_charges_for( $client="ALL", $filter="" )
 		$filter["client_id"]=$client;
 	}
 	return get_charges( $filter );
-}
-
-// $charges is an array, need to add arguments for showing
-// voids and showing the link to the void form
-function show_charges( $charges, $format="short", $show_voids="N", $show_vbutton="N" )
-{
-// FIXME This could probably all be replaced with generic functionality...
-
-    $output = "";
-
-    if (sql_num_rows( $charges) == 0)
-    {
-            $output .= "No Charges to Display";
-    }
-    else
-    {
-        $output .= (tablestart("", "border=5"));
-        // display headers
-	    switch( $format )
-	    {
-			case ""		:
-			case "short" :
-			    $output .=header_row("Date","Type","Unit","Amount","comment");
-			    break;
-		    case "full" :
-			    $output .=header_row(
-               		    "Date",
-			    "Charge<br>Type",
-			    "Unit",
-               		    "Amount",
-	                    "comment",
-	                    "Project",
-	                    "Subsidy<br>Type",
-	                    "Period<br>Start",
-	                    "Period<br>End",
-                        "AddedBy",
-                        ($show_vbutton == "Y" ? "Void<BR>Charge" : ""));
-			    break;
-            }
-        $row = '';
-        $total = 0;
-        while ($row = sql_fetch_assoc($charges))
-        {
-			if (! sql_true($row["is_void"]))
-			{
-				$total += $row["amount"];
-         			$display_charges = TRUE;  //now we know there are charges to display
-			}
-			// it's not required to use strikethrough, but I thought it
-            // would look good.  Unfortunately, duplicating all of those
-            // cell() calls isn't pretty at all.  Maybe we should just put
-            // a big VOID to the left of voided charges?
-
-            if ($show_voids == "N" && sql_true($row["is_void"]))
-            {
-                continue;
-            }
-            elseif($show_voids == "Y" && sql_true($row["is_void"]))
-            {
-                // voided charges are displayed with strikethrough text
-                $func="strikecell";
-            }
-            else
-            {
-                // charges are shown plain jane
-                $func = "cell";
-            }
-
-            $cells = "";
-            $cells .= $func(dateof($row['effective_date']))
-                   . $func($row['charge_type_code'])
-				   . $func($row['housing_unit_code'])
-                   . $func($row['amount'])
-                   . $func(smaller(webify($row["comment"])));
-
-            if ($format=="full")
-            {
-		if (sql_true($row["is_subsidy"]) && $row["subsidy_type_code"]=="")
-		{
-			$subs_text = "subsidy";
-		}
-		else
-		{
-			$subs_text = $row["subsidy_type_code"];
-		}
-        		$poster=staff_link($row["added_by"]);
-                $cells .=
-                                    $func($row['housing_project_code']).
-                        $func($subs_text).
-                   		$func(dateof($row['period_start'])).
-                        $func(dateof($row['period_end'])).
-                        $func(smaller( oline($poster) . oline(dateof($row["added_at"])),2));
-
-            }
-            // show void button for a voided charge?
-            if ($show_vbutton == "Y" && sql_false($row['is_void']))
-            {  
-               $cells .= cell(show_void_button($row['charge_id']));
-            }
-            elseif ($show_vbutton == "Y" && sql_true($row['is_void'])) 
-            {
-               $cells .= cell(smaller("VOIDED " . dateof($row["voided_at"]) . " " 
-		. staff_link($row["voided_by"]) . ": " . $row["void_comment"],7));
-            }
-            // if show_vbutton == N, display nothing
-
-            // now wrap cells
-            $output .= row($cells);
-        }
-        $output .= row(cell(bold("Total for displayed charges: $total")
-                        ,"colspan=12")) . tableend();
-    }
-    return ($display_charges || $show_voids == "Y" 
-                ? $output : "No charges to display");
-}
-
-
-
-// display button that goes to the void form
-function show_void_button($id)
-{
-    $file = "charge_add.php";
-    $args = "?chargeid=$id&action=voidform";
-    $link = formto("charge_add.php");
-    $link .= hiddenvar("action", "voidform");
-    $link .= hiddenvar("charge_id",$id);
-    $link .= button("Void");
-    $link .= formend();
-    return  $link;
-}
-
-function show_charge_type_pick($default="")
-{
-    global $charges_type_table;
-    $sql = "SELECT charge_type_code as Value, description as Label from
-            $charges_type_table";
-    $output = selectto("charge_type_code");
-	$output .= do_pick_sql($sql, $default);
-    if (empty($default) || $default == "none")
-    {
-        $is_default="default";                
-    }
-    $output .= selectitem("none","none",$is_default);
-    $output .= selectend();    
-    return $output;
-}
-
-function show_is_subsidy_pick($default)
-{
-    if($default == "t")
-    {
-        $subsidy = $default;
-    }
-    else
-    {
-        $tenant = $default;
-    }
-    $output = selectto("is_subsidy");
-    $output .= selectitem("f", "Tenant", $tenant);
-    $output .= selectitem("t", "Subsidy", $subsidy);
-    $output .= selectend();
-    return $output;
-}
-    
-function show_charges_add_form($clientid, $unit, $project, $default="")
-{
-    // $default is the current charge a user is trying to add, but
-    // they have validation errors, so we want to redisplay their 
-	$def=get_def('charge');
-	if (is_array($default))
-    {
-        $effective_date = $default["effective_date"];
-        $type = $default["charge_type_code"];
-        $amount = $default["amount"];
-        $comment = dewebify($default["comment"]);
-        $project = $default["housing_project_code"];
-        $unit = $default["housing_unit_code"];
-        $period_start = $default["period_start"];
-        $period_end = $default["period_end"];
-        $is_subsidy = $default["is_subsidy"];
-    }
-    
-    $select_type = show_charge_type_pick($type);
-    $right = "ALIGN=RIGHT";
-    $amt_format = "SIZE=9 MAXLENGTH=9"; // attributes for text field
-    $select_is_subsidy = "Applies to:  " . show_is_subsidy_pick($is_subsidy);
-    
-    $output = "";
-    $output .= formto("charge_add.php");
-    $output .= hiddenvar("action","add");
-    $output .= hiddenvar("client_id", $clientid);
-    $output .= hiddenvar("housing_unit_code", $unit);
-    $output .= tablestart("addform","BORDER=5");
-    $output .= row(cell("Effective Date:  ") 
-                . cell(formdate("effective_date", 
-                    ($effective_date ? $effective_date : "now"))));
-    $output .= row(cell("Type:  ",$right) . cell($select_type .
-    indent($select_is_subsidy,4)));
-    // add space to convert $amount to string for display; else zero is blank
-    $output .= row(cell("Amount: \$",$right) 
-                . cell(formvartext("amount", $amount . " ", $amt_format)));
-    $output .= row(cell("Comment: ",$right . " valign=top") 
-                . cell(formtextarea("comment", $comment)));
-    $output .= row(cell("These Fields Are Set Automatically",
-                        "colspan=2 align=center"));
-    $output .= row(cell("Project:",$right)
-//                . cell(show_project_pick($project)));
-				. cell(form_field_generic('housing_project_code',$project,$def,array('action'=>'add'),$dummy)));
-//form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='rec')
-    $output .= row(cell("Unit:",$right) 
-                . cell(show_unit_pick($unit)));
-    $output .= row(cell("The Fields Below Are For Rent, Subsidy & Vacancy Charges Only",
-                        "colspan=2 align=center"));
-    $output .= row(cell("Period Start:", $right)
-                . cell(formvartext("period_start", $period_start)));
-    $output .= row(cell("Period End:", $right)
-                . cell(formvartext("period_end", $period_end)));    
-    $output .= row(cell(button("Add"),"colspan=2 align=center"));
-    $output .= tableend();
-    $output .= formend();
-    return $output;
-}
-
-// charge is an array of one charge record from the db
-function show_charges_void_form($id)
-{
-    return formto("charge_add.php")
-   		. hiddenvar("action","void")
-    	. hiddenvar("charge_id",$id)
-	    . oline(formtextarea("vcomment"))
-    	. button("Void This Charge");
-}
-
-// $charge is an array where values are set by the show_charges_add_form
-function validate_addcharge_data($charge)
-{    
-    // validate clientid, date, type, amount, comment...all required
-    global $sess_confirm_project, $sess_confirm_unit;
-    $valid_type = false;
-    $errors = "";
-    $clientid = $charge["client_id"];
-    $unit = $charge["housing_unit_code"];
-    $unit_sql = "SELECT housing_project_code FROM housing_unit WHERE housing_unit_code='$unit'";
-    // not necessarily the same as $project
-    $unit_project = sql_fetch_assoc(agency_query($unit_sql)); 
-    $unit_project_code = $unit_project["housing_project_code"];
-    $project = $charge["housing_project_code"];
-    $date = $charge["effective_date"];
-    $type = strtoupper(trim($charge["charge_type_code"]));
-    $amount = $charge["amount"];
-    $comment = $charge["comment"];   
-    $period_start = $charge["period_start"];
-    $period_end = $charge["period_end"];
-    $is_subsidy = $charge["is_subsidy"];
-        
-    if (is_client($clientid))
-    {   
-//         if (resident_id($clientid))
-//         {
-            $record = get_last_residence($clientid);
-            $res = sql_fetch_assoc($record);       
-//         }
-    }
-    else
-    {
-        $errors .= oline("Not a valid Client ID:  $clientid.");
-    }
-    
-    // housing_unit_code and project_code need to jive
-    if ($project != $unit_project_code)
-    {        
-        $errors .= oline("No such unit $unit at housing project "
-                . ($project ? $project : "none"));
-    }
-    
-    // if project or unit isn't the last_residence for the client, complain
-    if ($project != $res["housing_project_code"] && $sess_confirm_project != "Y")
-    {
-        $charge_string = "confirm_project=Y&action=add&";
-        foreach($charge as $key => $value)
-        {
-            $charge_string .= $key . "=" . $value . "&";            
-        }
-        
-        $errors .= oline(alert_mark(($project ? $project : "none") 
-                . " does not match the resident's last known project (" 
-                . ($res["housing_project_code"] ? $res["housing_project_code"] 
-                    : "none") . ")"));
-        $errors .= oline(hlink($_SERVER['PHP_SELF']."?$charge_string",
-                "Thanks for the warning.  I want to add the charge anyway"));
-    }
-    elseif ($unit != $res["housing_unit_code"] && $sess_confirm_unit != "Y")
-    {
-        $charge_string = "confirm_unit=Y&action=add&";
-        foreach($charge as $key => $value)
-        {
-            $charge_string .= $key . "=" . $value . "&";
-        }
-        
-        $errors .= oline(alert_mark("$unit does not match the resident's last "
-                . "known unit (" . ($res["housing_unit_code"] ? 
-                    $res["housing_unit_code"] : "none") . ")"));
-        $errors .= oline(hlink($_SERVER['PHP_SELF']."?$charge_string",
-                "Thanks for the warning.  I want to add the charge anyway"));
-    }
-
-    if ($date == false)
-    {
-        $errors .= oline("Not a valid effective date.");
-    }
-    
-    switch ($type) 
-    {
-        case "NONE" :
-            $errors .= oline("You must specify a charge Type.");   
-            break;
-        case "RENT" :  //rent has two checks:  is_subsidy and period start/end
-            if ($is_subsidy == "t")
-            {
-                $errors .= oline("Rents apply to tenants only.  Choose a
-                    different Charge Type or set Applies To to Tenant."); 
-            }           
-        case "SUBSIDY" :
-            // is_subidy is always true (see charge_add.php) for this type
-            if (empty($period_start) || empty($period_end))
-            {
-                $errors .= oline("Period Start and End dates are required for
-                        $type charges.");
-            }
-            break;
-        case "DAMAGE" :
-        case "KEY" :
-        case "CLEAN" :
-        case "SECURITY" :
-            if ($is_subsidy == 't')
-            {
-                $errors .= oline("Charge Type $type applies to Tenants only. 
-                   Choose a different Charge Type or set Applies To to Tenant.");
-            }
-            break;
-    }
-    
-    if (empty($comment))
-    {
-        $errors .= oline("Comments are required.");
-    }
-    
-    // verify that charge doesn't exist yet
-    // need to protect sql from quotes etc.
-    $charge["comment"] = sqlify($charge["comment"]);
-    $verify_charge = get_charges($charge);
-    if (count($verify_charge) > 0)
-    {
-        $errors .= oline("Duplicate:  charge already exists in the system.");
-    }
-        
-    return $errors;
 }
 
 // These rent functions originally in landlordd.php, brought over here
@@ -787,7 +419,7 @@ $DEBUG=true;
 				for ($cnt=0;$cnt<count($rc);$cnt++)
 				{
 					$rc=array_shift($rc);
-					void_charge($rc["charge_id"],"Original whole month charge voided: Unit transfer in same building");
+					void_charge_old($rc["charge_id"],"Original whole month charge voided: Unit transfer in same building");
 				}
 /*
 As of 11/12/03, SHA is doing traditional pro-rating, and this code is not needed:
@@ -826,7 +458,7 @@ As of 11/12/03, SHA is doing traditional pro-rating, and this code is not needed
 					$rcs=get_charges($existing_rent_filter);
 					while ($rc=array_shift($rcs))
 					{
-						void_charge($rc["charge_id"],
+						void_charge_old($rc["charge_id"],
 						'Original whole month charge voided: tranferred to other '.$GLOBALS['AG_TEXT']['ORGANIZATION'].' project');
 					}
 					// do a pro-rate based on actual days
@@ -926,7 +558,7 @@ As of 11/12/03, SHA is doing traditional prorating, and this code is not needed:
 	{
 		$orphan=array_shift($orphan_charges);
 //outline("I'm going to void this orphan charge " . dump_array($orphan));
-		void_charge($orphan["charge_id"],"Client not resident during month");
+		void_charge_old($orphan["charge_id"],"Client not resident during month");
 	}
 
 $DEBUG && 	outline(bigger(bold("Here is the final log: ")),2);
@@ -942,6 +574,7 @@ function balance_by_project($client_id) {
 
 	global $query_display;
 	//fixme: talkin' about your huge sql...perhaps this should be a db function...
+	//fixme2: this would be a piece of cake with the balance_project and balance_combined views
 	$sql = "SELECT housing_project_code,
 		subs_charge-subs_payment AS subsidy_balance,
 		non_subs_charge-non_subs_payment AS client_balance
@@ -1014,7 +647,7 @@ function balance_by_project($client_id) {
 		}
 	}
 	if (is_null($rows)) {
-		return smaller('No outstanding balances');
+		return '';
 	}
 
 	$rows .= row(rightcell('Total',$right).centercell('$'.$totals[1],$right).centercell('$'.$totals[2]));

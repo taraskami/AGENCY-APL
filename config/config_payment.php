@@ -33,41 +33,39 @@ should be included in this distribution.
 
 
 $engine['payment'] = array(
+	'add_another' => true,
 	'perm'     => 'rent,housing',
-//  'subtitle_html' => 'These records are for testing purposes only. See '.bug_link(21631). ' for more details.',
-	'valid_record' => array('(sql_false($rec["is_void"]) && be_null(orr($rec["void_reason_code"],$rec["voided_by"],$rec["void_comment"],$rec["voided_at"]))) || (sql_true($rec["is_void"]) && !be_null($rec["void_reason_code"]) && !be_null($rec["voided_by"]) && !be_null($rec["void_comment"]) && !be_null($rec["voided_at"]))' => 'All void fields must be filled in when voiding a record'),
-	'list_fields'=>array('payment_date','amount','payment_type_code','receipt'),
+	'list_fields'=>array('client_id','payment_date','amount','payment_type_code','receipt'),
 	'fields'   => array(
+		'check_from'=>array( 'comment'=>'Only for third-party checks' ),
 		'housing_project_code' => array(
 			'default'=>'EVAL: last_residence_own($rec_init["client_id"])',
 			'display_add' => 'hide'),
-	    'is_subsidy' => array('display_add' => 'hide'),
-	    'payment_type_code' => array('display_add' => 'hide'),
+		'amount'=>array( 
+			'data_type'=>'currency',
+			'value_format_list'=>'sql_true($rec["is_void"]) ? strike($x) : ((($x <0) ? red($x) : $x) . smaller(" (".link_engine(array("object"=>"payment","id"=>$rec["payment_id"],"action"=>"void")).")",2) )',
+			'total_value_list'=>'sql_true($rec["is_void"]) ? 0 : $x'),
 	    'payment_form_code' => array(
 			'valid' => array(
 				'($x == "CHECK_3P" && !be_null($rec["check_from"])) || $x != "CHECK_3P"' => 'Payment From must be filled in for 3rd-Party Checks')),
-	    'is_void' => array('display_add' => 'hide'),
-	    'void_reason_code' => array('display_add' => 'hide'),
-	    'voided_by' => array(
-			'display_add' => 'hide',
-			'value_edit' => '$GLOBALS["UID"]',
-			'valid' => array(
-				'$action == "add" || $GLOBALS["UID"] == $x' => '{$Y} must be set to current user')
-			 ),
-		'void_comment' => array( 'display_add' => 'hide'),
-	    'voided_at' => array( 'display_add' => 'hide'),
+		//FIXME: this should be handled generically as a system field:
+	    'void_reason_code' => array('display_add' => 'hide','display_edit'=>'hide'),
+		// FIXME: report ID (9) hardcoded in link below.  Should be fixed when reports can be identified by code...
 		'receipt' => array('display_add' => 'hide',
-			'is_html' => true,
-			'value' => 'link_report_output(9,"Print Receipt",array("cid"=>$rec["client_id"],"pid" => $rec["payment_id"]),"payment_receipt.odt")'
-// FIXME: report ID (9) hardcoded in link above.  Should be fixed when reports can be identified by code...
+			'value_format' => 'sql_true($rec["is_void"]) ? httpimage($GLOBALS["AG_IMAGES"]["RECORD_VOIDED"],30,30,0) : link_report_output(9,"Print Receipt",array("pid" => $rec["payment_id"]),"payment_receipt.odt")',
+			'label'=>''
 		     )
 	    )
 );
 
+// This might be useful if you import your payment records from another system, and don't want them changed
+/*
 foreach ( array('agency_project_code','payment_date','payment_form_code','payment_document_number',
 		   'amount','is_subsidy','posted_comment','check_from') as $tmp_f ) {
 
 	$engine['payment']['fields'][$tmp_f]['display_edit'] = 'display';
 
 }
+*/
+
 ?>

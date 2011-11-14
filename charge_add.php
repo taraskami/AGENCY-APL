@@ -30,6 +30,15 @@ should be included in this distribution.
 </LICENSE>
 */
 
+/*
+ * FIXME: this page is largely commented out, and only being kept here
+ * for the recalculate charges, until I can move them somewhere else.
+ *
+ * Currently there are no links to the recalc functions, and other than that there
+ * would be no reason to call this page.
+ *
+ */
+
 /*  charge_add.php provides the user interface for viewing, voiding,
 *   and adding new charges.  This script requires a valid client ID
 *   to run properly.
@@ -38,7 +47,6 @@ should be included in this distribution.
 $title = "View Charges";
 $quiet="Y";
 include "includes.php";
-
 if (! has_perm("rent","R"))
 {
 	agency_top_header();
@@ -53,6 +61,8 @@ if (db_read_only_mode()) {
 	page_close();
 	exit;
 }
+
+$charge_def=get_def('charge');
 
 
 $charge_format = "full";
@@ -89,6 +99,9 @@ if ($_REQUEST["action"]=="recalc") {
 $name_link = client_link($CLIENT_ID);  // for title display
 $action = $_REQUEST['action'];
 // process $action
+
+
+/*
 // ADD CHARGE
 if ($action == "add")
 {
@@ -158,14 +171,16 @@ if ($action == "add")
         $out .=oline(bold($post_it));        
     }
 }
+*/
 
-// PRCOESS VOID
+/*
+// PROCESS VOID
 if ($action == "void")
 {
-    $charge_id = $_POST["charge_id"];
+    $charge_id = $_REQUEST["charge_id"];
     if (!empty($charge_id))
     {
-        $void_comment = $_POST["vcomment"];
+        $void_comment = $_REQUEST["vcomment"];
         if (! empty($void_comment))
         {
             if (!void_charge($charge_id, $void_comment))
@@ -194,20 +209,20 @@ if ($action == "void")
 // SHOW VOID FORM (i.e. selected void button to the right of the charge)
 if ($action == "voidform")
 {
-    $charge_id = $_POST["charge_id"];
+    $charge_id = $_REQUEST["charge_id"];
     $show_add_form = "N";  // don't show add void form
     $action_message = bigger(bold("Prepare to Void Charge $charge_id"));
     $form_title = bigger(bold("Describe why the charge is being voided"));
-    if (!empty($charge_id))
+    if (!empty($charge_id) and is_valid($charge_id,'integer'))
     {
         $charge_results = get_charges( array( 'charge_id'=>$charge_id ));
-        $charge = sql_fetch_assoc($charge_results);
-        $charge_form = show_charges_void_form($charge["charge_id"]);
-        $charge_results = get_charges( array( 'charge_id'=>$charge_id ));
+        $charge = array_shift($charge_results);
+        //$charge_results = get_charges( array( 'charge_id'=>$charge_id ));
+        $charge_form = show_charges_void_form($charge_id);
     }
     else
     { 
-        $action_message = bold("No charge ID.  Can not display in void form.");
+        $action_message = bold("Missing or invalid charge ID ($charge_id).  Can not display in void form.");
         $show_add_form = "Y";
     }
 }
@@ -222,11 +237,18 @@ if ($show_add_form == "Y")  // true for most scenarios
     $curr_unit = $curr_res["housing_unit_code"];
     $show_voids = "Y";
     $show_vb = "Y"; // show void button
-    $charge_results = get_charges_for($CLIENT_ID);
+	$charge_control=array(
+					'object'=>'charge',
+					'action'=>'list',
+					'list'=>array(
+						'filter'=>client_filter($CLIENT_ID)
+					));
+	$charge_display = list_generic($charge_control, $charge_def,'',$dummy);
     $form_title = hrule() .bigger(bold("Add a New Charge for $name_link"));
     $charge_form = show_charges_add_form($CLIENT_ID, $curr_unit, 
                     $curr_project, $addcharge);    
 }
+*/
 
 // validate clientid
 if (empty($CLIENT_ID) || (!is_client($CLIENT_ID)) )
@@ -240,13 +262,12 @@ if (empty($CLIENT_ID) || (!is_client($CLIENT_ID)) )
 	exit;        
 }
 
-$charge_display = show_charges($charge_results, $charge_format, $show_voids, $show_vb);
-
+//$charge_display = show_charges($charge_results, $charge_format, $show_voids, $show_vb);
+//($control,$def,$control_array_variable='',&$REC_NUM)
 // display charges and form
 $out .= subhead(hlink($_SERVER['PHP_SELF']."?client_id=$CLIENT_ID", "View Charges") 
     . " for $name_link"); 
 $out .=  $action_message;
-$out .= oline($charge_display);    
 if (has_perm("rent","W"))
 {
 	$out .= $form_title;
@@ -269,6 +290,7 @@ else
 {
 	$out .= oline("You do not have permission to add or void charges");
 }
+$out .= oline($charge_display);    
 agency_top_header($commands);
 out($out);
 page_close();    

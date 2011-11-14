@@ -32,6 +32,7 @@ should be included in this distribution.
 */
 
 $engine['housing_unit_subsidy']=array(
+'show_add_link'=>true,
 					'cancel_add_url'=>'housing_menu.php',
 						  'perm'=>'housing_admin',
 						  'perm_list'=>'any',
