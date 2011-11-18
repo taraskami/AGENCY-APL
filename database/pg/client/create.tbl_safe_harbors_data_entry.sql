@@ -1,4 +1,5 @@
 CREATE TABLE tbl_safe_harbors_data_entry (
+safe_harbors_data_entry_id	SERIAL PRIMARY KEY,
 client_id	INTEGER NOT NULL REFERENCES tbl_client (client_id),
 collection_date	DATE NOT NULL,
 diag_dd		VARCHAR(10)	NOT NULL REFERENCES tbl_l_yes_no_1year (yes_no_1year_code),
