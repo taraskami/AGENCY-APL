@@ -2046,14 +2046,17 @@ function is_valid_agency($value,$type,$label="",&$mesg)
       // A validity checker for specific AGENCY data such as client, staff.
       // Passes through to is_valid so that only one function is needed in practice.
       $valid=true;
-      if (($type=="client") && (!is_client($value)) )
+      if (($type==AG_MAIN_OBJECT_DB) && (!is_client($value)) )
       {
-	    $mesg.= $label ? oline("Field $label is not a valid client.") : "";
+		$def=get_def(AG_MAIN_OBJECT_DB);
+	    $mesg.= $label ? oline('Field $label is not a valid ' . $def['singular']) : '';
 	    $valid=false;
       }
-      elseif ( ($type=="staff") ) //&& (!is_staff($value)) )
+      elseif ( ($type=="staff")  && (!is_staff($value)) )
       {
-	    // no support yet for is_staff function
+		$def=get_def('staff');
+	    $mesg.= $label ? oline('Field $label is not a valid ' . $def['singular']) : '';
+		$valid=false;
       }
       else
       {
@@ -2116,6 +2119,10 @@ function is_valid($value,$type)
       // Attempt at a more generic validity checker.
 
       if ( (($type=="integer") || ($type=="float") || ($type=="number")) && (!is_numeric($value)) )
+      {
+	    return false;
+      }
+      elseif ( ($type=='integer_db') and ( !(is_numeric($value) and (abs($value) < AG_POSTGRESQL_MAX_INT) )))
       {
 	    return false;
       }
