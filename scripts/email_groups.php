@@ -50,7 +50,8 @@ $copy_command = "scp -r $source/* $destination";
 
 function get_staff_list( $filter )
 {
-	$list = get_staff($filter,"username_unix");
+	$def=get_def('staff');
+	$list = get_generic($filter,"username_unix",'',$def);
 	while ( $rec = array_shift($list) )
 	{
 		$group[]=$rec["username_unix"];
@@ -65,7 +66,8 @@ function write_list( $filter, $filename )
 	return file_put_contents( $filename,implode($group,$NL) . $NL);
 }
 
-// global $staff_table (not needed, cause we're global anyway)
+$s_def=get_def($staff);
+$staff_table=$s_def['table'];
 $group_list = array( 
 		"all_test" => array(),
 		"is_test" => array("$staff_table.agency_project_code"=>"IS")

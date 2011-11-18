@@ -78,6 +78,7 @@ $engine["staff"] = array(
 				'name_first'=>array('label'=>'First Name'),
 				'name_first_legal'=>array('label'=>'Legal First Name',
 							  'comment'=>'Enter only if different from First Name'),
+				'name_full'=>array('label'=>'Full Name'),
 				'staff_email'=>array(
 							   'value'=>'$x ? hlink("mailto:%20".$x,$x) : $x',
 							   'is_html'=>true,

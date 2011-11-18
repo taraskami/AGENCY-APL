@@ -130,10 +130,6 @@ define('AG_PASSWORD_RESET_URL','reset_password.php');
  */
 $AG_EMAIL_SENDER='AGENCY Notifier <noreply@'.$_SERVER['SERVER_NAME'].'>';
 
-//password and staff tables (moved from below)
-$staff_table="staff";
-$staff_table_id="staff_id";
-
 /*
  * authorization and password configuration
  */
@@ -156,6 +152,7 @@ array(
       'USERNAME_FIELD' => 'username',
       'PASSWORD_FIELD' => 'staff_password',
 	'PASSWORD_MD5_FIELD' => 'staff_password_md5',
+	  'STAFF_TABLE' => 'staff', // really it's a view, but why quibble?
       'USER_ID_FIELD' => 'staff_id',
 	'USE_MD5' => true,  //alternate method is flipbits (very insecure, but easy to recover lost user passwords)
 	'CASE_SENSITIVE_USERNAME' => false
@@ -357,17 +354,6 @@ $logs_per_screen=25;
 
 //--------Staff------//
 define('AG_STAFF_PAGE','staff_display.php');
-$staff_select_sql="SELECT $staff_table.*,
-					name_last || ', ' || name_first AS name_full,
-					proj.description AS _agency_project_code,
-					prog.description as _agency_program_code,
-					pos.description as _staff_position_code
-				 FROM $staff_table
-                 LEFT JOIN l_agency_project AS proj ON ($staff_table.agency_project_code=proj.agency_project_code)
-                 LEFT JOIN l_agency_program AS prog ON ($staff_table.agency_program_code=prog.agency_program_code)
-				 LEFT JOIN l_staff_position AS pos USING (staff_position_code)
-				";
-
 
 $alert_table = 'alert';
 $alert_table_id = 'ref_id';

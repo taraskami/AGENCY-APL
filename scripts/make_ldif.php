@@ -93,8 +93,8 @@ $string=
 	.'l: Seattle\n'
 	.'st: WA\n'
 	.'postalCode: 98104\n'
-	.'title: {$_staff_position_code}\n'
-	.'ou: {$_agency_project_code}\n'
+	.'title: {$staff_position_code}\n'
+	.'ou: {$agency_project_code}\n'
 	.'o: Downtown Emergency Service Center\n'
 	.'userpassword: {$ldap_password}\n'
 //	.'workurl: http://www.desc.org\n\n'
@@ -144,7 +144,7 @@ function ldap_password($id)
 	return '{md5}'.get_password($id,'MD5');
 }
 
-$staff=get_staff(array());
+$staff=get_generic(array('is_active'=>sql_true()),'','','staff');
 
 while ($s=array_shift($staff)) {
 	$arr=array('name_first','name_last','staff_email','_staff_position_code','_agency_project_code');

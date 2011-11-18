@@ -10,6 +10,11 @@ SELECT tbl_staff.staff_id,
 	tbl_staff.name_last,
 	tbl_staff.name_first,
 	tbl_staff.name_first_legal,
+	CASE
+		WHEN tbl_staff.name_last IS NULL THEN name_first
+		WHEN tbl_staff.name_first IS NULL THEN name_last
+		ELSE tbl_staff.name_last || ', ' || name_first
+	END  AS name_full,
 	tbl_staff.is_active,
 	tbl_staff.login_allowed,
 	staff_employment_latest.staff_title,

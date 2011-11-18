@@ -90,7 +90,8 @@ function generate_staff_card($id)
 	 * writer file of an ID card
 	 */
 	
-	global $staff_table;
+	$def=get_def('staff');
+	$staff_table=$def['table'];
 	$query="SELECT SUBSTRING((name_first || ' ' || name_last),1,".AG_STAFF_ID_CARD_MAX_NAME_LENGTH.") AS name, staff_id::text AS id_string, to_char(current_date,'MM/DD/YY') AS issue_date,SUBSTRING(description,1,".AG_STAFF_ID_CARD_MAX_JOB_TITLE_LENGTH.") AS job_title FROM $staff_table LEFT JOIN l_staff_position USING (staff_position_code)";
 	
 	$rec=agency_query($query,array("staff_id"=>"$id"));

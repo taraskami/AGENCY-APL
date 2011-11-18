@@ -72,7 +72,11 @@ if (!engine_perm(array('action'=>'view','object'=>'staff','id'=>$id))) {
 	page_close();
 	exit;
 }
-if (count(staff_get($id)) < 1) {
+
+$def=get_def('staff');
+$filter=array($def['id_field']=>$id);
+
+if (count(($staff_rec=get_generic($filter,'','',$def))) < 1) {
 	agency_top_header();
 	outline(alert_mark('No Staff found'));
 	page_close();
@@ -205,7 +209,7 @@ if ($action=='reg_kc' && has_perm('clinical_data_entry','RW')) {
 $commands=orr($commands,array(bottomcell(link_engine(array("object"=>"staff","id"=>$id,"format"=>"data"),"View/edit Data Record")),
 					bottomcell(object_child_command_box_generic('staff',$id),'class="pick"')));
 
-$out = oline($msg) . staff_display( $id );
+$out = oline($msg) . view_staff($staff_rec,$def,'view');
 
 $name=strip_tags(staff_name($id));
 $title="$name ($id)";

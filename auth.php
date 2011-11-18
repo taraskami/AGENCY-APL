@@ -403,7 +403,7 @@ class Auth {
 	
 	function get_user_password($username,$raw = false)
 	{
-		global $AG_AUTH_DEFINITION,$staff_table;
+		global $AG_AUTH_DEFINITION;
 
 		$username = $AG_AUTH_DEFINITION['CASE_SENSITIVE_USERNAME'] ? $username : strtolower($username);
 
@@ -424,7 +424,7 @@ class Auth {
 
 		$res=agency_query("SELECT {$password_query} AS password 
                                 FROM {$AG_AUTH_DEFINITION['VIEW']} 
-                                   LEFT JOIN {$staff_table} USING ({$AG_AUTH_DEFINITION['USER_ID_FIELD']})
+                                   LEFT JOIN {$AG_AUTH_DEFINITION['STAFF_TABLE']} USING ({$AG_AUTH_DEFINITION['USER_ID_FIELD']})
                                 WHERE {$AG_AUTH_DEFINITION['USERNAME_FIELD']}=".enquote1(sql_escape_string($username))." AND login_allowed AND is_active");
 		if (sql_num_rows($res)<1)
 		{
@@ -454,9 +454,9 @@ class Auth {
 	
 	function get_user_info($username)
 	{
-		global $AG_AUTH_DEFINITION,$staff_table;
+		global $AG_AUTH_DEFINITION;
 		$username= $AG_AUTH_DEFINITION['CASE_SENSITIVE_USERNAME'] ? $username : strtolower($username);
-		$res=agency_query("SELECT * FROM {$staff_table} WHERE {$AG_AUTH_DEFINITION['USERNAME_FIELD']}=".enquote1(sql_escape_string($username))." AND login_allowed AND is_active");
+		$res=agency_query("SELECT * FROM {$AG_AUTH_DEFINITION['STAFF_TABLE']} WHERE {$AG_AUTH_DEFINITION['USERNAME_FIELD']}=".enquote1(sql_escape_string($username))." AND login_allowed AND is_active");
 		if (!$res)
 		{
 			return false;
@@ -540,9 +540,10 @@ class Auth {
 	function reconfirm_password() //function to be used for user password re-confirmation (widget, engine, etc)
 	{
 		global $AUID,$UID;
+		$def=get_def('staff');
 		$check_pwd = $_REQUEST[$this->var_password];
 		if (isset($AUID) and ($AUID !== $UID)) { //identity switching
-			$rec = array_shift(staff_get($UID));
+			$rec = array_shift(get_generic(array($def['id_field']=>$UID),'','',$def));
 			$username = $rec['username'];
 		} else {
 			$username = $_SESSION['USER_INFO']['username'];
@@ -649,9 +650,11 @@ function has_perm($perm_list=null,$mode="R",$staff_id="")
 	 * Get staff record, and cache.
 	 */
 	static $uid_staff_array;
+//	$s_def=get_def('staff');
 	if (!$staff = $uid_staff_array[$staff_id]) {
-
-		$staff = $uid_staff_array[$staff_id] = array_shift(staff_get($staff_id));
+		// FIXME: had to hard code staff, as get_def was causing infinite loop
+		// $staff = $uid_staff_array[$staff_id] = array_shift(get_generic(array($s_def['id_field']=>$staff_id),'','',$s_def));
+		$staff = $uid_staff_array[$staff_id] = array_shift(get_generic(array('staff_id'=>$staff_id),'','','staff'));
 
 	}
 

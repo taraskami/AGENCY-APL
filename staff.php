@@ -36,13 +36,6 @@ function staff_filter( $id )
 	return array('staff_id'=>$id);
 }
 
-function staff_display( $idnum )
-{
-        $rec = staff_get( $idnum );
-	  if (count($rec) < 1) { return red(bold('No Staff found with id #'.$idnum)); }
-        return view_staff( array_shift($rec) );
-}
-
 function staff_client_assignments($staff_id)
 {
 
@@ -150,9 +143,7 @@ function view_staff( $staff,$def='',$action='',$control='',$control_array_variab
 
       global $colors,$UID,$sys_user;
 	$def = orr($def,get_def('staff'));
-	if (!is_array($staff)) {
-		$staff=sql_fetch_assoc($staff);
-	}
+	$staff=array_shift($staff);
 	$id=$staff[$def['id_field']];	
 	if (sql_true($staff['is_active']) and be_null(
 			$staff['staff_title']
@@ -425,46 +416,45 @@ function staff_link( $idnum, $name="lookup" )
 	return $result;	
 }
 
-function staff_get( $idnum )
-{
-		return get_staff(array("staff_id"=>$idnum, "is_active" => array('t','f')));
-}
-
 function get_staff( $filter, $order="name_last,name_first" )
 {
+// FIXME: This function is no longer called.
+//		   But it does check/correct for duplicated staff, at least somewhat
+//			which the generic function doesn't.
+//		  One really shouldn't be duplicating staff anyway, but I suppose stuff happens...
+
 	// default is to only get active staff
 	// but if filter is set ("is_active"="{sql_true()} OR {sql_false}")
 	// Then this function won't mess with the filter.
-	global $staff_select_sql;
+	$def=get_def($staff);
 	if (!isset($filter["is_active"]))
 	{
 		$filter["is_active"]=sql_true();
 	}
-	$a = agency_query($staff_select_sql,$filter,$order);
-	if (sql_num_rows($a)==0 && ($idnum=$filter['staff_id']))
+	$a = get_generic($filter,$order,'',$def);
+	// FIXME:  This doesn't really quite cover the bases for unduplicated staff
+	if ((count($a)==0) && ($idnum=$filter[$def['id_field']]))
 	{
-		$b=agency_query("SELECT * FROM duplication_staff",array('staff_id_old'=>$idnum));
+		$b=agency_query("SELECT * FROM duplication_staff",array($def['id_field'].'_old'=>$idnum));
 		if ( ($b) && (sql_num_rows($b)==1))
 		{
 			$b=sql_fetch_assoc($b);
-			return staff_get( $b['staff_id']);
+			// Recurses itself--could be a problem if two staff pointed back at each other
+			return get_staff( array($def['id_field']=$b[$def['id_field']]));
 		}
 	}
-	while ($rec=sql_fetch_assoc($a)) {
-		$result[]=$rec;
-	}
-	return $result;
-
+	return $rec;
 }
 
 function staff_name( $sid )
 {
+	$def=get_def('staff');
 	if (!$sid) {
 		return false;
 	} elseif (!is_numeric($sid)) { //other organzation's staff
 		return $sid;
 	}
-	$staff=get_staff(array("staff_id"=>$sid,"is_active"=>array(sql_true(),sql_false())));
+	$staff=get_generic(array($def['id_field']=>$sid,"is_active"=>array(sql_true(),sql_false())),'','',$def);
 	if (count($staff)<>1) {
 		return false;
 	}
@@ -474,13 +464,11 @@ function staff_name( $sid )
 
 function is_staff( $id )
 {
-    global $staff_table, $staff_table_id;
-
-    if (is_numeric($id) && $id < AG_POSTGRESQL_MAX_INT) {
-	    $q = agency_query("SELECT * from $staff_table WHERE $staff_table_id = $id");
-	    return ($q && (sql_num_rows($q) > 0) );
-    }
-    return false;
+	$def=get_def('staff');
+    if (is_valid($id,'integer_db') and (count(get_generic(array($def['id_field']=>$id),'','',$def)) == 1)) {
+		return true;
+	}
+	return false;
 }
 
 function is_self( $idnum )
@@ -509,8 +497,9 @@ function get_staff_f( $staff, $separator="<br>" )
 
 function pick_staff_to( $varname, $active_only="Yes", $default=-1 ,$subset=false,$options='',$inc_sys_user=false)
 {
-	global $staff_table,$staff_table_id;
-	$table = orr($subset,$staff_table);
+	$def=get_def('staff');
+	$staff_table_id=$def['id_field'];
+	$table = orr($subset,$def['table']);
 	$query = "SELECT 
 		CASE WHEN name_first < 'A' THEN name_last
 		ELSE name_last || ', ' || name_first
@@ -644,8 +633,8 @@ function show_staff_heads( $staff )
                 cell($i+1)
                 .  cell( staff_photo($info["staff_id"],.35))
 					. cell(oline(staff_link($info["staff_id"]))
-					. $info["_staff_position_code"]
-					. ", " . $info["_agency_project_code"] ));
+					. $info["staff_position_code"]
+					. ", " . $info["agency_project_code"] ));
                 }
         $result .= tableend();
         return $result;
