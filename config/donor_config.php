@@ -51,24 +51,7 @@ $AG_MENU_LINKS=array(
 	hlink('menu.php','Menu'),
 	hlink(AG_REPORTS_URL,'Reports'));
 
-$AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
-				//---Staff & Users---//
-				'alert',
-				'alert_notify',
-				'staff',
-				'permission',
-				'user_option',
-				//---Engine & AGENCY---//
-				'info_additional',
-				'info_additional_type',
-				'def_array',
-				'config_file',
-				'report',
-				'generic_sql_query', // a pseudo object for handling generic SQL
-				'reference',
-				//---Postgresql---
-				'pg_catalog',
-				//---Donor Stuff-----//
+$AG_ENGINE_TABLES=array_merge($AG_ENGINE_TABLES_CORE,array(AG_MAIN_OBJECT_DB,
 				'address',
 				'donor_extended',
 				'gift',
@@ -86,11 +69,9 @@ $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
 				'volunteer_reg',
 				'volunteer_hours',
 				'proposal'
-/*
-				'export_gift_mip',
-				'export_donor_mip'
-*/
-				);
+//				'export_gift_mip',
+//				'export_donor_mip'
+));
 
 /*
  * to add a new type of quicks search, it is assumed that there will be a corresponding CSS class of the same 

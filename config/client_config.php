@@ -41,7 +41,7 @@ define('AG_PRODUCTION_DATABASE_SERVER','localhost');
 define('AG_LIST_EMPTY_HIDE',true); //show empty records by default
 define('AG_LIST_GROUPING_EXPANDED',false); //default child record groupings to expanded
 
-$AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
+$AG_ENGINE_TABLES=array_merge($AG_ENGINE_TABLES_CORE,array(AG_MAIN_OBJECT_DB,
 				//---General Client---//
 // 				'activity',
 // 				'assessment',
@@ -65,7 +65,6 @@ $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
  				'income',
  				'jail',
 // 				'jail_charge',
- 				'log',
 // 				'mail',
 //				'medical_health',
 // 				'sex_offender_reg',
@@ -137,6 +136,7 @@ $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
 // 				'kc_authorization_response',
 // 				'kc_authorization_actions_taken',
 // 				'export_kc_transaction',
+//				'safe_harbors_data_entry',
 				//---Confidential---//
 // 				'hiv',
 // 				'immigrant',
@@ -144,43 +144,11 @@ $AG_ENGINE_TABLES=array(AG_MAIN_OBJECT_DB,
 // 				'cd_reg',
 // 				'service_cd',
 				//---Staff & Users---//
-				'alert',
-				'alert_notify',
-				'staff',
-// 				'staff_key_assign',
  				'calendar',
  				'calendar_appointment',
-				'permission',
-// 				'staff_driver_authorization',
-				'staff_employment',
-//				'staff_identifier',
-// 				'staff_language',
- 				'staff_password',
- 				'staff_phone',
-//				'staff_pto_rollup',
-				'staff_remote_login',
-//				'staff_request',
-//				'staff_termination',
-//				'staff_qualification',
 //				'survey_2008_1night',
-//				'safe_harbors_data_entry',
-				'user_option',
-				//---Engine & AGENCY---//
-				'attachment',
-				'attachment_link',
- 				'news',
- 				'generic_sql_query', // a pseudo object for handling generic SQL
-				'db_revision_history', // database modifications applied
-				'reference',
-				'config_file',
-				'def_array',
-				//---Testing---//
-				'report',
-				'info_additional',
-				'info_additional_type',
-				//---Postgresql---//
- 				'pg_catalog'
-				);
+
+				));
 
 /*
  * to add a new type of quicks search, it is assumed that there will be a corresponding CSS class of the same 

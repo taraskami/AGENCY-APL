@@ -501,4 +501,43 @@ define('AG_ERROR_LOG_BACKTRACE',false);
 
 define('AG_ATTACHMENT_LOCATION',$AG_HOME_BY_FILE . '/attachments/');
 
+/*
+ * Core tables for AGENCY
+ * Additional tables defined in flavors
+ * (e.g., client_config.php)
+ */
+
+$AG_ENGINE_TABLES_CORE=array(
+    'alert',
+    'alert_notify',
+    'attachment',
+    'attachment_link',
+    'db_revision_history', // database modifications applied
+    'info_additional',
+    'info_additional_type',
+    'log',
+    'news',
+    'permission',
+    'pg_catalog', // From the database
+    'reference',
+    'report',
+    'staff',
+//  'staff_driver_authorization',
+    'staff_employment',
+//  'staff_identifier',
+//  'staff_key_assign',
+//  'staff_language',
+    'staff_password',
+    'staff_phone',
+//  'staff_pto_rollup',
+//  'staff_qualification',
+    'staff_remote_login',
+//  'staff_request',
+//  'staff_termination',
+    'user_option',
+    //---Weird or Hacky Objects---//
+    'config_file',
+    'def_array',
+    'generic_sql_query' // a pseudo object for handling generic SQL
+);
 ?>
