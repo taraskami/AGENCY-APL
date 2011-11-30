@@ -41,7 +41,7 @@ include "includes.php";
  * Bug 23526. 
  */
 
-$id = $_REQUEST['id'];
+$id = orr($_REQUEST['id'],$_REQUEST['control']['id']);
 $email = $_REQUEST['email'];
 
 if ($email &&  $id) {
@@ -62,7 +62,7 @@ $id = orr($id, staff_id_from_username($email));
  * Or just default to your own page
  */
 
-if (!$id && !$email){
+if (!is_valid($id,'integer_db')) {
 	$id = orr($_SESSION['STAFF_DISPLAY_PAGE_ID'],$UID);
  }
 
@@ -82,7 +82,7 @@ if (count(staff_get($id)) < 1) {
 
 $_SESSION['STAFF_DISPLAY_PAGE_ID']=$id;
 
-$action = $_REQUEST['action'];
+$action = orr($_REQUEST['action'],$_REQUEST['control']['action']);
 
 /*
  * password section
