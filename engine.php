@@ -66,8 +66,8 @@ function engine($control='',$control_array_variable='control')
 	$action = $control['action'];
 	$control['id'] = $id = engine_set_control_id($control);
 
- 	if (!$object or !$action or !$id ) {
- 		return array('message'=>'ERROR: engine() must have an action, object and id passed.');
+ 	if (!$object or !$action or (!$id and (!in_array($action,array('add','list'))) )) {
+ 		return array('message'=>dump_array($control) . "ERROR: engine() must have an action ($action), object ($object) and id ($id) passed.");
  	}
 
 	$session_identifier = generate_session_identifier($object,$id);
@@ -232,7 +232,7 @@ function engine($control='',$control_array_variable='control')
 	$def['fn']['process']($REC,$rec,$def);
 	$_SESSION['REC'.$session_identifier] = $REC;
 
-      /*
+    /*
 	 * Process quicksearch
 	 */
 	$qs_results = engine_process_quicksearch($step,$REC,$control);
@@ -474,7 +474,7 @@ function engine($control='',$control_array_variable='control')
 				  $REC = orr($a,$REC);
 
 				  /*
-				   * Reset session so no double posts occur
+				   e Reset session so no double posts occur
 				   */
 				  $_SESSION['CONTROL'.$session_identifier] = null;
 				  if ($ADD_ANOTHER) {
