@@ -225,22 +225,6 @@ switch( $action ) {
 	/* 
 	 * view-mode actions
 	 */
-/*
- // Where if anywhere is this called from?
-
- case 'merge' :
-
-	 include 'openoffice.php';
-	 include 'zipclass.php';
-	 
-	 $a = array_shift(get_generic( array('log_id'=>$id),NULL,NULL,get_def('log') ));
-	 
-	 office_mime_header('writer');
-	 $x=oowriter_merge($a,'log_print.sxw');
-	 out($x->data());
-	 page_close($silent=true); //no footer on oo files
-	 exit;
-*/
 	 
  case 'view' : 
 	 
