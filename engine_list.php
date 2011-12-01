@@ -215,7 +215,7 @@ function list_generic($control,$def,$control_array_variable='',&$REC_NUM)
 
  	}
 
-	if ($control['list']['display_add_link']) {
+	if ($control['list']['display_add_link'] or ($total<1)) {
 		$add_link = link_engine(array('object'=>$object,'action'=>'add'),'Add a '.$def['singular']);
 	}
 
