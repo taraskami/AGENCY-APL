@@ -1218,7 +1218,7 @@ function form( $contents, $next_form="", $name="", $extra="")
 	return formto( $next_form,$name,$extra) . $contents . formend();
 } 
 
-function formto( $next_form="", $name="", $extra="" )
+function formto( $next_form="", $name="", $extra="", $method='post' )
 // Start a form, specify page to send to.
 // form name get stored globally, so it can
 // get referenced by JS date selector functions.
@@ -1234,7 +1234,7 @@ function formto( $next_form="", $name="", $extra="" )
     {
         $GLOBALS["form_name"]=$name;
     }
-	return ("<form method=\"post\" action=\"$next_form\" name=\"$name\""
+	return ("<form method=\"$method\" action=\"$next_form\" name=\"$name\""
 	. ($extra ? " $extra" : "") . ">\n");
 }
 
