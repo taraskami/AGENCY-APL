@@ -1837,8 +1837,11 @@ function object_child_command_box_generic($object,$parent_id)
 	// sort child records by plural
 	$new = array();
 	foreach ($child_records as $child) {
-		$t_def = get_def($child);
-		$new[$child] = $t_def['plural'];
+		// Skip child records not enabled in engine
+		if (in_array($child,$GLOBALS['AG_ENGINE_TABLES'])) {
+			$t_def = get_def($child);
+			$new[$child] = $t_def['plural'];
+		}
 	}
 	asort($new);
 	$child_records = array_keys($new);
