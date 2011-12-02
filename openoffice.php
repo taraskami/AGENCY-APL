@@ -806,12 +806,14 @@ function serve_office_doc($doc,$filename) {
 	if (preg_match('/(.*)\.'.$ext.'$/i',$base,$matches)) {
 		$base=$matches[1];
 	}
-	if (AG_OPEN_OFFICE_PREFER_MS_FORMATS
-		and array_key_exists($ext,$oo_to_ms)) {
-		$ext=$oo_to_ms[$ext];
-	}
-	if (AG_OPEN_OFFICE_ALWAYS_PDF) {
-		$ext='pdf';
+	if (AG_OPEN_OFFICE_EXTERNAL_CONVERSION_ENABLED) {
+		if (AG_OPEN_OFFICE_PREFER_MS_FORMATS
+			and array_key_exists($ext,$oo_to_ms)) {
+			$ext=$oo_to_ms[$ext];
+		}
+		if (AG_OPEN_OFFICE_ALWAYS_PDF) {
+			$ext='pdf';
+		}
 	}
 	if (in_array(strtolower($ext),$need_conversion_formats)) {
 		if (!AG_OPEN_OFFICE_EXTERNAL_CONVERSION_ENABLED) {
