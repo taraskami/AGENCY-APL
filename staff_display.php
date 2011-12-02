@@ -169,10 +169,7 @@ if ($action=="print_staff_id")
     include "openoffice.php";
     include "zipclass.php";
     $card=generate_staff_card($id);
-    office_mime_header("writer");
-    echo($card->data());
-    page_close($silent=true); //no footer on oo files
-    exit;
+	serve_office_doc($card,'staff_idcard/pdf'); //exits
 }
 
 if ($action=='reg_kc' && has_perm('clinical_data_entry','RW')) {

@@ -756,33 +756,84 @@ $DEBUG && outline(webify("row output = $row_output"));
 	return $zip;
 }
 
-function office_mime_header($type="writer")
+function office_mime_header($filename)
 {
-	switch ($type) {
-		case "writer" :
-			$ext = AG_OPEN_OFFICE_WRITER_TYPE_DEFAULT;
+	preg_match('/^(.*)\.([a-z]{3,5})$/i',$filename,$matches);
+	$ext=strtolower($matches[2]);
+	$name=orr($matches[1],'agency_report');
+	$filename=$name. '.' . $ext;
+	switch ($ext) {
+		case 'pdf' :
+			$type='application/pdf';
 			break;
-		case "calc" :
-			$ext = AG_OPEN_OFFICE_CALC_TYPE_DEFAULT;
+		case 'xls' :
+			$type='application/vnd.ms-excel';
 			break;
-		case "idcard" :
-			$ext = "card";
-			$text="application/idcard";
+		case 'doc' :
+			$type='application/msword';
 			break;
-	default:
-		$ext = $type;
-		$text = in_array($type,array('odt','sxw')) ? 'application/vnd.sun.xml.writer' : 'application/vnd.sun.xml.calc';
+		case 'odt' :
+		case 'sxw' :
+			$type='application/vnd.sun.xml.writer';
+			break;
+		case 'ods' :
+		case 'sxc' :
+			$type='application/vnd.sun.xml.calc';
+			break;
+		default :
+			$type='application/octet-stream';
 	}
-	if ($type=="idcard") {
-		header ( "Content-type: idcard/idcard");
-		header ( "Content-Disposition: attachment; filename=idcard.idcard" );
-		header ( "Content-Description: AGENCY Generated ID Card" );
-	} else {
-		header ( "Content-type: " . orr($text,"application/vnd.stardivision.$type"));
-		header ( "Content-Disposition: attachment; filename=openoffice.$ext" );
-		header ( "Content-Description: AGENCY Generated Open Office Data" );
-	}
+	header ( 'Content-type: ' . $type);
+	header ( 'Content-Disposition: attachment; filename=' . $filename );
+	header ( 'Content-Description: AGENCY Generated Open Office Data' );
 	return;
+}
+
+function serve_office_doc($doc,$filename) {
+	// serve an office file, externally converted if necessary, and exit
+
+	$need_conversion_formats=array('pdf','xls','doc');
+	$oo_to_ms=array(
+		'sxw'=>'doc',
+		'odt'=>'doc',
+		'sxc'=>'xls',
+		'ods'=>'xls'
+	);
+
+	$pi=pathinfo($filename);
+	$ext=$pi['extension'];
+	$base=$pi['basename'];
+	if (preg_match('/(.*)\.'.$ext.'$/i',$base,$matches)) {
+		$base=$matches[1];
+	}
+	if (AG_OPEN_OFFICE_PREFER_MS_FORMATS
+		and array_key_exists($ext,$oo_to_ms)) {
+		$ext=$oo_to_ms[$ext];
+	}
+	if (AG_OPEN_OFFICE_ALWAYS_PDF) {
+		$ext='pdf';
+	}
+	if (in_array(strtolower($ext),$need_conversion_formats)) {
+		if (!AG_OPEN_OFFICE_EXTERNAL_CONVERSION_ENABLED) {
+			log_error('External conversion not enabled');
+			page_close();
+			exit;
+		}
+
+		// FIXME: test for enabled
+		$conv_file=tempnam(sys_get_temp_dir(),$base);
+		$conv_file2=$conv_file.".$ext";
+		rename($conv_file,$conv_file2);
+		file_put_contents($conv_file2,$doc->data());
+		office_mime_header($base.'.'.$ext);
+		passthru("/usr/bin/unoconv --stdout -f $ext $conv_file2");
+		unlink($conv_file2);
+	} else {
+		office_mime_header($filename);
+		echo($doc->data());
+	}
+	page_close($silent=true); //no footer on oo files
+	exit;	
 }
 
 function oo_get_upload_template($var_name)

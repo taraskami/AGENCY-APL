@@ -444,39 +444,18 @@ define('AG_REPORTS_REGEX_TEMPLATES','/^(.*)[|](.*)([|](.*))?$/U');
  * OpenOffice configuration 
  *
  *
- * Document type:
- *
- * use open document only if all users have OO >= 2.0
- * odt (writer) and ods (calc)
- * 
- * otherwise, sxw (writer) and sxc (calc) are used
- * 
- * 
- *
  */
 
-if (!defined('AG_OPEN_OFFICE_ENABLE_EXPORT')) {
-
-	define('AG_OPEN_OFFICE_ENABLE_EXPORT',true);
-
-}
-
+define('AG_OPEN_OFFICE_ENABLE_EXPORT',true);
 define('AG_OPEN_OFFICE_DISABLED_MESSAGE','Open Office exports not enabled for this AGENCY installation');
-
-define('AG_OPEN_OFFICE_USE_OPEN_DOCUMENT',false);
-
-if (AG_OPEN_OFFICE_USE_OPEN_DOCUMENT) {
-	define('AG_OPEN_OFFICE_WRITER_TYPE_DEFAULT','odt'); 
-	define('AG_OPEN_OFFICE_CALC_TYPE_DEFAULT','ods');   
-	define('AG_OPEN_OFFICE_CALC_TEMPLATE','generic_spreadsheet.ods');
-} else {
-	define('AG_OPEN_OFFICE_WRITER_TYPE_DEFAULT','sxw'); 
-	define('AG_OPEN_OFFICE_CALC_TYPE_DEFAULT','sxc');   
-	define('AG_OPEN_OFFICE_CALC_TEMPLATE','generic_spreadsheet.sxc');
-}
-
+define('AG_OPEN_OFFICE_CALC_TEMPLATE','generic_spreadsheet.sxc');
 define('AG_CLIENT_CARD_TEMPLATE','client_id.sxw');
 define('AG_STAFF_CARD_TEMPLATE','staff_id.sxw');
+
+/* You need additional software (e.g., unoconv) installed for PDF and MS Office formats */
+define('AG_OPEN_OFFICE_EXTERNAL_CONVERSION_ENABLED',false); //FIXME: make me a feature
+define('AG_OPEN_OFFICE_PREFER_MS_FORMATS',true);
+define('AG_OPEN_OFFICE_ALWAYS_PDF',false);
 
 /*
  * OpenOffice Special Character Translation (see bugs 6009 and 18103)

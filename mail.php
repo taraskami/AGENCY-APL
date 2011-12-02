@@ -144,10 +144,7 @@ function show_mail_list($format="")
 		$set = get_mails_waiting();
 		$template_file='mail_signout.sxw';
 		$merged_file=oowriter_merge($set,$template_file);
-		office_mime_header("writer");
-		out($merged_file->data());
-		page_close($silent=true); //no footer on oo files
-		exit;
+		serve_office_doc($merged_file,$template_file); //exits
      }
      elseif ($format=="posting")
      {
@@ -158,10 +155,7 @@ function show_mail_list($format="")
 		$merged_file=oowriter_merge($set,$template_file,'ucwords(strtolower($x["name_full"])) . " (" . $x["client_id"] . ")"');
 //		$set=get_mails(array("delivery_code"=>"WAITING"));
 //		$merged_file=oowriter_merge($set,$template_file,'$x["name_full"]');
-		office_mime_header("writer");
-		out($merged_file->data());
-		page_close($silent=true); //no footer on oo files
-		exit;
+		serve_office_doc($merged_file,$template_file); //exits
      } elseif ($format=='today') {
 	     $sql = $mail_select_sql; 
 	     $out = header_row('','date','return','type','client');

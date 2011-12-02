@@ -46,10 +46,7 @@ function process_open_query($result,$extra_vars="")
  		out(alert_mark('Unknown OpenOffice Type: '.$out_form));
  		exit;
  	}
-	office_mime_header($type);
-	out($oo->data());
-	page_close($silent=true); //no footer on oo files
-	exit;
+	serve_office_doc($oo,$out_form); //exits
 }
 
 $quiet="Y";

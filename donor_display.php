@@ -75,17 +75,11 @@ if ($action=="print_donor_profile")
 		// using this instead, for now:
 		$addr=agency_query("SELECT address_mail AS _address FROM address_mail(address($ID))");
 		$env=oowriter_merge_new($addr,$template);
-		office_mime_header("writer");
-		echo($env->data());
-		page_close($silent=true);
-		exit;
+		serve_office_doc($end,$template); //exits
 		break;
 	case $donor_profile_template:
 		$profile=generate_donor_profile($ID);
-		office_mime_header("writer");
-		echo($profile->data());
-		page_close($silent=true);
-		exit;
+		serve_office_doc($profile,$template); //exits
 		break;
 	default :
 		outline('Error: donor_display not configured for selected template ('.$template.')');

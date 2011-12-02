@@ -69,10 +69,7 @@ if (!$client_not_found) {
 		include 'zipclass.php';
 
 		$card = generate_client_card($ID);
-		office_mime_header('idcard');
-		echo($card->data());
-		page_close($silent = true); //no footer on oo files
-		exit;
+		serve_office_doc($card,'idcard.pdf'); //exits
 
 	case 'set_clinical_id':
 

@@ -313,6 +313,7 @@ if ($print_sheet) {
 			$config = $GLOBALS['bed_'.$group];
 			$start  = $config['start'];
 			$end    = $start + $config['count'] - 1;
+			$filename="bednight_sheet_$print_format.sxw";
 
 			$sheet=oowriter_merge(agency_query("SELECT DISTINCT SUBSTRING(
                                                                  (CASE WHEN c.client_id IS NULL THEN b.client::text
@@ -322,7 +323,7 @@ if ($print_sheet) {
                                          FROM generate_series($start,$end)
                                                LEFT JOIN bed_reg b ON (b.bed_no = generate_series AND $filter)
                                                LEFT JOIN client c ON (b.client::text=c.client_id::text)",
-								   '','bed_no'),"bednight_sheet_$print_format.sxw");
+								   '','bed_no'),$filename);
 		}
 
 	} else {
@@ -337,13 +338,10 @@ if ($print_sheet) {
                                                                  ,1,22) AS client_name,
                                            b.bed_group,b.bed_no,b.comments
                                          FROM bed_reg b LEFT JOIN tbl_client c ON (b.client::text=c.client_id::text)",
-							   $filter,'bed_group, bed_no'),"bednight_sheet_$print_format.sxw");
+							   $filter,'bed_group, bed_no'),$filename);
 	}
 
-	office_mime_header('writer');
-	echo($sheet->data());
-	page_close($silent=true); //no footer on oo files
-	exit;
+	serve_office_doc($sheet,$filename); // exits
 
 }
 

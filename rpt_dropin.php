@@ -73,10 +73,7 @@ if ($sdate || $edate)
 		$data=sql_query("SET DATESTYLE TO SQL"); // don't care about result
 		$data=agency_query($sql,$filter,$order);
 		$file=oowriter_merge($data,$template,"","","client_name");
-		office_mime_header("writer");
-		out($file->data());
-		page_close($silent=true); //no footer on oo files
-		exit;
+		serve_office_doc($file,$template); //exits
 	}
 }
 $title= "Dal Drop-in Report";

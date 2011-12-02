@@ -182,6 +182,8 @@ function report_generate($report)
 	 *
 	 */
 
+		
+
 	$pattern_replace_header = $pattern_replace = array();
 	$report['variables']=orr($report['variables'],array());
 	foreach ($report['variables'] as $var) {
@@ -230,6 +232,8 @@ function report_generate($report)
 
 	// sort longest to shortest keys so, for example, "date_end" is replaced before "date"
 	uksort($pattern_replace,'strlen_cmp');
+//outline(dump_array($pattern_replace));
+//outline(dump_array($pattern_replace_header));
 	$pattern = array_keys($pattern_replace);
 	$replace = array_values($pattern_replace);
 	foreach ($report['sql'] as $k => $sql) {
@@ -368,11 +372,8 @@ function report_generate_openoffice($report,$template)
 		log_error('Unknown openoffice type '.$template);
 		return false;
 	}
-       
-	office_mime_header($type);
-	out($oofile->data());
-	page_close($silent=true); //no footer on oo files
-	exit;
+
+	serve_office_doc($oofile,$template); //exits
 }
 
 function report_generate_from_posted()
@@ -530,22 +531,35 @@ function report_generate_export($sql,$format)
 
 	if (has_perm('sql_dump')) {
 		preg_match('/^sql_(dump|data)_([a-z]*)$/',$format,$m);
-		header("Content-Type: text; charset=ISO-8859-1");
+		//header("Content-Type: text; charset=ISO-8859-1");
+		//header("Content-Type: application/octet-stream");
 		if ($m[1]=='data') {
 			switch ($m[2]) {
 				case 'csv' :
 					$delimiter=',';
 					$quotes=true;
+					$c_type='text/csv';
 					break;
 				case 'tab' :
 					$delimiter="\t";
 					$quotes=false;
+					$c_type='text/tab-delimited';
 					break;
 				default :
 					// unknown format;
+					$c_type='text/plain';
+					break;
 			}
+			header('Content-Type: ' . $c_type);
+			//header('Accept-Ranges: bytes');
+			//header('Content-Transfer-Encoding: binary');
+			//header('Pragma: public');
 			header('Content-Disposition: attachment; filename="agency_data.csv"');
-			out(sql_data_export($sql,$delimiter,'',$quotes));
+			$out=sql_data_export($sql,$delimiter,'',$quotes);
+			//$len=strlen($out);
+			//header('Content-Length: ' . $len);
+			//header('Content-Range: bytes 0-' . ($len-1) . '/' . $len);
+			out($out);
 		} elseif ($m[1]=='dump') {
 			header('Content-Disposition: attachment; filename="agency_sql_dump.sql"');
 			out(sql_commentify($GLOBALS['AG_TEXT']['CONFIDENTIAL_STATEMENT']));
