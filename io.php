@@ -2190,6 +2190,7 @@ function smart_char_destroy($string)
 			    chr(146)=>'\'', //right single '
 			    chr(147)=>'"', //left double "
 			    chr(148)=>'"', //right double "
+				chr(149)=>'*', // Bullet
 			    chr(150)=>'-', //medium dash
 			    chr(151)=>'--'  // &mdash, good enough for now (we don't want to store HTML '&mdash;' or '&#151;').
 			    );
