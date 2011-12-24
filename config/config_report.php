@@ -37,6 +37,7 @@ $engine['report'] = array(
 					'list_fields' => array( 'report_id','report_title','report_category_code','report_comment'),
 					'title_format_add' =>'bigger(bold($x)) . " " . smaller(link_wiki_public("Reports","Help with writing reports"))',
 					'title_format_edit' =>'bigger(bold($x)) . " " . smaller(link_wiki_public("Reports","Help with writing reports"))',
+					'subtitle_eval_code'=>'smaller(link_wiki_public("Reports","Help with writing reports"))',
 					'fields' => array(
 						'report_id' => array(
 								'value_view' => '$x . smaller(link_report($rec["report_id"],"Run this report"))',
