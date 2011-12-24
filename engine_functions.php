@@ -3081,6 +3081,62 @@ function process_generic(&$sess,&$form,$def)
       }
 }
 
+/*
+      // OPTIONAL SUBTITLE HTML
+      $sub_title = $engine[$object]['subtitle_html'];
+
+    // Absolute add link HTML (displays regardless of records or not)
+    $abs_add_link = $engine[$object]['add_link_absolute_html'];
+    if ($tmp_code = $engine[$object]['add_link_absolute_eval']) {
+        $abs_add_link .= eval('return '.$tmp_code.';');
+    }
+
+      // OPTIONAL SUBTITLE eval code
+    $sub_eval_code = $engine[$object]['subtitle_eval_code'];
+    if (is_array($sub_eval_code)) {
+        $sub_code_array=null;
+        foreach ($sub_eval_code as $code_bit) {
+            $sub_code_array .= cell(eval('return '.$code_bit.';'));
+        }
+    } else {
+        $sub_code = eval('return '.$sub_eval_code.';');
+    }
+
+*/
+
+function sub_title_generic( $action, $rec, $def ) {
+	$sep=oline();
+	// Keeping subtitle_html and subtitle_eval_code for legacy compatibility
+	// merging them intoone
+	// This depends on subtitle being blank by engine default
+	$sub = orr($def['subtitle_'.$action],
+				$def['subtitle']);
+	$sub_eval = orr( $def['subtitle_html_'.$action],
+				$def['subtitle_html'],
+				$def['subtitle_eval_code_'.$action],
+				$def['subtitle_eval_code']);
+	if ($sub_eval) {
+		if (is_array($sub_eval)) {
+/*
+// FIXME: Not sure exactly what this is, or how it's supposed to work! (copied from engine_list.php)
+			$sub_code_array=null;
+			foreach ($sub_eval as $code_bit) {
+				$sub_code_array .= cell(eval('return '.$code_bit.';'));
+			}
+*/
+		} else {
+			$sub_eval = eval('return ' .$sub_eval .';');
+		}
+	}
+	//Return any of these that are set, I guess?
+	$result =
+		$sub 
+		. (($sub and $sub_eval) ? $sep : '')
+		. $sub_eval;
+	return $result ? span($result,'class="engineSubtitle"') : '';
+}
+
+
 function title_generic($action,$rec,$def)
 {
       $a=orr($def['title_' . $action],$def['title']);
@@ -3096,11 +3152,11 @@ function title_generic($action,$rec,$def)
 		$x .= ' for '.client_link($rec[AG_MAIN_OBJECT_DB.'_id']);
 	}
       // then determine format
-      $out = oline($b
+      $out = ($b
 			 ? eval('return ' . $b. ';')
-			 : bigger(bold($x)))
-		. $required_note;
-	return $out;
+			 : (bigger(bold($x))
+		. ' ')) . sub_title_generic($action,$rec,$def);
+	return span($out,'class="engineTitle"');
 }
 
 function engine_process_quicksearch(&$step,&$rec,$control)
