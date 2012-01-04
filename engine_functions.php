@@ -2261,7 +2261,7 @@ function system_fields_f($rec,$def,$control,&$important_header='',&$JAVA_ENGINE=
 	// Links to def array, and config file
 	if ((!$skip_view_links) and has_perm('config_file,def_array')) {
 		$system .= right(smaller('View ' . elink('config_file',$def['object'],'config file','target="_blank"')
-			. ' or ' . elink('def_array',$def['object'],'def array','target="_blank"') . ' for ' . $def['object']));
+			. ' or ' . elink('def_array',$def['object'],'def array','target="_blank"') . ' for ' . $def['singular']));
 	}	
 
 	return $system;
