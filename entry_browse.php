@@ -40,6 +40,8 @@ $visitor_fields=array('visitor_name','visit_purpose','visit_type_code','visiting
 $def=get_def('entry');
 $ev_def=get_def('entry_visitor');
 $ef_def=get_def(AG_MAIN_OBJECT_DB);
+$this_entry_location='FRONT_DOOR'; // FIXME
+
 
 $c_req=$_REQUEST['control'];
 if (!is_array($c_req)) {
@@ -73,11 +75,15 @@ if (isset($_REQUEST['enterClientUndo'])) {
 	$d_c=$_REQUEST['enterClientUndo'];
 	$d_filter=$_SESSION['ENTRY_BROWSE_UNDO_RECORD'];
 	if ($d_c==$d_filter[$_SESSION['ENTRY_BROWSE_UNDO_FIELD']]) {
-		if (delete_generic($d_filter,$def,'Auto-deleted by entry_browse undo')) {
+		if (delete_void_generic($d_filter,$def,'delete',$delete_message,array('deleted_comment'=>'Auto-deleted by entry_browse undo'))) {
 			$delete_result = 'Deleted entry record for ' . client_link($d_c) . '@' . datetimeof($d_filter['entered_at']);
 		} else {
-			$delete_result = oline('Failed to delete entry record for ' . client_link($d_c) . '@' . datetimeof($d_filter['entered_at']));
+			$delete_result = oline('Failed to delete entry record for ' . client_link($d_c) . '@' . datetimeof($d_filter['entered_at'])) . 'Got message: ' . $delete_message;
 		}
+	} else {
+		$delete_result=oline('Undo mismatch for ' . client_link($d_c))
+		. oline('Session undo_field: ' . $_SESSION['ENTRY_BROWSE_UNDO_FIELD'])
+		. 'Entry record: ' . $_SESSION['ENTRY_BROWSE_UNDO_RECORD'];
 	}
 	unset($_SESSION['ENTRY_BROWSE_UNDO_RECORD']);
 	unset($_SESSION['ENTRY_BROWSE_UNDO_FIELD']);
@@ -88,10 +94,10 @@ if (is_enabled('entry_visitor') and isset($_REQUEST['enterVisitorUndo'])) {
 	$d_c=$_REQUEST['enterVisitorUndo'];
 	$d_filter=$_SESSION['ENTRY_VISITOR_BROWSE_UNDO_RECORD'];
 	if ($d_c==$d_filter[$_SESSION['ENTRY_VISITOR_BROWSE_UNDO_FIELD']]) {
-		if (delete_generic($d_filter,$ev_def,'Auto-deleted by entry_browse undo')) {
+		if (delete_void_generic($d_filter,$ev_def,$delete_message,array('deleted_comment'=>'Auto-deleted by entry_browse undo'))) {
 			$delete_visitor_result = 'Deleted visitor record for ' . $d_filter['visitor_name'] .'@'. datetimeof($d_filter['entered_at']);
 		} else {
-			$delete_visitor_result = oline('Failed to delete visitor record for ' . $d_filter['visitor_name'] . '@' . datetimeof($d_filter['entered_at']));
+			$delete_visitor_result = oline('Failed to delete visitor record for ' . $d_filter['visitor_name'] . '@' . datetimeof($d_filter['entered_at'])) . 'Got message: ' . $delete_message;
 		}
 	}
 	unset($_SESSION['ENTRY_VISITOR_BROWSE_UNDO_RECORD']);
@@ -109,19 +115,33 @@ if (isset($_REQUEST['enterClient'])) {
 		// Find and show client notes flagged for this location	
 		$note_filter=array(
 			$ef_def['id_field']=>$e_c,
-			'ANY:flag_entry_codes'=>$USER_PREFS['entry_location']);
+			'ARRAY_CONTAINS:flag_entry_codes'=>array($this_entry_location));
+		$notes=get_generic($note_filter,'','','client_note');
+		while ($note=array_shift($notes)) {
+			$note_f[]=$note['note'] . smaller(' ('.elink('client_note',$note['client_note_id'],'view record','target="_blank"').')');
+		}
+		$note_f=$note_f
+				? (html_heading_1('There is a message regarding this ' .$ef_def['singular'] .':')
+					. div(oline().implode(oline(),$note_f).toggle_label('View message...'),'','class="hiddenDetail"'))
+				: '';
 		$rec=array();
 		$cont=array('action'=>'add','object'=>'entry','id'=>'dummy');
 		blank_generic($def, $rec,$cont);
 		$rec[$id_field]=$e_c;
 		$rec['entered_at']=datetimeof('now','SQL');
-//		$rec['entry_location_code']='FRONT_DOOR';  // FIXME hardcoded--default in DB
+		$rec['entry_location_code']=$this_entry_location;
 		$rec['added_by']=$rec['changed_by']=$UID;
 		$rec['sys_log']='auto-added by entry_browse';
 //outline("Trying $e_c, override =" . $_REQUEST['enterClientOverride']. ", ineligible? " . call_sql_function('entry_ineligible',$e_c));
 		if ((call_sql_function('entry_ineligible',$e_c)==sql_true()) and (!$_REQUEST['enterClientOverride']=='Y') ) {
-			$override_result=oline(client_link($e_c) .' Please see a staff person before entering.').' ('
-			.hlink_if($_SERVER['PHP_SELF'] .'?enterClient='.$e_c.'&enterClientField='.$id_field.'&enterClientOverride=Y','Staff only:  Click to override',true) . ')';
+			$override_result=
+				oline(client_link($e_c)) 
+				.oline(' Please see a staff person before entering.')
+				.oline( ($a=enrollments_f(client_filter($e_c)))
+					? ('Enrolled in '. $a)
+					: 'No recovery circle')
+			.' ('
+			.hlink($_SERVER['PHP_SELF'] .'?enterClient='.$e_c.'&enterClientField='.$id_field.'&enterClientOverride=Y','Staff only:  Click to override') . ')';
 //outline("I am asking for override");
 			$skip=true;
 		}
@@ -155,7 +175,7 @@ if (is_enabled('entry_visitor') and isset($_REQUEST['rec'])) {
 	$ev_rec['entered_at']=datetimeof('now','SQL');
 	$ev_rec['added_by']=$rec['changed_by']=$UID;
 	$ev_rec['sys_log']='auto-added by entry_browse';
-	$ev_rec['entry_location_code']='FRONT_DOOR';  // FIXME hardcoded--default in DB
+	$ev_rec['entry_location_code']=$this_entry_location;
 	if (!valid_generic($ev_rec,$ev_def,$message,'add')) {
 		$ev_post_result .= $message;
 		$continue_ev_rec=$ev_rec;
@@ -230,10 +250,11 @@ $out .= html_heading_1($title)
 	. ($ev_post_result ? div($ev_post_result,'','id="postVisitorResult"') : '')
 	. ($delete_visitor_result ? div($delete_visitor_result,'','id="deleteVisitorResult"') : '')
 	. ($override_result ? div($override_result,'','id="overrideClientResult"') : '')
+	. ($note_f ? div($note_f,'','id="clientNote"') : '')
 	. div($entry_form,'','id="enterClientForm"')
 	. $entry_visitor_form
 	// comment out line below to not display recent entries
-	. oline() . $entries
+	//. oline() . $entries
 ;
 out($out);
 page_close();
