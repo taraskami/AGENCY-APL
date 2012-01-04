@@ -2888,7 +2888,7 @@ function delete_void_generic($filter,$def,$action,&$message,$stamp_rec=array())
 
 	$stamp_rec[$bool_field]=sql_true();
 	$stamp_rec[$who_field]=$GLOBALS['UID'];
-	if (isset($when_field)) {
+	if (isset($stamp_rec[$when_field])) {
 		unset($stamp_rec[$when_field]);
 	}
 	$stamp_rec['FIELD:'.$when_field]='CURRENT_TIMESTAMP';
