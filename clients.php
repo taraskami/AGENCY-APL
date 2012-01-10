@@ -180,6 +180,9 @@ function client_show( $id )
 	$out .= rowrlcell("Current Registrations & Status",
 				jail_status_f($id)
 				. hospital_status_f($id)
+				. member_introduction_status_f($id)
+				. enrollments_f(client_filter($id),oline(),'Enrolled in ',oline())
+				. (($a=entry_ineligible_f($id)) ? oline(red($a)) : '')
 /*
 				. conditional_release_f($id)
 				. housing_status_f($id)
@@ -247,13 +250,14 @@ function client_show( $id )
 		smaller(link_engine(array('object'=>'income','action'=>'add','rec_init'=>array(AG_MAIN_OBJECT_DB.'_id'=>$id)),smaller('Add an income record')))
  		: smaller(jump_to_object_link('income'));
 	$out .= row(rightcell('Monthly Income'. html_no_print(oline().$jump_add)). leftcell($inc));
+	$out .= $client['interests'] ? row(rightcell(label_generic('interests',$def,'view')) . leftcell(value_generic($client['interests'],$def,'interests','view'))) : '';
 	// Balances
 	if (is_enabled('charge_and_payment') and ($bal=balance_by_project($id))) {
 		$out .= row(rightcell('Outstanding Balances').leftcell($bal));
 	}
 	// Basic Info
 	$out .= row( rightcell(oline('Date of Birth')
-				     . 'Gender, Ethnicity, SS, Vet Status')
+				     . 'Gender, Ethnicity, Vet Status')
 			 . leftcell( 
 					oline($deceased_f
 						? red('Deceased. '.dateof($client['dob']).' - '.dateof($deceased_date).' ('.client_age($id,'NO',$deceased_date).' years old)')
@@ -264,10 +268,12 @@ function client_show( $id )
 		   			. multi_objects_f( 
 								 get_generic(client_filter($id),'','','ethnicity')
 								 ,'ethnicity','ethnicity_code') . green("  |  ")
-					. blue($GLOBALS['AG_DEMO_MODE'] ? '999-99-9999' : $client["ssn"]) . green("  |  ") 
+//					. blue($GLOBALS['AG_DEMO_MODE'] ? '999-99-9999' : $client["ssn"]) . green("  |  ") 
 					. blue(value_generic($client['veteran_status_code'],$def,'veteran_status_code','list'))) );
+/*
 	//ids
 	$out .= row(rightcell(ucfirst(AG_MAIN_OBJECT).' ID #\'s').leftcell($ids));
+*/
 
 	$out .=row(cell(smaller(system_fields_f($client,$def,array('action'=>'view'))),'colspan="2" class="systemField"'));
 
@@ -450,7 +456,7 @@ function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
 					     . is_enabled('residence_own') ? "Housing Status" : '')
  				. boldcell("Last Entry")
 				. $bar_status
-				.  boldcell("Gender / Ethnicity /<br />Date of Birth / ssn") 
+				.  boldcell("Gender / Ethnicity /<br />Date of Birth") 
 				. boldcell("Picture"));
 	}
 
@@ -499,7 +505,7 @@ function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
 		   			. oline(multi_objects_f( 
 								 get_generic(client_filter($info[AG_MAIN_OBJECT_DB.'_id']),'','','ethnicity')
 								 ,'ethnicity','ethnicity_code'))
-					 . oline(dateof($info["dob"]) . ($info['ssn'] ? green(' | ') . $info['ssn'] : ''))))
+					 . oline(dateof($info["dob"]) )))
 				   . cell( client_photo( $info[AG_MAIN_OBJECT_DB."_id"], 0.5 )), $opts);
 	}
 	$result .= tableend();
@@ -1535,7 +1541,7 @@ function staff_links()
 //		. client_elevated_concern_list()
 //		. recent_staff_dals_missing_pn_f()
 		. assignments_f($UID,true)
-		. Calendar::my_calendar()
+		. (is_enabled('calendar') ? Calendar::my_calendar() : '')
 //		. recent_medical_dals_f()
 //		. my_staff_dals_missing_pn_f()
 		;
