@@ -89,15 +89,12 @@ function process_object_reference_generic($def,$rec,&$control)
 {
 	if (in_array($control['action'],array('add','edit'))) {
 		// Add action always ref to something else
-		$objects = $_REQUEST['selectedObjectObject'];
-		$ids = $_REQUEST['selectedObjectId'];
-		$labels = $_REQUEST['selectedObjectLabel'];
-		$ref_type = $_REQUEST['selectedObjectRefType'];
-		for ($x=0; $x < count($objects) ; $x++) {
-			if ($ref_type[$x]<>'to') {
+		foreach($_REQUEST['selectedObject'] as $ref) {
+			$ref=json_decode(rawurldecode($ref),true);
+			if ($ref['refType']<>'to') {
 				continue;
 			}
-			$obj_ref_req[] = array('object'=>$objects[$x],'id'=>$ids[$x],'label'=>$labels[$x]);
+			$obj_ref_req[]=$ref;
 		}
 		// FIXME:
 		//$refs = array_unique(array_merge(orr($obj_ref_req,array()),orr($control['object_references'],array())));
@@ -117,39 +114,27 @@ function process_object_reference_generic($def,$rec,&$control)
 	}
 }
 
-function populate_object_references_one( $ref, $x, $type ) {
-	// silly little helper function to avoid looping & save code
-	$n='preSelectedObject';
-    $max_length=20;
-	// Settle for this for now:
-	$label=webify(substr($ref['label'],0,$max_length));
-/*
-//FIXME: this should work, but doesn't because refs are currently
-// embedded in input tags.  Better to use divs or data instead.
-	$label=(strlen($ref['label']) <= $max_length)
-		? webify($label)
-		: webify($label)
-			. div(toggle_label('...').webify(substr($ref['label'],$max_length)),'','class="hiddenDetail"');
-*/
-	return 
-		hiddenvar( $n.'Number[]',$x)
-		. hiddenvar( $n.'Object[]',$ref['object'],"id=\"{$n}Object$x\"")
-		. hiddenvar( $n.'Id[]',$ref['id'],"id=\"{$n}Id$x\"")
-		. hiddenvar( $n.'Label[]',$label,"id=\"{$n}Label$x\"")
-		. hiddenvar( $n.'CanRemove[]',!($ref['canRemove']==false),"id=\"{$n}CanRemove$x\"")
-		. hiddenvar( $n.'RefType[]',$type,"id=\"{$n}RefType$x\"");
-}
-
 function populate_object_references( $control ) {
 	$x=1;
 	$refs_to=orr($control['object_references']['to'],array());
 	$refs_from=orr($control['object_references']['from'],array());
 	foreach (array('to'=>$refs_to,'from'=>$refs_from) as $type=>$refs) {
 		foreach ($refs as $ref) {
-			$pre_refs .= populate_object_references_one( $ref, $x++,$type );
+/*
+//FIXME: this should work, but doesn't because the labels can't handle embedded codes & such
+			$label=$ref['label'];
+			$label=(strlen($label) <= $max_length)
+				? $label
+				: substr($label,0,$max_length)
+				. div(toggle_label('...').substr($ref['label'],$max_length),'','class="hiddenDetail"');
+			$ref['label']=$label;
+*/
+			$ref['RefType']=$type;
+			$ref['Number']=$x++;
+			$pre_refs .= div(json_encode($ref));
 		}
 	}
-	return $pre_refs;
+	return div($pre_refs,'preSelectedObjects','class="serverData"');
 }
 
 function object_reference_container($title='') {
@@ -169,9 +154,13 @@ function post_object_references( $rec,$def,$refs, &$mesg ) {
 			'to_id_field' => $tmp_def['id_field'],
 			'from_table' => $def['object'],
 			'from_id' => $rec[$def['id_field']],
-			'from_id_field' => $def['id_field'],
-			'added_by' => $rec['added_by'],
-			'changed_by' => $rec['changed_by']);
+			'from_id_field' => $def['id_field']);
+		$check_ref=get_generic($n_ref,NULL,NULL,$rdef);
+		if (count($check_ref)==1) {
+			continue;
+		}
+		$n_ref['added_by'] = $rec['added_by'];
+		$n_ref['changed_by'] = $rec['changed_by'];
 		$mesg2='';
 		if (!$n_alert = $rdef['fn']['post']($n_ref,$rdef,$mesg2)) {
 			// only return message on failure
@@ -196,13 +185,13 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 	/* Get label */
 	switch ($object) {
 		// Objects with object_name() function in db:
-		case 'AG_MAIN_OBJECT' :
+		case AG_MAIN_OBJECT :
 			if ($GLOBALS['AG_DEMO_MODE']) {
 				$label_field='XXXXXX, XXX';
 				break;
 			} // else fall through...
-		case 'AG_MAIN_OBJECT' :
-		case'staff' :
+		case AG_MAIN_OBJECT :
+		case 'staff' :
 			$label_field= $object . '_name(' . $id_field . ')';
 			$method='Search';
 			break;
@@ -317,7 +306,8 @@ function get_object_references($object,$id,$id_field=NULL) {
 		// Ref table currently only holds integers, skip anything else
 		return false;
 	}
-	return get_generic(object_reference_filter($object,$id,$id_field),'','',get_def('reference'));
+	$order="to_table='".AG_MAIN_OBJECT_DB."' DESC,to_table,to_id";
+	return get_generic(object_reference_filter($object,$id,$id_field),$order,'',get_def('reference'));
 }
 
 function info_additional_label($id) {

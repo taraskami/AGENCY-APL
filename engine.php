@@ -304,18 +304,24 @@ function engine($control='',$control_array_variable='control')
 		}
 
 	    if ($step=='submit') {
+			$db_refs=array();
+			merge_object_reference_db($object,$id,$db_refs);
+			$refs_changed=($db_refs['object_references']['to']!=$control['object_references']['to']);
+		    $rec_changed=$def['fn']['rec_changed']($REC,$REC_LAST,$def);
 		    if (!$def['fn']['valid']($REC,$def,$message,$action,$REC_LAST)) { 
 			    /*
 			     * Not valid
 			     */
 			    $step='continued';
-		    } elseif (!$def['fn']['rec_changed']($REC,$REC_LAST,$def)) {
+		    } elseif ((!$rec_changed) and (!$refs_changed)) {
 			    /*
 			     * No changes made, abort edit and go to view
 			     */
 			    $message .= 'No changes made during edit.  Record untouched.';
+				$control['object_references']=array();
+				merge_object_reference_db($object,$id,$control);
 			    $action = 'view';
-		    } elseif ( ($action=='add') and $def['single_active_record']
+		    } elseif ( $rec_changed and ($action=='add') and $def['single_active_record']
 				   and ($res = $def['fn']['get_active']($filter=$REC_INIT,$REC,$def))
 				   and (count($res) > 0) ) {
 			    /*
@@ -366,6 +372,7 @@ function engine($control='',$control_array_variable='control')
 		    }
 	    }
 	    if ($step=='post') {
+		    $rec_changed=$def['fn']['rec_changed']($REC,$REC_LAST,$def);
 		    if ( $action=='edit' and (!be_null($id)) 
 			   and (isset($REC[$def['id_field']])) and (!be_null($REC[$def['id_field']]))
 			   and ($id<>$REC[$def['id_field']]) ) {
@@ -393,6 +400,9 @@ function engine($control='',$control_array_variable='control')
 			     */
 			  $res = $def['post_with_transactions'] ? sql_begin() : '';
 
+		  if (!$rec_changed) {
+			$a = $REC;
+			} else {
 			  if ($changed_rec = $def['fn']['rec_collision']($REC,$REC_LAST,$def,$action,$message)) {
 				  /*
 				   * Record collision
@@ -423,7 +433,7 @@ function engine($control='',$control_array_variable='control')
 				  $message    .= oline('Asked to post, but not in add or edit.  Something is wrong.');
 				  $post_failed = true;
 			  }
-
+			}
 			  /*
 			   * Post staff alerts
 			   */
@@ -453,6 +463,9 @@ function engine($control='',$control_array_variable='control')
 			   */
 			  if (!$post_failed && ($refs = $control['object_references']['to'])) {
 				  $post_failed = !post_object_references($a,$def,$refs,$message);
+				  if ((!$post_failed) and (!$rec_changed)) {
+					$message .= 'successfully posted object references to otherwise unchanged record.';
+				  }
 			  }
 			  
 			  if ($post_failed) {
@@ -667,7 +680,7 @@ function engine($control='',$control_array_variable='control')
 			$show_selected = object_reference_container();
 
 			/* Object References Form */
-			if (($action=='add') and ($objs = $def['allow_object_references'])) {
+			if (in_array($action,array('add','edit')) and ($objs = $def['allow_object_references'])) {
 
 				foreach ($objs as $obj ) {
 					$t_def=get_def($obj);
@@ -698,7 +711,7 @@ function engine($control='',$control_array_variable='control')
 				div($object_refs,'objectSelector')
 				. $show_selected)
 			    . div(button($submit_text,'','','','','class="engineButton"') . $reset_button . $cancel_button,'','style="clear: both"')
-				. div($pre_refs,'preSelectedObjects')
+				. $pre_refs
 				. $required_fields_text 
 				. (($required_fields_text and $object_refs_show_link) ? ' | ' : '')
 				. $object_refs_show_link
