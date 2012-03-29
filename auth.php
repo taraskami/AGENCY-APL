@@ -1035,7 +1035,8 @@ function user_identity_management()
 			 */
 			$AUID  = $UID;
 			$UID   = $EUID;
-			$staff = array_shift(staff_get($UID));
+			$def=get_def('staff');
+			$staff = array_shift(get_generic(array($def['id_field']=>$UID),'','',$def));
 			$NICK  = $staff['name_first'];
 
 		}
