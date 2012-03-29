@@ -3,7 +3,7 @@ CREATE OR REPLACE VIEW table_log_enabled_tables AS
 SELECT cc.relname AS table
 FROM pg_trigger t
 	LEFT JOIN pg_class cc ON t.tgrelid = cc.oid
-WHERE t.tgname ~ '_log_chg$'::text AND (NOT t.tgisconstraint OR NOT (EXISTS ( 
+WHERE t.tgname ~ '_log_chg$'::text AND (NOT t.tgisinternal OR NOT (EXISTS ( 
 	SELECT 1
 	FROM pg_depend d
 		JOIN pg_constraint c ON d.refclassid = c.tableoid AND d.refobjid = c.oid
