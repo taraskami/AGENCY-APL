@@ -3046,6 +3046,10 @@ function process_generic(&$sess,&$form,$def)
 			if (!($sess[$form_key]=dateof($form_value,'SQL'))) {
 				$sess[$form_key] = $form_value; //assign invalid date anyway, for validity check to catch
 			}
+		} elseif ( substr($type,0,4)=='time' ) {
+			if (!($sess[$form_key]=timeof($form_value,'SQL'))) {
+				$sess[$form_key] = $form_value; //assign invalid time anyway, for validity check to catch
+			}
 		} elseif ( ($type=='boolean') ) {  //added for checkbox booleans
 			if (sql_true($form_value)) { $form_value=sql_true(); }
 			if (sql_false($form_value)) { $form_value=sql_false(); }
