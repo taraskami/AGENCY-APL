@@ -67,7 +67,7 @@ class User_Option {
 	{
 		global $engine;
 		$this->set_user($uid);
-		$this->table=$engine['user_option']['table_post'];
+		$this->table=orr($engine['user_option']['table_post'],'user_option'); // FIXME: first init was failing without the fallback
 		$this->options_array = $this->get_array();
 	}
 
