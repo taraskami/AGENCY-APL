@@ -168,6 +168,9 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
       //pass the remaining elements in control_array to engine
       if (is_array($control_array)) {
 		foreach ($control_array as $key=>$value) {
+			if ($value==array()) {
+				continue;
+			}
 			if (!get_magic_quotes_gpc()) {
 				$value = addslashes($value);
 			}
