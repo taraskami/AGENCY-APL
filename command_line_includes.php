@@ -107,7 +107,7 @@ include $off . 'java_engine.php'; //java engine class
 include $off . 'revision_history.php';
 include $off . 'output.php';
 include $off . 'calendar.php';
-include $off . 'widget.php';
+//include $off . 'widget.php';
 include $off . 'news.php';
 include $off . 'id_card.php';
 include $off . 'image.php';
