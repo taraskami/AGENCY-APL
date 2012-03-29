@@ -302,7 +302,7 @@ function engine_perm($control,$access_type='')
 	}
 
       if (!is_array($perm)) {
-		$perm=split(',',$perm);
+		$perm=explode(',',$perm);
       }
       foreach($perm as $permission) {
 		if ($permission=='self') {

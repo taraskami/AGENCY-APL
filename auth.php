@@ -751,7 +751,7 @@ function has_perm($perm_list=null,$mode="R",$staff_id="")
 		/*
 		 * split $names into array
 		 */
-		$perm_list = split(',',$perm_list);
+		$perm_list = explode(',',$perm_list);
 
 	}
 
