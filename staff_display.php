@@ -76,12 +76,14 @@ if (!engine_perm(array('action'=>'view','object'=>'staff','id'=>$id))) {
 $def=get_def('staff');
 $filter=array($def['id_field']=>$id);
 
-if (count(($staff_rec=get_generic($filter,'','',$def))) < 1) {
+if (count(($staff_rec=get_generic($filter,'','',$def))) <> 1) {
 	agency_top_header();
 	outline(alert_mark('No Staff found'));
 	page_close();
 	exit; 
  }
+
+$staff_rec=array_shift($staff_rec);
 
 
 $_SESSION['STAFF_DISPLAY_PAGE_ID']=$id;
@@ -119,15 +121,12 @@ if ($action == 'set_password') {
 
 	if (can_change_password($id) || password_check($pass_old,$hash_method,$id)) {
 
-		// get username
-		$tmp_staff = array_shift(staff_get($id));
-		
 		if ($pass_new != $pass_new1) {
 
 			$msg .= alert_mark('Sorry, new passwords do not match');
 			$action = 'change_password';
 
-		} elseif (!is_secure_password($_REQUEST['password_new'],$tmp_staff['username'],$msg) ) {
+		} elseif (!is_secure_password($_REQUEST['password_new'],$staff_rec['username'],$msg) ) {
 
 			$msg = alert_mark($msg);
 			$action = 'change_password';
