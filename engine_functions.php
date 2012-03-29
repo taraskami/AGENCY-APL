@@ -238,14 +238,14 @@ function unserialize_control($control)
       // HAS THE ABILITY TO UNSERIALIZE EITHER A COMPLETELY SERIALIZED ARRAY,
       // OR AN ARRAY WITH SERIALIZED SUB-ARRAYS. AS OF NOW, IT WON'T WORK IF 
       // THERE ARE SERIALIZED ELEMENTS IN FURTHER SUB-ARRAYS (OF SUB-ARRAYS).
-      if ($a=unserialize(percent_decode(urldecode(stripslashes($control))))) {
-		return $a;
-      }
       if (is_array($control)) {
 		foreach ($control as $key=>$value) {
 			$control[$key] = unserialize_control($value);
 		}
 		return orr($control,array());
+      }
+      if ($a=unserialize(percent_decode(urldecode(stripslashes($control))))) {
+		return $a;
       }
 	return $control;
 }
