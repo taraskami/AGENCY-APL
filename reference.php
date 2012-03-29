@@ -39,7 +39,7 @@ function merge_object_reference_db($object,$id,&$control) {
 	$start_refs_to = is_array($control['object_references']['to']) ? $control['object_references']['to'] : array();
 	$db_refs = $add_refs = array();
 //outline("Trying for $object and $id");
-	$refs=get_object_references($object,$id);
+	$refs=orr(get_object_references($object,$id),array());
 //outline("Got refcohnt: " . sql_num_rows($refs) );
 	while ($ref = array_shift($refs)) {
 		$t_id = $ref['to_id'];
