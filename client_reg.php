@@ -36,6 +36,12 @@ $quiet="Y";
 include "includes.php";
 $title='Register a new '.AG_MAIN_OBJECT;
 
+if (!is_enabled('client_reg_search')) {
+	header("Location: display.php?action=add&object=". AG_MAIN_OBJECT_DB);
+	page_close();
+	exit;
+}
+
 $action=$_REQUEST['action'];
 $rec = $_REQUEST['rec'];
 $def = get_def(AG_MAIN_OBJECT_DB);
