@@ -2098,7 +2098,7 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 function form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec,$formvar='rec')
 {
 
-	$field = form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar);
+	$field = form_field_generic($key,$value,$def,$control,$Java_Engine,$formvar);
 
       //FORMAT LABEL
 	$action = $control['action'];
@@ -2364,7 +2364,7 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 	}
 	if ($def['multi_records']) { //horrid 'generic' multi-record hack
 		foreach ($def['multi'] as $c_obj=>$opts) {
-			$opts['valid_fn']($action,$rec,&$def,&$mesg,&$VALID,$c_obj);  
+			$opts['valid_fn']($action,$rec,$def,$mesg,$VALID,$c_obj);  
 		}
 	}
 	foreach ($rec as $key=>$value) {
@@ -3443,7 +3443,7 @@ function process_staff_alert_generic($def,$rec,&$control)
 	    or $alert['ref_table'] != $def['object']) {
 		return 'Error: ID or OBJECT mismatch. Couldn\'t add alert';
 	}
-	if (!$adef['fn']['valid']($alert,&$adef,&$mesg,'add',$rec_last=array())) {
+	if (!$adef['fn']['valid']($alert,$adef,$mesg,'add',$rec_last=array())) {
 		return 'Couldn\'t add alert. Validity Problems: ' . oline() . $mesg;
 	}
 	foreach( $alerts as $alert_staff )
@@ -3464,7 +3464,7 @@ function process_staff_alert_generic($def,$rec,&$control)
 		else
 		{
 	//post alert
-	$n_alert = post_generic($alert,$adef,&$mesg,$filter='');
+	$n_alert = post_generic($alert,$adef,$mesg,$filter='');
 	if (!$n_alert) {
 		return 'Failed to post alert: '.$mesg;
 	}
@@ -3831,7 +3831,7 @@ function auto_close_generic($def,$action,$id,$date)
 	$rec[$end] = $close_date;
 
 	//verify record
-	if (!$def['fn']['valid']($rec,&$def,&$message,$action,$rec_last)) {
+	if (!$def['fn']['valid']($rec,$def,$message,$action,$rec_last)) {
 		return bold('This record couldn\'t be closed due to the following errors (it might need to be edited manually):')
 			. div($message,'','class="indent"');
 	} 

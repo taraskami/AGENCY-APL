@@ -930,7 +930,7 @@ function engine($control='',$control_array_variable='control')
 			/*
 			 * Generate list
 			 */
-			$result = $list_func($control,$def,$control_array_variable,&$total_records,$sid);
+			$result = $list_func($control,$def,$control_array_variable,$total_records);
 			$output .= (($total_records==0) ? '' : $use_link ) . $result;
 		} else {
 
