@@ -1407,7 +1407,7 @@ function post_calendar_appointment($rec,$def,&$mesg,$filter='',$control=array())
 	$new_rec = $rec;
 	unset($new_rec['repeat_until']); // virtual fields, not in the database
 	unset($new_rec['event_repeat_type_code']);
-	$result = post_generic($new_rec,$def,&$mesg,$filter,$control);
+	$result = post_generic($new_rec,$def,$mesg,$filter,$control);
 	// if there's a filter, that means it's an update, so we don't do any repeating stuff
 	// if there's no repeat information, we also just return
 	if ($filter || be_null($rec['repeat_until']) || be_null($rec['event_repeat_type_code']))
