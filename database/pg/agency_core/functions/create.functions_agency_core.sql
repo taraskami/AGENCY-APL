@@ -64,6 +64,12 @@ CREATE OR REPLACE FUNCTION be_null( x integer[] ) RETURNS BOOLEAN AS $$
 
 $$ LANGUAGE sql IMMUTABLE;
 
+CREATE OR REPLACE FUNCTION be_null( x point ) RETURNS BOOLEAN AS $$
+
+      SELECT $1 IS NULL;
+
+$$ LANGUAGE sql IMMUTABLE;
+
 /*
  * These are some convenience functions.
  */
