@@ -5,7 +5,7 @@
 
 This file is part of AGENCY.
 
-AGENCY is Copyright (c) 2003-2009 by Ken Tanzer and Downtown Emergency
+AGENCY is Copyright (c) 2003-2012 by Ken Tanzer and Downtown Emergency
 Service Center (DESC).
 
 All rights reserved.
@@ -66,7 +66,7 @@ array(
 	'ORGANIZATION' => 'Generic Social Service Organization',
       'AGENCY_HOME_TITLE' => 'AGENCY Home Page',
 	'CONFIDENTIAL_STATEMENT'=>'Add your confidentiality statement in agency_config.php',
-	'COPYRIGHT_STATEMENT'=> link_agency_public_home() . ' is copyright (c) 2003-2009, by Ken Tanzer and <a href="http://www.desc.org">DESC</a>. <a href="license_info.php">More information</a>',
+	'COPYRIGHT_STATEMENT'=> link_agency_public_home() . ' is copyright (c) 2003-2012, by Ken Tanzer and <a href="http://www.desc.org">DESC</a>. <a href="license_info.php">More information</a>',
 	'LICENSE_INFO'=>'AGENCY comes with ABSOLUTELY NO WARRANTY.  AGENCY is free software, and can be distributed under the terms of the General Public License, Version 3.  This file should have been included with AGENCY, but can also be found at <a href="http://www.gnu.org/licenses.html">www.gnu.org/licenses.html</a>',
 
       //LINK LABELS (set link destinations below)
