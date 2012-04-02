@@ -175,7 +175,7 @@ function oo_merge_set( $data_recs, $template_strings, $group_field="" )
    	        $x = is_array($data_recs) ? array_shift($data_recs) : sql_fetch_assoc($data_recs);
 			$x = array_merge($sys_vars,$x);
 			$id = $x[$group_field];
-			uksort(&$x,'strlen_cmp');
+			uksort($x,'strlen_cmp');
 			$keys = array_map("oo_preg_pattern",array_keys($x));
 			$values = array_map("oo_preg_value",array_values($x));
 			foreach ($template_strings as $template_string)
