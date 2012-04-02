@@ -97,9 +97,10 @@ function reset_password_link( $token,$email) {
 }
 
 
-function issue_token( $email, &$msg ) {
-	if (!($staff_id=staff_id_from_email($email))) {
-		$msg .= "Sorry, no account found matching $email";
+function issue_token( $email, &$msg,$username=NULL ) {
+	$staff_id=staff_id_from_email($email);
+	if (!($staff_id and ( (!$username) or (staff_id_from_username($username)==$staff_id)))) {
+		$msg .='Sorry, no account found matching those parameters';
 		return false;
 	}
 	$token =generate_token();
@@ -122,6 +123,8 @@ function issue_token( $email, &$msg ) {
 
 function request_token_form() {
 	return formto()
+			. oline("Enter your Username: ")
+			. oline(form_field('text','username'),2)
 			. oline("Enter your email address: ")
 			. oline(form_field('text','email'),2)
 			. button("Reset my password")

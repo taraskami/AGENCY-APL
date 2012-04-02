@@ -44,6 +44,7 @@ $div2=$div_id;
 
 $email=$_REQUEST['email'];
 $token=$_REQUEST['token'];
+$username=$_REQUEST['username'];
 $password1=$_REQUEST['password1'];
 $password2=$_REQUEST['password2'];
 
@@ -77,7 +78,7 @@ if ($password1 or $password2) {
 
 if (!$token) {
 	if ($email) {
-		if ( issue_token( $email,$msg ) ) {
+		if ( $username and (issue_token( $email,$msg,$username )) ) {
 			$out .= "An email has been sent to $email for resetting your password";
 		} else {
 			$out .= oline('There was a problem, and we were unable to process your request') .  oline("($msg)",2);
