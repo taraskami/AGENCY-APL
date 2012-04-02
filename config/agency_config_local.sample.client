@@ -110,4 +110,6 @@ $AG_STAFF_PHOTO_BY_FILE = $AG_HOME_BY_FILE . '/photos/staff';
 // redirected on trying to load a non-listed page
 //$AG_USER_PAGE_RESTRICTIONS = array('demo'=>array('object_query.php','log_browse.php'));
 
+// Timezone
+DEFINE('AG_TIMEZONE','America/Los_Angeles');
 ?>
