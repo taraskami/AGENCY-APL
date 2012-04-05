@@ -63,7 +63,7 @@ function get_report_from_db( $report_id )
 	else {
 		$rec['output'] = array();
 	}
-	$rec['report_permission']=preg_split('/[,\s]/',$rec['report_permission']);
+	$rec['report_permission'] = $rec['report_permission'] ? preg_split('/[,\s]/',$rec['report_permission']) : array();
 	return $rec;
 }
 
@@ -608,7 +608,8 @@ if (!be_null($init) && is_assoc_array($init)) {
 	}
 	$url = $GLOBALS['off'].AG_REPORTS_URL . '?report_id='.$report_id . $url;
 	$rep = get_report_from_db($report_id);
-	return hlink_if($url,$label,(be_null($rep['report_permission']) || has_perm($rep['report_permission'])));
+	$perm = $rep['report_permission'];
+	return hlink_if($url,$label,(be_null($perm) || ($perm==array()) || has_perm($perm)));
 }
 
 function link_report_output($report_id,$label,$init,$template=null)
@@ -646,14 +647,14 @@ function track_report_usage($report_id, $report_name)
 function list_report($control,$def,$control_array_variable='',&$REC_NUM)
 {
 		$order=array('report_category','report_title');
-		$order='report_category_code,report_title';
+		$order="COALESCE(report_category_code,'GENERAL'),report_title";
 		$result = list_query($def,array(),$order,$control);
 		if (($REC_NUM=sql_num_rows($result)) == 0 ) {
 			$out = oline('No reports found');
 		} else {
 			for ($count=1;$count<=$REC_NUM;$count++) {
 				$rep=sql_fetch_assoc($result);
-				$sortkey = orr($rep['report_category_code'],'General');
+				$sortkey = ucfirst(strtolower(orr($rep['report_category_code'],'General')));
 				if ($sortkey <> $old_sortkey) {
 					$out .= $li ? html_list($li) : '';
 					$out .= oline() . oline(bigger(bold($sortkey)),2);
