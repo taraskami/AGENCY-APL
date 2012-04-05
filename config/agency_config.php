@@ -42,10 +42,8 @@ should be included in this distribution.
  *
  * Note:  DO NOT use this without considering security issues!
  */
-//define('AG_KIOSK_MODE',false);
+define('AG_KIOSK_MODE',false);
 //define('AG_KIOSK_USER','agency_kiosk');
-define('AG_KIOSK_MODE',true);
-define('AG_KIOSK_USER','demo');
 
 //Agency public addresses:
 $agency_public_home_url='http://agency-software.org/';
@@ -83,7 +81,7 @@ array(
       //Authorization stuff
       'LOGIN_TITLE' => 'Login to AGENCY',
 	  //Box (div content) that will show on login screen
-	  'LOGIN_ADVISORY' => oline('Username: demo').'Password: demo',
+	  'LOGIN_ADVISORY' => '',
       'LOGIN_SUB_TEXT' => "Welcome to AGENCY! Please enter your username and password:<br>\n",
       'AUTH_LOGOUT_MESSAGE' => 'You have been logged out.',
       'AUTH_LOGIN_BUTTON_TEXT' => 'Login',
@@ -442,7 +440,7 @@ define('AG_CLIENT_CARD_TEMPLATE','client_id.sxw');
 define('AG_STAFF_CARD_TEMPLATE','staff_id.sxw');
 
 /* You need additional software (e.g., unoconv) installed for PDF and MS Office formats */
-define('AG_OPEN_OFFICE_EXTERNAL_CONVERSION_ENABLED',true); //FIXME: make me a feature
+define('AG_OPEN_OFFICE_EXTERNAL_CONVERSION_ENABLED',false); //FIXME: make me a feature
 define('AG_OPEN_OFFICE_PREFER_MS_FORMATS',true);
 define('AG_OPEN_OFFICE_ALWAYS_PDF',false);
 
