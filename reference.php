@@ -89,7 +89,8 @@ function process_object_reference_generic($def,$rec,&$control)
 {
 	if (in_array($control['action'],array('add','edit'))) {
 		// Add action always ref to something else
-		foreach($_REQUEST['selectedObject'] as $ref) {
+		$sent_objects=orr($_REQUEST['selectedObject'],array());
+		foreach($sent_objects as $ref) {
 			$ref=json_decode(rawurldecode($ref),true);
 			if ($ref['refType']<>'to') {
 				continue;
