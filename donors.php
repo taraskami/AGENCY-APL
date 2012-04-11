@@ -360,7 +360,7 @@ function notes_search()
 						'page'=>'display.php'
 						),
 				     orr($_REQUEST['control'],array()));
-	$result = call_engine($control,'',true,true,&$TOTAL,&$PERM);
+	$result = call_engine($control,'',true,true,$TOTAL,$PERM);
 	if (!$PERM) { return 'No Permissions'; }
 	$sub = oline('Found '.$TOTAL.' results for '.bold($s));
 	return $sub . $result;
@@ -501,7 +501,7 @@ function client_search($allow_other="N",$auto_forward=true,$use_old=false)
 					'action'=>'list',
 					'list'=>array('filter'=>$filter)
 					);
-		$result_d = call_engine($control_d,'',true,true,&$TOTAL,$PERM);
+		$result_d = call_engine($control_d,'',true,true,$TOTAL,$PERM);
 
 		if ($TOTAL > 1) {
 			$dt = $TOTAL . ' Results in ';
@@ -521,7 +521,7 @@ function client_search($allow_other="N",$auto_forward=true,$use_old=false)
 					 'action'=>'list',
 					 'list'=>array('filter'=>$filter_a));
 
-		$result_a = call_engine($control_a,'',true,true,&$TOTAL,$PERM);
+		$result_a = call_engine($control_a,'',true,true,$TOTAL,$PERM);
 		if ($TOTAL > 1) {
 			$at = $TOTAL . ' Results in Address';
 			$dt .= oline(seclink('address',smaller($at)),3);
