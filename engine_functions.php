@@ -3113,14 +3113,14 @@ function process_generic(&$sess,&$form,$def)
 
 function sub_title_generic( $action, $rec, $def ) {
 	$sep=oline();
-	// Keeping subtitle_html and subtitle_eval_code for legacy compatibility
-	// merging them intoone
+	// Keeping subtitle_html and subtitle_eval_code
+	// merging them into one
 	// This depends on subtitle being blank by engine default
 	$sub = orr($def['subtitle_'.$action],
 				$def['subtitle']);
-	$sub_eval = orr( $def['subtitle_html_'.$action],
-				$def['subtitle_html'],
-				$def['subtitle_eval_code_'.$action],
+	$sub_html = orr( $def['subtitle_html_'.$action],
+				$def['subtitle_html']);
+	$sub_eval = orr( $def['subtitle_eval_code_'.$action],
 				$def['subtitle_eval_code']);
 	if ($sub_eval) {
 		if (is_array($sub_eval)) {
@@ -3136,10 +3136,12 @@ function sub_title_generic( $action, $rec, $def ) {
 		}
 	}
 	//Return any of these that are set, I guess?
-	$result =
-		$sub 
-		. (($sub and $sub_eval) ? $sep : '')
-		. $sub_eval;
+	if ($sub) { $subs[]=$sub; }
+	if ($sub_html) { $subs[]=$sub_html; }
+	if ($sub_eval) { $subs[]=$sub_eval; }
+	if ( count($subs) > 0) {
+		$result = implode($sep,$subs);
+	}
 	return $result ? span($result,'class="engineSubtitle"') : '';
 }
 
@@ -3162,7 +3164,7 @@ function title_generic($action,$rec,$def)
       $out = ($b
 			 ? eval('return ' . $b. ';')
 			 : (bigger(bold($x))
-		. ' ')) . sub_title_generic($action,$rec,$def);
+		. ' ')) ; //. sub_title_generic($action,$rec,$def);
 	return span($out,'class="engineTitle"');
 }
 

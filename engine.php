@@ -559,6 +559,7 @@ function engine($control='',$control_array_variable='control')
 			    ? view_generic($REC,$def,$action,$control) 
 			    : $def['fn']['view']($REC,$def,$action,$control);
 		    $title = oline($def['fn']['title']($action,$REC,$def));
+		    $sub_title = sub_title_generic($action,$REC,$def);
 
 		    if ($control['break_confirm']) {
 			    $message .= ' '.$return_to_edit;
@@ -694,6 +695,7 @@ function engine($control='',$control_array_variable='control')
 			} // end O. R. Form
 
 		    $title = $def['fn']['title']($action,$REC,$def);
+		    $sub_title = sub_title_generic($action,$REC,$def);
 
 		    foreach ($def['fields'] as $field) {
 			    if ($field['data_type'] == 'attachment') {
@@ -754,6 +756,7 @@ function engine($control='',$control_array_variable='control')
 					}
 				}
 				$title = oline($def['fn']['title']($action,$REC,$def));
+		    		$sub_title = sub_title_generic($action,$REC,$def);
 				$output .= $prepend_add_html; //this will be coming from 'add' or 'edit'
 				$output .= populate_object_references($control) . object_reference_container();
 				$output .= ($format == 'data') 
@@ -886,6 +889,7 @@ function engine($control='',$control_array_variable='control')
 		if ( $read_perm ) {
 			$list=unserialize(urldecode(stripslashes($list)));
 			$title =  $def['fn']['list_title']($control,$def);
+			$sub_title = sub_title_generic($action,$REC,$def);
 
 			/*
 			 * Check for available alternate formats
@@ -955,6 +959,7 @@ function engine($control='',$control_array_variable='control')
 		}
 		$reason_code_field=$action.'_reason_code';
 		$title = oline($def['fn']['title']($action,$REC,$def));
+		$sub_title = sub_title_generic($action,$REC,$def);
 		if ($def['require_'.$com_field]) {
 			$def['fields'][$com_field]['null_ok']=false;
 		}
@@ -1098,6 +1103,7 @@ function engine($control='',$control_array_variable='control')
       }
 
       $result=array('title'         => $title,
+			  'sub_title' => $sub_title,
 			  'total_records' => $total_records,
 			  'output'        => $output,
 			  'message'       => $message,
