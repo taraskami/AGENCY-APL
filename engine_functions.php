@@ -4151,7 +4151,8 @@ function engine_browser_control() {
 
 function all_db_objects( $filter=NULL ) {
 	$filter=orr($filter,array('type'=>array('view','table')));
-	$objects = array_fetch_column(get_generic($filter,NULL,NULL,'db_agency_relations'),'name');
+	$order="name ilike 'tbl_%',name ilike 'l_%'";
+	$objects = array_fetch_column(get_generic($filter,$order,NULL,'db_agency_relations'),'name');
 	return $objects;
 }
 
