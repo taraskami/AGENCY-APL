@@ -1586,13 +1586,13 @@ function valid_multi_record_generic(&$records,&$def,&$message,&$errors,$rec_init
 	 * Wrapper function for valid_generic, to determine if a set of records
 	 * is valid.
 	 */
-
+	$common_fields=orr($def['multi_add']['common_fields'],array());
 	$i = 0;
 	$tmp = array();
 	foreach ($records as $number => $rec) {
 		if ($i++==0 && $def['multi_add']['common_fields_required']) {
 			// require common fields for first record, retain default in $tmp array
-			foreach ($def['multi_add']['common_fields'] as $field) {
+			foreach ($common_fields as $field) {
 				$tmp[$field] = $def['fields'][$field]['null_ok'];
 				$def['fields'][$field]['null_ok'] = false;
 				$common_val[$field]=$rec[$field];
@@ -1600,12 +1600,12 @@ function valid_multi_record_generic(&$records,&$def,&$message,&$errors,$rec_init
 			$restore = true;
 		} elseif ($restore) {
 			// restore default from $tmp array
-			foreach ($def['multi_add']['common_fields'] as $field) {
+			foreach ($common_fields as $field) {
 				$def['fields'][$field]['null_ok'] = $tmp[$field];
 			}
 		}
 		if ($def['fn']['multi_record_passed']($rec,$rec_init,$def)) {
-			foreach ($def['multi_add']['common_fields'] as $field) {
+			foreach ($common_fields as $field) {
 				$rec[$field]=$common_val[$field]; // tack common vals on to each record
 			}
 			$t_v = valid_generic($rec,$def,$message,'add');
