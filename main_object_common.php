@@ -654,8 +654,7 @@ function client_photo( $idnum, $scale=1, $all_in_array=false )
 	$base_f=client_photo_filename($idnum,"BASE_F"); // not id-speficic
 	$base_h=client_photo_filename($idnum,"BASE_H"); // "
 	$photos=array();
-	$files=array();
-	exec("ls -1r $base_f/$idnum*",$files);
+	$files=glob("$base_f/$idnum*");
 	foreach ($files as $f)
 	{
 		if (preg_match('/^(.*)' . $idnum . '$/',$f,$matches))
