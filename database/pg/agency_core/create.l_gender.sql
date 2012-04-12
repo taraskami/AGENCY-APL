@@ -17,6 +17,17 @@ CREATE TABLE tbl_l_gender (
 
 CREATE VIEW l_gender AS SELECT * FROM tbl_l_gender WHERE NOT is_deleted;
 
+INSERT INTO tbl_l_gender VALUES ('FEMALE', 'Female',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_gender VALUES ('MALE', 'Male',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_gender VALUES ('TR_M', 'Transgender (Female to Male)',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_gender VALUES ('TR_F', 'Transgender (Male to Female)',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_gender VALUES ('TR_MF', 'Transgender (F to M), CONSIDER FEMALE',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_gender VALUES ('TR_FM', 'Transgender (M to F), CONSIDER MALE',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_gender VALUES ('TR_UNKNOWN', 'Transgender (Direction Unknown)',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_gender VALUES ('UNKNOWN', 'Unknown',sys_user(),current_timestamp,sys_user(),current_timestamp);
+
+/*
+--The old codes:
 INSERT INTO tbl_l_gender VALUES ('1', 'Female',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_gender VALUES ('2', 'Male',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_gender VALUES ('3', 'Transgender (Female to Male)',sys_user(),current_timestamp,sys_user(),current_timestamp);
@@ -25,4 +36,4 @@ INSERT INTO tbl_l_gender VALUES ('6', 'Transgender (F to M), CONSIDER FEMALE',sy
 INSERT INTO tbl_l_gender VALUES ('7', 'Transgender (M to F), CONSIDER MALE',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_gender VALUES ('5', 'Transgender (Direction Unknown)',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_gender VALUES ('8', 'Unknown',sys_user(),current_timestamp,sys_user(),current_timestamp);
-
+*/
