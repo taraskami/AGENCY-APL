@@ -25,7 +25,7 @@ INSERT INTO tbl_db_revision_history
 
 	 VALUES ('UPDATE_GENDER_CODES', /*UNIQUE_DB_MOD_NAME */
 			'Changes codes from numberic to char', /* DESCRIPTION */
-			'AGENCY_CLIENT', /* Which flavor of AGENCY.  AGENCY_CORE applies to all installations */
+			'CLIENT', /* Which flavor of AGENCY.  AGENCY_CORE applies to all installations */
 			'', /* git SHA ID, if applicable */
 			'db_mod.45', /* git tag, if applicable */
 			current_timestamp, /* Applied at */

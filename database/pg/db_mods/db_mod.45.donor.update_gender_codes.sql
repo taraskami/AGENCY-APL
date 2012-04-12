@@ -25,7 +25,7 @@ INSERT INTO tbl_db_revision_history
 
 	 VALUES ('UPDATE_GENDER_CODES', /*UNIQUE_DB_MOD_NAME */
 			'Changes codes from numberic to char', /* DESCRIPTION */
-			'AGENCY_DONOR', /* Which flavor of AGENCY.  AGENCY_CORE applies to all installations */
+			'DONOR', /* Which flavor of AGENCY.  AGENCY_CORE applies to all installations */
 			'', /* git SHA ID, if applicable */
 			'db_mod.45', /* git tag, if applicable */
 			current_timestamp, /* Applied at */
@@ -55,7 +55,7 @@ UPDATE tbl_staff SET changed_by=sys_user(),changed_at=current_timestamp,sys_log=
 UPDATE tbl_staff SET changed_by=sys_user(),changed_at=current_timestamp,sys_log=COALESCE(sys_log||E'\n')||'Updating gender codes (db_mod.x)',gender_code='UNKNOWN' WHERE gender_code='8';
 
 /*
---Commne
+--Comment out for donor version, or if gender is not in your client table
 
 UPDATE tbl_client SET changed_by=sys_user(),changed_at=current_timestamp,sys_log=COALESCE(sys_log||E'\n')||'Updating gender codes (db_mod.x)',gender_code='FEMALE' WHERE gender_code='1';
 UPDATE tbl_client SET changed_by=sys_user(),changed_at=current_timestamp,sys_log=COALESCE(sys_log||E'\n')||'Updating gender codes (db_mod.x)',gender_code='MALE' WHERE gender_code='2';
