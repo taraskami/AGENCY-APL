@@ -61,6 +61,14 @@ function list_generic($control,$def,$control_array_variable='',&$REC_NUM)
 		$control['list'][$key]=$$key;
 
       }
+	  /* if SQL changes, blow out order.  Otherwise old order, like from Advanced Search, can linger on
+		* and mess things up.  Partly addresses fixme below.
+		*/
+	  if ($sql != $_SESSION['open_query_sql']) {
+			$order=NULL;
+	  }
+
+	  $_SESSION['open_query_sql']=$sql;
 
       if (!$order && !be_null($fields)) {
 
