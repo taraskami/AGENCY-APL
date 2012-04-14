@@ -719,9 +719,10 @@ function list_total_records_text($control,$position,$total,$max,$def)
 	} else {
 		$sort_order = $order;
 	}
-	return smaller(oline("Records $first_rec-$last_rec (of $total total records)")
-			   . span('Sorted by '.$sort_order,' class="listOrder'.($order[$ORDER] ? 'Up' : 'Down').'"')
-			   );
+	$text = ($last_rec==$total) ? "All $total records"
+		: "Records $first_rec-$last_rec (of $total total records)";
+	$sort_text = $sort_order ? ', ' . span('Sorted by '.$sort_order,' class="listOrder'.($order[$ORDER] ? 'Up' : 'Down').'"'): '';
+	return smaller($text . $sort_text);
 }
 
 function list_links($max,$position,$total,$control,$control_array_variable)
@@ -752,9 +753,9 @@ function list_links($max,$position,$total,$control,$control_array_variable)
       }
 
       $JUMP = list_link_format($jump_links,$current_page);
-      $links = smaller(bold("Page $current_page of $num_pages"). ($num_pages>1 
-							  ? " Jump to Page: $prev_link $next_link $JUMP"
-							  : ''));
+      //$links = smaller(bold("Page $current_page of $num_pages"). ($num_pages>1 
+      $links = ($num_pages>1) ? smaller($prev_link,2).smaller( ' ' . bold("Page $current_page of $num_pages")
+			. " $next_link $JUMP") : '';
 
       return $links;
 

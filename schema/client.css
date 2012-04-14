@@ -6,5 +6,8 @@
 
 .listControl,.listControlAdvanced { background-color: #ff8100; }
 .listHeader { background-color: #ccccff; }
+.listHeader td {
+				padding-top: 4px;
+				padding-bottom: 6px; }
 td.generalDataHeader { background-color: #f0f0ff; }
 
