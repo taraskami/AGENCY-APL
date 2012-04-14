@@ -227,6 +227,10 @@ div.sqlCode {
 	margin: 5px 25px; font-family: courier,serif;
 }
 
+div.sqlCode li {  
+	padding: 4px;
+}
+
 .staffServiceLinks {
 	z-index: 99; 
 	margin-left: 25px; 

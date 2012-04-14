@@ -116,7 +116,13 @@ $(function() {
 	$(".hiddenDetail").each( function() {
 		var lab = $(this).children("[name=toggleLabel]");
 		if (lab.val()==undefined) {
-			var text = "details...";
+			if ( $(this).hasClass("sqlCode") ) {
+				var text = "Show SQL...";
+			} else if ( $(this).hasClass("configFile") ) {
+				var text = "Show Configuration...";
+			} else {
+				var text = "details...";
+			}
 		} else {
 			var text = lab.val();
 		}
