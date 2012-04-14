@@ -197,7 +197,7 @@ function list_generic($control,$def,$control_array_variable='',&$REC_NUM)
 		$def = config_generic_sql($def,$result);
 		$control['list']['fields'] = $fields = orr($fields,$def['list_fields']);
 		$control['list']['order'] = $order = orr($order,$def['list_order'],array());
-
+		$generic_sql=true;
 		/*
 		 * End Generic SQL Query handling
 		 */
@@ -222,7 +222,8 @@ function list_generic($control,$def,$control_array_variable='',&$REC_NUM)
 
  	}
 
-	if ($def['allow_add'] and ($control['list']['display_add_link'] or ($total<1))) {
+	//if ($control['list']['display_add_link'] or ($total<1)) {
+	if ($def['allow_add'] and (!$generic_sql) and ($control['list']['display_add_link'] or has_perm('admin'))) {
 		$add_link = link_engine(array('object'=>$object,'action'=>'add'),'Add ' . aan($def['singular']) .' '.$def['singular']);
 	}
 
