@@ -93,7 +93,7 @@ function bar_status_f( $client,$format='',&$is_provisional)
 	$verb_passive=$def['verb_passive'];
 	$noun = $def['singular'];
 	if (count($bars) > 0) {
-		while($curr_bar = array_shift($bars)) {
+		while($curr_bar = sql_to_php_generic(array_shift($bars),$def)) {
 			$days_barred = $curr_bar['days_barred'];
 			$enddate = $curr_bar['bar_date_end'];
 			$brc_resolution = $curr_bar['brc_resolution_code'];
@@ -111,8 +111,13 @@ function bar_status_f( $client,$format='',&$is_provisional)
 			} else {
 				$bar_type = $days_barred . ($days_barred > 1 ? " days" : " day");
 			}
-			//$barred_from = value_generic($curr_bar['barred_from_summary'],$def,'barred_from_summary','list');
-			$barred_from = str_replace(',',', ',value_generic($curr_bar['barred_from_codes'],$def,'barred_from_codes','list'));
+			// If all selected, collapse to 'ALL'
+			$bf=$curr_bar['barred_from_codes'];
+			$bf_options=count_rows($def['fields']['barred_from_codes']['lookup']['table']);
+			$barred_from = (count($bf)==$bf_options) 
+				? '(from ALL)'
+				//: str_replace(',',', ',value_generic($bf,$def,'barred_from_codes','view'));
+				: ucfirst(strtolower('('.implode(', ',$bf).')'));
 			$bar_text = bigger(red(bold(strtoupper($verb_passive)))).$prov_reinstate.' '.bold($barred_from).' ';
 			if (($format <> "short") && ($format <> "mail"))
 			{
