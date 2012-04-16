@@ -143,7 +143,6 @@ function view_staff( $staff,$def='',$action='',$control='',$control_array_variab
 
       global $colors,$UID,$sys_user;
 	$def = orr($def,get_def('staff'));
-	$staff=array_shift($staff);
 	$id=$staff[$def['id_field']];	
 	if (sql_true($staff['is_active']) and be_null(
 			$staff['staff_title']
