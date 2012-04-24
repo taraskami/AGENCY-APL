@@ -98,6 +98,16 @@ function sql_escape_string($s)
 	}
 }
 
+function sql_escape_literal($s)
+{
+	switch ( $GLOBALS['WHICH_DB'] ) {
+	case 'my':
+		return mysql_escape_literal($s);
+	case 'pg':
+		return pg_escape_literal($s);
+	}
+}
+
 function sql_metadata($table)
 {
 	switch ($GLOBALS['WHICH_DB']) {
