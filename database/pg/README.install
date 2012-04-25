@@ -9,7 +9,7 @@ Note: This assumes the PostgreSQL server has already been installed and
       initialized.
 
 Note: These instructions need a little updating.  Check the web for more
-	  current information, http://agency.sourceforge.net/.
+	  current information, http://agency-software.org/.
 
 1) In the agency_core directory, edit install.db.sql, 
    replacing {USER} with the desired username,
@@ -76,7 +76,7 @@ The first time you do this, AGENCY will ask you to configure an engine array.  D
 Now is a good time to enable table logging and changed_at triggers for your tables.
 You can do this from the AGENCY administration page.
 
-More information about AGENCY is available at agency.sourceforge.net.
+More information about AGENCY is available at agency-software.org.
 Now would also be a good time to sign up for one or more of the AGENCY mailing lists,
 or to make a donation to support this project!
 

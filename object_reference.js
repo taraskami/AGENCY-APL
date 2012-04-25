@@ -8,7 +8,7 @@ Service Center (DESC).
 
 All rights reserved.
 
-For more information about AGENCY, see http://agency.sourceforge.net/
+For more information about AGENCY, see http://agency-software.org/
 For more information about DESC, see http://www.desc.org/.
 
 AGENCY is free software: you can redistribute it and/or modify
