@@ -24,7 +24,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with CHASERS.  If not, see <http://www.gnu.org/licenses/>.
+along with AGENCY.  If not, see <http://www.gnu.org/licenses/>.
 
 For additional information, see the README.copyright file that
 should be included in this distribution.
