@@ -218,9 +218,23 @@ function engine($control='',$control_array_variable='control')
 	/*
 	 * Allow add,edit and delete flags
 	 */
+
+	/*
+	 * I don't think even superusers should be able to override these settings.
+	 * Some records can't be edited (hacky_objects).
+	 * If you want only superuser edit, for example, you can allow_edit + perm_edit=>superuser
+	 * If you really need to anyway, you could temporarily change the setting,
+	 * or access the database directly.
+	 */
+
+	$allow_add    = $def['allow_add'];
+	$allow_edit   = $def['allow_edit'];
+	$allow_delete = $def['allow_delete'];
+/*
 	$allow_add    = orr($def['allow_add'],$super_user_perm);
 	$allow_edit   = orr($def['allow_edit'],$super_user_perm);
 	$allow_delete = orr($def['allow_delete'],$super_user_perm);
+*/
 	$allow_void   = $allow_edit and has_perm('void','W');
 
 	/*
@@ -822,9 +836,9 @@ function engine($control='',$control_array_variable='control')
 						$is_void = sql_true($REC['is_void']);
 						$is_deleted = sql_true($REC['is_deleted']);
 						$is_voidable  = (!($is_void or $is_deleted) and array_key_exists('is_void',$REC));
-						$links = ($is_void or $is_deleted) ? '' : oline(link_engine($edit_control_array,$edit_text));
-						$links .= ($is_void or $is_deleted) ? '' : oline(link_engine($clone_control_array,$clone_text));
-						$links .= $is_deleted ? '' : link_engine($delete_control_array,$delete_text);
+						$links = ($is_void or $is_deleted or (!$allow_edit)) ? '' : oline(link_engine($edit_control_array,$edit_text));
+						$links .= ($is_void or $is_deleted or (!$allow_add)) ? '' : oline(link_engine($clone_control_array,$clone_text));
+						$links .= ($is_deleted or (!$allow_delete)) ? '' : link_engine($delete_control_array,$delete_text);
 						$links .= $is_voidable
 								  ? oline() . link_engine($void_control_array,$void_text)
 								  : '';
