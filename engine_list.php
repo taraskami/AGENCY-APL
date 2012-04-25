@@ -1312,6 +1312,9 @@ function show_list_totals($result,$total,$def,$control,$fields)
 
 		foreach ($fields as $field) {
 
+			if ($TOTALS[$field]) {
+				$has_totals=true;
+			}
 			$row .= cell(value_generic($TOTALS[$field],$def,$field,'list')
 					 . ((be_null($page_totals)) ? '' : oline() . smaller(value_generic($page_totals[$field],$def,$field,'list'))));
 
@@ -1323,7 +1326,9 @@ function show_list_totals($result,$total,$def,$control,$fields)
 
 		}
 
-		return row(cell('Totals:' . $page_totals_f).cell().$row,'class="listTotals"');
+		return $has_totals
+			? row(cell('Totals:' . $page_totals_f).cell().$row,'class="listTotals"')
+			: '';
 
 	} else {
 
