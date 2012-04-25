@@ -148,25 +148,29 @@ function sql_true( $bool="generate" )
 
 	switch (strtolower($bool))
     {
-	      case 't' :
-	      case 'true' :
-	      case 'y' :
-	      case 'on' :
-              case '1' :
-		    return true;
-	      case 'f' :
-	      case 'false' :
-	      case 'n' :
-	      case 'off' :
-              case '0' :
-		    return false;
-	      case '' :
-		    return null;
-	      case "generate" :
-		    return 't';
-	      default :
-		    outline("Warning--non-boolean ($bool) passed to sql_true");
-		    return;	
+		case 't' :
+		case 'true' :
+		case 'y' :
+		case 'yes' :
+		case 'on' :
+		case '1' :
+			return true;
+
+		case 'f' :
+		case 'false' :
+		case 'n' :
+		case 'no' :
+		case 'off' :
+		case '0' :
+			return false;
+
+		case '' :
+			return null;
+		case "generate" :
+			return 't';
+		default :
+			outline("Warning--non-boolean ($bool) passed to sql_true");
+			return;	
      }
 }
 
@@ -174,28 +178,24 @@ function sql_false( $bool="generate" )
 {
 // evaluate whether a boolean from (Pg)SQL is false, and return true/false
 // if used w/o argument, generate a true for use in inserts,updates,etc.
-	switch (strtolower($bool))
-	      {
-	      case 'false' :
-	      case 'f' :
-	      case 'n' :
-	      case 'off' :
-              case '0' :
-		    return true;
-	      case 't' :
-	      case 'y' :
-	      case 'on' :
-	      case 'true' :
-              case '1' :
-		    return false;
-	      case '' :
-		    return null;
-	      case "generate" :
-		    return 'f';
-	      default :
-		    outline("Warning--non-boolean passed to sql_false");
-		    return;	
-	      }
+
+// Avoiding redundant code and consistency by using sql_true for the specific tests.
+
+	switch (strtolower($bool)) {
+		case 'generate' :
+			return 'f';
+		case '' :
+			return null;
+		default :
+			$a = sql_true( $bool );
+			if ($a===false) {
+				return true;
+			} elseif ($a===true) {
+				return false;
+			}
+			outline("Warning--non-boolean passed to sql_false");
+			return;	
+	}
 }
 
 function agency_query( $select, $filter="", $order="",$limit="", $offset='',$group='')
