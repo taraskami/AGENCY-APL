@@ -3712,9 +3712,24 @@ function build_lookup_query($field_def,$action)
 	if ($action and isTableView($look_table.'_'.$action)) {
 		$look_table = $look_table.'_'.$action;
 	}
+
+	$look_label=$look['label_field'];
 	$look_code=$look['value_field'];
 	$show_value = $field_def['show_lookup_code_'.$action];
-	$look_label=$look['label_field'];
+
+	// FIXME: This is better handling of lookup fields allowing for
+	// easier configuration and only used in cases that are guaranteed
+	// to fail otherwise.  (e.g., no field).  But this really should be
+	// handled in engine configuration
+	if (!$look_code) {
+		if (preg_match('/^(tbl_)?(l_)?(.*)$/',$look_table,$m)) {
+			$look_tmp = $m[3];
+		}
+		$look_code=$look_tmp . '_code';
+	}
+	$look_label=orr($look_label,'description');
+	// End FIXME
+
 	$tmp_order = orr($field_def['lookup_order'],'LABEL');
 	switch (strtoupper($tmp_order)) {
 	case 'TABLE_ORDER':
