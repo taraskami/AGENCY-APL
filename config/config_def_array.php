@@ -33,6 +33,8 @@ should be included in this distribution.
 $engine['def_array'] = array(
 	'title'=>'"Viewing def array for " .$rec["object"]',
 	'perm'=>'admin',
+	'allow_add'=>false,
+	'allow_delete'=>false,
 	'allow_edit'=>false,
 	'id_field'=>'object'
 );
