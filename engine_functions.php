@@ -1003,7 +1003,9 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 	    $tmp_lab = preg_replace('/'.AG_MAIN_OBJECT_DB.'/',AG_MAIN_OBJECT,$field);
 	    $tmp_lab = preg_replace('/^agency_/','',$tmp_lab); //  (remove noise from labels)
 	    $tmp_lab = preg_replace('/^org_/','',$tmp_lab); 
-	    $new['label'] = preg_replace('/ /','&nbsp;',ucwords(preg_replace('/_/',' ',$tmp_lab)));
+		//I don't think the space->&nbsp; is necessary or appropriate here
+	    //$new['label'] = preg_replace('/ /','&nbsp;',ucwords(preg_replace('/_/',' ',$tmp_lab)));
+	    $new['label'] = ucwords(preg_replace('/_/',' ',$tmp_lab));
 
 	    if (array_key_exists($field,$system_fields)) {
 		    //handle system fields here
