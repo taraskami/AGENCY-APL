@@ -734,6 +734,13 @@ function config_object($object)
 			// don't set length unless manually specified for text fields
 			unset($OBJECT['fields'][$k]['length']);
 		}
+
+		// Last minute adjustments: change objects to singular
+		foreach($field as $tag=>$option) {
+			if ((strpos($tag,'label_')===0) and (!isset($config_object['fields'][$k][$tag]))) {
+				$OBJECT['fields'][$k][$tag]=str_ireplace(str_replace('_',' ',$OBJECT['object']),$OBJECT['singular'],$option);
+			}
+		}
 	  }
       return $OBJECT;
 
