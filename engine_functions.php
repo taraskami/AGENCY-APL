@@ -2241,7 +2241,7 @@ function system_fields_f($rec,$def,$control,&$important_header='',&$JAVA_ENGINE=
 		}
 		$system[]=$line;
 	}
-	$system=smaller(implode(oline(),$system));
+	$system=$system ? smaller(implode(oline(),$system)) : '';
 	if ((in_array($action,array('add','edit'))) and has_perm('system_log_field','W')) {
 		if (!be_null($rec['sys_log'])) {
 			$ex_class=' hiddenDetailShow';
