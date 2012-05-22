@@ -1016,9 +1016,15 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 
 		  $new['data_type']='timestamp';
 
-	    } elseif (  (strtolower(substr($field,3))=='is_') ||
-			    (strtolower(substr($field,4))=='has_') ||
-			    (strtolower(substr($field,4))=='was_')  ) {
+	    } elseif (  (strtolower(substr($field,0,3))=='is_') ) {
+
+		  $new['data_type']='boolean';
+		  // 8 characters to take off 3 because of "&nbsp;"  Not sure why we're doing this.
+		  //$new['label'] = substr($new['label'],8) . '?';
+		  $new['label'] = substr($new['label'],3) . '?';
+
+		} elseif ( (strtolower(substr($field,0,4))=='has_') ||
+			    (strtolower(substr($field,0,4))=='was_')  ) {
 
 		  $new['data_type']='boolean';
 
@@ -1138,7 +1144,8 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 
 	    } elseif (preg_match('/(.*)_code$/i',$field,$m)) { //catch other '_code' fields
 
-		    $new['label'] = ucwords(substr($new['label'],0,strlen($new['label'])-10)); //10 = length(&nbsp;code)
+		    //$new['label'] = ucwords(substr($new['label'],0,strlen($new['label'])-10)); //10 = length(&nbsp;code)
+		    $new['label'] = ucwords(substr($new['label'],0,strlen($new['label'])-5)); //10 = length(&nbsp;code)
 
 	    } else {
 		  // this is all engine metadata can do
@@ -1245,8 +1252,8 @@ function set_engine_defaults($object,$table='')
 				//else go for the primary key, or failing that, the first field
 				: orr( $primary, $fields[0]) 
 		  );
-      $singular=orr($engine[$object]['singular'],ucwords(preg_replace("/_/",' ',$object)));
-	$singular=preg_replace("/".AG_MAIN_OBJECT_DB."/i",ucwords(AG_MAIN_OBJECT),$singular);
+      $singular=orr($engine[$object]['singular'],ucwords(preg_replace("/_/",' ',preg_replace('/^l_/i','',$object))));
+	  $singular=preg_replace("/".AG_MAIN_OBJECT_DB."/i",ucwords(AG_MAIN_OBJECT),$singular);
       $DEFAULTS['global_default']['singular'] = $singular;
       $DEFAULTS['global_default']['plural'] = (strtolower(substr($singular,-1))=='y') 
 	    ? substr($singular,0,strlen($singular)-1) . 'ies'
@@ -1675,10 +1682,11 @@ function label_generic($key,$def,$action,$do_formatting=true)
 		$label .= $req;
 	}
 
-	if ($action == 'view' && in_array($type,array('lookup','lookup_multi'))) {
+	if ($action != 'list' && in_array($type,array('lookup','lookup_multi'))) {
 
 		$l_table = $field['lookup']['table'];
-		$label = link_engine(array('object'=>$l_table,'action'=>'list'),alt($label,'Show lookup list (Table: '.$l_table.')'),'',' class="fancyLink" target="_blank"');
+		//$label = link_engine(array('object'=>$l_table,'action'=>'list'),alt($label,'Show lookup list (Table: '.$l_table.')'),'',' class="fancyLink" target="_blank"');
+		$label = smaller(link_engine(array('object'=>$l_table,'action'=>'list'),'view lookup ','',' class="fancyLink advancedControl" target="_blank"'),2) . $label;
 
 	}
 
