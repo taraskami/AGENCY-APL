@@ -1,6 +1,7 @@
 CREATE TABLE tbl_entry (
 	entry_id			BIGSERIAL PRIMARY KEY,
 	entered_at			TIMESTAMP NOT NULL,
+	exited_at			TIMESTAMP,
 	client_id			INTEGER NOT NULL REFERENCES tbl_client (client_id),
 	issue_no			INTEGER,
 	source			CHAR(1),
