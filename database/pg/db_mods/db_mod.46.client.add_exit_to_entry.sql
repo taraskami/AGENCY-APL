@@ -44,6 +44,4 @@ CREATE VIEW entry AS (SELECT * FROM tbl_entry WHERE NOT is_deleted);
 \i ../client/create.view.elevated_concern_note.sql
 
 
-/*
 COMMIT;
-*/
