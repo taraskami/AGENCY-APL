@@ -447,7 +447,7 @@ function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
 			. row(boldcell("#")
 				. boldcell(oline(ucfirst(AG_MAIN_OBJECT)." / ID # /") 
 					     . oline("Overnight Eligibility | Assessed Score") 
-					     . is_enabled('residence_own') ? "Housing Status" : '')
+					     . (is_enabled('residence_own') ? "Housing Status" : ''))
  				. boldcell("Last Entry")
 				. $bar_status
 				.  boldcell("Gender / Ethnicity /<br />Date of Birth / ssn") 
