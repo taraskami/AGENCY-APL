@@ -192,6 +192,9 @@ INSERT INTO db_list
 \i create.l_news_priority.sql
 \i create.tbl_news.sql
 
+/* system log */
+\i create.tbl_system_log.sql
+
 /* Enable alert notifications on objects */
 select
 	alert_notify_enable('tbl_staff'),
