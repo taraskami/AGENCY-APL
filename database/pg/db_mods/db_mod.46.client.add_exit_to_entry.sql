@@ -27,7 +27,7 @@ INSERT INTO tbl_db_revision_history
 			'Adds exited_at field to entry table', /* DESCRIPTION */
 			'CLIENT', /* Which flavor of AGENCY.  AGENCY_CORE applies to all installations */
 			'', /* git SHA ID, if applicable */
-			'db_mod.45', /* git tag, if applicable */
+			'db_mod.46', /* git tag, if applicable */
 			current_timestamp, /* Applied at */
 			'', /* comment */
 			sys_user(),
