@@ -174,16 +174,18 @@ $engine['global_default'] = array(
 				  'valid_record'=>null, //a record-wide validity check (has access to $rec and $rec_last)
 				  'verify_on_post'=>true, //re-verify record prior to posting
 				  'widget'=>null, //hook for widget functionality -> see widget.php for more details
-				  'allow_add' => false,
-				  'allow_delete' => false,
-				  'allow_void' => false,
-				  'allow_edit' => false,
+				  'allow_add' => true,
+				  'allow_delete' => true,
+				  'allow_void' => true,
+				  'allow_edit' => true,
 				  'allow_list' => true,
 				  'allow_view' => true,
 				  'allow_download' => true,
 				  //'label_format' => '$x',
 				  //'value_format' => 'bold($x)', redundant!!
 				  //title added below
+				  'perm_delete' => 'admin',
+				  'perm_void' => 'admin',
 				  'title_format' => null);
 
 $engine['field_default'] = array(
