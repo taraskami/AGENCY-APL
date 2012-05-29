@@ -719,7 +719,7 @@ function webify_sql($sql)
 		}
 		$new_sql .= $word.$line;
 	}
-	return webify($new_sql);
+	return syntaxify(webify($new_sql),'SQL');
 }
 
 function sql_to_php($sql,$mapping)

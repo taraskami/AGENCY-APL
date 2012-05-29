@@ -2480,5 +2480,9 @@ function toggle_label($label) {
 	return hiddenvar('toggleLabel',$label);
 }
 
+function syntaxify( $string, $lang ) {
+	require_once($off.'bundled/phppgadmin/syntax_highlight.php');
+	return syntax_highlight($string,$lang);
+}
 
 ?>
