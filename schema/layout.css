@@ -97,9 +97,10 @@ table.engineForm td, table.engineForm th { border:inset 1px #e6e6e6; padding: 3p
 table.engineForm th { font-weight: bold; text-align: center; }
 
 .engineButton, .linkButton { border: solid 1px black; text-decoration: none; 
+	border-radius: 10px;
 	font-family: helvetica,georgia,sans-serif; font-size: 1em;
 	vertical-align: middle; 
-	background-color: #e6e6e6; color: #000; margin: 10px;}
+	background-color: #e6e6ff; color: #000; margin: 10px;}
 .linkButton { padding: 2px; }
 .engineButton { padding: 1px; }
 .removeButton { border: solid 1px black; text-decoration: none; 
@@ -184,7 +185,7 @@ div.childRecordListGenericData { margin-left: 25px; }
 #objectCommandBox, #objectCommandBox a, #objectCommandBox acronym, #objectCommandBox input { font-size: 75%; }
 
 /* Quick Search */
-#QuickSearch { width: 230px; padding: 2px; vertical-align: middle; }
+#QuickSearch { width: 230px; padding: 2px; vertical-align: middle; position: relative; right: 0; }
 .QuickSearchTabInactive, .QuickSearchTab { 
 	float: left; 
 	border-top: solid 1px #000088; 
