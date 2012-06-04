@@ -91,7 +91,6 @@ $id = trim(orr($id,$LAST_ID));
 
 // FIXME:  I'm not sure if this is being used, or quite what it does...
 //process_quick_search('N',false); // "N" to Not stop after showing results, false to not auto-forward to client page
-
 /*
 //-------add clients--------//
 if ( isset($client_select) ) {
@@ -218,7 +217,6 @@ if ( isset($valid_staff) ) {
 */
 $action = orr($action,$LAST_ACTION,'list');
 //outline("Aection = $action");
-$show_page_logs_link=hlink($_SERVER['PHP_SELF'].'?action=show_page_logs','show these logs on 1 page');
 //outline("Switching on action $action");
 switch( $action ) {
 
@@ -239,13 +237,6 @@ switch( $action ) {
 	 $mode  = 'view';
 	 break;
 
-case 'show_page_logs' :
-
-	$show_page_logs_link = hlink($_SERVER['PHP_SELF'].'?control[action]=list','return to log index');
-	$a = get_generic( $LOG_FILTER,'log_id','',$l_def);
- 	$mode  = 'list';
-	break;
-
 	/*
 	 *browse-mode actions
 	 */
@@ -259,7 +250,9 @@ case 'show_page_logs' :
 
 	if ( ! (($LOG_POS >=0) and ($LOG_POS < $log_count ) )) {
 		// if invalid LOG_POS, set to end of log.
- 		$LOG_POS = $log_count - $logs_per_screen;
+ 		//$LOG_POS = $log_count - $logs_per_screen;
+		// Set to beginning, since newest first
+		$LOG_POS=0;
 	}
 	if ($LOG_POS-min($log_count,$logs_per_screen)  < 0) {
 		$LOG_POS=0;
@@ -325,9 +318,6 @@ case 'list' :
 case 'view' :
 //outline("In browse, LOG_ILTE = " . dump_array($LOG_FILTER). " viewfilter= " . dump_array($view_filter) . " a=$a");
 //outline("log_pos $LOG_POS");
-	if ( !isset($a) && isset($LOG_FILTER) ) {
-       	$a = get_generic( $LOG_FILTER, NULL,NULL,$l_def);
-	}
 
 	$page_title= $LOG_FILTER ? 
 		'Viewing log entries ' . ( $LOG_POS+1 ) .'-->' .(min($LOG_POS+$logs_per_screen,$log_count))
@@ -345,10 +335,8 @@ case 'view' :
 					'max'=>$logs_per_screen,
 					'display_add_link'=>true,
 					'no_controls'=>false));
-//outline("Control: " . dump_array($control));
 
 	$nav_links=list_links($logs_per_screen,$LOG_POS,$log_count,$control,'control');
-	// Fixme: instead of "details...", should say "controls..."
 	$commands =array($commands,cell(div(toggle_label("settings...") . show_pick_logs(),'','class="hiddenDetail"'),'class="pick"'));
 	if (count($log_types) == 0 ) {
 		$lt_def=get_def('l_log_type');
@@ -359,19 +347,14 @@ case 'view' :
 		$out .= alert_mark($msg);
 	} elseif (!isset($LOG_FILTER)) {
 		$out .= alert_mark('Open Settings to Select Log(s) to view');
-	} elseif (isset($LOG_FILTER) && count($a)==0) {
+	} elseif (isset($LOG_FILTER) && ($log_count==0)) {
 		$out .=alert_mark('Your selection contains no log entries');
 	} elseif ($LOG_FILTER) { // ??? (OK, if no LOG_FILTER, user needs to select logs first)
 
 //toggle_query_display();
-	$content = ($action == 'show_page_logs') 
-		//? log_show( $a,$DISPLAY['photos'] , true)
-		? view_generic($a,get_def('log'),'view')
-		//: show_log_heads( $a,$DISPLAY['photos'],true) ))
-		: call_engine($control,'',true,false,$DUMMY,&$PERMISSION);
+	$content = call_engine($control,'',true,false,$DUMMY,$DUMMY_PERMISSION);
 		$out .= center(oline(bold(bigger($our_title)))
-						. oline($nav_links))
-//					   . smaller(oline() . '(' . $show_page_logs_link . ')'))
+			. oline($nav_links))
 			. oline( $content );
 //outline("TOTAL_RECORDS=$LOG_POS");
 	}
