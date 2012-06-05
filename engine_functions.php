@@ -1087,7 +1087,7 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 		    //$new = set_engine_actions('show_lookup_code','BOTH',$new); //returns array with actions set
 		    
 		    $new['show_lookup_code_list']='DESCRIPTION';  //will display only DESCRIPTION for list action
-		    $new['label'] = ucwords(substr($new['label'],0,strlen($new['label'])-10)); //10 = length(&nbsp;code)
+		    $new['label'] = ucwords(substr($new['label'],0,strlen($new['label'])-5)); //5 = length(_code)
 		    $new['lookup'] = array('table' => 'l_' . $matches[1],
 						   'value_field' => $matches[1].'_code',
 						   'label_field' => 'description'
