@@ -223,7 +223,7 @@ function list_generic($control,$def,$control_array_variable='',&$REC_NUM)
  	}
 
 	//if ($control['list']['display_add_link'] or ($total<1)) {
-	if ($def['allow_add'] and (!$generic_sql) and ($control['list']['display_add_link'] or has_perm('admin'))) {
+	if ($def['allow_add'] and (!$generic_sql) and ($control['list']['display_add_link'] or (($filter==array()) and has_perm('admin')))) {
 		$add_link = link_engine(array('object'=>$object,'action'=>'add'),'Add ' . aan($def['singular']) .' '.$def['singular']);
 	}
 
