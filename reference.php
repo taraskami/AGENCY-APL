@@ -130,7 +130,7 @@ function populate_object_references( $control ) {
 				. div(toggle_label('...').substr($ref['label'],$max_length),'','class="hiddenDetail"');
 			$ref['label']=$label;
 */
-			$ref['RefType']=$type;
+			$ref['refType']=$type;
 			$ref['Number']=$x++;
 			$pre_refs .= div(json_encode($ref));
 		}
