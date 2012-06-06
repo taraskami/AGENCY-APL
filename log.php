@@ -171,11 +171,12 @@ function view_log($rec,$def,$action,$control='',$control_array_variable='control
 	$c_def=get_def(AG_MAIN_OBJECT_DB);
 	$client_refs = ($a=object_references_f('log',$rec['log_id'],NULL,'','to',array('client')))
 	? oline($c_def['plural'] . ':') . $a
-	: '(no '.$c_def['plural'].' are referenced in this log entry)';
+	: '';
 
 	$staff_alerts = ($a=staff_alerts_f('log',$rec['log_id']))
 		? oline(bold('Staff Alerts:')).$a
-		: 'No Staff Alerts';
+		: '';
+
 	$in_logs = smaller(implode(oline(),$rec['log_type_code']));
 /*
 	foreach( $rec['log_type_code'] as $a) {
@@ -191,10 +192,10 @@ function view_log($rec,$def,$action,$control='',$control_array_variable='control
 		//refs/author info
 		  table(row(
 				cell($in_logs)
-				. cell($client_refs,'class="client"') //client refs
-				. cell($staff_alerts,'class="staff"') //staff alerts
-				. cell(oline('Posted by '.staff_link($rec['added_by']))
-					 . $post_times,'class="info"')),'','class="logHeader"')
+				. cell(oline('Posted by '.staff_link($rec['added_by'])) . $post_times,'class="info"')
+				. ($client_refs ? cell($client_refs,'class="client"') : '')
+				. ($staff_alerts ? cell($staff_alerts,'class="staff"') : '')
+				),'','class="logHeader"')
 
 		. div(html_heading_2($subject,' class="logSubject"')
 			. $log_text,'','class="logText generalTable"');
