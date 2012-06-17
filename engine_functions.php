@@ -1797,7 +1797,7 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 function view_generic_row($key,$value,$def,$action,$rec)
 {
 	global $colors;
-      $value=value_generic($value,$def,$key,$action);
+      $value=value_generic($value,$def,$key,$action,true,$rec);
       $label=label_generic($key,$def,$action);
 
 	//ideally, comment handling would be in the label_generic function, but for now, not breaking things is good
@@ -2488,7 +2488,7 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 			$def['fields']['comment']['not_valid_flag']=true;
 			$VALID=false;
 			//$valid=false;
-			$mesg .= oline("Comment required for $label of " . value_generic($value,$def,$key,'view'));
+			$mesg .= oline("Comment required for $label of " . value_generic($value,$def,$key,'view',true,$rec));
 		}
 
 	    //manual validity definitions
