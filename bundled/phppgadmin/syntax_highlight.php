@@ -32,23 +32,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-function keyword_replace($keywords, $text, $ncs = false)
+function keyword_replace($keywords, $text, $ncs = false, $class='sqlKeyword')
 {
     $cm = ($ncs)? "i" : "";
     foreach ($keywords as $keyword)
     {
         $search[]  = "/(\\b$keyword\\b)/" . $cm;
-        $replace[] = '<span class="keyword">\\0</span>';
+        $replace[] = '<span class="'.$class.'">\\0</span>';
     }
 
     $search[]  = "/(\\bclass\s)/";
-    $replace[] = '<span class="keyword">\\0</span>';
+    $replace[] = '<span class="'.$class.'">\\0</span>';
 
     return preg_replace($search, $replace, $text);
 }
 
 
-function preproc_replace($preproc, $text, $class='sqlCode')
+function preproc_replace($preproc, $text, $class='sqlKeyword')
 {
     foreach ($preproc as $proc)
     {
