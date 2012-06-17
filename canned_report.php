@@ -76,11 +76,15 @@ switch ($action) {
 			if (!($out=report_generate($report,$mesg))) {
 			  $out .= div($mesg,'','class="error"');
 			}
-			 break;
+			$head = html_heading_tag($report['report_title'],1)
+			. html_heading_tag('Report Results',2);
+			break;
 	 } 
 
  case 'options' : // set user options for report
 	$title = 'Select Options ('. $report['report_title']. ')';
+	$head = html_heading_tag($report['report_title'],1);
+
 	// navigate back to list of reports
 	$navigation[]=$main_reports_url;
 	$navigation[]=$view_this_report;
@@ -96,13 +100,18 @@ switch ($action) {
 
  default: // report list
 	$title = 'AGENCY Report Page';
+	$head = html_heading_tag($title,1)
+			. html_heading_tag('Choose a Report',2);
 	$perm= $tot_recs = NULL;
 	 $out .= call_engine(array('object'=>'report','action'=>'list','format'=>''),'',true,true,$perm,$tot_recs);
 }
 
-$out = html_heading_1($title) . $out ;
-$commands = array(bottomcell(implode(oline(),$navigation),' class="pick"'));
+$help_link=link_wiki_public('Reports','About Reports');
+$out = $head . $out ;
+$commands = array(bottomcell($help_link . implode(oline(),$navigation),' class="pick"'));
 agency_top_header($commands);
-out($out);
+out(div($out,'','class="engineMain engineMainReport"'));
 page_close();
+exit;
+
 ?>

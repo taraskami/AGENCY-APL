@@ -3411,7 +3411,7 @@ function add_staff_alert_form_generic($def,$rec,$control)
 					  . rowrlcell('Your Password' . $req,$AG_AUTH->get_password_field($auto_focus=false))
 					  ,'','class=""')
 			. button('Add Alert','','','','','class="engineButton"')
-			. js_link('Cancel',$close,'class="linkButton"')
+			. js_link('Cancel',$close,'class="linkButton engineButton"')
 			. formend());
 	return js_link('Add staff alert(s)',
 			   'document.getElementById(\'engineStaffAlertForm\').style.display="block";blur();return false;')

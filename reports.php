@@ -358,7 +358,7 @@ function report_generate($report,&$msg)
 		}
 		$css_class = $report['css_class'];
 		$css_id = $report['css_id'];
-		return div(html_heading_4(webify($report['report_header']),' class="reportHeader"')
+		return div( (!be_null($report['report_header']) ? html_heading_4(webify($report['report_header']),' class="reportHeader"') : '')
 			. implode('<HR class="reportOutputSeparator">',$out)
 			. (!be_null($footer) ? html_heading_4($footer,' class="reportFooter"') : '')
 			. html_heading_4($sys_footer,' class="reportSysFooter"'),$css_id,'class="report $css_class"');
@@ -476,6 +476,8 @@ function report_user_options_form($report)
 	$out = formto();
 	$out .= $report['report_code'] ? hiddenvar('report_code',$report['report_code']) : '';
 	$out .= hiddenvar('action','generate');
+	if (is_array($report['variables']) and count($report['variables'])>0) {
+	$opt .= html_heading_tag('Select Report Options',2);
 	foreach( orr($report['variables'],array()) as $p ) {
 		$varname    = AG_REPORTS_VARIABLE_PREFIX . $p['name'];	
 		$userprompt = $p['prompt'];	
@@ -521,14 +523,15 @@ function report_user_options_form($report)
 			$opt .= row(cell(alert_mark('Don\'t know how to handle a ' . $p['type']),' colspan="2"'));
 		}
 	}
+	$opt=table($opt);
+	}
 
 	// output options
-	$opt .= row(cell('Choose Output Format').cell(report_output_select($report,true)));
-	//$opt .= row(cell(oline('',2).formcheck(AG_REPORTS_VARIABLE_PREFIX.'showcfg').smaller(' Show Config File on Results Page'),' colspan="2"'));
-	//$opt .= row(cell(formcheck(AG_REPORTS_VARIABLE_PREFIX.'showsql').smaller(' Show SQL on Results Page'),' colspan="2"'));
+	$opt .= table(row(cell()) . row(cell(html_heading_tag('Choose Output Format',3)
+			. report_output_select($report,true))));
 
-	$out .= table($opt);
-	$out .= button();
+	$out .= $opt;
+	$out .= oline(). button('Submit','','','','','class="engineButton"');
 	$out .= formend();
 
 	return $out;
@@ -748,23 +751,26 @@ function list_report($control,$def,$control_array_variable='',&$REC_NUM)
 		} else {
 			for ($count=1;$count<=$REC_NUM;$count++) {
 				$rep=sql_fetch_assoc($result);
-				$sortkey = ucfirst(strtolower(orr($rep['report_category_code'],'General')));
+				$sortkey = ucwords(str_replace('/',' / ',strtolower(value_generic(orr($rep['report_category_code'],'GENERAL'),$def,'report_category_code','list',false))));
 				$comment=(($com=$rep['report_comment'])) ? span($com . toggle_label('comment...'),'class="hiddenDetail"') : '';
 				$lists[$sortkey][]= html_list_item(link_report($rep['report_code'],$rep['report_title']) . ' ' . $comment);
+				if ($rep['report_category_code']=='HIDDEN') {
+					$hidden_value=$sortkey;
+				}
+
 			}
-			$out .= oline();
 			foreach($lists as $sec => $list) {
-				$item = html_list(implode('',$list));
-				if ($sec=='Hidden') {
-					$hidden .= $item;
+				$item = html_heading_tag($sec,4) . html_list(implode('',$list));
+				if ($sec==$hidden_value) {
+					$hidden = $item;
 				} else {
-					$out .= oline(bigger(bold($sec)),2) . $item;
+					$out .= $item;
 				}
 			}
 		}
 		$out .= $hidden ? oline() . span($hidden . toggle_label('Show hidden reports...'),'class="hiddenDetail"').oline() : '';
 		$out .= oline() . smaller(italic(add_link('report','Add a new report')));
-		return $out;
+		return div($out,'','class="listMain listObjectReport listObjectReportCustom"');
 }
 
 ?>

@@ -672,13 +672,13 @@ function engine($control='',$control_array_variable='control')
 	    if ($step == 'continued') {
 		    $cancel_url = $def['fn']['cancel_url']($REC,$def,$action,$control_array_variable);
 		    $cancel_button = hlink($cancel_url,$cancel_text,''
-						   ,' class="linkButton" onclick="'.call_java_confirm('Are you sure you want cancel?').'"');
+						   ,' class="linkButton engineButton" onclick="'.call_java_confirm('Are you sure you want cancel?').'"');
 		    $reset_button = hlink($page.'?'.$control_array_variable.'[step]=new'
 						  . '&'.$control_array_variable.'[action]='.$action
 						  . '&'.$control_array_variable.'[object]='.$object
 						  . '&'.$control_array_variable.'[id]='.$id
 						  ,$reset_text,''
-						  ,' class="linkButton" onclick="'.call_java_confirm('Are you sure you want to reset the form?').'"');
+						  ,' class="linkButton engineButton" onclick="'.call_java_confirm('Are you sure you want to reset the form?').'"');
 		    /*		    
 		     * Pass control array variables in form
 		     */
@@ -948,7 +948,7 @@ function engine($control='',$control_array_variable='control')
 				$use_link[] = $long_link;
 			}
 			if ($use_link) {
-				$use_link = div(implode(' | ',$use_link),'','style="white-space: nowrap; margin: 2px; "');
+				$use_link = div(implode(' | ',$use_link),'','class="listLinks"');
 			}
 			/*
 			 * Generate list

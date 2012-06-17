@@ -82,6 +82,7 @@ input.agencyForm[type=text]   {background-color: #fff; border: solid 1px #444; m
 
 /* Engine */
 table.listMain { border: solid 1px #000; }
+div.listMain { border: solid 1px #000; padding: 5px; margin: 5px;}
 table.listControl { padding: 3px; }
 .listControlAdvanced { border-right: solid 1px #fff; }
 td.listControl { border: solid 1px #fff; vertical-align: middle; text-align: center; 
@@ -102,7 +103,7 @@ table.engineForm th { font-weight: bold; text-align: center; }
 	vertical-align: middle; 
 	background-color: #e6e6ff; color: #000; margin: 10px;}
 .linkButton { padding: 2px; }
-.engineButton { padding: 1px; }
+.engineButton { padding: 5px; font-weight: bold; font-style: italic; }
 .removeButton { border: solid 1px black; text-decoration: none; 
 	font-family: helvetica,georgia,sans-serif; font-size: 1em;
 	padding: 1px;
@@ -111,7 +112,7 @@ table.engineForm th { font-weight: bold; text-align: center; }
 
 #engineMenu { position: absolute; right: 4px; border: solid 1px #ddd; padding: 8px; width: 185px; }
 #engineMenu span { white-space: nowrap; padding: 3px; display: block; text-align: center; margin: 15px 0px 3px 0px; }
-#engineMain { margin: 0px 185px 0px 0px; }
+div.engineMain { margin: 0px 185px 0px 0px; }
 
 /* ordering arrows */
 .listOrderUp { background: url('../images/up_arrow.png') no-repeat center right; }

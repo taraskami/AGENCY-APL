@@ -40,6 +40,7 @@ $engine['report_block'] = array(
 	'list_fields' => array( 'is_enabled','report_code','report_block_title','report_block_comment'),
 	'add_another'=>true,
 	'add_another_and_remember'=>true,
+	'subtitle_html'=>smaller(link_wiki_public('Reports','Report Help')),
 	'fields' => array(
 		'report_code' => array(
 			//'value_format' => 'link_report($x_raw,$x_raw,NULL,"view")',
