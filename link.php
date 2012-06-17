@@ -153,6 +153,9 @@ function link_wiki_public($db_title,$label='',$options='')
 	if (strpos($options,'target=')===false) {
 		$options .= ' target="_blank"';
 	}
+	if (strpos($options,'class=')===false) {
+		$options .= ' class="linkWikiPublic"';
+	}
 	return hlink(AG_WIKI_PUBLIC_BASE_URL.$db_title,$label,'',$options);
 }
 

@@ -58,6 +58,8 @@ textarea {
 a.fancyLink { text-decoration: none; }
 a.fancyLink:hover, a.fancyLink:active { color: #f00; text-decoration: underline; }
 
+.hidden { display: none; }
+
 span.testDbWarningLink,
 a.toggleLink { font-size: 65%; }
 div.engineMessageResultDetail { font-size: 80%; border: solid 1px black; }
@@ -339,7 +341,7 @@ div#noStaffEmployment {
 }
 
 #topMenuCell {
-	width: 80;
+	width: 100;
 	text-align: left;
 	background-color: 	#00FF00;
 }
@@ -425,3 +427,16 @@ div#postVisitorResult {
 /* for bundled SQL syntax highlighter */
 .sqlKeyword { color: red; }
 
+a.linkWikiPublic {
+	vertical-align: top;
+	float: right;
+	background-color: #9AE98F;
+	border: solid 3px #67B65c;
+	border-top: -10px;
+	border-right: -10px;
+	padding: 12px;
+	font-size: 120%;
+	font-style: italic;
+	font-weight: bold;
+	border-radius: 20px;
+}
