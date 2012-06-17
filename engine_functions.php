@@ -1512,7 +1512,7 @@ function value_generic($value,$def,$key,$action,$do_formatting=true,$rec=array()
 	$type=$field['data_type'];
 	//fixme: this should really be done at the formatting stage, since it doesn't webify anything
 	// that is occasionally a link (such as DAL progress note field).
-	if (!in_array($type,array('html','lookup','table_switch','lookup_multi','array','staff_list','attachment')) && !$field['is_html']) {
+	if (!(in_array($type,array('html','lookup','table_switch','lookup_multi','array','staff_list','attachment')) and $do_formatting) and (!$field['is_html'])) {
 		$value=webify($value); 
 	}
       $show_value = $field['show_lookup_code_'.$action];
@@ -1584,14 +1584,16 @@ function value_generic($value,$def,$key,$action,$do_formatting=true,$rec=array()
 			// </Optimize Me!>
 			switch ($show_value) {
 			case 'CODE':
-				$value = alt($value,$new_val);
+				$value = $do_formatting ? alt($value,$new_val) : $value;
 				break;
 			case 'DESCRIPTION':
-				$value=alt(orr($new_val,"($value not found in lookup table)"),$value);
+				$foo=orr($new_val,"($value not found in lookup table)");
+				$value= $do_formatting ? alt($foo,$value) : $foo;
 				break;
 			case 'BOTH':
 			default:
-				$value=orr($new_val,'(not found in lookup table)') . smaller(" ($value)",2);
+				$foo=orr($new_val,"($value not found in lookup table)");
+				$value= $do_formatting ? alt($foo . smaller(" ($value)",2),$value) : $foo . "($value)";
 			}
 		}
 	} elseif ($type == 'lookup_multi') {
@@ -1607,14 +1609,14 @@ function value_generic($value,$def,$key,$action,$do_formatting=true,$rec=array()
 				$desc = orr(sql_assign($sql,$filt),"($t_v not found in lookup table");
 				switch ($show_value) {
 				case 'CODE':
-					$n_value[] = alt($t_v,$desc);
+					$n_value[] = $do_formatting ? alt($t_v,$desc) : $t_v;
 					break;
 				case 'DESCRIPTION':
-					$n_value[] = alt($desc,$t_v);
+					$n_value[] = $do_formatting ? alt($desc,$t_v) : $desc;
 					break;
 				case 'BOTH':
 				default:
-					$n_value[] = $desc. smaller(" ($t_v)",2);
+					$n_value[] = $do_formatting ? $desc. smaller(" ($t_v)",2) : "$desc ($t_v)";
 				}
 			}
 			$value = $do_formatting ? implode(','.oline(),orr($n_value,$value)) : orr($n_value,$value);
@@ -1638,11 +1640,11 @@ function value_generic($value,$def,$key,$action,$do_formatting=true,$rec=array()
 		$value = link_attachment($value, $key, $short_format);
 	}
 	elseif (($type=='text') || ($type=='varchar')) {
-		$value = hot_link_objects($value);
+		$value = $do_formatting ? hot_link_objects($value) : $value;
 	}
       //VALUE FORMAT
-	$value= be_null(trim($value)) ? '&nbsp;' : $value; // avoid blank cells w/o border
 	if ($do_formatting) {
+		$value= be_null(trim($value)) ? '&nbsp;' : $value; // avoid blank cells w/o border
 		$a=$field['value_format_'.$action];
 		$x=$value;
 		$value=eval("return $a;");
