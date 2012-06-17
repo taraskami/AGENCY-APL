@@ -29,6 +29,8 @@ div.engineMain .listLinks {
 }
 
 div.listObjectReportCustom H4 {
+	margin-top: 5px;
+	padding-top: 1px;
 	font-size: 140%;
 	font-weight: bold;
 	color: #000033;

@@ -52,9 +52,14 @@ $engine['report'] = array(
 								'value_list' => '$x ." ". smaller(link_report($rec["report_code"],"Run"))',
 								'is_html' => true),
 
-						'output' => array(
-								'label' => 'Additional Output Options',
-								'comment' => 'One option per line, format filename|label'),
+						'suppress_output_codes' => array(
+								'label' => 'Suppress Output for',
+								'data_type' => 'lookup_multi',
+								'lookup' => array('table'=>'l_output'),
+								'lookup_format' => 'checkbox_v'),
+						'output_template_codes' => array(
+								'comment' => 'One option per line, format filename|label',
+								'label' => 'Templates'),
 						'block_count' => array( 'label' => 'Blocks'),
 		'permission_type_codes'=>array(
 			'data_type'=>'lookup_multi',
