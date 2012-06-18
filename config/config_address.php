@@ -36,6 +36,9 @@ $engine['address'] = array(
 	'fields' => array(
 		'address_email'=>array(
 			'label'=>'Email'
+		),
+		'address_email2'=>array(
+			'label'=>'Email2'
 		)
 	)
 );

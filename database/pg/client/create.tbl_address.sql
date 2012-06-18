@@ -10,6 +10,7 @@ CREATE TABLE tbl_address (
 	state_code		VARCHAR(3),
 	zipcode			VARCHAR(10),
 	address_email	VARCHAR(80),
+	address_email2	VARCHAR(80),
 	address_comment TEXT,
 	added_by     INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
 	added_at     TIMESTAMP(0)     NOT NULL DEFAULT CURRENT_TIMESTAMP,

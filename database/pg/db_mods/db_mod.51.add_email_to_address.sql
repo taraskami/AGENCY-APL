@@ -44,6 +44,8 @@ DROP VIEW address;
 
 ALTER TABLE tbl_address ADD COLUMN address_email VARCHAR(80);
 ALTER TABLE tbl_address_log ADD COLUMN address_email VARCHAR(80);
+ALTER TABLE tbl_address ADD COLUMN address_email2 VARCHAR(80);
+ALTER TABLE tbl_address_log ADD COLUMN address_email2 VARCHAR(80);
 
 \i ../client/create.view.address.sql
 

@@ -39,6 +39,9 @@ $engine['address_staff'] = array(
 		'client_id' => array( 'display'=>'hide'),
 		'address_email'=>array(
 			'label'=>'Email'
+		),
+		'address_email2'=>array(
+			'label'=>'Email2'
 		)
 	)
 );
