@@ -31,9 +31,12 @@ should be included in this distribution.
 </LICENSE>
 */
 
-$engine['address'] = array(
+$engine['address_staff'] = array(
+	'singular' => 'Staff Address',
+	'table_post' => 'tbl_address',
 	'list_fields' => array('address_date','address_summary','address_email','address_date_end'),
 	'fields' => array(
+		'client_id' => array( 'display'=>'hide'),
 		'address_email'=>array(
 			'label'=>'Email'
 		)

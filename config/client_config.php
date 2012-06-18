@@ -43,6 +43,7 @@ define('AG_LIST_GROUPING_EXPANDED',false); //default child record groupings to e
 
 $AG_ENGINE_TABLES=array_merge($AG_ENGINE_TABLES_CORE,array(AG_MAIN_OBJECT_DB,
 				//---General Client---//
+ 				'address_client',
 // 				'activity',
 // 				'assessment',
  				'bar',
@@ -144,6 +145,7 @@ $AG_ENGINE_TABLES=array_merge($AG_ENGINE_TABLES_CORE,array(AG_MAIN_OBJECT_DB,
 // 				'cd_reg',
 // 				'service_cd',
 				//---Staff & Users---//
+				'address_staff',
  				'calendar',
  				'calendar_appointment',
 //				'survey_2008_1night',

@@ -43,6 +43,7 @@ $engine["staff"] = array(
 		'title_list'=>'ucwords($action) . "ing Staff"',
 		'cancel_add_url'=>AG_ADMIN_URL,
 		'child_records' => array('alert',
+						 //'address_staff',
 						 'alert_notify',
 						 'staff_employment',
 						 'permission',

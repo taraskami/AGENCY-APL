@@ -46,7 +46,3 @@
 \i create.l_referral_source.sql
 \i create.tbl_application_housing.sql
 
-/* address */
-/* FIXME:  this table is clients & staff, and shouldn't be housing-specific or in this script */
-\i create.tbl_address.sql
-

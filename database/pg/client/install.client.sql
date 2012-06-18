@@ -96,6 +96,10 @@
 \i create.l_entry_location.sql
 \i create.tbl_entry.sql
 
+/* Address table and views */
+\i create.tbl_address.sql
+\i create.view.address.sql
+
 /* Bed table */
 \i create.l_volunteer.sql
 \i create.l_bed_group.sql

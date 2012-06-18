@@ -43,6 +43,7 @@ $engine["client"] = array(
 						'log'                 => 'general',
 						'client_note'         => 'general',
 						'staff_assign'        => 'general',
+//						'address_client'      => 'general',
 						'immigrant'           => 'general',
 						'disability'          => 'general',
 						'ethnicity'			  => 'general',
@@ -104,7 +105,6 @@ $engine["client"] = array(
 //						'service_crp' => 'CRP',
 						//---Other---//
 						//-------Clinical-------//
-//						'address'                            => 'clinical',
 //						'activity_evaluation'                => 'clinical',
 //						'calendar_appointment'               => 'clinical',
 //						'chart_archive'                      => 'clinical',
