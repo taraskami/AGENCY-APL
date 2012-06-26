@@ -707,9 +707,10 @@ function sql_error( $res='' )
         	return '<br />The MYSQL server reported error #' . mysql_errno() .
 			       '<br />The error text was: ' . mysql_error();
 		case 'pg' :
-			$err = $res ? pg_result_error( $res ) : pg_last_error();
-        	return '<br />The PostgreSQL server reported an error.'
-			       . "<br />The error text was: $err";
+			$err = oline($res ? pg_result_error( $res ) : pg_last_error());
+        	return oline('The PostgreSQL server reported an error.')
+			       . oline("The error text was: $err")
+					. (has_perm('admin') ? div(dump_array(debug_backtrace()).toggle_label('Debugging details'),'','class="hiddenDetail"') : '');
 		default :
 			return AG_DATABASE_UNDEFINED_ERROR;
 	}
