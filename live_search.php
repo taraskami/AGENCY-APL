@@ -12,7 +12,7 @@ preg_match('/^[a-z_ ,0-9()]*$/i',$type) or die("Bad term passed");
 $def=get_def($type);
 
 if (has_perm($def['perm_view'])) {
-	$alias = ($type==AG_MAIN_OBJECT_DB)
+	$alias = (($type==AG_MAIN_OBJECT_DB) and array_key_exists(AG_MAIN_OBJECT_DB,$def['fields']))
 		? " || COALESCE(name_alias,'')"
 		: '';
 	$filter=array("ILIKE:{$type}_name({$type}_id) || ' (' || {$type}_id ||') ' $alias"=>'%'.$term.'%');
