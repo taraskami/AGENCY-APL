@@ -129,7 +129,13 @@ user_identity_management();
 //------Check for restricted user/pages, and redirect-----//
 
 $allowed_array=orr($GLOBALS['AG_USER_PAGE_RESTRICTIONS'],array());
-$name=$_SESSION['USER_INFO']['username'];
+if (isset($AUID) and ($AUID !== $UID)) { //identity switching
+	$def = get_def('staff');
+	$rec = array_shift(get_generic(array($def['id_field']=>$UID),'','',$def));
+	$name = $rec['username'];
+} else {
+	$name = $_SESSION['USER_INFO']['username'];
+}
 $page_name=basename($_SERVER['PHP_SELF']);
 if (in_array($name,array_keys($allowed_array))) {
 	if ((!in_array($page_name,$allowed_array[$name]))
