@@ -945,16 +945,28 @@ function client_note_f ($id)
 	}
  	$out = html_no_print(jump_to_object_link('client_note'));
 	while ($a = array_shift($res)) {
+		$addl=array();
 		$a = sql_to_php_generic($a,$def); //convert sql arrays to php arrays
-		if (sql_true($a['is_front_page'])) {
+		if (sql_true($a['is_front_page'])
+			and ( (be_null($a['front_page_until']) or ($a['front_page_until'] >= datetimeof('now','SQL'))) )) {
 			$flag = '';
 			if ($flag_entries = $a['flag_entry_codes']) {
+				if (sql_true($a['is_dismissed'])) {
+					$addl[]='dismissed';
+				}
+				if (orr($a['flag_entry_until'],datetimeof('now','SQL')) >= datetimeof('now','SQL')) {
+					$addl[]='expired';
+				}
+				$addl = count($addl) > 0 ? ' (' . implode(',',$addl) . ')' : '';
 				$flag_title = array();
 				foreach ($flag_entries as $location) {
 					$flag_title[] = sql_lookup_description($location,'l_entry_location');
 				}
-				$flag_title = 'this note is displayed on gatekeeping ('.implode(' &amp; ',$flag_title).') when '.AG_MAIN_OBJECT.'\'s card is swiped.';
-				$flag = span('flagged for entry',' title="'.$flag_title.'" class="clientCommentFlag"');
+				$c_def=get_def(AG_MAIN_OBJECT);
+				$c_sing=$c_def['singular'];
+				$flag_title = 'this note is shown when '.$c_sing. 'enters at '.implode(' &amp; ',$flag_title)
+						.  $a['flag_entry_until'] ? ' until ' . dateof($a['flag_entry_until']) : '';
+				$flag = span('flagged for entry'.$addl,' title="'.$flag_title.'" class="clientCommentFlag"');
 			}
 
 			$link = link_engine(array('object'=>'client_note','id'=>$a['client_note_id'],'action'=>'edit'),'Edit/Remove');

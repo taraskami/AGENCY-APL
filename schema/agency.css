@@ -416,6 +416,19 @@ div#postVisitorResult {
 	width: 50%;
 }
 
+div#clientNote {
+	background-color: #FFDDDD;
+	padding: 8px;
+	border: solid black 2px;
+	width: 50%;
+	margin-bottom: 30px;
+	font-size: 140%;
+}
+
+div#clientNote H1 {
+	font-size: 100%;
+}
+
 #enterVisitorLink {
 	font-size: 200%;
 }
