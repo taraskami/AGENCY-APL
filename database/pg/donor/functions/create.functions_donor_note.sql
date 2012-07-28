@@ -23,20 +23,3 @@ BEGIN
     RETURN NEW;
 END; $$ language plpgsql STABLE;	
 
-CREATE OR REPLACE FUNCTION staff_program( int4 ) RETURNS text AS $$
-
-        SELECT agency_program_code FROM staff WHERE staff_id=$1;
-
-$$ LANGUAGE sql STABLE;
-
-CREATE OR REPLACE FUNCTION staff_position( int4 ) RETURNS text AS $$
-
-        SELECT staff_position_code FROM staff WHERE staff_id=$1;
-
-$$ LANGUAGE sql STABLE;
-
-CREATE OR REPLACE FUNCTION staff_project( int4 ) RETURNS text AS $$
-
-        SELECT agency_project_code FROM staff WHERE staff_id=$1;
-
-$$ LANGUAGE sql STABLE;

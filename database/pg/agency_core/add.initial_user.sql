@@ -21,7 +21,7 @@ SELECT 'sys_user', --username
 	'USER', --last name
 	'SYSTEM', -- first name
 	true, --is_active
-	'8', --gender_code (leave as 8)
+	'UNKNOWN', --gender_code
 	false, --login_allowed
 	1,    --added_by
 	1    --changed_by
@@ -29,13 +29,14 @@ SELECT 'sys_user', --username
 UNION ALL
 
 /* This is the system administator account, and should be edited to reflect real values */
+/* Like any staff record, it can also be edited in AGENCY after installation */
 
 SELECT 
 	'super_user', --change to desired username
 	'USER',       --change to sys admin's last name
 	'SUPER',      --change to sys admin's first name
 	true,   
-	'8',          --change to sys admin's gender (complete list in create.l_gender.sql, or 1 for Female, 2 for Male
+	'UNKNOWN',    --change to sys admin's gender (complete list in create.l_gender.sql) or FEMALEE for Female, MALE for Male
 	true,
 	1,
 	1
@@ -52,6 +53,12 @@ INSERT INTO tbl_staff_password (staff_id,staff_password_md5,added_by,changed_by)
 -- This file shouldn't need to be edited below here. --
 
 /* system user function to return sys_user's id */
+
+-- If you do a clean install, the System User will have an ID of 1.
+-- This is what is assumed and set automatically.
+-- If for some reason your system user has a different ID,
+-- change this function to match.
+
 CREATE OR REPLACE FUNCTION sys_user() RETURNS INTEGER AS '
 BEGIN
 	RETURN 1;

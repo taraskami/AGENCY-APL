@@ -14,12 +14,6 @@ CREATE OR REPLACE FUNCTION donor_name( int4 ) RETURNS text AS $$
 
 $$ LANGUAGE sql STABLE;
 
-CREATE OR REPLACE FUNCTION bool_f(boolean) RETURNS text AS $$
-
-        SELECT CASE $1 WHEN true THEN 'Y' WHEN false THEN 'N' ELSE NULL END;
-
-$$ LANGUAGE sql IMMUTABLE;
-
 CREATE OR REPLACE FUNCTION set_preferred_address() RETURNS TRIGGER AS $$
 BEGIN
         IF NEW.preferred_address_code IS NULL THEN

@@ -6,12 +6,13 @@
  * it references it.
  */
 
+/*
 DROP VIEW report;
 DROP VIEW report_usage;
 DROP VIEW report_block;
 DROP VIEW l_report_block_type;
 DROP VIEW l_output;
---DROP VIEW l_report_block_type;
+DROP VIEW l_report_block_type;
 DROP TABLE tbl_report_usage;
 DROP TABLE tbl_report_block;
 DROP TABLE tbl_l_report_block_type;
@@ -19,7 +20,8 @@ DROP TABLE  tbl_report;
 DROP VIEW l_report_category;
 DROP TABLE tbl_l_report_category;
 DROP TABLE tbl_l_output;
---DROP TABLE tbl_l_report_block_type;
+DROP TABLE tbl_l_report_block_type;
+*/
 
 \i create.l_output.sql
 \i create.l_report_category.sql
