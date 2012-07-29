@@ -348,7 +348,7 @@ case 'view' :
 	} elseif (!isset($LOG_FILTER)) {
 		$out .= alert_mark('Open Settings to Select Log(s) to view');
 	} elseif (isset($LOG_FILTER) && ($log_count==0)) {
-		$out .=alert_mark('Your selection contains no log entries');
+		$out .=oline(alert_mark('Your selection contains no log entries')) . bigger(bold($add_link));
 	} elseif ($LOG_FILTER) { // ??? (OK, if no LOG_FILTER, user needs to select logs first)
 
 //toggle_query_display();
