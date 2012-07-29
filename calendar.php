@@ -894,7 +894,7 @@ class Calendar {
 		$def = get_def('calendar_appointment');
 		$res = get_generic(staff_filter($UID),'','','calendar_current');
 
-		if (array_shift($res) < 1) {
+		if (count($res) < 1) {
 			return '';
 		}
 
