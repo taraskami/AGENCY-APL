@@ -20,6 +20,10 @@ function object_photo_filename( $id, $object, $scale, $all_in_array=false ) {
 		$offset="/$object/$id"; // could extend to other objects
 	} elseif ($object==AG_MAIN_OBJECT_DB) {
 		$offset = "/pc" . substr("0". intval($id/1000),-2) .  "/$id";
+	} elseif ($object=='photo_upload') {
+		return (is_file( $a=$AG_HOME_BY_FILE . '/agencylink/photo_upload/' .$id) or true)
+			? $a
+			: 'Upload photo ' .$a . ' not found';
 	} else {
 		log_error("object_photo_filename: Photos not supported for object type $object");
 	}

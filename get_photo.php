@@ -203,7 +203,7 @@ if (!$completed)
 
 	if ($found ) {
 		$out .= oline(bigger(bold("Here is your photo")),2);
-		$out .= oline(httpimage("$source_url/$file",480,640));
+		$out .= oline(httpimage('serve_photo.php?object=photo_upload&id=' . rawurlencode("$file").'',480,640));
 		$commands .= oline(hlink($_SERVER['PHP_SELF']."?client_id=$client_id&file=$file&valid=yes","I want to use this photo."),2);
 		$commands .= oline(hlink($_SERVER['PHP_SELF']."?client_id=$client_id&file=$file&valid=no","This photo is no good.  Please delete"));
 	} else {
