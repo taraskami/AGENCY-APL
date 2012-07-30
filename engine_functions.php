@@ -959,7 +959,6 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 	 */
 
       global $engine;
-
 	$enmeta  = array();
 
       $system_fields = $engine['system_fields'];
@@ -1099,6 +1098,11 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 			    $new['label'] = 'Project';
 
 		    }		  
+			if ($object==('l_'.$matches[1])) {
+				// Code field in lookup table
+				$new['force_case']='upper';
+				$new['valid']['preg_match(\'/^[A-Z0-9_]*$/\',$x)'] ='{$Y} should only contain letters, numbers and underscores';
+			}
 
 	    } elseif (preg_match('/(.*)_code_other$/i',$field,$m) and in_array($m[1].'_code',$fields)) {
 
