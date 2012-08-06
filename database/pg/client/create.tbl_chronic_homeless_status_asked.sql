@@ -1,4 +1,3 @@
-BEGIN;
 CREATE TABLE tbl_chronic_homeless_status_asked (
 
 	chronic_homeless_status_asked_id	SERIAL PRIMARY KEY,
@@ -24,9 +23,10 @@ CREATE INDEX index_tbl_chronic_homeless_status_asked_client_id ON tbl_chronic_ho
 
 CREATE OR REPLACE VIEW chronic_homeless_status_asked AS SELECT * FROM tbl_chronic_homeless_status_asked WHERE NOT is_deleted;
 
+/*
+If you had a limited permission user, you would want something like this:
+
 GRANT SELECT ON chronic_homeless_status_asked to gate;
-
 GRANT SELECT ON tbl_chronic_homeless_status_asked to gate;
+*/
 
-COMMIT;
-END;
