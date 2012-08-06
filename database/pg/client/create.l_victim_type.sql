@@ -1,4 +1,4 @@
-CREATE TABLE      l_victim_type (
+CREATE TABLE      tbl_l_victim_type (
 	victim_type_code     VARCHAR(10)     PRIMARY KEY,
 	description     TEXT,
     --system fields
