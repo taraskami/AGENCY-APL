@@ -1,4 +1,4 @@
-CREATE TABLE      l_reg_required_length (
+CREATE TABLE      tbl_l_reg_required_length (
 	reg_required_length_code     VARCHAR(10)     PRIMARY KEY,
 	description     TEXT,
     --system fields
