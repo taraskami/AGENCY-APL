@@ -41,6 +41,16 @@ function elink($object,$id,$label,$options=null)
 	return link_engine(array('object'=>$object,'id'=>$id),$label,'',$options);
 }
 
+function elink_value($object,$id,$options=null)
+{
+	/*
+	 * A quick-link engine function, for default view action
+	 */
+
+	$d = get_def($object);
+	return link_engine(array('object'=>$object,'id'=>$id),object_label($object,$id));
+}
+
 function add_link($object,$label='',$options=null,$rec_init=NULL)
 {
 	/*
