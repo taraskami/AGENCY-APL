@@ -98,10 +98,14 @@ if ($refresh) {
 	header("Refresh: $refresh");
 }
 
+//-----Kiosk mode stuff-----//
+// Sets AG_KIOSK_MODE and AG_KIOSK_USER
+set_kiosk_info();
+
 //------checking authentication--------//
 $AG_AUTH = new Auth();
 if (!$AG_AUTH->authenticate()) {
-	if (AG_KIOSK_MODE) {
+	if (AG_KIOSK_MODE_SET) {
 		$AG_AUTH->reset_kiosk();
 		$AG_AUTH->authenticate();
 	}

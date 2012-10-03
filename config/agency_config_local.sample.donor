@@ -66,8 +66,25 @@ define('AG_READ_ONLY_MODE',false);
  *
  * Note:  DO NOT use this without considering security issues!
  */
+
+// AG_KIOSK_MODE determines whether KIOSK mode is active
 define('AG_KIOSK_MODE',false);
-define('AG_KIOSK_USER','');
+//define('AG_KIOSK_MODE',true);
+
+// This will let you specify users on a per-machine basis.  See kiosk.php for more detail.
+ 
+//define('AG_KIOSK_USER_BY_MACHINE_ID',serialize(
+//	array('66.210.63.251'=>'demo',
+//  array('127.0.0.1'=>'localhost_kiosk_user',
+// '*'=>'default_kiosk_user')));
+
+// Or, a single kiosk user:
+// define('AG_KIOSK_USER_BY_MACHINE_ID',serialize(array('*'=>'kiosk_user')));
+
+// If no match from MACHINE_ID, use the (legacy) AG_KIOSK_USER instead.
+//define('AG_KIOSK_USER','demo');
+
+// If no user is defined, kiosk mode is not enabled
 
 /*
  * Error Logging

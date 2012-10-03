@@ -94,7 +94,7 @@ class Auth {
 	{
 		$this->new_session();
 		$hash=$this->set_hash(microtime());
-	        $this->make_auth_array(AG_KIOSK_USER,$hash);
+	        $this->make_auth_array(AG_KIOSK_USER_SET,$hash);
 		$this->kiosk_active=true;
 		$_SESSION['AUTH']['kiosk_active']=true;
 	}
@@ -114,8 +114,10 @@ class Auth {
 		if ($_SESSION['AUTH']['kiosk_active']) {
 			$this->kiosk_active=true;
 		}
-		if (!AG_KIOSK_MODE) {
+		if (!AG_KIOSK_MODE_SET) {
 			if ($this->kiosk_active()) {
+				$_SESSION['AUTH']['kiosk_active']=false;
+				$this->kiosk_active=false;
 				$this->new_session();
 			}
 		}
@@ -123,7 +125,7 @@ class Auth {
 		$last_user=$_SESSION['USER_INFO'][$AG_AUTH_DEFINITION['USER_ID_FIELD']];
 		if (!$this->is_valid())
 		{
-			if ($this->suppress_login or AG_KIOSK_MODE) {
+			if ($this->suppress_login or AG_KIOSK_MODE_SET) {
 				return false;
 			}
 			echo $this->login();
@@ -345,7 +347,7 @@ class Auth {
 		    }
 
 		    $this->log_user_login();
-			if ($username != AG_KIOSK_USER) {
+			if ($username != AG_KIOSK_USER_SET) {
 				$_SESSION['kiosk_active']=false;
 				$this->kiosk_active=false;
 			}
