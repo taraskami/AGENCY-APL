@@ -173,7 +173,7 @@ function post_object_references( $rec,$def,$refs, &$mesg ) {
 }
 
 
-function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_count=1, $label='')
+function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_count=1, $label='',$class='')
 {
 	$def=get_def($object);
 	$obj_opt='object="'.$object.'"';
@@ -205,6 +205,7 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 	$op .= hiddenvar('objectPickerMethod',$method);
 	if ($method=='Search') {
 		$op .= form_field('text','objectPickerSearchText')
+			. hiddenvar('objectPickerMaxSelect',$max_count) // FIXME: this will break with multiple selectors on one form
 			. button('Search','','','','','class="objectPickerSubmit"');
 	} elseif ($method=='Pick') {
 		$op .= selectto('objectPickerPickList',$obj_opt )
@@ -219,7 +220,7 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 			. span($show_selected)
 			. span($object_picker)
 			. span($submit . $cancel),
-			$div_id,'class="' . $object .'"');
+			$div_id,'class="' . $object . ' ' . $class . '"');
 }
 
 function info_additional_f($object,$id,$id_field=NULL,$sep='') {

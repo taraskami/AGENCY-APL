@@ -79,43 +79,81 @@ $(function() {
 		if (!method) {
 			method = $(event.target.row).find("[name=objectPickerMethod]").val();
 		}
-		switch (method) {
-			case 'Pick':
-				var obj_name = $(event.target).closest('div').find("[name=objectPickerObject]").val();
-				var obj_id = $(event.target).closest('div').find("[name=objectPickerPickList]").val();
-				var obj_text = $(event.target).closest('div').find("[name=objectPickerPickList] :selected").text();
-				addSelectedObject( { id: obj_id, label: obj_text, object: obj_name, canRemove: true, refType: 'to' });
-				break;
-			case 'searchResult':
-				var obj_name = $(event.target).closest('tr').find("[name=objectPickerObject]").val();
-				var obj_id = $(event.target).closest('tr').find("[name=objectPickerId]").val();
-				var obj_text = $(event.target).closest('tr').find("[name=objectPickerLabel]").val();
-				addSelectedObject( { id: obj_id, label: obj_text, object: obj_name, canRemove: true, refType: 'to' });
-				break;
-			case 'Search':
-				var search_text = $(event.target).closest('div').find("[name=objectPickerSearchText]").val();
-				var obj = $(event.target).closest('div').find("[name=objectPickerObject]").val();
-				var args = qs_object(search_text,obj);
-				$.ajax({
-					method: "get",
-					url: "ajax_selector.php",
-					data: args,
-					beforeSend: function(){$("#page_loading").show("fast");},
-					complete: function(){ $("#page_loading").hide("fast");}, 
-					success: function(html){
-						$("#aj_client_selector_my_clients").val(false);
-						$("#ajClientSearchResults").html(html); 
-						var button = '<td><button type="button" class="objectPickerSubmit">SELECT</button></td>';
-						$("#ajClientSearchResults tr.generalData2,tr.generalData1").each( function(i) {
-							$(this).children("td:eq(1)").html(button);
-						});
-						$("#ajClientSearchResults").show(); 
-						var tab=$("#ajClientSearchResults table");
-						}
-				});
+		if ( method=='Search') {
+			var parentDiv = $(event.target).closest('div').parent().closest('div');
+			if (parentDiv.hasClass('objectPickerToForm')) {
+				var target = parentDiv.prev();
+				if (target.id) {
+					var id = target.id;
+				} else {
+					var base = 'RandomDivId';
+					var x=0;
+					while ($(base + ++x).length>0) {}
+					var id = base + x;
+					$(target).attr('id',id);
+				}
+			} else {
+				var id=null;
+			}
+		}
+		if ( method=='SearchResult') {
+			var id = $(this).find('span.serverData').html();
+		}
+
+		var selected = process_selector_event( event,method,id );
+		if (selected !== undefined) {
+			if (selected.target) {
+				$('#'+selected.target).val( selected.id ).after( selected.label ).next().hide();
+				$(this).closest('div').remove();
+			} else {
+				addSelectedObject( selected );
+			}
 		}
 	});
 });
+
+function process_selector_event( event,method,target_el ) {
+	switch (method) {
+		case 'Pick':
+			var obj_name = $(event.target).closest('div').find("[name=objectPickerObject]").val();
+			var obj_id = $(event.target).closest('div').find("[name=objectPickerPickList]").val();
+			var obj_text = $(event.target).closest('div').find("[name=objectPickerPickList] :selected").text();
+			//addSelectedObject( { id: obj_id, label: obj_text, object: obj_name, canRemove: true, refType: 'to' });
+			return { id: obj_id, label: obj_text, object: obj_name, canRemove: true, refType: 'to', target: target_el };
+			break;
+		case 'SearchResult':
+			var obj_name = $(event.target).closest('tr').find("[name=objectPickerObject]").val();
+			var obj_id = $(event.target).closest('tr').find("[name=objectPickerId]").val();
+			var obj_text = $(event.target).closest('tr').find("[name=objectPickerLabel]").val();
+			//addSelectedObject( { id: obj_id, label: obj_text, object: obj_name, canRemove: true, refType: 'to' });
+			return { id: obj_id, label: obj_text, object: obj_name, canRemove: true, refType: 'to', target: target_el };
+			break;
+		case 'Search':
+			var search_text = $(event.target).closest('div').find("[name=objectPickerSearchText]").val();
+			var obj = $(event.target).closest('div').find("[name=objectPickerObject]").val();
+			var args = qs_object(search_text,obj);
+			$.ajax({
+				method: "get",
+				url: "ajax_selector.php",
+				data: args,
+				beforeSend: function(){$("#page_loading").show("fast");},
+				complete: function(){ $("#page_loading").hide("fast");}, 
+				success: function(html){
+					$("#aj_client_selector_my_clients").val(false);
+					$("#ajClientSearchResults").html(html); 
+					//var button = '<td><button type="button" class="objectPickerSubmit">SELECT</button></td>';
+					var button = '<td><button type="button" class="objectPickerSubmit">SELECT'
+							+ (target_el ? '<span class="serverData">'+target_el+'</span>' : '')
+							+ '</button></td>';
+					$("#ajClientSearchResults tr.generalData2,tr.generalData1").each( function(i) {
+						$(this).children("td:eq(1)").html(button);
+					});
+					$("#ajClientSearchResults").show(); 
+					var tab=$("#ajClientSearchResults table");
+					}
+			});
+	}
+};
 
 /*
  * Object Reference Container & Additional Information
