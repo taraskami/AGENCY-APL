@@ -75,6 +75,10 @@ $engine["client"] = array(
 						'bed'         => 'general',
 						'calendar_appointment' => 'general',
 						'hospital'             => 'general',
+						//---Housing Guests---//
+//						'guest_authorization' => 'guest',
+//						'guest_visit' => 'guest',
+
 						//-------Shelter------//
 //						'shelter_reg' => 'shelter',
 //						'assessment'  => 'shelter',

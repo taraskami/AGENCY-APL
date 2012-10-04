@@ -1651,7 +1651,7 @@ function value_generic($value,$def,$key,$action,$do_formatting=true,$rec=array()
 		}
 	} elseif ($type=='attachment') {
 		$short_format = ($action == 'list');
-		$value = link_attachment($value, $key, $short_format);
+		$value = is_valid('integer_db',$value) ? link_attachment($value, $key, $short_format) : $value;
 	}
 	elseif (($type=='text') || ($type=='varchar')) {
 		$value = $do_formatting ? hot_link_objects($value) : $value;
@@ -1929,8 +1929,24 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 	} elseif ($type=='phone') {
 		$type='varchar';
 	}
+	if ($key=='guest_id') {
+		$type = 'guest';
+	}
       $len = $pr['length'];
 	switch ($type) {
+	case 'guest':
+		//$allowed=$pr[$action.'_main_objects'] || be_null($value); //edit & add
+		$allowed=true;
+		$field = ( $value ? elink_value('guest',$value) : '')
+			. hiddenvar($formvar.'['.$key.']',$value);
+		if ($allowed) {
+			//$wipeout = be_null($value) ? '' : formvar_wipeout($formvar.'['.$key.']');
+			$wipeout = formvar_wipeout($formvar.'['.$key.']');
+			$div_dummy='';
+			$field .= object_selector_generic( 'guest',$div_dummy,'',1,'Guest Label','objectPickerToForm');
+			$field .= $wipeout;
+		}
+		break;
 	case 'staff':
 	    $subset = $pr['staff_subset'];
 	    $active_only = $action=='add' && !$pr['staff_inactive_add'] ? 'HUMAN' : false;

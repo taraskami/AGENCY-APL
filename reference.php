@@ -187,12 +187,14 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 	switch ($object) {
 		// Objects with object_name() function in db:
 		case AG_MAIN_OBJECT :
+		case 'guest' :
 			if ($GLOBALS['AG_DEMO_MODE']) {
 				$label_field='XXXXXX, XXX';
 				break;
 			} // else fall through...
 		case AG_MAIN_OBJECT :
 		case 'staff' :
+		case 'guest' :
 			$label_field= $object . '_name(' . $id_field . ')';
 			$method='Search';
 			break;
@@ -345,6 +347,9 @@ function object_label($object,$id) {
 		case 'housing_unit' :
 			$l=sql_lookup_description($id,'housing_unit','housing_unit_id','housing_unit_code');
 			break;
+		case 'guest' :
+			$l=sql_lookup_description($id,'guest','guest_id','name_full');
+			break;
 		default :
 			$def = get_def($object);
 			$l = $def['singular'] . ' ' . $id;
@@ -361,6 +366,9 @@ function object_qs_filter($qs_text,$object=AG_MAIN_OBJECT_DB)
 	switch( strtolower($object) ) {
 		case 'staff':
 			$filter['ILIKE:staff_name(staff_id)']="%$qs_text%";
+			break;
+		case 'guest':
+			$filter['ILIKE:guest_name(guest_id)']="%$qs_text%";
 			break;
 		case 'client':
 			if ( is_numeric( $qs_text )  && ($qs_text <= AG_POSTGRESQL_MAX_INT)) {
