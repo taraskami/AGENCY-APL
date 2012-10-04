@@ -76,7 +76,7 @@ define('AG_KIOSK_MODE',false);
 //define('AG_KIOSK_USER_BY_MACHINE_ID',serialize(
 //	array('66.210.63.251'=>'demo',
 //  array('127.0.0.1'=>'localhost_kiosk_user',
-// '*'=>'default_kiosk_user')));
+// '*'=>'default_kiosk_user'))));
 
 // Or, a single kiosk user:
 // define('AG_KIOSK_USER_BY_MACHINE_ID',serialize(array('*'=>'kiosk_user')));
