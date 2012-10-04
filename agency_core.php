@@ -52,4 +52,38 @@ function is_enabled( $feature ) {
 	}
 }
 
+function set_local_parameters() {
+
+/*
+ * Modeled on set_kiosk_info()
+ *
+ * AG_LOCAL_PARAMETERS_BY_MACHINE_ID can specify per-machine parameters
+ * (Currently IP-based only, but could be extended to other forms of machine identification)
+ *
+ * in the format 'id'=>'val' (can be array)
+ * (an id can be specified as '*' to match and stop at that point)
+ *
+ * When matched, AG_LOCAL_PARAMETERS will be defined
+ * as a serialized version of the variable.  (To allow for arrays)
+ *
+ * DEFINE('AG_LOCAL_PARAMETERS_BY_MACHINE_ID',serialize(array(
+ * 		'127.0.0.1'=>array('foo'=>'bar'),
+ *		'*'=>array('foo'=>'bar2'))));
+ *
+ */
+
+
+	if (is_array($params=unserialize(AG_LOCAL_PARAMETERS_BY_MACHINE_ID))) {
+		$our_ip = $_SERVER['REMOTE_ADDR'];
+		foreach ($params as $ip =>$param) {
+			if ( ($ip==$our_ip) or ($ip=='*') ) {
+				define('AG_LOCAL_PARAMETERS',serialize($param));
+				return;
+			}
+		}
+	}
+	define('AG_LOCAL_PARAMETERS',serialize(NULL));
+	return;
+}
+
 ?>

@@ -85,6 +85,17 @@ define('AG_KIOSK_MODE',false);
 // If no user is defined, kiosk mode is not enabled
 
 /*
+ * Variables set on a per-machine basis.
+ *
+ * The constant AG_LOCAL_PARAMETERS will be set to
+ * the matched array, serialized.
+ */
+
+//define('AG_LOCAL_PARAMETERS_BY_MACHINE_ID',serialize(
+//	array('208.54.32.222'=>array('guest_register_housing_project_code'=>'HOUSING_1'),
+//	'*'=>array('guest_register_housing_project_code'=>'HOUSING_2'))));
+
+/*
  * Error Logging
  */
 define('AG_ERROR_LOG_FILE','/var/log/agency/agency_error.log');

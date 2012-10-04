@@ -102,6 +102,9 @@ if ($refresh) {
 // Sets AG_KIOSK_MODE and AG_KIOSK_USER
 set_kiosk_info();
 
+//-----Set local parameters, from AG_LOCAL_PARAMETERS_BY_MACHINE_ID-----//
+set_local_parameters();
+
 //------checking authentication--------//
 $AG_AUTH = new Auth();
 if (!$AG_AUTH->authenticate()) {
