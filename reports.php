@@ -69,7 +69,9 @@ function get_report_from_db( $report_code )
 }
 
 function report_parse_var_text( $text ) {
-	$vartypes=array('PICK','DATE','TIME','TIMESTAMP','TEXT','TEXT_AREA','VALUE');
+	$var_types=array('PICK','PICK_MULTI','DATE','TIME','TIMESTAMP','TEXT','TEXT_AREA','VALUE');
+	$pick_types=array('PICK','PICK_MULTI');
+	$endpick_types=array('ENDPICK','ENDPICK_MULTI');
 	$lines = preg_split('/\n/m',$text);
 	while ($line = array_shift($lines)) {
 		if (preg_match('/^\s$/',$line)) {
@@ -77,7 +79,7 @@ function report_parse_var_text( $text ) {
 		}
 		$var=array();
 		$ex = explot($line);
-		if (!in_array(strtoupper($ex[0]),$vartypes)) {	
+		if (!in_array(strtoupper($ex[0]),$var_types)) {	
 			//fixme:  make me a pretty warning
 			outline('Warning:  Unknown variable type ' .$ex[0]);
 			continue;
@@ -86,10 +88,10 @@ function report_parse_var_text( $text ) {
         $var['name']    = $ex[1];
         $var['prompt']  = $ex[2];
         $var['default'] = $ex[3];
-		if ($var['type']=='PICK') {
+		if (in_array($var['type'],$pick_types)) {
 			while ($tmp_line = array_shift($lines))	{
 				$tmp_line = explot($tmp_line);
-				if (strtoupper($tmp_line[0])=='ENDPICK') {
+				if (in_array(strtoupper($tmp_line[0]),$endpick_types)) {
 					break;
 				}
 				if (strtoupper($tmp_line[0])=='SQL') {
@@ -100,7 +102,7 @@ function report_parse_var_text( $text ) {
 							// SQL query assembled and ready
 							$tmp_query = agency_query($tmp_sql); 
 							while ($t=sql_fetch_assoc($tmp_query)) {
-								$var['options'][]='"'.$t['value']. '" "' .$t['label'].'"';
+								$var['options'][$t['value']]= $t['label'];
 							}
 							break;
 						} else {
@@ -108,7 +110,7 @@ function report_parse_var_text( $text ) {
 						}	
 					}	
 				} else {
-					$var['options'][]=enquote2($tmp_line[0]) . ' ' . enquote2($tmp_line[1]);
+					$var['options'][$tmp_line[0]] = $tmp_line[1];
 				}
 			}
 		}
@@ -130,7 +132,7 @@ function report_valid_request($report, &$mesg)
 		$type  = $var['type'];
 		$name  = $var['name'];
 		$prompt = $var['prompt'];
-		$value = report_get_user_var($name,$report['report_code']);
+		$value = report_get_user_var($name,$report['report_code'],$type);
 		switch ($type) {
 		case 'VALUE' :
 			if (!is_numeric($value)) {
@@ -162,12 +164,15 @@ function report_valid_request($report, &$mesg)
 	return $valid;
 }
 
-function report_get_user_var($name,$report_code)
+function report_get_user_var($name,$report_code,$type=NULL)
 {
+	// FIXME:  Validate these inputs!!!
 	$varname = AG_REPORTS_VARIABLE_PREFIX.$name;
 	if (!isset($_REQUEST[$varname]) and isset($_REQUEST[$varname.'_date_']) and isset($_REQUEST[$varname.'_time_'])) {
 		// Reassemble timestamps
 		$val=$_REQUEST[$varname.'_date_'].' ' . $_REQUEST[$varname.'_time_'];
+	} elseif ($type=='PICK_MULTI') {
+		$val=array_keys($_REQUEST[$varname]);
 	} else {
 		$val=$_REQUEST[$varname];
 	}	
@@ -192,38 +197,58 @@ function report_generate($report,&$msg)
 	foreach ($report['variables'] as $var) {
 		$type  = $var['type'];
 		$name  = $var['name'];
-		$value = report_get_user_var($name,$report['report_code']);
+		$value = report_get_user_var($name,$report['report_code'],$type);
 
 		switch ($type) {
 		case 'DATE' :
-			$value = dateof($value,'SQL');
+			$value_sql = dateof($value,'SQL');
 			$value_header = dateof($value);
 			break;
 		case 'TIME' :
-			$value = timeof($value,'SQL');
+			$value_sql = timeof($value,'SQL');
 			$value_header = timeof($value);
 			break;
 		case 'TIMESTAMP' :
-			$value = datetimeof($value,'SQL');
+			$value_sql = datetimeof($value,'SQL');
 			$value_header = dateof($value) . ' ' . timeof($value);
 			break;
+		case 'PICK_MULTI' :
+			$value_sql=implode("','",$value); // When used wrapped in single quotes, 'v','a','l','u','e'
+			$value_header = implode(',',$value);
+			break;
 		default:
-			$value_header = $value;
+			$value_sql = $value;
+			$value_header = is_array($value) ? implode(',',$value) : $value;
+			break;
 		}
-		$pattern_replace['$'.$name] = $value;
+		$pattern_replace['$'.$name] = $value_sql;
 		$pattern_replace_header['$'.$name] = $value_header; //contains human-readable values for date
-		$report['pattern_replace']=$pattern_replace;
-		$report['pattern_replace_header']=$pattern_replace_header;
 		//set labels
-		if ($var['options']) { //a pick variable, determine which was picked
-			foreach ($var['options'] as $opt) {
-				$opte = explot($opt);
-				if ($opte[0] === $value) {
-					$label = $opte[1];
+		switch ($type) {
+			case 'PICK' : //a pick variable, determine which was picked
+				$label = $var['options'][$value];
+				break;
+			case 'PICK_MULTI' :
+				$tmp_array = array_values(array_intersect_key($var['options'],array_flip($value)));
+				// FIXME: Make me a nice separate listing function
+				switch (count($tmp_array)) {
+					case 0 :
+						$label='';
+						break;
+					case 1 :
+						$label=$tmp_array[0];
+						break;
+					case 2 :
+						$label = implode(' & ',$tmp_array);
+						break;
+					default :
+						$label = implode(', ',array_slice($tmp_array,0,-1)) . ' & ' . $tmp_array[count($tmp_array)-1];
+						break;
 				}
-			}
-		} else {
-			$label = $var['prompt'];
+				break;	
+			default : 
+				$label = $var['prompt']; //FIXME: Is this right?  Doesn't seem so.  $label=$value instead?
+				break;
 		}
 		$pattern_replace['$'.$name.'_label'] = $label;
 		$pattern_replace_header['$'.$name.'_label'] = $label;
@@ -234,6 +259,10 @@ function report_generate($report,&$msg)
 		$pattern_replace_header['$'.$k ]=$v;
 	}
 
+	// Save in report variable
+	$report['pattern_replace']=$pattern_replace;
+	$report['pattern_replace_header']=$pattern_replace_header;
+
 	// sort longest to shortest keys so, for example, "date_end" is replaced before "date"
 	uksort($pattern_replace,'strlen_cmp');
 	$pattern = array_keys($pattern_replace);
@@ -243,6 +272,7 @@ function report_generate($report,&$msg)
 	uksort($pattern_replace_header,'strlen_cmp');
 	$pattern_h = array_keys($pattern_replace_header);
 	$replace_h = array_values($pattern_replace_header);
+
 	// Loop through report blocks
 	foreach ($report[$rb] as $s => $sql) {
 		// Strip out disabled blocks
@@ -482,25 +512,33 @@ function report_user_options_form($report)
 		$varname    = AG_REPORTS_VARIABLE_PREFIX . $p['name'];	
 		$userprompt = $p['prompt'];	
 		$comment    = $p['comment']; // fixme in parse_cfg_file
+		$multi		= false; // reset for PICK / PICK_MULTI
 
 		// store report variables for session
 		$default = $_SESSION['report_options_'.$report['report_code'].'_'.$varname] = 
 			orr($_REQUEST[$varname],$_SESSION['report_options_'.$report['report_code'].'_'.$varname]);
 		
 		switch ($p['type']) {
+		case 'PICK_MULTI' :
+			$multi=true;
+			// no break, continue
 		case 'PICK' :
 			$label =($userprompt ? bigger(bold($userprompt)) : '' ).  ($comment ? " $comment" : '');
-			$cell = selectto($varname);
-
-			foreach( $p['options'] as $li) {
-				$li = explot($li);
+			$cell = $multi ? '' : selectto($varname);
+			foreach( $p['options'] as $li=>$lab) {
 				// default is set a) if default is passed, and equals current option
-				$defaulti = $default===$li[0] 
+				// or default is array, and $li is one of the keys
+				$defaulti = ( ( is_array($default) and in_array($li,array_keys($default)))
+					or ($li==$default)
 					// or, b) no default is passed, but default is configured to current option
-					|| (!$default && $li[0]==$p['default']);
-				$cell .= selectitem( $li[0],$li[1],$defaulti);
+					or ( (!$default) and ($li==$p['default']) ));
+
+				$cell .= ($multi)
+					? span(formcheck($varname .'['.$li.']', ($defaulti ? 'checked="checked"' : ''))
+				 		. '&nbsp;'.$lab,' class="radioButtonSet"') . oline()
+					: selectitem( $li,$lab,$defaulti);
 			}
-			$opt .= row(cell($userprompt) . cell($cell.selectend()));
+			$opt .= row(cell($label) . cell($cell. (!$multi ? selectend() : '') ));
 			break;
 		case 'DATE' :
 				 $opt .= row(cell($userprompt) . cell(formdate($varname,orr($default,$p['default'],dateof('now')))));
@@ -523,11 +561,11 @@ function report_user_options_form($report)
 			$opt .= row(cell(alert_mark('Don\'t know how to handle a ' . $p['type']),' colspan="2"'));
 		}
 	}
-	$opt=table($opt);
+	$opt=table_blank($opt);
 	}
 
 	// output options
-	$opt .= table(row(cell()) . row(cell(html_heading_tag('Choose Output Format',3)
+	$opt .= table_blank(row(cell()) . row(cell(html_heading_tag('Choose Output Format',3)
 			. report_output_select($report,true))));
 
 	$out .= $opt;
