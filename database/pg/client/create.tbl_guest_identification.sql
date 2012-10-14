@@ -5,7 +5,8 @@ CREATE TABLE tbl_guest_identification (
 	identification_type_code VARCHAR(20) NOT NULL REFERENCES tbl_l_identification_type (identification_type_code),
 	identification_number TEXT,
     identification_expiration_date DATE NOT NULL,
---    sign_up_date DATE NOT NULL,
+	comment TEXT,
+
     --system fields
     added_by                        INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
     added_at                        TIMESTAMP(0)     NOT NULL DEFAULT CURRENT_TIMESTAMP,

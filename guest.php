@@ -137,7 +137,8 @@ function guest_verify($client_id,$guest_id,$type='visit') {
 	if (count($guest) <> 1) {
 		return false;
 	}
-	if (be_null($guest[0]['identification_status'])) {
+	if (be_null(($ied=$guest[0]['identification_expiration_date'])) or ($ied < dateof('now','SQL')) ) {
+		// Comment out this line if you don't care about ID expiration dates
 		$id_warning=div('Note: No Current Identification on file for this guest','','class="idWarning"');
 	}
 

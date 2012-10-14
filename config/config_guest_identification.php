@@ -31,15 +31,25 @@ should be included in this distribution.
 */
 
 $engine['guest_identification'] = array(
+	'list_fields'=>array('guest_id','identification_type_code','identification_number','identification_expiration_date'),
 	'fields' => array(
-
-
-		'guest_identification_scan' => array(
+		'identification_document_scan' => array(
+			'label' => 'Document Scan',
 			'data_type' => 'attachment',
 			'display_view'=>'hide',
 			'display_list'=>'hide'
 		),
+		'identification_expiration_date'=>array(
+			'label'=>'Expiration'
+		),
+		'identification_type_code'=>array(
+			'label'=>'Type'
+		),
+		'identification_number'=>array(
+			'label'=>'Number'
+		),
 		'guest_identification' => array(
+			'label' => 'ID scan',
 			'value' => 'guest_photo($rec["guest_id"])',
 			'value_list' => 'guest_photo($rec["guest_id"],50,50)',
 			'is_html'=>true,

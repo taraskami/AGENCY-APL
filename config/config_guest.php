@@ -31,6 +31,7 @@ should be included in this distribution.
 */
 
 $engine['guest'] = array(
+	'use_table_post_edit' => true,
 	'child_records' => array(
 		'guest_identification','guest_authorization','guest_visit'
 	),
@@ -51,7 +52,14 @@ $engine['guest'] = array(
 		'client_id' => array(
 			'display'=>'hide'
 		),
+		// Comment these three lines out if you are not keeping ID in a separate table
+		'identification_number'=>array('display'=>'hide'),
+		'identification_expiration_date'=>array('display'=>'hide'),
+		'identification_type_code'=>array('display'=>'hide'),
+
 		'identification_status' => array(
+			// Hide this field if you are not keeping identification in a separate table
+			// 'display'=>'hide',
 			'value' => '$x ? elink("guest_identification",$x,"on file") : "not on file" . add_link("guest_identification","Add ID now",NULL,array("guest_id"=>$rec["guest_id"]))',
 			'is_html'=>true
 		)

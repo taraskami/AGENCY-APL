@@ -5,6 +5,7 @@ CREATE TABLE tbl_guest_visit (
 	guest_id INTEGER NOT NULL REFERENCES tbl_guest (guest_id),
 	client_id  INTEGER NOT NULL REFERENCES tbl_client (client_id),
 	housing_unit_code varchar(10) NOT NULL REFERENCES tbl_housing_unit(housing_unit_code),
+	comment TEXT,
     --system fields
     added_by                        INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
     added_at                        TIMESTAMP(0)     NOT NULL DEFAULT CURRENT_TIMESTAMP,

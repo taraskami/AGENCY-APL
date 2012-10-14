@@ -6,7 +6,10 @@ BEGIN;
 
 /*
 
+DROP FUNCTION guest_name(integer);
+
 DROP VIEW guest_visit_authorized;
+DROP VIEW client_guest_ineligible;
 DROP VIEW guest_visit_current;
 DROP VIEW guest;
 DROP VIEW guest_identification_current;
@@ -27,6 +30,8 @@ DROP TABLE tbl_l_connection_type;
 
 DROP VIEW l_identification_type;
 DROP TABLE tbl_l_identification_type;
+
+
 
 */
 

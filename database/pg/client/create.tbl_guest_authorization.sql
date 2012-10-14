@@ -6,6 +6,7 @@ CREATE TABLE tbl_guest_authorization (
 	guest_authorization_date_end DATE,
 --	allowed_project_codes VARCHAR(20)[], -- REFERENCES l_housing_project -- None will be interpreted as ALL
 --   connection_type_code varchar(10) REFERENCES tbl_l_connection_type (connection_type_code),
+	comment TEXT,
     --system fields
     added_by                        INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
     added_at                        TIMESTAMP(0)     NOT NULL DEFAULT CURRENT_TIMESTAMP,
