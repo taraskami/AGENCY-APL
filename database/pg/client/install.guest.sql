@@ -25,8 +25,8 @@ DROP TABLE tbl_guest_authorization;
 
 DROP TABLE tbl_guest;
 
-DROP VIEW l_connection_type;
-DROP TABLE tbl_l_connection_type;
+--DROP VIEW l_connection_type;
+--DROP TABLE tbl_l_connection_type;
 
 DROP VIEW l_identification_type;
 DROP TABLE tbl_l_identification_type;
@@ -35,7 +35,7 @@ DROP TABLE tbl_l_identification_type;
 
 */
 
-\i create.l_connection_type.sql
+--\i create.l_connection_type.sql
 \i create.l_identification_type.sql
 
 \i create.tbl_guest.sql
