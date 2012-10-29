@@ -63,7 +63,7 @@ function set_kiosk_info() {
  */
 
 
-	if (!AG_KIOSK_MODE) {
+	if (!(defined('AG_KIOSK_MODE') and AG_KIOSK_MODE)) {
 		define('AG_KIOSK_MODE_SET',false);
 		return;
 	}
@@ -77,7 +77,7 @@ function set_kiosk_info() {
 			}
 		}
 	}
-	if (AG_KIOSK_USER) {
+	if (defined('AG_KIOSK_USER') and AG_KIOSK_USER) {
 		define('AG_KIOSK_USER_SET',AG_KIOSK_USER);
 		define('AG_KIOSK_MODE_SET',true);
 		return;
