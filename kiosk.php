@@ -68,9 +68,9 @@ function set_kiosk_info() {
 		return;
 	}
 	if (is_array($users=unserialize(AG_KIOSK_USER_BY_MACHINE_ID))) {
-		$our_ip = $_SERVER['REMOTE_ADDR'];
-		foreach ($users as $ip =>$user) {
-			if ( ($ip==$our_ip) or ($ip=='*') ) {
+		$our_id = get_machine_id();
+		foreach ($users as $id =>$user) {
+			if ( ($id==$our_id) or ($id=='*') ) {
 				define('AG_KIOSK_MODE_SET',true);
 				define('AG_KIOSK_USER_SET',$user);
 				return;

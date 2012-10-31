@@ -65,6 +65,21 @@ function agency_menu_admin()
 			exit;
 		}
 		break;
+	case 'set_machine_id_cookie' :
+		if (!has_perm('super_user')) {
+			break;
+		}
+		$unit=$_POST['cookie_duration_unit'];
+		$quant=$_POST['cookie_duration_quantity'];
+		$machine=$_POST['machine_id_value'];
+		$domain=$_SERVER['HTTP_HOST'];
+		$path=dirname($_SERVER['REQUEST_URI']);
+		$machines=unserialize(AG_MACHINE_ID_BY_COOKIE);
+		if (!(is_numeric($unit) and is_numeric($quant) and is_array($machines) and in_array($machine,$machines) and is_secure_transport())) {
+			break;
+		}
+		setcookie('AG_MACHINE_ID',AG_MACHINE_ID_COOKIE_PREFIX.array_search($machine,$machines),$unit*$quant,$path,$domain,true,true);	
+		break;
 	}
 
 	$button = button('Go','','','','',' class="agencyForm"');
@@ -106,7 +121,9 @@ function agency_menu_admin()
 	$menu[ucwords(AG_MAIN_OBJECT).' Unduplication'] = html_list(
 											html_list_item(link_unduplication('Unduplicate '.ucwords(AG_MAIN_OBJECT)))
 											. html_list_item('This link will unduplicate '.AG_MAIN_OBJECT.'s who have already been processed and confirmed as duplicates, in case they were in tables which have only recently been added, or were not unduplicated from the DB for another reason: '.link_unduplication('Check for/unduplicate confirmed duplicate '.AG_MAIN_OBJECT.'s from tables','undup_overlooked')));
-	
+
+	// Set cookies for machine ID
+	$menu['Set Cookie ID for this Machine']=set_machine_id_cookie();
 	
 	// Database Maintenance
 	$menu['Database Maintenance'] = html_list(

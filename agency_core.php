@@ -52,6 +52,32 @@ function is_enabled( $feature ) {
 	}
 }
 
+function get_machine_id() {
+	$ip_ids=unserialize(AG_MACHINE_ID_BY_IP);
+	$cookie_ids=unserialize(AG_MACHINE_ID_BY_COOKIE);
+	$order=unserialize(AG_MACHINE_ID_ORDER);
+	if (!is_array($order)) {
+		return NULL;
+	}
+	foreach ($order as $type) {
+		if (($type=='cookie') and is_array($cookie_ids)) {
+			foreach ($cookie_ids as $k=>$v) {
+				if ($_COOKIE['AG_MACHINE_ID']==(AG_MACHINE_ID_COOKIE_PREFIX . $k)) {
+					return $v;
+				}
+			}
+		}
+		if (($type=='ip') and is_array($ip_ids)) {
+			foreach ($ip_ids as $k=>$v) {
+				if ($_SERVER['REMOTE_ADDR']==$k) {
+					return $v;
+				}
+			}
+		}
+	}
+	return NULL;			
+}
+
 function set_local_parameters() {
 
 /*
@@ -74,9 +100,9 @@ function set_local_parameters() {
 
 
 	if (is_array($params=unserialize(AG_LOCAL_PARAMETERS_BY_MACHINE_ID))) {
-		$our_ip = $_SERVER['REMOTE_ADDR'];
-		foreach ($params as $ip =>$param) {
-			if ( ($ip==$our_ip) or ($ip=='*') ) {
+		$our_id = get_machine_id();
+		foreach ($params as $id =>$param) {
+			if ( ($id==$our_id) or ($id=='*') ) {
 				define('AG_LOCAL_PARAMETERS',serialize($param));
 				return;
 			}
@@ -86,4 +112,47 @@ function set_local_parameters() {
 	return;
 }
 
+function set_machine_id_cookie() {
+	$list=unserialize(AG_MACHINE_ID_BY_COOKIE);
+	if (!is_array($list)) {
+		return 'No Cookie Configuration Specified.  (Can set AG_MACHINE_ID_BY_COOKIE in agency_config_local.php)';
+	}
+	$form = formto()
+		. hiddenvar('action','set_machine_id_cookie')
+		. 'Set this machine to: '
+		. selectto('machine_id_value');
+	$this_machine=get_machine_id();
+	foreach ($list as $k=>$x) {
+		if ($_COOKIE['AG_MACHINE_ID']==(AG_MACHINE_ID_COOKIE_PREFIX.$k)) {
+			$current = $x;
+		}
+		$form .= selectitem($x,$x,($this_machine===$x));
+	}
+	$unit = selectto('cookie_duration_unit')
+		. selectitem('0','This session only')
+		. selectitem(time()+60,'Minute(s)')
+		. selectitem(time()+3600,'Hour(s)',true) // default
+		. selectitem(time()+3600*24,'Day(s)')
+		. selectitem(time()+3600*24*7,'Week(s)')
+		. selectitem(time()+3600*24*30,'Month(s)')
+		. selectitem(time()+3600*24*365,'Year(s)')
+		. selectend();
+	$form .= selectend()
+		. oline()
+		. 'Cookie lasts for '
+		. formvartext('cookie_duration_quantity',1,'size="3"')
+		. $unit
+		. oline()
+		. button()
+		. formend();
+	$status = $current
+		 ? 'This machine currently set to ' . bold($current)
+		: 'No cookie currently set for this machine';
+	if ($this_machine and ($this_machine != $current)) {
+		$status .= oline() . 'Note: this machine ID currently set to ' . bold($this_machine).', but not by cookie.';
+	}
+	$note = 'Note: If the machine ID was just set, cookie will not take effect until the next page is loaded. '
+			. smaller('('.hlink($_SERVER['PHP_SELF'],'Reload now'). ')');
+	return oline($status,2) . $form . $note;
+}
 ?>
