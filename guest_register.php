@@ -30,7 +30,7 @@ $menu=orr($_GET['menu'],$_POST['menu']);
 //outline("Menu = $menu");
 switch ($menu) {
 	case 'menu' :
-		$filter=array('housing_project_from_unit(unit_no(client_id,current_date))'=>$housing_project_code);
+		$filter=array('housing_project_code'=>$housing_project_code);
 		if (!$id=guest_find_client_id($filter,$msg,$_SESSION[$SESSION_ID_VAR])) {
 			$menu=NULL;
 			break;

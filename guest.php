@@ -35,12 +35,12 @@ function guest_find_client_id($filter1,&$msg,$current_id) {
 			$msg .= implode(oline(),$msg1);
 			return false;
 		}
-//		$filter['ILIKE:name_first']=$name_first;
-//		$filter['ILIKE:name_last']=$name_last;
-		$filter['unit_no(client_id,current_date)']=$unit;
 		$filter['dob']=$dob;
+		$filter['housing_unit_code']=$unit;
 		$filter=array_merge($filter,$filter1);
-		$clients=get_generic($filter,NULL,NULL,'client');
+		$c_def=get_def('client');
+		$c_def['sel_sql']='SELECT * FROM client LEFT JOIN residence_own USING (client_id)'; 
+		$clients=get_generic($filter,NULL,NULL,$c_def);
 		if (count($clients)==0) {
 			$msg .= 'Matching tenant not found';
 			return false;
