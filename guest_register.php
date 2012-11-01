@@ -21,8 +21,8 @@ $title='Welcome to ' . sql_lookup_description($housing_project_code,'l_housing_p
 $signin_msg='Sign a guest in';
 $signout_msg='Sign a guest out';
 $logout_msg='Log Out';
-$logout_link=hlink($_SERVER['SCRIPT_NAME'],'Log Out');
-$menu_link=hlink($_SERVER['SCRIPT_NAME'].'?menu=menu','Return to Menu');
+$logout_link=span(hlink($_SERVER['SCRIPT_NAME'],'Log Out','','class="guestMenuLink"'),'class="guestMenuButton"');
+$menu_link=span(hlink($_SERVER['SCRIPT_NAME'].'?menu=menu','Return to Menu','','class="guestMenuLink"'),'class="guestMenuButton"');
 
 $SESSION_ID_VAR = 'GuestTenantID'; // the variable name to use in the session
 
@@ -39,9 +39,9 @@ switch ($menu) {
 		}
 		$GLOBALS['AG_BODY_TAG_OPTIONS']=' class="guestMenuScreen" ';
 		$out = ''
-		. span(hlink($link_base . '?menu=signin', $signin_msg,'','class="tenantSigninButton"'),'class="guestMenuButton"')
-		. span(hlink($link_base . '?menu=signout', $signout_msg,'','class="tenantSignoutButton"'),'class="guestMenuButton"')
-		. span(hlink($link_base . '?menu=', $logout_msg,'','class="tenantLogoutButton"'),'class="guestMenuButton"');
+		. span(hlink($link_base . '?menu=signin', $signin_msg,'','class="tenantSigninButton guestMenuLink"'),'class="guestMenuButton"')
+		. span(hlink($link_base . '?menu=signout', $signout_msg,'','class="tenantSignoutButton guestMenuLink"'),'class="guestMenuButton"')
+		. span(hlink($link_base . '?menu=', $logout_msg,'','class="tenantLogoutButton guestMenuLink"'),'class="guestMenuButton"');
 		break;
 	case 'signin' :
 		$GLOBALS['AG_BODY_TAG_OPTIONS']=' class="guestSigninScreen" ';

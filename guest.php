@@ -103,8 +103,8 @@ function guest_guest_select_form( $id ) {
 } else {
 		$base_url='';
 		foreach($list as $item) {
-			//$items[] = span(hlink($base_url.'?menu=signin_selected&guest_id='.$item['guest_id'],$item['guest_name']),'class="guestMenuButton"');
-			$items[] = hlink($base_url.'?menu=signin_selected&guest_id='.$item['guest_id'],span($item['guest_name'],'class="guestMenuButton"'));
+			$items[] = span(hlink($base_url.'?menu=signin_selected&guest_id='.$item['guest_id'],$item['guest_name'],'','class="guestMenuLink"'),'class="guestMenuButton"');
+			//$items[] = hlink($base_url.'?menu=signin_selected&guest_id='.$item['guest_id'],span($item['guest_name'],'class="guestMenuButton"'));
 		}
 		//$response = implode(oline(),$items);
 		$response = implode('',$items);
@@ -120,7 +120,7 @@ function guest_exit_select_form( $id ) {
 	} else {
 		$base_url='';
 		foreach($list as $item) {
-			$items[] = span(hlink($base_url.'?menu=signout_selected&guest_id='.$item['guest_id'],$item['guest_name']),'class="guestMenuButton"');
+			$items[] = span(hlink($base_url.'?menu=signout_selected&guest_id='.$item['guest_id'],$item['guest_name'],'','class="guestMenuLink"'),'class="guestMenuButton"');
 		}
 		//$response = implode(oline(),$items);
 		$response = implode('',$items);
@@ -147,8 +147,8 @@ function guest_verify($client_id,$guest_id,$type='visit') {
 	$form = div(guest_photo($guest_id),'','class="guestPhotoContainer"') . span("You are $client_name",'class="guestClientName"')
 		. span( "And  " . $guest[0]['name_full'] . " is $action.",'class="guestGuestName"')
 			. oline('',3)
-			. span(hlink('?menu=sign' . (($type=='exit') ? 'out' : 'in') . '_selected_verify&guest_id='.$guest_id,'Yes, this is correct'),'class="guestMenuButton"')
-			. span(hlink('?menu=menu','No, this is not correct.'),'class="guestMenuButton"')
+			. span(hlink('?menu=sign' . (($type=='exit') ? 'out' : 'in') . '_selected_verify&guest_id='.$guest_id,'Yes, this is correct','','class="guestMenuLink"'),'class="guestMenuButton"')
+			. span(hlink('?menu=menu','No, this is not correct.','','class="guestMenuLink"'),'class="guestMenuButton"')
 			;
 	return $id_warning . $form;
 }

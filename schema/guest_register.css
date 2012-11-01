@@ -43,10 +43,16 @@ div.guestAGENCYFooter {
 }
 
 .guestMenuButton {
-	padding: 10px;
+	display: inline-block;
 	margin: 10px;
 	background-color: #8888FF;
 	font-size: 120%;
+}
+
+a.guestMenuLink {
+	margin:0px;
+	padding:10px;
+	display: block; 
 }
 
 .guestResponseMessage {
