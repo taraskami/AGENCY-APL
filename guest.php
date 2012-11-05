@@ -195,10 +195,9 @@ function post_a_guest_exit($client_id,$guest_id,$msg) {
 		$msg .= "Multiple current visits found for $client_id,$guest_id.  Please contact system administrator.";
 		return false;
 	}
-	$rec=$recs[0];
-	$rec['exited_at']=datetimeof('now','SQL');
-	$update_filter=array($def['id_field']=>$rec[$def['id_field']]);
-	return post_generic($rec,$def,$msg,$update_filter);
+	$update_rec['exited_at']=datetimeof('now','SQL');
+	$update_filter=array($def['id_field']=>$recs[0$def['id_field']]);
+	return post_generic($update_rec,$def,$msg,$update_filter);
 }
 
 
