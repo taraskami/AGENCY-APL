@@ -185,15 +185,20 @@ function post_a_guest_visit($client_id,$guest_id,$msg) {
 function post_a_guest_exit($client_id,$guest_id,$msg) {
 	$def=get_def('guest_visit');
 	$d1 = $d2 = array();
-	$filt=array('client_id'=>$client_id,'guest_id'=>$guest_id);
+	$filt=array('client_id'=>$client_id,'guest_id'=>$guest_id,'NULL:exited_at'=>'dummy');
 	$recs=get_generic($filt,NULL,NULL,'guest_visit_current');
 	if (count($recs)==0) {
 		$msg .= 'Current visit not found';
 		return false;
 	}
+	if (count($recs)>1) {
+		$msg .= "Multiple current visits found for $client_id,$guest_id.  Please contact system administrator.";
+		return false;
+	}
 	$rec=$recs[0];
-	$rec['exited_at']=dateof('now','SQL');
-	return post_generic($rec,$def,$msg,$filt);
+	$rec['exited_at']=datetimeof('now','SQL');
+	$update_filter=array($def['id_field']=>$rec[$def['id_field']]);
+	return post_generic($rec,$def,$msg,$update_filter);
 }
 
 
