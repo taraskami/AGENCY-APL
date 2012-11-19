@@ -32,7 +32,7 @@ function guest_find_client_id($filter1,&$msg,$current_id) {
 			$msg1[] = 'Invalid Date of Birth';
 		}
 		if (count($msg1) >0 ) {
-			$msg .= implode(oline(),$msg1);
+			$msg[] = implode(oline(),$msg1);
 			return false;
 		}
 		$filter['dob']=$dob;
@@ -42,22 +42,22 @@ function guest_find_client_id($filter1,&$msg,$current_id) {
 		$c_def['sel_sql']='SELECT * FROM client LEFT JOIN residence_own USING (client_id)'; 
 		$clients=get_generic($filter,NULL,NULL,$c_def);
 		if (count($clients)==0) {
-			$msg .= 'Matching tenant not found';
+			$msg[] = 'Matching tenant not found';
 			return false;
 		}
 		if (count($clients)>1) {
-			$msg .= 'Found multiple matching records--don\'t know what to do!  Please tell a staff person about this.';
+			$msg[] = 'Found multiple matching records--don\'t know what to do!  Please tell a staff person about this.';
 			return false;
 		}
 	} elseif ($current_id) {
 		// continue current login	
 		$clients=get_generic(client_filter($current_id),'','','client');
 	} else {
-		$msg .= 'No information submitted.  Try again';
+		$msg[] = 'No information submitted.  Try again';
 		return false;
 	}
 
-	$msg .= 'Welcome ' . ucwords(strtolower($clients[0]['name_first'])) . ' ' . ucwords(strtolower($clients[0]['name_last']));
+//	$msg[] = 'Welcome ' . ucwords(strtolower($clients[0]['name_first'])) . ' ' . ucwords(strtolower($clients[0]['name_last']));
 
 	return $clients[0]['client_id'];
 }
@@ -78,16 +78,16 @@ function guest_select_form($unit_filter=array()) {
 	$def=get_def('housing_unit');
 	$out = ''
 	. formto()
-	. html_heading_tag("Select your unit",2)
+	. div(html_heading_tag("Select your unit",2)
 	. selectto('housing_unit_code')
 	. selectitem('','...')
 	. do_pick_sql('SELECT housing_unit_code AS value, substring(housing_unit_code FROM \'^[a-zA-Z]*([0-9]+)$\') AS label FROM ' . $def['table'] . ' WHERE ' . read_filter($unit_filter) . ' ORDER BY 1') 
 	. selectend()
-	. oline()
-	. html_heading_tag('Date of birth: ',2)
-	. formdate('dob')
+	,'','class="guestLoginUnit"')
+	. div(html_heading_tag('Date of birth: ',2)
+	. formdate('dob'),'','class="guestLoginDob"')
 	. oline('',2)
-	. button('Go','','','','','class="guestTenantSelectSubmit"')
+	. div(button('Go','','','','','class="guestTenantSelectSubmit"'),'','class="guestLoginGo guestMenuButton"')
 	. hiddenvar('menu','menu')
 	. formend()
 	; 
@@ -98,15 +98,12 @@ function guest_select_form($unit_filter=array()) {
 function guest_guest_select_form( $id ) {
 	$list=get_generic(client_filter($id),NULL,NULL,'guest_visit_authorized');
 	if (count($list)==0) {
-		$response = 'Sorry, you have no eligible visitors.';
-	
-} else {
+		$response = div('Sorry, you have no eligible guests.','','class="guestResponseMessage"');
+	} else {
 		$base_url='';
 		foreach($list as $item) {
-			$items[] = span(hlink($base_url.'?menu=signin_selected&guest_id='.$item['guest_id'],$item['guest_name'],'','class="guestMenuLink"'),'class="guestMenuButton"');
-			//$items[] = hlink($base_url.'?menu=signin_selected&guest_id='.$item['guest_id'],span($item['guest_name'],'class="guestMenuButton"'));
+			$items[] = span(hlink($base_url.'?menu=signin_selected&guest_id='.$item['guest_id'],$item['guest_name'],'','class="guestMenuLink"'),'class="guestButton"');
 		}
-		//$response = implode(oline(),$items);
 		$response = implode('',$items);
 	}
 	return $response;
@@ -116,11 +113,11 @@ function guest_exit_select_form( $id ) {
 	$list=get_generic(client_filter($id),NULL,NULL,'guest_visit_current');
 
 	if (count($list)==0) {
-		$response = 'Sorry, you have no current visitors.';
+		$response = div('You have no current guests to sign out.','','class="guestResponseMessage"');
 	} else {
 		$base_url='';
 		foreach($list as $item) {
-			$items[] = span(hlink($base_url.'?menu=signout_selected&guest_id='.$item['guest_id'],$item['guest_name'],'','class="guestMenuLink"'),'class="guestMenuButton"');
+			$items[] = span(hlink($base_url.'?menu=signout_selected&guest_id='.$item['guest_id'],$item['guest_name'],'','class="guestMenuLink"'),'class="guestButton"');
 		}
 		//$response = implode(oline(),$items);
 		$response = implode('',$items);
@@ -131,6 +128,7 @@ function guest_exit_select_form( $id ) {
 function guest_verify($client_id,$guest_id,$type='visit') {
 	//$type can be 'exit' or 'visit'
 	$action = ($type=='visit') ? 'visiting you' : 'ending their visit';
+	$action2 = ($type=='visit') ? 'signin' : 'signout';
 
 	$g_filt = array('guest_id'=>$guest_id);
 	$guest=get_generic($g_filt,NULL,NULL,'guest');
@@ -144,11 +142,14 @@ function guest_verify($client_id,$guest_id,$type='visit') {
 
 	$client=sql_fetch_assoc(client_get($client_id));
 	$client_name=$client['name_first'].' ' . $client['name_last'];
-	$form = div(guest_photo($guest_id),'','class="guestPhotoContainer"') . span("You are $client_name",'class="guestClientName"')
-		. span( "And  " . $guest[0]['name_full'] . " is $action.",'class="guestGuestName"')
-			. oline('',3)
-			. span(hlink('?menu=sign' . (($type=='exit') ? 'out' : 'in') . '_selected_verify&guest_id='.$guest_id,'Yes, this is correct','','class="guestMenuLink"'),'class="guestMenuButton"')
-			. span(hlink('?menu=menu','No, this is not correct.','','class="guestMenuLink"'),'class="guestMenuButton"')
+	$verify_message=oline("You are " . bold(underline($client_name)),2)
+		. "and " . bold(underline($guest[0]['name_full'])) . " is $action.";
+	$form = div(guest_photo($guest_id),'','class="guestPhotoContainer"') 
+		. div($verify_message,'','class="guestVisitSummary"')
+			. oline('',2)
+			. oline(bigger(bold(italic('Is this information correct?')),2),2)
+			. span(hlink('?menu=' . $action2 . '_selected_verify&guest_id='.$guest_id,'Yes, this is correct','','class="guestMenuLink"'),'class="guestMenuButton guestYesChoice"')
+			. span(hlink('?menu='.$action2,'No, I want to try again','','class="guestMenuLink"'),'class="guestMenuButton guestNoChoice"')
 			;
 	return $id_warning . $form;
 }
@@ -196,7 +197,7 @@ function post_a_guest_exit($client_id,$guest_id,$msg) {
 		return false;
 	}
 	$update_rec['exited_at']=datetimeof('now','SQL');
-	$update_filter=array($def['id_field']=>$recs[0$def['id_field']]);
+	$update_filter=array($def['id_field']=>$recs[0][$def['id_field']]);
 	return post_generic($update_rec,$def,$msg,$update_filter);
 }
 

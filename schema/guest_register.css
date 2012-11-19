@@ -3,11 +3,11 @@ body {
 }
 
 body.guestLoginScreen {
-	background-color: yellow;
+	background-color: #FFFFBB;
 }
 
 body.guestMenuScreen {
-	background-color: #80FF80;
+	background-color: #BBFFBB;
 }
 
 body.guestSigninScreen {
@@ -15,24 +15,27 @@ body.guestSigninScreen {
 }
 
 body.guestSignoutScreen {
-	background-color: #80FF80;
+	background-color: #BBFFBB;
 }
 
 body.guestSigninSelectedScreen {
-	background-color: #80FF80;
+	background-color: #BBFFBB;
 }
 
 body.guestSignoutSelectedScreen {
-	background-color: #80FF80;
+	background-color: #BBFFBB;
 }
 
 body.guestSigninSelectedVerifyScreen {
-	background-color: #80FF80;
+	background-color: #BBFFBB;
 }
 
 body.guestSignoutSelectedVerifyScreen {
-	background-color: #80FF80;
+	background-color: #BBFFBB;
 }
+
+h1 { font-size: 150%; }
+h2 { font-size: 200%; }
 
 div.guestAGENCYFooter {
 	width: 50%;
@@ -42,37 +45,65 @@ div.guestAGENCYFooter {
 	margin-top: 100px;
 }
 
+.guestButton {
+	display: inline-block;
+	margin: 10px;
+	background-color: #F8C408;
+	font-size: 150%;
+	font-weight: bold;
+	border: solid black 2px;
+}
+
 .guestMenuButton {
 	display: inline-block;
 	margin: 10px;
-	background-color: #8888FF;
-	font-size: 120%;
+	background-color: #FFFFAA;
+	font-size: 150%;
+	border: solid black 3px;
+	border-radius: 12px;
+	font-weight: bold;
 }
+
+.guestMenuButtons .guestMenuButton {
+	display:block;
+}
+
+.guestMenuButtons {
+	width: 30%;
+}
+
+.guestLogoutButton {
+	background-color: #FF9999;
+}
+
+.guestYesChoice { background-color: #22FF22; }
+.guestNoChoice { background-color: #FF6666; }
 
 a.guestMenuLink {
 	margin:0px;
-	padding:10px;
+	padding:20px;
 	display: block; 
 }
 
 .guestResponseMessage {
-	font-size: 115%;
+	font-size: 150%;
+	font-style: italic;
+	font-weight: bold;
 	padding: 10px;
 	margin-bottom: 20px;
 }
 .guestHeaderBlock {
 	display: block;
 	margin-top: 20px;
+
 }
 
-span.guestGuestName {
+div.guestVisitSummary {
 	padding: 20px;
 	border: solid black 2px;
-}
-
-span.guestClientName {
-	padding: 20px;
-	border: solid black 2px;
+	background-color: #7777FF;
+	width: 50%;
+	font-size: 150%;
 }
 
 .guestEligibleItem {
@@ -93,7 +124,7 @@ img.guestPhoto {
 
 div.idWarning {
 	background-color: #FFCCCC;
-	padding: 30px;
+	padding: 3px;
 	border: solid 2px red;
 	width: 50%;
 }
@@ -106,6 +137,35 @@ div.idWarning {
 	font-size: 150%;
 }
 
+.guestHeaderBlock select {
+	font-size: 200%;
+}
+
 .guestHeaderBlock input {
-	font-size: 150%;
+	font-size: 200%;
+}
+
+.guestLoginDob { display: none; }
+.guestLoginGo { 
+	width: 30%;
+display: none; }
+
+.guestLoginGo input {
+	background-color: #88FF88;
+	padding: 15px;
+	margin: 0px;
+	display: block;
+	width: 100%;
+}
+
+.guestLoginUnit h2,
+.guestLoginDob h2 { 
+	font-size: 200%; 
+	font-style: italic;
+	font-weight: bold;
+}
+
+div.guestLoginDob input {
+	margin-right: 15px;
+	padding-right: 15px;
 }
