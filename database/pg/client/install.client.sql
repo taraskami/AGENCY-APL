@@ -96,6 +96,9 @@
 \i create.l_entry_location.sql
 \i create.tbl_entry.sql
 
+\i create.view.entry_eligible.sql
+\i functions/create.entry_ineligible.sql
+
 /* Address table and views */
 \i create.tbl_address.sql
 \i create.view.address.sql
