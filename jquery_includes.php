@@ -33,6 +33,7 @@ should be included in this distribution.
 link_style_sheet('pepper-grinder/jquery-ui-1.8.custom.css','screen',' class="styleSheetScreen"');
 link_style_sheet('jquery.datepick.css','screen',' class="styleSheetScreen"');
 link_style_sheet('jquery.clockpick.css','screen',' class="styleSheetScreen"');
+//link_style_sheet('jquery.keyboard.css','screen',' class="styleSheetScreen"');
 
 link_javascript('jquery-1.4.4.min.js');
 link_javascript('jquery-ui-1.8.custom.min.js');
@@ -41,4 +42,5 @@ link_javascript('jquery.clockpick.js');
 link_javascript('jquery.elastic.js');
 link_javascript('jquery_agency.js');
 link_javascript('object_reference.js');
+//link_javascript('jquery.keyboard.min.js');
 ?>
