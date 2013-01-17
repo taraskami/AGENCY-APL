@@ -96,7 +96,7 @@ function guest_select_form($unit_filter=array()) {
 
 
 function guest_guest_select_form( $id ) {
-	$list=get_generic(client_filter($id),NULL,NULL,'guest_visit_authorized');
+	$list=get_generic(client_filter($id),'guest_name',NULL,'guest_visit_authorized');
 	if (count($list)==0) {
 		$response = div('Sorry, you have no eligible guests.','','class="guestResponseMessage"');
 	} else {
@@ -110,7 +110,7 @@ function guest_guest_select_form( $id ) {
 }
 
 function guest_exit_select_form( $id ) {
-	$list=get_generic(client_filter($id),NULL,NULL,'guest_visit_current');
+	$list=get_generic(client_filter($id),'guest_name',NULL,'guest_visit_current');
 
 	if (count($list)==0) {
 		$response = div('You have no current guests to sign out.','','class="guestResponseMessage"');
