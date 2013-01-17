@@ -25,8 +25,8 @@ INSERT INTO tbl_l_ethnicity VALUES
 	('10', 'Japanese', '611','ASIAN_PAC',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_ethnicity VALUES 
 	('11', 'Other Asian', '699','ASIAN_PAC',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_ethnicity VALUES 
-	('12', 'Multi-Racial', '998','MULTI',sys_user(),current_timestamp,sys_user(),current_timestamp);
+--INSERT INTO tbl_l_ethnicity VALUES 
+--	('12', 'Multi-Racial', '998','MULTI',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_ethnicity VALUES 
 	('13', 'Other', '799','OTHER',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_ethnicity VALUES 
