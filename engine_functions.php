@@ -2418,6 +2418,20 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 			}
 		}
 	}
+	// FIXME:  This test for invalid record repeats the code above for valid record.  Could be streamlined.
+	if ($val = $def['invalid_record']) {
+		// field can have multiple tests and multiple messages to display
+		foreach ($val as $test => $msg)  
+		{
+			if (eval( "return $test;" ))
+			{
+			      $mesg .= empty($msg) 
+					? oline("Record has invalid data")
+					: oline($msg);
+			      $VALID=false;
+			}
+		}
+	}
 	if ($def['multi_records']) { //horrid 'generic' multi-record hack
 		foreach ($def['multi'] as $c_obj=>$opts) {
 			$opts['valid_fn']($action,$rec,$def,$mesg,$VALID,$c_obj);  
@@ -2530,6 +2544,20 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 		    // field can have multiple tests and multiple messages to display
 		    foreach ($val as $test => $msg) {
 			    if (!eval( "return $test;" )) {
+				    $mesg .= empty($msg) 
+					    ? oline("Field $label has an invalid value.")
+					    : oline(str_replace(array('{$Y}','{$x}'),array($label,$x),$msg));
+				    $valid=false;
+			    }
+		    }
+	    }
+	    // FIXME: This test of invalid conditions repeats the above tests for valid.  Could be streamlined.
+	    if ($val = $fields[$key]['invalid']) {
+		    $x=$value;  
+		    $ox = $rec_last[$key];
+		    // field can have multiple tests and multiple messages to display
+		    foreach ($val as $test => $msg) {
+			    if (eval( "return $test;" )) {
 				    $mesg .= empty($msg) 
 					    ? oline("Field $label has an invalid value.")
 					    : oline(str_replace(array('{$Y}','{$x}'),array($label,$x),$msg));
