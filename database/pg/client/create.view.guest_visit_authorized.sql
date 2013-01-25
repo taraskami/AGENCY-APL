@@ -5,7 +5,7 @@ CREATE VIEW guest_visit_authorized AS
 		name_full AS guest_name
 
 	FROM
-		guest_authorization ga
+		guest_authorization_current ga
 	LEFT JOIN
 		guest USING (guest_id)
 	WHERE
