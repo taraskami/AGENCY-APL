@@ -12,6 +12,8 @@ CREATE TABLE tbl_l_housing_project (
 	auto_calculate_rent_charges		BOOLEAN,
 	agency_program_code	VARCHAR(10) REFERENCES tbl_l_agency_program (agency_program_code),
 	agency_project_code	VARCHAR(10) REFERENCES tbl_l_agency_project (agency_project_code),
+	unit_code_prefix VARCHAR(10),
+
     --system fields
     added_by                        INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
     added_at                        TIMESTAMP(0)     NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -32,8 +34,8 @@ CREATE TABLE tbl_l_housing_project (
  *
  */
 
-INSERT INTO tbl_l_housing_project VALUES ('HOUSING_1', 'Housing Project 1', '123 Main Street','','Seattle','WA','98102','SEATTLE',210,false, false,'PROG_A','PROJECT_1',sys_user(),current_timestamp,sys_user(),current_timestamp);
-INSERT INTO tbl_l_housing_project VALUES ('HOUSING_2', 'Housing Project 2', '393 Papermill Lane','','Tacoma','WA','98401','WA',NULL,false, false,'PROG_A','PROJECT_1',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_housing_project VALUES ('HOUSING_1', 'Housing Project 1', '123 Main Street','','Seattle','WA','98102','SEATTLE',210,false, false,'PROG_A','PROJECT_1','A',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_housing_project VALUES ('HOUSING_2', 'Housing Project 2', '393 Papermill Lane','','Tacoma','WA','98401','WA',NULL,false, false,'PROG_A','PROJECT_2','B',sys_user(),current_timestamp,sys_user(),current_timestamp);
 
 CREATE VIEW l_housing_project AS (SELECT * FROM tbl_l_housing_project WHERE NOT is_deleted);
 
