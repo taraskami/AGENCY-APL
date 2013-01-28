@@ -1,43 +1,56 @@
-function allInputsValid() {
-	if (!$('div.guestLoginUnit select').val()) {
-		return false;
+function inputsValidate() {
+	var unit = $('div.guestLoginUnit');
+	var secret = $('div.guestLoginSecret');
+	var goButton = $('div.guestLoginGo');
+	//var secred_regex=/([0-9]{1,2}[\-\/]?){2}[0-9]{2,4}/; // for a full dob
+	var secret_regex = /^([0-9]{4})$/; // 4 year DOB
+
+	if (!inputsValidate.validUnits) {
+		inputsValidate.validUnits= jQuery.parseJSON( $( '#housingUnitCodes' ).html() );
 	}
-	var date_check=/([0-9]{1,2}[\-\/]?){2}[0-9]{2,4}/;
-	if ($('div.guestLoginDob input').val().match(date_check)) {
+
+	var our_form = $(goButton).closest('form');
+
+	var unit_val = $(unit).find('input').val();
+	var secret_val = $(secret).find('input').val();
+
+	var check_unit = (jQuery.inArray(unit_val, inputsValidate.validUnits) > -1);
+	var check_secret = (secret_val !== undefined) && secret_val.match(secret_regex);
+	if ( (check_unit) && check_secret) {
+		var loading = $('<img></img>').attr('src','images/loading.gif');
+		$(unit).find('input').removeAttr('disabled').after(loading);
+		$(our_form).submit();
 		return true;
-	}
-	return false;
+	} else if (check_unit) {
+		var keyboard=$(unit).find('input').keyboard().getkeyboard();
+		keyboard.destroy();
+		$(unit).find('input').attr('disabled','disabled');
+		$(secret).show().find('input').focus();
+		return false;
+	} 
 }
 
 $( function() {
 	$('.calTodayLink').remove();
-	$('.field_date').keyboard( { 
+	var params = {
+		alwaysOpen: false,
+		stayOpen: false,
 		layout: 'custom', 
 		customLayout: { 'default': ['7 8 9', '4 5 6', '1 2 3', '{b} 0 /'] } ,
 		usePreview: false,
 		autoAccept: true,
-		position: { at2: 'right center', my: 'left bottom' }
-	} );
-
-	// Show DOB after unit selected	
-	$('div.guestLoginUnit select').change( function() {
-		if ($(this).val()) {
-			$('div.guestLoginDob').show('slow').find('input').focus();
-			//if (allInputsValid()) {
-				$('div.guestLoginGo').show('slow');
-			//}
-		} else {
-			$('div.guestLoginDob').hide('slow');
-		}
-	});
-
-	// Not working as change event not being triggered
-	$('div.guestLoginDob input').change( function() {
-		if (allInputsValid()) {
-				$('div.guestLoginGo').show('slow');
-		}
-	});
-
-
+		position: { at2: 'right center', my: 'left center' }
+	};
+// Remove the comment block for an onscreen keyboard
+/*
+	$('div.guestLoginSecret input').keyboard( params );
+	$('div.guestLoginUnit input').keyboard( params );
+*/
+	$('div.guestLoginUnit input').focus();
+	var watch = setInterval( function() {
+		if (inputsValidate()) {
+			clearInterval(watch);
+		} 
+		} ,100);
 });
 

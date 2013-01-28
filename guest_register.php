@@ -20,7 +20,7 @@ if (!$housing_project_code) {
 }	
 
 $filter_project=array('housing_project_code'=>$housing_project_code);
-
+//toggle_query_display();
 $title='Welcome to ' . sql_lookup_description($housing_project_code,'l_housing_project','housing_project_code','description');
 
 $signin_msg='Select your visiting guest';
@@ -95,7 +95,7 @@ switch ($menu) {
 			//$form = 'Your visitor has been successfully registered.';
 			$message[] = $name . ' has been successfully registered as your guest';
 		} else {
-			$message[] = 'There as a problem registering ' . $name . ' as your guest.';
+			$message[] = span('There as a problem registering ' . $name . ' as your guest.','class="error"');
 		}
 		$menu='menu';
 		break;	
@@ -111,7 +111,7 @@ switch ($menu) {
 		if (post_a_guest_exit($_SESSION[$SESSION_ID_VAR],$guest_id)) {
 			$message[] = "Your guest $name has been successfully exited.";
 		} else {
-			$message[] = "There as a problem exiting your guest $name.";
+			$message[] = span("There as a problem exiting your guest $name.",'class="error"');
 		}
 		$menu='menu';
 		break;	

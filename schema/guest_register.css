@@ -146,6 +146,7 @@ div.idWarning {
 }
 
 .guestLoginDob { display: none; }
+.guestLoginSecret { display: none; }
 .guestLoginGo { 
 	width: 30%;
 display: none; }
@@ -159,6 +160,7 @@ display: none; }
 }
 
 .guestLoginUnit h2,
+.guestLoginSecret h2,
 .guestLoginDob h2 { 
 	font-size: 200%; 
 	font-style: italic;

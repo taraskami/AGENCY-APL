@@ -11,7 +11,9 @@ function guest_find_client_id($filter1,&$msg,$current_id) {
 //	$name_last=$_POST['name_last'];
 //	$name_first=$_POST['name_first'];
 	$unit=$_POST['housing_unit_code'];
+	$prefix=sql_assign('SELECT unit_code_prefix FROM l_housing_project',$filter1);
 	$dob=$_POST['dob'];
+	$yob=$_POST['yob'];
 	$msg1=array();
 
 		
@@ -24,36 +26,54 @@ function guest_find_client_id($filter1,&$msg,$current_id) {
 			$msg1[] = 'Invalid first name';
 		}
 */
-	if ($unit or $dob) {
-		if (!preg_match('/^[a-zA-Z0-9_]*$/',$unit)) {
-			$msg1[] = 'Invalid format for unit number: $unit';
+	if ($unit or ($dob or $yob)) {
+		if (!preg_match('/^('.$prefix.')?[-0-9_]*$/i',$unit,$match)) {
+			$msg1[] = span('Invalid format for unit number: $unit','class="error"');
+		} else if (!$match[1]) {
+			// e.g., if tenant types "204", convert to "A204"
+			$unit = $prefix . $unit;
 		}
+/*
 		if (!$dob=dateof($dob,'SQL')) {
 			$msg1[] = 'Invalid Date of Birth';
+		}
+*/
+		if ( !$yob) {
+			$msg1[] = span('Missing Year of Birth','class="error"');
+		} elseif ( ($yob > 0) and ($yob < 100)) {
+			$yob = 1900 + $yob;
+		} elseif (! (($yob > 1900) and ($yob < 2000))) {
+			$msg1[] = span('Invalid Year of Birth','class="error"');
 		}
 		if (count($msg1) >0 ) {
 			$msg[] = implode(oline(),$msg1);
 			return false;
 		}
-		$filter['dob']=$dob;
-		$filter['housing_unit_code']=$unit;
+		if ($dob) {
+			$filter['dob']=$dob;
+		}
+		if ($yob) {
+			$filter['>=:dob']=$yob.'-01-01';
+			$filter['<=:dob']=$yob.'-12-31';
+		}
+		$filter['ILIKE:housing_unit_code']=$unit;
 		$filter=array_merge($filter,$filter1);
 		$c_def=get_def('client');
 		$c_def['sel_sql']='SELECT * FROM client LEFT JOIN residence_own USING (client_id)'; 
 		$clients=get_generic($filter,NULL,NULL,$c_def);
 		if (count($clients)==0) {
-			$msg[] = 'Matching tenant not found';
+			$msg[] = span('Matching tenant not found','class="error"');
 			return false;
 		}
 		if (count($clients)>1) {
-			$msg[] = 'Found multiple matching records--don\'t know what to do!  Please tell a staff person about this.';
+			$msg[] = span('Found multiple matching records--don\'t know what to do!  Please tell a staff person about this.','class="error"');
 			return false;
 		}
 	} elseif ($current_id) {
 		// continue current login	
 		$clients=get_generic(client_filter($current_id),'','','client');
 	} else {
-		$msg[] = 'No information submitted.  Try again';
+		$msg[] = span('No information submitted.  Try again','class="error"');
 		return false;
 	}
 
@@ -76,16 +96,29 @@ function guest_select_form($unit_filter=array()) {
 	. formvartext('name_last')
 */
 	$def=get_def('housing_unit');
+	$def['sel_sql']='SELECT substring(housing_unit_code FROM \'^[a-zA-Z]*([-0-9_]+)$\') AS housing_unit_code FROM housing_unit';
+	$units=get_generic($unit_filter,NULL,NULL,$def);
+	$units=array_fetch_column($units,'housing_unit_code');
+	$units=div(json_encode($units),'housingUnitCodes','class="serverData"');
 	$out = ''
 	. formto()
-	. div(html_heading_tag("Select your unit",2)
+	. $units 
+	. div(html_heading_tag("Enter your unit "
+	. formvartext('housing_unit_code',NULL,'size=4 autocomplete="off"')
+
+,2)
+/*
 	. selectto('housing_unit_code')
 	. selectitem('','...')
 	. do_pick_sql('SELECT housing_unit_code AS value, substring(housing_unit_code FROM \'^[a-zA-Z]*([0-9]+)$\') AS label FROM ' . $def['table'] . ' WHERE ' . read_filter($unit_filter) . ' ORDER BY 1') 
 	. selectend()
+*/
 	,'','class="guestLoginUnit"')
-	. div(html_heading_tag('Date of birth: ',2)
-	. formdate('dob'),'','class="guestLoginDob"')
+//	. div(html_heading_tag('Date of birth: ',2)
+	. div(html_heading_tag('What year were you born? '
+		. formpassword('yob',NULL,'size=4'),2)
+	,'','class="guestLoginSecret"')
+//	. formdate('dob'),'','class="guestLoginDob"')
 	. oline('',2)
 	. div(button('Go','','','','','class="guestTenantSelectSubmit"'),'','class="guestLoginGo guestMenuButton"')
 	. hiddenvar('menu','menu')
@@ -189,11 +222,11 @@ function post_a_guest_exit($client_id,$guest_id,$msg) {
 	$filt=array('client_id'=>$client_id,'guest_id'=>$guest_id,'NULL:exited_at'=>'dummy');
 	$recs=get_generic($filt,NULL,NULL,'guest_visit_current');
 	if (count($recs)==0) {
-		$msg .= 'Current visit not found';
+		$msg .= span('Current visit not found','class="error"');
 		return false;
 	}
 	if (count($recs)>1) {
-		$msg .= "Multiple current visits found for $client_id,$guest_id.  Please contact system administrator.";
+		$msg .= span("Multiple current visits found for $client_id,$guest_id.  Please contact system administrator.",'class="error"');
 		return false;
 	}
 	$update_rec['exited_at']=datetimeof('now','SQL');
