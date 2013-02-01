@@ -2523,7 +2523,7 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 	    } 
 
 	    //maximum length
-	    if (!is_array($type) and strlen($value) > AG_MAXIMUM_STRING_LENGTH) {
+	    if (!is_array($value) and strlen($value) > AG_MAXIMUM_STRING_LENGTH) {
 		    $valid = false;
 		    $mesg .= oline('Field '.$label.' has exceeded the maximum length ('.AG_MAXIMUM_STRING_LENGTH
 					 .'). Contact your system administrator if this is valid data.');
