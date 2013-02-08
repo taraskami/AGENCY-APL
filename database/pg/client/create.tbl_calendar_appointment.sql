@@ -7,7 +7,8 @@ CREATE TABLE tbl_calendar_appointment (
 	event_end				TIMESTAMP(0) NOT NULL CHECK ( (event_end::text ~ '(00|15|30|45|(23:59)):00$') --for the last time-slot of the day
 										AND event_end > event_start),
 	calendar_appointment_resolution_code	VARCHAR(10) REFERENCES tbl_l_calendar_appointment_resolution ( calendar_appointment_resolution_code ),
-	location_code			REFERENCES tbl_l_location (location_code),
+	location_code			VARCHAR(10) REFERENCES tbl_l_agency_facility (agency_facility_code),
+	--location_code			VARCHAR(10) REFERENCES tbl_l_location (location_code),
 	location_text			TEXT,
 	comments				TEXT,
 	allow_overlap			BOOLEAN NOT NULL DEFAULT FALSE,
