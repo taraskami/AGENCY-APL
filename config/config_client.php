@@ -143,6 +143,22 @@ $engine["client"] = array(
 			'ucwords($action) . "ing '.AG_MAIN_OBJECT.' record"
 			. (($action=="list") ? "s" : " for " . client_link($rec["client_id"]))',
 		"title_add"=>'ucwords($action) . "ing a new '.AG_MAIN_OBJECT.' record."',
+		/* Registration (adding) configuration */
+		'registration'=>array(
+			'search_fields'=>array('name_last','name_first','dob','ssn'),
+			'match_result_order'=> '"rank_client_search_results(name_last,name_first,name_alias,ssn,dob,"'
+				. '. enquote1(sqlify($rec["name_last"]))'
+				. '. ","'
+				. '. enquote1(sqlify($rec["name_first"]))'
+				. '. ","'
+				. '. enquote1(sqlify($rec["ssn"]))'
+				. '. ","'
+				. '. enquote1(sqlify(orr($rec["dob"],"2099-01-01")))'
+				. '. ")"'
+		),
+
+
+
 		"fields" => array(
 					 'is_protected_id'=>array('display'=>'hide'),
 					'comments'=>array('post'=>false, //until we drop the field all together

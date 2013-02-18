@@ -379,39 +379,6 @@ function client_id_from_link($link) {
 	return $id;
 }
 
-function client_reg_search_verify()
-{
-	global $rec,$def;
-
-	$def['multi_records'] = null;
-	$valid = $def['fn']['valid']($rec,$def,$out,'add');
-	$out = $out ? red($out) : '';
-	if (!$valid) {
-		$out .= client_reg_form();
-	} else {
-		$func = AG_MAIN_OBJECT_DB.'_reg_search';
-		$out .= $func();
-	}
-	return $out;
-}
-
-function client_reg_form()
-{
-      global $def,$rec,$main_object_reg_prompt,$engine,$AG_HEAD_TAG;
-
-	$focus = array_keys($rec);
-	$out .= oline(bigger(bold($main_object_reg_prompt,2)))
-		. formto()
-	      . tablestart('','class="engineForm"')
-		. $def['fn']['form']($rec,$def,array('action'=>'add'))
-		. hiddenvar('action','search')
-		. rowrlcell(button('Submit','','','','','class="engineButton"'),link_agency_home('Cancel','','class="linkButton"'))
-	      . tableend()
-		. formend();
-	form_field_focus('elements["rec['.$focus[0].']"]');
-	return $out;
-}
-
 /*
  * The following functions deal exclusively with photos and could probably
  * be safely moved to a photo-specific file for inclusion.
@@ -718,5 +685,166 @@ function generic_home_sidebar_left()
     return $org_logo . $agency_logo_f . $agency_logo_b;
 }
 
+function agency_home_links()
+{
+	///* setup home links */
+	$add_object_link = hlink("object_reg.php?object=" . AG_MAIN_OBJECT_DB,'Add '.ucfirst(AG_MAIN_OBJECT));
+	$home_links_1 = array(link_feedback(), //feedback
+				    link_admin(), //AGENCY admin
+				    $add_object_link
+				    );
+	//$home_links_2 = array('add second line of commands here');
+	return implode(' | ',$home_links_1)
+		. ($home_links_2 ? oline() . implode(' | ',$home_links_2) : '');
+
+}
+/*
+ * Object registration (adding) functions
+ */
+
+function object_reg_search_verify($object,$def,$rec)
+{
+//	global $rec,$def;
+
+	$def['multi_records'] = null;
+	$valid = $def['fn']['valid']($rec,$def,$out,'add');
+	$out = $out ? red($out) : '';
+	if (!$valid) {
+		$out .= object_reg_form($object,$def,$rec);
+	} else {
+		$func = $object.'_reg_search';
+		if (function_exists($func)) {
+			$result = $func($def,$rec);
+		} else {
+			$result = object_reg_search($object,$def,$rec);
+		}
+		if ($result===null) {
+			$jump="Location: display.php?control[action]=add&control[object]=$object&control[no_object_reg]=true";
+			foreach ($rec as $k=>$v) {
+				$jump .= '&control[rec_init]['.$k.']='.urlencode($v);
+			}
+			header($jump);
+			page_close();
+			exit;        
+		}
+	}
+	return $out . $result;
+}
+
+function object_reg_form($object,$def,$rec)
+{
+//      global $def,$rec,$main_object_reg_prompt;
+
+	$focus = array_keys($rec);
+	$out .= oline(bigger(bold($main_object_reg_prompt,2)))
+		. formto()
+	      . tablestart('','class="engineForm"')
+		. $def['fn']['form']($rec,$def,array('action'=>'add'))
+		. hiddenvar('action','search')
+		. hiddenvar('object',$object)
+		. rowrlcell(button('Submit','','','','','class="engineButton"'),link_agency_home('Cancel','','class="linkButton"'))
+	      . tableend()
+		. formend();
+	form_field_focus('elements["rec['.$focus[0].']"]');
+	return $out;
+}
+
+
+function object_reg_search($object,$def,$rec)
+{
+	$reg_search_fields = $def['registration']['search_fields']; // orr w/ something as default?
+	foreach ($reg_search_fields as $x)	{
+		$$x=$rec[$x];
+	}
+	$filter = build_object_match_filter($object,$def,$rec);
+	$object_search_rank = eval( "return " . $def['registration']['match_result_order'].';' );
+
+	$obj = $def['object'];
+	$obj_label = $def['singular'];
+	$objs = $def['plural'];
+	$tmp_object = 'control_'.$object.'_reg';
+	$control=array(
+		'object'=>$tmp_object,
+		'action'=>'list',
+		'list'=>array(
+			'filter'=>$filter,
+			'order'=>array('match'=>true)
+		)
+	);
+
+	$title = "Review existing $objs for a match";
+	$out .= oline(smaller('(searching on name:'.bold($name_last.', '.$name_first).', dob: '.bold($dob).', ssn: '.bold($ssn).')'));
+	$out.=oline() . oline(red("Review the following $objs to make sure $obj_label is not already registered"));
+	$def['sel_sql'] = "SELECT *,$object_search_rank as match FROM " . $def['table'];
+
+	//------ Highlight exact matches ------//
+	foreach ($reg_search_fields as $field) {
+		$def['fields'][$field]['value_format_list'] = '(strtolower($x)==strtolower(\''.$rec[$field].'\')) ? bigger(bold($x)) : $x';
+		$REC[$field] = $rec[$field];
+	}
+
+	// FIXME: HACK ALERT: stuff a temporary def for engine to use
+	$GLOBALS['AG_ENGINE_TABLES'][$tmp_object]=$tmp_object;
+	$t_def=$def;
+	$t_def['list_hide_view_links'] = true;
+	$t_def['object']=$tmp_object;
+	$GLOBALS['engine'][$tmp_object]=$t_def;
+	// /HACK
+	$out.=call_engine($control,$tmp_object,$NO_TITLE=true,$NO_MESSAGES=false,$TOT,$PERM);
+	$continue_link=link_engine(array('object'=>$obj,
+		'action'=>'add',
+		'no_object_reg'=>true,
+		'rec_init'=>$REC),
+		"If the $obj_label is not already registered, proceed here");
+	$return_url = $_SERVER['PHP_SELF'].'?object='.$object;
+	foreach ($REC as $k=>$v) {
+		$return_url .= '&rec['.$k.']='.urlencode($v);
+	}
+	$return_link=hlink($return_url,'Return to search form');
+	$out .= oline() . bigger(oline(bigger($continue_link,2),2).$return_link);
+	return ($TOT==0)
+	? NULL
+	: $out;
+}
+
+function build_object_match_filter($object,$def,$rec)
+{
+	foreach ($rec as $k=>$v) {
+		$$k=$v;
+	}
+	//Name stuff
+	$meta_first = levenshteinMetaphoneDistance($name_first,'name_first');
+	$meta_last =  levenshteinMetaphoneDistance($name_last,'name_last');
+	$filter=array(
+					array('FIELD<=:'.$meta_first => LEVENSHTEIN_ACCEPT,
+						'FIELD<=:'.$meta_last => LEVENSHTEIN_ACCEPT,
+						'ILIKE:name_alias'=>"%$name_last%",
+						'ILIKE:name_alias '=>"%$name_first%"));
+
+	if ( ssn_of($ssn) and ssn_of($ssn)!='999-99-9999') { //Don't search on 999-99-9999 or blank
+
+		//SSN variations
+		for ($x=0;$x<11;$x++) {
+			//find matching ssn's off by one digit
+			if ($x==3 || $x==6) continue;
+			$ssn_search[] = substr_replace($ssn,'_',$x,1);
+		}
+		
+		$filter[0][] = array(" LIKE : ssn "=>ssn_flip($ssn));
+		$filter[0][] = array(" LIKE : ssn "=>ssn_flip($ssn,7));
+		$filter[0][] = array(" LIKE : ssn "=>ssn_flip($ssn,5));
+		$filter[0][] = array(" LIKE : ssn "=>$ssn_search);
+	}
+
+	if (dateof($dob)) { //set DOB
+		$filter[0]["dob"]=dateof($dob,"SQL"); 
+	} elseif (!is_assoc_array($filter[0])) {
+		//must make filter an associative array, or read_filter will barf
+		$filter[0]['NULL:'.$def['id_field']]=true; //or primary key  IS NULL -- will never return true
+	}
+
+	$filter=array_filter($filter); //remove blanks which crash sql searches
+	return $filter;
+}
 
 ?>

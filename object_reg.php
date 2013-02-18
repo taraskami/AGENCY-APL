@@ -34,25 +34,33 @@ should be included in this distribution.
 //$query_display="Y";
 $quiet="Y";
 include "includes.php";
-$title='Register a new '.AG_MAIN_OBJECT;
-
-if (!is_enabled('client_reg_search')) {
-	header("Location: display.php?action=add&object=". AG_MAIN_OBJECT_DB);
+$object=$_REQUEST['object'];
+if (!in_array($object,$AG_ENGINE_TABLES)) {
+	agency_top_header();
+	outline("Unknown object $object passed to object_reg.  Cannot continue");
 	page_close();
 	exit;
 }
 
+$def = get_def($object);
+
+if (!(is_enabled('object_reg_search') and is_array($def['registration']))) {
+	header("Location: display.php?control[action]=add&control[object]=".$def['object']);
+	page_close();
+	exit;
+}
+
+$title='Register a new '.$def['singular'];
 $action=$_REQUEST['action'];
 $rec = $_REQUEST['rec'];
-$def = get_def(AG_MAIN_OBJECT_DB);
-foreach ($main_object_reg_search_fields as $x) {
+foreach ($def['registration']['search_fields'] as $x) {
 	$rec[$x]=dewebify($rec[$x]);
 }
 
 if ($action=='search') {
-	$out .= client_reg_search_verify();
+	$out .= object_reg_search_verify($object,$def,$rec);
 } else {
-      $out .= client_reg_form();
+	$out .= object_reg_form($object,$def,$rec);
 }
 
 agency_top_header();

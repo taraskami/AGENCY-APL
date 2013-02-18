@@ -47,7 +47,7 @@ $commands=array();
 
 // Home page top commands box
 $news_control = array('object'=>'news','action'=>'list');
-$links_func=AG_MAIN_OBJECT_DB.'_agency_home_links';
+$links_func='agency_home_links';
 $links=span($links_func(),'class="homeLinks"');
 $links_sidebar_func=AG_MAIN_OBJECT_DB.'_home_sidebar_left';
 $news=div(link_engine($news_control,'What\'s<br />New?','','class="fancyLink"'),'','class="newsLink"');

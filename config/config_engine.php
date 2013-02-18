@@ -152,6 +152,7 @@ $engine['global_default'] = array(
 				  'post_with_transactions'=>true, //records will be posted within transactions
 				  'prepend_finished_add_eval' => null, //evaluate code and prepend result to finished view
 				  'rec_init_from_previous'=>null,      //if true, this will fill in the form with the clients last record
+				  'registration'=> null, // array to specify registration (adding) duplicate-checking
 				  'require_delete_comment' => true,    //will force a comment to be entered when deleting a record
 				  'require_delete_reason' => true,   // only if delete_reason_code exists in table
 				  'require_void_comment' => true,    //will force a comment to be entered when voiding a record

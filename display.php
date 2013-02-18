@@ -47,6 +47,20 @@ if (!$control = dewebify_array(unserialize_control($_REQUEST['control']))) {
 	$_SESSION['LAST_CALLED_CONTROL_VARIABLE'] = $tmp_control;
 }
 
+/* Redirect reg-enabled objects to object_reg, where search for existing matches is performed */
+
+if (is_enabled('object_reg_search')) {
+	if ( ($def=get_def($control['object'])) and is_array($def['registration']) and (orr($_REQUEST['control']['step'],'new')=='new') and (!$_REQUEST['control']['no_object_reg'])) {
+		foreach ($tmp_control['rec_init'] as $k=>$v) {
+			$jump .= '&rec['.$k.']='.urlencode($v);
+		}
+		$jump='Location: object_reg.php?object='.$def['object'];
+		header($jump);
+		page_close();
+		exit;
+	}
+}
+
 $stuff=engine($control);
 
 $formatted_title = $stuff['title'];

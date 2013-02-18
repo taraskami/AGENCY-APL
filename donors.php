@@ -644,16 +644,6 @@ function donor_reg_search()
 	}
 }
 
-function donor_agency_home_links()
-{
-	$add_client_link = hlink("client_reg.php",'Add '.ucfirst(AG_MAIN_OBJECT));
-	$home_links_1 = array($add_client_link, //add client
-				    link_feedback(),
-				    link_admin(),
-				    );
-	return implode(' | ',$home_links_1);
-}
-
 function donor_home_sidebar_left()
 {
     /* You could customize the client-version sidebar for the home page here */

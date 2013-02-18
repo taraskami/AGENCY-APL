@@ -35,7 +35,22 @@ $engine['guest'] = array(
 	'child_records' => array(
 		'guest_identification','guest_authorization','guest_visit'
 	),
-	'list_fields'=>array('name_full','photo'),
+	//'list_fields'=>array('name_full','dob','name_alias','photo','tenants'),
+	'list_fields'=>array('name_full','dob','name_alias','photo'),
+	/* Registration (adding) configuration */
+	'registration'=>array(
+		'search_fields'=>array('name_last','name_first','dob'),
+		'match_result_order'=> ' ($dob==1) ? 1
+			: rank_client_search_results(name_last,name_first,name_alias,ssn,dob,'
+			. 'enquote1(sqlify($rec["name_last"]))'
+			. ','
+			. 'enquote1(sqlify($rec["name_first"]))'
+//			. ','
+//			. 'enquote1(sqlify($rec["ssn"]))'
+			. ','
+			. 'enquote1(sqlify($rec["dob"]))'
+			. ')'
+	),
 	'fields' => array(
 		'guest_photo' => array(
 			'data_type' => 'attachment',
@@ -49,6 +64,24 @@ $engine['guest'] = array(
 			'display_add' => 'hide',
 			'display_edit' => 'hide'
 		),
+		'name_last'=>array('label'=>'Last Name'),
+		'name_first'=>array('label'=>'First Name'),
+		'name_alias'=>array('label'=>'Alias'),
+		'name_middle'=>array('label'=>'Middle Name'),
+		'name_full'=>array(
+			'label'=>'Name',
+			'value_format'=>'guest_link($rec["guest_id"])'
+		),
+/*
+		'tenants'=>array(
+			'is_html'=>true,
+			'data_type'=>'array',
+			//'value'=>'implode(oline(),array_walk(array_fetch_column(get_generic(array("guest_id"=>$rec["guest_id"]),NULL,NULL,"guest_authorization_current"),"client_id"),"client_link"))'
+			//'value'=>'array_walk(array_fetch_column(get_generic(array("guest_id"=>$rec["guest_id"]),NULL,NULL,"guest_authorization_current"),"client_id"),"client_link")'
+			// FIXME: This isn't working
+			'value'=>'be_null($x) ? null : implode(oline(),array_walk(array_fetch_column(get_generic(array("guest_id"=>$rec["guest_id"]),NULL,NULL,"guest_authorization_current"),"client_id"),create_function(\'&$v,$k\', \'$v = client_link($v);\')))'
+		),
+*/
 		'client_id' => array(
 			'display'=>'hide'
 		),

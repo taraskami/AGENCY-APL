@@ -1250,60 +1250,13 @@ function client_age($id,$dob='NO',$date='',$format='year')
 
 }
 
-function client_reg_search()
+//function build_client_match_filter($name_last,$name_first,$dob=null,$ssn=null)
+function build_client_match_filter($rec)
 {
-      global $def,$rec,$main_object_reg_search_fields,$engine; 
-
-      foreach ($main_object_reg_search_fields as $x)
-	{
-		    $$x=$rec[$x];
-	}
-      $SSN=$ssn=ssn_of($ssn);
-      $dob=dateof($dob);
-	$filter = build_client_match_filter($name_last,$name_first,$dob,$ssn);
-	$client_search_rank = build_client_match_order($name_last,$name_first,$dob,$ssn);
-	$obj = AG_MAIN_OBJECT_DB;	
-	$obj_label = AG_MAIN_OBJECT;
-	$objs = $obj_label . 's';  //FIXME--should reference plural	
-	$t_obj = $obj . '_reg_tmp';
-	$control=array('object'=>$t_obj,
-			   'action'=>'list',
-			   'list'=>array('filter'=>$filter,
-					     'order'=>array('match'=>true)
-					     ));
-
-      $title = "Review existing $objs for a match";
-	$out .= oline(smaller('(searching on name:'.bold($name_last.', '.$name_first).', dob: '.bold($dob).', ssn: '.bold($ssn).')'));
-      $out.=oline() . oline(red("Review the following $objs to make sure $obj_label is not already registered"));
-	//----- Create a copy of def -----//
-	$engine[$t_obj]=$engine[$obj];
-	$engine[$t_obj]['object']=$t_obj;
-	//----- modify client columns -----//
-	$engine[$t_obj]['fn']['show_query_row'] = 'show_query_row_generic';
-	$engine[$t_obj]['list_fields'] = array('match',$obj.'_id','custom5','ssn','dob','name_last','name_first');
-
-	$engine[$t_obj]['sel_sql'] = 'SELECT '.$client_search_rank.' as match, client_id,dob,ssn,name_last,name_first FROM client';
-
-	//------ Highlight exact matches ------//
-	foreach ($main_object_reg_search_fields as $field) {
-		$engine[$t_obj]['fields'][$field]['value_format_list'] = '(strtolower($x)==strtolower(\''.$rec[$field].'\')) ? bigger(bold($x)) : $x';
-		$REC[$field] = $rec[$field];
-	}
-	if (!in_array($t_obj,$GLOBALS['AG_ENGINE_TABLES'])) {
-		array_push($GLOBALS['AG_ENGINE_TABLES'],$t_obj);
+	foreach ($rec as $k=>$v) {
+		$$k=$v;
 	}
 
-	$out.=call_engine($control,'control_client_reg',$NO_TITLE=true,$NO_MESSAGES=false,$TOT,$PERM);
-      $out.=oline() . oline(bigger(link_engine(array('object'=>$obj,
-								     'action'=>'add',
-								     'rec_init'=>$REC),
-							     "If the $obj_label is not already registered, proceed here")));
-      
-      return $out;
-}
-
-function build_client_match_filter($name_last,$name_first,$dob=null,$ssn=null)
-{
 	//Name stuff
 	$meta_first = levenshteinMetaphoneDistance($name_first,'name_first');
 	$meta_last =  levenshteinMetaphoneDistance($name_last,'name_last');
@@ -1350,20 +1303,6 @@ function build_client_match_order($name_last,$name_first,$dob,$ssn)
 	$name_last = sqlify($name_last);
 	$name_first = sqlify($name_first);
 	return "rank_client_search_results(name_last,name_first,name_alias,ssn,dob,'{$name_last}','{$name_first}','{$ssn}','{$dob}')";
-}
-
-function client_agency_home_links()
-{
-	/* setup home links */
-	$add_client_link = hlink("client_reg.php",'Add '.ucfirst(AG_MAIN_OBJECT));
-	$home_links_1 = array(link_feedback(), //feedback
-				    link_admin(), //AGENCY admin
-				    $add_client_link
-				    );
-	//$home_links_2 = array('add second line of commands here');
-	return implode(' | ',$home_links_1)
-		. ($home_links_2 ? oline() . implode(' | ',$home_links_2) : '');
-
 }
 
 function client_home_sidebar_left()

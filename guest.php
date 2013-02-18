@@ -7,6 +7,10 @@ function guest_name( $id ) {
 	return sql_assign( 'SELECT name_full FROM guest WHERE guest_id='.$id);
 }
 
+function guest_link( $id ) {
+	return elink( 'guest', $id, guest_name( $id ) );
+}
+
 function guest_find_client_id($filter1,&$msg,$current_id) {
 //	$name_last=$_POST['name_last'];
 //	$name_first=$_POST['name_first'];
