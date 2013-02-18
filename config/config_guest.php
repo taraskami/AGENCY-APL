@@ -40,16 +40,17 @@ $engine['guest'] = array(
 	/* Registration (adding) configuration */
 	'registration'=>array(
 		'search_fields'=>array('name_last','name_first','dob'),
-		'match_result_order'=> ' ($dob==1) ? 1
-			: rank_client_search_results(name_last,name_first,name_alias,ssn,dob,'
-			. 'enquote1(sqlify($rec["name_last"]))'
-			. ','
-			. 'enquote1(sqlify($rec["name_first"]))'
-//			. ','
-//			. 'enquote1(sqlify($rec["ssn"]))'
-			. ','
-			. 'enquote1(sqlify($rec["dob"]))'
-			. ')'
+		//'match_result_order'=> '"rank_client_search_results(name_last,name_first,name_alias,ssn,dob,"'
+		// confusingly, I stuffed name_alias as a dummy for nonexistent placeholder ssn
+		'match_result_order'=> '"rank_client_search_results(name_last,name_first,name_alias,name_alias,dob,"'
+			. '. enquote1(sqlify($rec["name_last"]))'
+			. '. ","'
+			. '. enquote1(sqlify($rec["name_first"]))'
+			. '. ","'
+			. '. enquote1(sqlify($rec["ssn"]))'
+			. '. ","'
+			. '. enquote1(sqlify(orr($rec["dob"],"2099-01-01")))'
+			. '. ")"'
 	),
 	'fields' => array(
 		'guest_photo' => array(
