@@ -815,12 +815,21 @@ function build_object_match_filter($object,$def,$rec)
 	//Name stuff
 	$meta_first = levenshteinMetaphoneDistance($name_first,'name_first');
 	$meta_last =  levenshteinMetaphoneDistance($name_last,'name_last');
+
+	// FIXME: I Am a hack!
+	if ($object=='guest') {
 	$filter=array(
 					array('FIELD<=:'.$meta_first => LEVENSHTEIN_ACCEPT,
 						'FIELD<=:'.$meta_last => LEVENSHTEIN_ACCEPT,
 						'ILIKE:name_alias'=>"%$name_last%",
 						'ILIKE:name_alias '=>"%$name_first%"));
-
+	} else {
+	$filter=array(
+					array(array('FIELD<=:'.$meta_first => LEVENSHTEIN_ACCEPT,
+						'FIELD<=:'.$meta_last => LEVENSHTEIN_ACCEPT),
+						array('ILIKE:name_alias'=>"%$name_last%",
+						'ILIKE:name_alias '=>"%$name_first%")));
+	}
 	if ( ssn_of($ssn) and ssn_of($ssn)!='999-99-9999') { //Don't search on 999-99-9999 or blank
 
 		//SSN variations
