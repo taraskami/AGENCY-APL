@@ -1,6 +1,7 @@
 CREATE TABLE      tbl_bar        (
 bar_id				SERIAL PRIMARY KEY,
 client_id				INTEGER REFERENCES tbl_client ( client_id ),
+guest_id				INTEGER REFERENCES tbl_guest ( guest_id ),
 
 /* non-client section */
 
@@ -89,17 +90,21 @@ sys_log				TEXT
 			OR bar_date_end IS NOT NULL
 	)
 
-	CONSTRAINT barred_client_or_non_client CHECK (
-		(client_id IS NOT NULL AND non_client_name_last IS NULL AND non_client_name_first IS NULL AND non_client_description IS NULL)
+	CONSTRAINT barred_client_or_guest_or_non_client CHECK (
+		(client_id IS NOT NULL AND guest_id IS NULL AND non_client_name_last IS NULL AND non_client_name_first IS NULL AND non_client_description IS NULL)
 		OR
-		(client_id IS NULL AND non_client_name_last IS NOT NULL AND non_client_name_first IS NOT NULL AND non_client_description IS NOT NULL)
+		(client_id IS NULL AND guest_id IS NULL AND non_client_name_last IS NOT NULL AND non_client_name_first IS NOT NULL AND non_client_description IS NOT NULL)
+		OR
+		(client_id IS NULL AND guest_id IS NOT NULL AND non_client_name_last IS NULL AND non_client_name_first IS NULL AND non_client_description IS NULL)
 	)
 ); 
 
 
 CREATE INDEX index_tbl_bar_client_id ON tbl_bar ( client_id );
+CREATE INDEX index_tbl_bar_guest_id ON tbl_bar ( guest_id );
 CREATE INDEX index_tbl_bar_bar_date ON tbl_bar ( bar_date );
 CREATE INDEX index_tbl_bar_bar_date_end ON tbl_bar ( bar_date_end );
 CREATE INDEX index_tbl_bar_bar_resolution_location_code ON tbl_bar ( bar_resolution_location_code );
 CREATE INDEX index_tbl_bar_non_clients ON tbl_bar ( non_client_name_last, non_client_name_first );
 CREATE INDEX index_tbl_bar_client_id_bar_date ON tbl_bar ( client_id,bar_date );
+CREATE INDEX index_tbl_bar_guest_id_bar_date ON tbl_bar ( guest_id,bar_date );

@@ -1,4 +1,4 @@
-CREATE VIEW guest_visit_authorized AS
+CREATE OR REPLACE VIEW guest_visit_authorized AS
 	SELECT
 		guest_id,
 		ga.client_id,
@@ -23,12 +23,14 @@ CREATE VIEW guest_visit_authorized AS
 		-- Client is not restricted from visitors
 	AND	(ga.client_id NOT IN (SELECT client_id FROM client_guest_ineligible))
 
+		-- Guest is not barred from visiting
+	-- FIXME: This checks for barred guests, but not whether barred from specific project
+	AND (guest_id NOT IN (SELECT guest_id FROM bar_guest_current))	
 
 ;
 
 
 /*
-	AND guest_id NOT IN guest_restrictions
 	AND client_id NOT IN 3+ in last week, etc...
 */
 ;

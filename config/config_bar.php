@@ -50,24 +50,28 @@ $Cl_noun = ucfirst($cl_noun);
 $engine["bar"]=array(
 	'singular'=>$noun,
 	'verb_passive'=>$verb_passive,
-	"title" => '(be_null($rec["client_id"]))
+	"title" => '(be_null($rec["client_id"]) and be_null($rec["guest_id"]))
 	    ? ucwords($action)."ing ' .$Noun. ' for non-client ".$rec["non_client_name_last"].", ".$rec["non_client_name_first"]
-          : ucwords($action) . "ing ' .$Noun. ' for " . client_link($rec["client_id"])',
+          : ucwords($action) . "ing ' .$Noun. ' for " . orr(client_link($rec["client_id"]),guest_link($rec["guest_id"]))',
 	'title_list' => 'ucwords($action) . "ing ' .$Noun. ' Records for " . client_link($rec["client_id"])',
 	'subtitle_eval_code' => "oline(smaller(help('BarCodes','','What do the ' . $noun.' codes mean?','',false,true)))",
 	'list_fields'=>array('bar_date','bar_date_end','barred_from_summary','bar_type','flags','barred_by','comments'),
 	'list_order'=>array('bar_date'=>true),
 	'list_max'=>20,
 	'valid_record'=>array(
-				     //non-client vs client
-				     '(be_null($rec["client_id"]) and (!be_null($rec["non_client_name_last"]) and
+				     //non-client vs guest vs client
+				     '(be_null($rec["client_id"]) and be_null($rec["guest_id"]) and (!be_null($rec["non_client_name_last"]) and
 										 !be_null($rec["non_client_name_first"]) and
 										  !be_null($rec["non_client_description"])))
 				     or
-				     (!be_null($rec["client_id"]) and (be_null($rec["non_client_name_last"]) and
+				     (be_null($rec["client_id"]) and (!be_null($rec["guest_id"])) and (be_null($rec["non_client_name_last"]) and
+										   be_null($rec["non_client_name_first"]) and
+										   be_null($rec["non_client_description"])))
+				     or
+				     (!be_null($rec["client_id"]) and be_null($rec["guest_id"]) and (be_null($rec["non_client_name_last"]) and
 										   be_null($rec["non_client_name_first"]) and
 										   be_null($rec["non_client_description"])))'=>
-				     "All non-$cl_noun fields must be filled in for non-$cl_noun $nouns"
+				     ucfirst($noun) . " must be for client, guest or $cl_noun.  All non-$cl_noun fields must be filled in for non-$cl_noun $nouns"
 				     ),
 	"fields" => array(
 				'barred_by' => array( 'label' => ucfirst($verb_passive) . ' By' ),
@@ -93,6 +97,7 @@ $engine["bar"]=array(
              'value_field'=>'staff_id',
              'label_field'=>'staff_name(staff_id)')
 ),
+			'guest_id'=>array('value'=>'guest_link($x)','is_html'=>true),
 				"reinstate_condition" => array(
 									 "label" => "Conditions for Reinstatement",
 									 "comment" => "Describe rules for reinstatement"

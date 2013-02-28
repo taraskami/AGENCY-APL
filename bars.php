@@ -32,9 +32,12 @@ should be included in this distribution.
 */
 
 
-function bar_status( $client, $group="",$start="",$end="",$brc="",$which=array())
+function bar_status( $id, $group="",$start="",$end="",$brc="",$which=array())
 {
-	/* $client could be integer, name or client record
+	/*  $id could be integer, or array.
+	 *  If array, it will look for either client_id or guest_id.
+	 *  Apparently from bed_reg a name might be passed, in which case false is returned.
+	 *
 	 *  $group needs to be changed to facility code of some sort
 	 *  currently $group is just any bed group...may be expanded
 	 *  start is a date for checking bar status during a time period
@@ -43,17 +46,33 @@ function bar_status( $client, $group="",$start="",$end="",$brc="",$which=array()
 	 *  hence you can find out if a client was barred on a specific date
 	 *  brc is a flag...if set it checks if client was barred to brc
 	 */
-	if (is_array($client))
+	$c_def=get_def(AG_MAIN_OBJECT);
+	$g_def=get_def('guest');
+	$c_field=$c_def['id_field'];
+	$g_field=$g_def['id_field'];
+
+	if (is_array($id))
 	{
-		$client = $client["client_id"];
+		if ($id[$g_field]) {
+			$id = $id[$g_field];
+			$field=$g_field;
+		} elseif ($id[$c_field]) {
+			$field=$c_field;
+			$id = $id[$c_field];
+		} else {
+			return false;
+		}
 	}
-	if ( ! is_numeric( $client) )
+	if ( ! is_numeric($id) )
 	{    
 		// text (unregistered) clients not barred
 		return false;
+	} else {
+		// Integer passed, means main object
+		$field=$c_field;
 	}
 	$func = "get_generic";
-	$filt = array("client_id" => $client);// get bars for one client
+	$filt = array($field => $id);// get bars for one client or guest
 	if ($start) { // get bars within a time period
 		$end = orr($end,$start); // if no end date, set it
 		//$start could be a date or an sql keyword like CURRENT_TIMESTAMP
@@ -76,12 +95,31 @@ function bar_status( $client, $group="",$start="",$end="",$brc="",$which=array()
 	return count($func($filt,'','','bar'))>0;
 }
 
-function bar_status_f( $client,$format='',&$is_provisional)
+function bar_status_f( $id,$format='',&$is_provisional)
 {
+	// In this function, $id is an associative array passed
+	// with either guest_id or client_id
 	$format = orr($format,'short');
 	// return a formatted string describing bar status
-	$client_id=$client["client_id"];
-	$filter = client_filter($client_id);
+	$c_def=get_def(AG_MAIN_OBJECT);
+	$g_def=get_def('guest');
+	$c_field=$c_def['id_field'];
+	$g_field=$g_def['id_field'];
+	if (is_array($id))
+	{
+		if ($id[$g_field]) {
+			$id = $id[$g_field];
+			$field=$g_field;
+		} elseif ($id[$c_field]) {
+			$field=$c_field;
+			$id = $id[$c_field];
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+	$filter = array($field=>$id);
 	$filter['bar_date_end']=array('FIELD>=:bar_date_end'=>'CURRENT_DATE',
 						'NULL:bar_date_end'=>'');
 	$bars = get_generic($filter,'bar_date DESC, bar_date_end DESC','','bar');
@@ -153,7 +191,7 @@ function bar_status_f( $client,$format='',&$is_provisional)
 	}
 	else
 	{
-		$link = html_no_print(' ('.link_engine(array('object'=>'bar','action'=>'add','rec_init'=>array('client_id'=>$client_id)),'Add a ' . $noun).')');
+		$link = html_no_print(' ('.link_engine(array('object'=>'bar','action'=>'add','rec_init'=>$filter),'Add a ' . $noun).')');
 		$res = smaller('Not ' . $verb_passive.$link);
 		if ($format=='mail') {
 			$res = oline($res);

@@ -44,6 +44,7 @@ DROP TABLE tbl_l_identification_type;
 \i create.tbl_guest_visit.sql
 \i create.view.guest.sql 
 \i create.view.guest_visit_current.sql;
+\i create.view.bar_guest.sql;
 \i create.view.client_guest_ineligible.sql
 \i create.view.guest_visit_authorized.sql;
 

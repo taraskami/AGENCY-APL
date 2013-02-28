@@ -30,13 +30,22 @@ should be included in this distribution.
 </LICENSE>
 */
 
+// This is used for the label for the bar status field
+// It will draw on what is defined for bar.
+// However, if you change that in bar, and are updating
+// the whole engine array, you will need to update guest
+// a second time to pick up that change.
+$b_def=get_def('bar');
+$bar_noun=ucfirst(orr($b_def['noun'],'bar'));
+$status_field=$bar_noun . ' Status';
+
 $engine['guest'] = array(
 	'use_table_post_edit' => true,
 	'child_records' => array(
-		'guest_identification','guest_authorization','guest_visit'
+		'guest_identification','guest_authorization','guest_visit','bar'
 	),
 	//'list_fields'=>array('name_full','dob','name_alias','photo','tenants'),
-	'list_fields'=>array('name_full','dob','name_alias','photo'),
+	'list_fields'=>array('name_full','dob','name_alias','bar_status','photo'),
 	/* Registration (adding) configuration */
 	'registration'=>array(
 		'search_fields'=>array('name_last','name_first','dob'),
@@ -73,7 +82,12 @@ $engine['guest'] = array(
 			'label'=>'Name',
 			'value_format'=>'guest_link($rec["guest_id"])'
 		),
-/*
+		'bar_status' => array( // See note at top of file re: updating
+			'label'=>$status_field,
+			'value'=>'bar_status_f(array("guest_id"=>$rec["guest_id"]))',
+			'is_html'=>true
+		),
+		/*
 		'tenants'=>array(
 			'is_html'=>true,
 			'data_type'=>'array',
