@@ -218,7 +218,7 @@ function gatemail_status_f($client)
 
 function form_row_bar($key,$value,&$def,$control,&$Java_Engine,$rec)
 {
-	if (!in_array($key,array('client_id','non_client_name_last','non_client_name_first','non_client_description'))) {
+	if (!in_array($key,array('client_id','guest_id','non_client_name_last','non_client_name_first','non_client_description'))) {
 		return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
 	}
 
@@ -228,9 +228,14 @@ function form_row_bar($key,$value,&$def,$control,&$Java_Engine,$rec)
 			return false;
 		}
 		return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
-	} else { //non-client bar
-		//hide client id
-		if ($key == 'client_id') {
+	} elseif (!be_null($rec['guest_id'])) { //guest bar
+		//hide non-client bar fields
+		if ($key !== 'guest_id') {
+			return false;
+		}
+		return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
+	} else {
+		if (in_array($key,array('client_id','guest_id'))) {
 			return false;
 		}
 		return form_generic_row($key,$value,$def,$control,$Java_Engine,$rec);
@@ -239,7 +244,7 @@ function form_row_bar($key,$value,&$def,$control,&$Java_Engine,$rec)
 
 function view_row_bar($key,$value,$def,$action,$rec)
 {
-	if (!in_array($key,array('client_id','non_client_name_last','non_client_name_first','non_client_description','non_client_name_full'))) {
+	if (!in_array($key,array('client_id','guest_id','non_client_name_last','non_client_name_first','non_client_description','non_client_name_full'))) {
 		return view_generic_row($key,$value,$def,$action,$rec);
 	}
 
@@ -249,9 +254,15 @@ function view_row_bar($key,$value,$def,$action,$rec)
 			return false;
 		}
 		return view_generic_row($key,$value,$def,$action,$rec);
+	} elseif (!be_null($rec['guest_id'])) { //guest bar
+		//hide non-guest bar fields
+		if ($key !== 'guest_id') {
+			return false;
+		}
+		return view_generic_row($key,$value,$def,$action,$rec);
 	} else { //non-client bar
 		//hide client id
-		if (in_array($key,array('client_id','non_client_name_last','non_client_name_first'))) {
+		if (in_array($key,array('client_id','guest_id','non_client_name_last','non_client_name_first'))) {
 			return false;
 		}
 		return view_generic_row($key,$value,$def,$action,$rec);
