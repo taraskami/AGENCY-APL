@@ -8,6 +8,9 @@ function guest_name( $id ) {
 }
 
 function guest_link( $id ) {
+	if (!is_valid($id,'integer_db')) {
+		return null;
+	}
 	return elink( 'guest', $id, guest_name( $id ) );
 }
 
