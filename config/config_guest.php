@@ -84,7 +84,8 @@ $engine['guest'] = array(
 		),
 		'bar_status' => array( // See note at top of file re: updating
 			'label'=>$status_field,
-			'value'=>'bar_status_f(array("guest_id"=>$rec["guest_id"]))',
+			'value'=>'bar_status_f(array("guest_id"=>$rec["guest_id"]),"long")',
+			'value_list'=>'bar_status_f(array("guest_id"=>$rec["guest_id"]))',
 			'is_html'=>true
 		),
 		/*
