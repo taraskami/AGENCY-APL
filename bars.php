@@ -51,8 +51,11 @@ function bar_status( $id, $group="",$start="",$end="",$brc="",$which=array())
 	$c_field=$c_def['id_field'];
 	$g_field=$g_def['id_field'];
 
-	if (is_array($id))
-	{
+	if ( is_numeric($id) ) {    
+		// Integer passed, means main object
+		$field=$c_field;
+	} elseif (is_array($id)) {
+		// client or guest?
 		if ($id[$g_field]) {
 			$id = $id[$g_field];
 			$field=$g_field;
@@ -62,14 +65,9 @@ function bar_status( $id, $group="",$start="",$end="",$brc="",$which=array())
 		} else {
 			return false;
 		}
-	}
-	if ( ! is_numeric($id) )
-	{    
+	} else {
 		// text (unregistered) clients not barred
 		return false;
-	} else {
-		// Integer passed, means main object
-		$field=$c_field;
 	}
 	$func = "get_generic";
 	$filt = array($field => $id);// get bars for one client or guest
