@@ -113,11 +113,8 @@ function list_generic($control,$def,$control_array_variable='',&$REC_NUM)
 		 *
 		 * fixme: Known Bugs:
 		 *
-		 * 1) the attempt to split ORDER BY out will fail on complex queries (with nested order by statements). There
-		 *    is no easy fix for this. It is a fairly minor bug in that the initial query will run, but when a user
-		 *    attempts to re-order a query, nasty errors will ensue.
-		 * 2) re-ordering will fail on any column name with spaces in it
-		 * 3) sql in title doesn't change depending on order
+		 * *) re-ordering will fail on any column name with spaces in it
+		 * *) sql in title doesn't change depending on order
 		 *
 		 *
 		 */
@@ -152,42 +149,12 @@ function list_generic($control,$def,$control_array_variable='',&$REC_NUM)
 			sql_query($sql[$i]);
 		}
 
-		if ( ($split = preg_split('/order\sby/i',$sql[$sql_count])) //remove any explicit ORDER BY statements
-		     && count($split)>1
-		     /*
-			* FIXME: this last is a hack to prevent stripping of overly complex orderings/queries
-			*        oddly enough, the only thing breaking complex queries from being passed in the order
-			*        by parameter was the line below that strips the semi-colon, so a smarter stripping
-			*        might suffice.
-			*/
- 		     && !preg_match('/SELECT/i',$split[count($split)-1])) {
-
-			$ord_by = array_pop($split);          //the last one is the order by statement
-			$rest = implode(' ORDER BY ',$split); //re-construct the query w/o the last order by
-			$sql[$sql_count] = $rest; 
-			$control['sql'] = $sql;
-
-			if (be_null($order)) { //order passed by user takes precedence
-				$ord = explode(',',$ord_by);
-				$order = array();
-
-				foreach($ord as $o) {
-					$o = str_replace(';','',$o);
-					if ( ($tmp = preg_split('/\sdesc(\s*)$/i',$o)) //ascending/descending determination
-					     and count($tmp)>1) {
-						$o = trim($tmp[0]);
-						if (is_numeric($o)) { //a little brutish work around for php number-indexed array handling
-							$o = ' '.$o;
-						}
-						$order[$o] = true;
-					} else {
-						if (is_numeric($o)) {
-							$o = ' '.$o;
-						}
-						$order[$o] = false;
-					}
-				}
-			}
+		if ($order) {
+			// If user specifies order (clicks on column header),
+			// Wrap query into subquery so that order will be handled correctly
+			// This might inefficiently force two sortings, but it's clean
+			$sql[$sql_count] = 'SELECT * FROM (' . str_replace(';','',$sql[$sql_count]) . ') AS generic_sql_query_temp;';
+			$control[$sql]=$sql;
 		}
 
 		//process final (or only) query
