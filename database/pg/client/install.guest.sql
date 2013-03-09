@@ -2,8 +2,6 @@
  * Install tables for guest functionality
  */
 
-BEGIN;
-
 /*
 
 DROP FUNCTION guest_name(integer);
@@ -41,12 +39,14 @@ DROP TABLE tbl_l_identification_type;
 \i create.tbl_guest.sql
 \i create.tbl_guest_identification.sql
 \i create.tbl_guest_authorization.sql
-\i create.tbl_guest_visit.sql
 \i create.view.guest.sql 
+\i create.tbl_guest_visit.sql
 \i create.view.guest_visit_current.sql;
-\i create.view.bar_guest.sql;
-\i create.view.client_guest_ineligible.sql
-\i create.view.guest_visit_authorized.sql;
+
+-- Moved these to install.client.sql
+--\i create.view.bar_guest.sql;
+--\i create.view.client_guest_ineligible.sql
+--\i create.view.guest_visit_authorized.sql;
 
 \i functions/create.function.guest_name.sql
 
@@ -55,4 +55,3 @@ DROP TABLE tbl_l_identification_type;
 \i populate.guest.sample_data.sql
 */
 
-COMMIT;

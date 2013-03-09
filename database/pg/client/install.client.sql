@@ -128,8 +128,34 @@
 \i create.tbl_elevated_concern.sql
 \i create.view.elevated_concern_note.sql
 
+/* HOUSING-SPECIFIC TABLES */
+\i install.housing.sql
+
+/* Since income and guest records reference housing units, they need to
+ * exist. If you don't use the install.housing.sql script,
+ * and want the income, guest or bar tables, run these lines instead.
+ */
+
+/*
+\i housing/create.l_unit_type.sql
+\i housing/create.tbl_housing_unit.sql
+\i housing/create.l_fund_type.sql
+*/
+
+/* GUEST SYSTEM */
+/* Currently Guest is required for Bar */
+\i install.guest.sql
+
 /* BAR SYSTEM */
 \i install.bar.sql
+
+
+/* These were part of install.guest.sql,
+ * but I moved them here because they depend on bars
+ */ 
+\i create.view.bar_guest.sql;
+\i create.view.client_guest_ineligible.sql
+\i create.view.guest_visit_authorized.sql
 
 /* SHELTER-SPECIFIC TABLES */
 /*
@@ -142,20 +168,6 @@
 \i create.l_mail_delivery.sql
 
 \i create.tbl_mail.sql
-*/
-
-/* HOUSING-SPECIFIC TABLES */
-\i install.housing.sql
-
-/* Since income records reference housing units, they need to
- * exist. If you don't use the install.housing.sql script,
- * and want the income table, run these lines instead.
- */
-
-/*
-\i housing/create.l_unit_type.sql
-\i housing/create.tbl_housing_unit.sql
-\i housing/create.l_fund_type.sql
 */
 
 /* Income Table */
