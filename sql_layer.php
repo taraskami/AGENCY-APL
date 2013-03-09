@@ -704,16 +704,25 @@ function sql_error( $res='' )
 	switch ($GLOBALS['WHICH_DB'])
 	{
 		case 'my' :
-        	return '<br />The MYSQL server reported error #' . mysql_errno() .
+        		$msg = '<br />The MYSQL server reported error #' . mysql_errno() .
 			       '<br />The error text was: ' . mysql_error();
+			break;
 		case 'pg' :
 			$err = oline($res ? pg_result_error( $res ) : pg_last_error());
-        	return oline('The PostgreSQL server reported an error.')
-			       . oline("The error text was: $err")
-					. (has_perm('admin') ? div(dump_array(debug_backtrace()).toggle_label('Debugging details'),'','class="hiddenDetail"') : '');
+        		$msg = oline('The PostgreSQL server reported an error.')
+			       . oline("The error text was: $err");
+			break;
 		default :
-			return AG_DATABASE_UNDEFINED_ERROR;
+			$msg = AG_DATABASE_UNDEFINED_ERROR;
+			break;
 	}
+	// Include backtrace?
+	// if has_perm is not defined, it's a very low-level error
+	// (likely db connection) and should be safe to dump debugging details
+	if ( (!function_exists('has_perm')) or has_perm('admin')) {
+		$msg .= div(dump_array(debug_backtrace()).toggle_label('Debugging details'),'','class="hiddenDetail"');
+	}
+	return $msg;
 }	
 
 function sql_last_notice($res = '')
