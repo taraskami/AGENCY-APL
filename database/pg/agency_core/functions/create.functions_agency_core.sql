@@ -80,6 +80,11 @@ CREATE OR REPLACE FUNCTION null_or( test boolean ) RETURNS boolean AS $$
 
 $$ LANGUAGE sql IMMUTABLE;
 
+CREATE OR REPLACE FUNCTION XOR( boolean, boolean) RETURNS boolean as $$
+	SELECT ( $1 and not $2) or ( not $1 and $2);
+
+$$ LANGUAGE sql IMMUTABLE;
+
 CREATE OR REPLACE FUNCTION link( url text, label text ) RETURNS text AS $$
 
      SELECT '<a href="' || $1 || '">' || $2 || '</a>';
