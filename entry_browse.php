@@ -40,8 +40,13 @@ $visitor_fields=array('visitor_name','visit_purpose','visit_type_code','visiting
 $def=get_def('entry');
 $ev_def=get_def('entry_visitor');
 $ef_def=get_def(AG_MAIN_OBJECT_DB);
-$this_entry_location='FRONT_DOOR'; // FIXME
 
+// If one entry location exists, this will pick it up
+// FIXME: if multiple locations, no way to determine which one
+// or needs to be set via local data
+
+$temp=$def['fields']['entry_location_code']['lookup'];
+$this_entry_location=sql_assign('SELECT ' . $temp['value_field'] . ' FROM ' . $temp['table'] . ' WHERE is_current LIMIT 1');
 
 $c_req=$_REQUEST['control'];
 if (!is_array($c_req)) {
