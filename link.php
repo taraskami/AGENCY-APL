@@ -41,7 +41,12 @@ function seclink( $id, $label, $options=null)
 function dead_link($text,$options='')
 {
       //return a gray pseudo link
-      return span($text,' class="deadlink"'.$options);
+      if (preg_match('/^(.*class=".[^"]*)(".*)$/i',$options,$matches)) {
+	$options = $matches[1] . ' deadlink' . $matches[2];
+      } else {
+	$options = 'class="deadlink"';
+      }
+      return span($text,$options);
 }
 
 function link_map($address,$label='map')

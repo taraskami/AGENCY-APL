@@ -139,7 +139,7 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 	    $allow = $def['allow_'.($action=='clone' ? 'add' : $action)];
 
       } else {
-	    return $url_only ? false : dead_link('LINK_ENGINE() REQUIRES AN ARRAY');
+	    return $url_only ? false : dead_link('LINK_ENGINE() REQUIRES AN ARRAY',$link_options);
       }
 //      $page = ($action=='list') ? $page : 'display.php'; //only list may be displayed elsewhere (for now)
 	if ($action == 'list') {
@@ -152,7 +152,7 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 	}
 
       if (!$object) {
-		return $url_only ? false : dead_link(alt($label,'LINK_ENGINE() CANNOT SEND A NULL OBJECT TO ENGINE'));
+		return $url_only ? false : dead_link(alt($label,'LINK_ENGINE() CANNOT SEND A NULL OBJECT TO ENGINE'),$link_options);
       }
 
       if ($rec_init and (in_array($action,array('add','widget')))) {
