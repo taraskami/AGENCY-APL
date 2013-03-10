@@ -108,7 +108,7 @@ function add_generics_fields($def,$child_object)
 	if ($multi['confirm_none']) {
 		$def['fields']["multi_{$child_object}_multi_no_multi_records"] = array("data_type"=>"multi_rec",
 			    "display_add"=>"multi_disp",
-			    "label_add"=>'Check this box ONLY if the '.$def['singular'].' has no ' .$c_def['plural'],
+			    "label_add"=>'Check this box ONLY if the '.$def['singular'].' has no known ' .$c_def['plural'],
 			    "multi_field"=>$multi_fields,
 			    "multi_type"=>"boolean");
 	}
