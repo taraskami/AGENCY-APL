@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="keywords" content="loading GIF, loading APNG, ajax load, ajaxload, ajax loader, animated PNG, AJAX, loading generator, loading spinners, GIF spinners, GIF bars,Circular (Spinners)" />
+  <meta name="description" content="Free ajax loader (loading animated GIF and APNG) spinners, bars and 3D animations generator for AJAX and JQuery Circular (Spinners)" />
+  <title>Preloaders.net - Circular (Spinners) AJAX loading GIF and APNG spinners, bars and 3D animations generator</title>
+  <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+  <link href="/css/style.css" rel="stylesheet" type="text/css" />
+  <link href="/css/slider.css" rel="stylesheet" type="text/css" />
+  <link href="/css/generate_en.css" rel="stylesheet" type="text/css" />
+  <script src="/jscripts/jquery.min.js" type="text/javascript"></script>
+  <script src="/jscripts/canvas.js" type="text/javascript"></script>
+  <script src="/jscripts/common.js" type="text/javascript"></script>
+  <script type="text/javascript">
+	// <![CDATA[
+	lang='en';
+    texts=new Array('Select your preloader', 'Width and Height must be within the range of 5 and 220', 'Download', 'Loading', 'Only english letters, numbers, space and the following characters are allowed for now:<br /><br /> ./<>\?;:"\'!@#$%^&*()[]{}_\+=-|\\]');
+	words=new Array('Image size', 'estimating......', 'unknown', 'Frames amount must be more than 1 and less than total frames amount for selected preloader', 'Using "Invert colors", "Use environment color" and "FFFFFF" background color together leads to a blank white image. Please change one or more of the parameters', 'System error. You are either generating too fast or server has thrown an exception. If the error persists, please, contact administrator', 'Please enter a correct value for the foreground color', 'Please enter a correct value for the background color', '', 'Buy this preloader`s source file');
+	
+	// ]]>
+  </script>
+
+
+<script type="text/javascript" src="/colorpicker/colorpicker.js"></script>
+<link rel="stylesheet" href="/colorpicker/colorpicker.css" type="text/css" />
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-6693785-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>
+<body style="background:url(/images/snow_back.gif) left top #e4efff">
+<div style="position:fixed; left:0px; bottom:0px; background:url(/images/snow.gif) left top repeat-x; height:247px; width:100%; z-index:-1"></div>
+<div style="position:fixed; left:0px; bottom:160px; background:url(/images/snowman.png) left top no-repeat; height:193px; width:142px; z-index:-1"></div>
+  <div class="holder">
+    <div class="header">
+        <div class="menu"> <a href="/en/manual">User's manual</a> <a href="/en/api" style="color:#810000; text-decoration:underline">API</a> <a href="/en/request_preloader">Request preloader</a><a href="/en/discussions">Discussions</a> <a href="/en/terms_of_use">Terms of use</a> <a href="/en/contact">About / Contact us</a> 
+	<div class="language_select">
+		<div style="padding-top:5px; margin-bottom:4px">Other language</div>
+		<div class="language_dropdown">
+	<a href="/en/circular" class="language_select_link" style="background-image:url(/images/lang/en.png); margin-top:5px;"> English</a><br /><a href="/ru/circular" class="language_select_link" style="background-image:url(/images/lang/ru.png); margin-top:5px;"> Русский</a><br />
+		<a href="/en/contribute" class="language_select_link" style="background:none;padding-left:0px; color:#FF0000; padding-right:0px;"> Add new language</a>
+		</div>
+	</div>
+	</div>
+        <div class="logo"><h1>Loading GIF &amp; APNG (AJAX loaders) generator</h1></div>
+		<div class="search"><form action="/en/search/" method="get" onsubmit="location.href='/en/search/'+$('#keywordsInput').val().toLowerCase(); return false;"><div><input type="text" name="keywords" id="keywordsInput" class="textfield" value="" /><input type="submit" value="" class="search_button" /></div><div class="clearer"></div></form>E.g.: <a href="/en/search/globe">Globe</a>, <a href="/en/search/fading line">Fading line</a>, <a href="/en/search/youtube">YouTube</a>, <a href="/en/search/">etc.</a></div>
+    </div>
+	<div class="content_wrapper">
+		<div class="content">
+			<div class="center">
+					</div>
+			<div class="categories">
+			<h2 class="title" style="margin-bottom:0px;">Categories</h2>
+			<ul class="categories_list" style="margin-top:3px">
+				<li ><a href="/en/3d">3 dimensional (3D)</a></li><li ><a href="/en/astronomy">Astronomy / Planets</a></li><li class="active_category"><a href="/en/circular">Circular (Spinners)</a></li><li ><a href="/en/horizontal">Horizontal (Bars)</a></li><li ><a href="/en/letters_numbers_words">Letters, numbers and words</a></li><li ><a href="/en/people">People</a></li><li ><a href="/en/rectangular">Rectangular</a></li><li ><a href="/en/religion">Religion signs</a></li><li ><a href="/en/science">Science</a></li><li ><a href="/en/smileys">Smileys</a></li><li ><a href="/en/social_bookmarks">Social bookmarks</a></li><li ><a href="/en/weather_conditions">Weather conditions</a></li><li ><a href="/en/zodiak">Zodiac signs</a></li>			</ul>
+			<h2 class="title" style="margin-top:10px; margin-bottom:0px;">Something extra...</h2>
+			<ul class="categories_list" style="margin-top:3px">
+				<li ><a href="/">Latest</a></li>
+				<li ><a href="/en/popular">Most popular</a></li>
+				<li ><a href="/en/all">All preloaders</a></li>
+				<li><a href="http://v1.preloaders.net/" onclick="target='_blank'">Preloaders.net V1</a> </li>
+				<li><a href="http://iconizer.net/" onclick="target='_blank'">Icons generator</a> </li>
+				<li><a href="http://cssload.net/" onclick="target='_blank'">Loading CSS generator</a> </li>
+			</ul>
+			</div>
+			<script type="text/javascript">
+	// <![CDATA[
+	var pinfo=new Array();
+	pinfo[365]=new Array("128", "128", "18", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/717976/", false);pinfo[362]=new Array("128", "128", "22", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/717171/", false);pinfo[360]=new Array("128", "128", "32", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/715153/", false);pinfo[359]=new Array("128", "128", "24", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/714692/", false);pinfo[357]=new Array("128", "128", "25", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/714127/", false);pinfo[351]=new Array("128", "118", "18", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/712982/", false);pinfo[350]=new Array("128", "128", "18", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/712799/", false);pinfo[349]=new Array("128", "128", "17", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/711871/", false);pinfo[340]=new Array("128", "128", "12", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/708493/", false);pinfo[339]=new Array("128", "128", "24", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/706928/", false);pinfo[338]=new Array("106", "128", "25", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/705373/", false);pinfo[336]=new Array("128", "29", "10", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/697423/", false);pinfo[335]=new Array("128", "128", "8", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/696831/", false);pinfo[334]=new Array("128", "128", "16", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/696830/", false);pinfo[331]=new Array("128", "128", "22", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/695943/", false);pinfo[329]=new Array("128", "128", "20", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/694687/", false);pinfo[328]=new Array("128", "128", "10", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/694917/", false);pinfo[327]=new Array("128", "128", "20", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/694236/", false);pinfo[326]=new Array("128", "128", "15", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/694224/", false);pinfo[325]=new Array("128", "128", "12", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/694200/", false);pinfo[321]=new Array("128", "128", "18", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/693152/", false);pinfo[320]=new Array("128", "128", "18", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/692945/", false);pinfo[319]=new Array("128", "128", "18", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/692574/", false);pinfo[301]=new Array("128", "128", "75", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/686648/", false);pinfo[298]=new Array("128", "128", "24", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/684877/", false);pinfo[295]=new Array("128", "128", "12", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/681406/", false);pinfo[290]=new Array("128", "128", "20", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/669474/", false);pinfo[287]=new Array("128", "128", "16", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667474/", false);pinfo[284]=new Array("128", "128", "12", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/666462/", false);pinfo[282]=new Array("128", "128", "18", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/666365/", false);pinfo[278]=new Array("128", "128", "20", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/666233/", false);pinfo[270]=new Array("128", "128", "18", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/661941/", false);pinfo[262]=new Array("128", "128", "9", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/660261/", false);pinfo[257]=new Array("128", "128", "18", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/657174/", false);pinfo[254]=new Array("128", "128", "18", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/656851/", false);pinfo[249]=new Array("128", "128", "20", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/655244/", false);pinfo[242]=new Array("128", "128", "20", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/652406/", false);pinfo[241]=new Array("128", "128", "18", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/652269/", false);pinfo[240]=new Array("128", "128", "30", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/651718/", false);pinfo[239]=new Array("128", "128", "10", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/651719/", false);pinfo[130]=new Array("128", "128", "12", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/650140/", false);pinfo[219]=new Array("128", "128", "30", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/690089/", false);pinfo[131]=new Array("128", "128", "8", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/696851/", false);pinfo[208]=new Array("128", "128", "15", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667545/", false);pinfo[171]=new Array("128", "128", "8", "", false);pinfo[166]=new Array("128", "128", "10", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667534/", false);pinfo[138]=new Array("128", "128", "10", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667531/", false);pinfo[159]=new Array("128", "128", "12", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667537/", false);pinfo[155]=new Array("128", "128", "11", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667527/", false);pinfo[156]=new Array("128", "128", "21", "", false);pinfo[139]=new Array("128", "128", "24", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/620887/", false);pinfo[126]=new Array("128", "128", "12", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667499/ ", false);pinfo[124]=new Array("128", "128", "16", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667497/", false);pinfo[123]=new Array("128", "60", "19", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667739/", false);pinfo[110]=new Array("64", "64", "16", "", false);pinfo[91]=new Array("128", "128", "20", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/693158/", false);pinfo[89]=new Array("128", "128", "18", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/652277/", false);pinfo[75]=new Array("128", "128", "8", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/653967/", false);pinfo[69]=new Array("128", "128", "28", "", false);pinfo[45]=new Array("128", "128", "20", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667495/", false);pinfo[42]=new Array("128", "128", "19", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667414/ ", false);pinfo[39]=new Array("128", "128", "20", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/620900/ ", false);pinfo[35]=new Array("128", "128", "12", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/653961/", false);pinfo[25]=new Array("128", "128", "8", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667268/ ", false);pinfo[8]=new Array("128", "128", "8", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667399/ ", false);pinfo[7]=new Array("128", "128", "10", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667387/ ", false);pinfo[6]=new Array("128", "128", "12", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667384/", false);pinfo[5]=new Array("128", "128", "8", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667382/ ", false);pinfo[4]=new Array("128", "128", "8", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667380/ ", false);pinfo[3]=new Array("128", "128", "8", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/655763/", false);pinfo[2]=new Array("128", "128", "8", "http://www.turbosquid.com/FullPreview/Index.cfm/ID/667404", false);pinfo[1]=new Array("128", "128", "12", "http://www.turbosquid.com/3d-models/3d-ball-pipe-preloader-model/620599", false);	var pSymbols={"a":86,"b":82,"c":82,"d":82,"e":86,"f":62,"g":84,"h":78,"i":34,"j":48,"k":80,"l":34,"m":116,"n":78,"o":86,"p":82,"q":82,"r":60,"s":80,"t":56,"u":78,"v":86,"w":118,"x":86,"y":86,"z":84,"A":112,"B":94,"C":106,"D":102,"E":94,"F":86,"G":110,"H":98,"I":34,"J":74,"K":102,"L":82,"M":114,"N":98,"O":114,"P":96,"Q":116,"R":106,"S":98,"T":98,"U":98,"V":110,"W":128,"X":110,"Y":110,"Z":98,"&":102,"@":128,"\\":58,":":34,",":36,"-":58,"$":86,".":34,"\"":56,"=":86,"!":36,"^":78,"/":58,"(":54,"{":60,"[":48,"<":86,">":86,"%":126,"+":86,"?":84,"\'":34,")":52,"}":60,"]":48,";":36,"#":94,"*":64,"~":88,"_":100," ":60,"0":84,"1":56,"2":86,"3":84,"4":88,"5":86,"6":86,"7":84,"8":86,"9":84};	// ]]>
+</script>
+<div class="parameters">
+			<div class="parameters_overlay"><div>Loading content. Please wait...</div></div>
+            <div class="preloaders">
+				<div class="help"><div><strong>1)</strong> Click on the box on the right. <br /><strong>2)</strong> From the appeared dropdown select the desired preloader</div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+				<div class="pr1">Select your preloader</div>
+                <div class="selection_box"></div>
+                <div class="selection_arrow"></div>
+                <div class="preloaders_list" >
+                    <div class="preloader"><div class="info">18 Fr / 128x128</div><img src="/preloaders/365/Pulsating engine.gif" alt="Pulsating engine" title="365: Pulsating engine" /><div class="preloader_name">Pulsating engine</div></div><div class="preloader"><div class="info">22 Fr / 128x128</div><img src="/preloaders/362/Tube pressure.gif" alt="Tube pressure" title="362: Tube pressure" /><div class="preloader_name">Tube pressure</div></div><div class="preloader"><div class="info">32 Fr / 128x128</div><img src="/preloaders/360/Velocity.gif" alt="Velocity" title="360: Velocity" /><div class="preloader_name">Velocity</div></div><div class="preloader"><div class="info">24 Fr / 128x128</div><img src="/preloaders/359/Filling circles.gif" alt="Filling circles" title="359: Filling circles" /><div class="preloader_name">Filling circles</div></div><div class="preloader"><div class="info">25 Fr / 128x128</div><img src="/preloaders/357/Spider web.gif" alt="Spider web" title="357: Spider web" /><div class="preloader_name">Spider web</div></div><div class="preloader"><div class="info">18 Fr / 128x118</div><img src="/preloaders/351/Ball in ring.gif" alt="Ball in ring" title="351: Ball in ring" /><div class="preloader_name">Ball in ring</div></div><div class="preloader"><div class="info">18 Fr / 128x128</div><img src="/preloaders/350/Skype loader.gif" alt="Skype loader" title="350: Skype loader" /><div class="preloader_name">Skype loader</div></div><div class="preloader"><div class="info">17 Fr / 128x128</div><img src="/preloaders/349/Ship steering wheel.gif" alt="Ship steering wheel" title="349: Ship steering wheel" /><div class="preloader_name">Ship steering wheel</div></div><div class="preloader"><div class="info">12 Fr / 128x128</div><img src="/preloaders/340/Fish.gif" alt="Fish" title="340: Fish" /><div class="preloader_name">Fish</div></div><div class="preloader"><div class="info">24 Fr / 128x128</div><img src="/preloaders/339/Hard disk.gif" alt="Hard disk" title="339: Hard disk" /><div class="preloader_name">Hard disk</div></div><div class="preloader"><div class="info">25 Fr / 106x128</div><img src="/preloaders/338/Christmas ball.gif" alt="Christmas ball" title="338: Christmas ball" /><div class="preloader_name">Christmas ball</div></div><div class="preloader"><div class="info">10 Fr / 128x29</div><img src="/preloaders/336/Water ripples.gif" alt="Water ripples" title="336: Water ripples" /><div class="preloader_name">Water ripples</div></div><div class="preloader"><div class="info">8 Fr / 128x128</div><img src="/preloaders/335/Thin broken ring.gif" alt="Thin broken ring" title="335: Thin broken ring" /><div class="preloader_name">Thin broken ring</div></div><div class="preloader"><div class="info">16 Fr / 128x128</div><img src="/preloaders/334/Thin filling broken ring.gif" alt="Thin filling broken ring" title="334: Thin filling broken ring" /><div class="preloader_name">Thin filling broken ring</div></div><div class="preloader"><div class="info">22 Fr / 128x128</div><img src="/preloaders/331/Steerwheel.gif" alt="Steerwheel" title="331: Steerwheel" /><div class="preloader_name">Steerwheel</div></div><div class="preloader"><div class="info">20 Fr / 128x128</div><img src="/preloaders/329/Egg rolling.gif" alt="Egg rolling" title="329: Egg rolling" /><div class="preloader_name">Egg rolling</div></div><div class="preloader"><div class="info">10 Fr / 128x128</div><img src="/preloaders/328/Snakes chasing.gif" alt="Snakes chasing" title="328: Snakes chasing" /><div class="preloader_name">Snakes chasing</div></div><div class="preloader"><div class="info">20 Fr / 128x128</div><img src="/preloaders/327/Pizza spinning.gif" alt="Pizza spinning" title="327: Pizza spinning" /><div class="preloader_name">Pizza spinning</div></div><div class="preloader"><div class="info">15 Fr / 128x128</div><img src="/preloaders/326/Pizza sliced.gif" alt="Pizza sliced" title="326: Pizza sliced" /><div class="preloader_name">Pizza sliced</div></div><div class="preloader"><div class="info">12 Fr / 128x128</div><img src="/preloaders/325/Sun.gif" alt="Sun" title="325: Sun" /><div class="preloader_name">Sun</div></div><div class="preloader"><div class="info">18 Fr / 128x128</div><img src="/preloaders/321/Clock with hands.gif" alt="Clock with hands" title="321: Clock with hands" /><div class="preloader_name">Clock with hands</div></div><div class="preloader"><div class="info">18 Fr / 128x128</div><img src="/preloaders/320/Search with arrow.gif" alt="Search with arrow" title="320: Search with arrow" /><div class="preloader_name">Search with arrow</div></div><div class="preloader"><div class="info">18 Fr / 128x128</div><img src="/preloaders/319/Searching.gif" alt="Searching" title="319: Searching" /><div class="preloader_name">Searching</div></div><div class="preloader"><div class="info">75 Fr / 128x128</div><img src="/preloaders/301/Windows8 loader.gif" alt="Windows8 loader" title="301: Windows8 loader" /><div class="preloader_name">Windows8 loader</div></div><div class="preloader"><div class="info">24 Fr / 128x128</div><img src="/preloaders/298/Pie chart.gif" alt="Pie chart" title="298: Pie chart" /><div class="preloader_name">Pie chart</div></div><div class="preloader"><div class="info">12 Fr / 128x128</div><img src="/preloaders/295/Ovals in circle.gif" alt="Ovals in circle" title="295: Ovals in circle" /><div class="preloader_name">Ovals in circle</div></div><div class="preloader"><div class="info">20 Fr / 128x128</div><img src="/preloaders/290/Long fading lines.gif" alt="Long fading lines" title="290: Long fading lines" /><div class="preloader_name">Long fading lines</div></div><div class="preloader"><div class="info">16 Fr / 128x128</div><img src="/preloaders/287/Filling broken ring.gif" alt="Filling broken ring" title="287: Filling broken ring" /><div class="preloader_name">Filling broken ring</div></div><div class="preloader"><div class="info">12 Fr / 128x128</div><img src="/preloaders/284/Twirl.gif" alt="Twirl" title="284: Twirl" /><div class="preloader_name">Twirl</div></div><div class="preloader"><div class="info">18 Fr / 128x128</div><img src="/preloaders/282/Thin fading line.gif" alt="Thin fading line" title="282: Thin fading line" /><div class="preloader_name">Thin fading line</div></div><div class="preloader"><div class="info">20 Fr / 128x128</div><img src="/preloaders/278/3D Blower.gif" alt="3D Blower" title="278: 3D Blower" /><div class="preloader_name">3D Blower</div></div><div class="preloader"><div class="info">18 Fr / 128x128</div><img src="/preloaders/270/Clock.gif" alt="Clock" title="270: Clock" /><div class="preloader_name">Clock</div></div><div class="preloader"><div class="info">9 Fr / 128x128</div><img src="/preloaders/262/Ventilator.gif" alt="Ventilator" title="262: Ventilator" /><div class="preloader_name">Ventilator</div></div><div class="preloader"><div class="info">18 Fr / 128x128</div><img src="/preloaders/257/Solid snake.gif" alt="Solid snake" title="257: Solid snake" /><div class="preloader_name">Solid snake</div></div><div class="preloader"><div class="info">18 Fr / 128x128</div><img src="/preloaders/254/Koala bear.gif" alt="Koala bear" title="254: Koala bear" /><div class="preloader_name">Koala bear</div></div><div class="preloader"><div class="info">20 Fr / 128x128</div><img src="/preloaders/249/Sun loader.gif" alt="Sun loader" title="249: Sun loader" /><div class="preloader_name">Sun loader</div></div><div class="preloader"><div class="info">20 Fr / 128x128</div><img src="/preloaders/242/Ubuntu logo.gif" alt="Ubuntu logo" title="242: Ubuntu logo" /><div class="preloader_name">Ubuntu logo</div></div><div class="preloader"><div class="info">18 Fr / 128x128</div><img src="/preloaders/241/Glow in ring.gif" alt="Glow in ring" title="241: Glow in ring" /><div class="preloader_name">Glow in ring</div></div><div class="preloader"><div class="info">30 Fr / 128x128</div><img src="/preloaders/240/Heart arrow.gif" alt="Heart arrow" title="240: Heart arrow" /><div class="preloader_name">Heart arrow</div></div><div class="preloader"><div class="info">10 Fr / 128x128</div><img src="/preloaders/239/Spinning gear.gif" alt="Spinning gear" title="239: Spinning gear" /><div class="preloader_name">Spinning gear</div></div><div class="preloader"><div class="info">12 Fr / 128x128</div><img src="/preloaders/130/Chasing blocks.gif" alt="Chasing blocks" title="130: Chasing blocks" /><div class="preloader_name">Chasing blocks</div></div><div class="preloader"><div class="info">30 Fr / 128x128</div><img src="/preloaders/219/Surrounded segments.gif" alt="Surrounded segments" title="219: Surrounded segments" /><div class="preloader_name">Surrounded segments</div></div><div class="preloader"><div class="info">8 Fr / 128x128</div><img src="/preloaders/131/3D snake.gif" alt="3D snake" title="131: 3D snake" /><div class="preloader_name">3D snake</div></div><div class="preloader"><div class="info">15 Fr / 128x128</div><img src="/preloaders/208/Spinning wheel.gif" alt="Spinning wheel" title="208: Spinning wheel" /><div class="preloader_name">Spinning wheel</div></div><div class="preloader"><div class="info">8 Fr / 128x128</div><img src="/preloaders/171/Spinning spiral.gif" alt="Spinning spiral" title="171: Spinning spiral" /><div class="preloader_name">Spinning spiral</div></div><div class="preloader"><div class="info">10 Fr / 128x128</div><img src="/preloaders/166/Pacman.gif" alt="Pacman" title="166: Pacman" /><div class="preloader_name">Pacman</div></div><div class="preloader"><div class="info">10 Fr / 128x128</div><img src="/preloaders/138/Kaleidoscope.gif" alt="Kaleidoscope" title="138: Kaleidoscope" /><div class="preloader_name">Kaleidoscope</div></div><div class="preloader"><div class="info">12 Fr / 128x128</div><img src="/preloaders/159/Rounded blocks.gif" alt="Rounded blocks" title="159: Rounded blocks" /><div class="preloader_name">Rounded blocks</div></div><div class="preloader"><div class="info">11 Fr / 128x128</div><img src="/preloaders/155/Spinning octopus.gif" alt="Spinning octopus" title="155: Spinning octopus" /><div class="preloader_name">Spinning octopus</div></div><div class="preloader"><div class="info">21 Fr / 128x128</div><img src="/preloaders/156/Arrows in glass.gif" alt="Arrows in glass" title="156: Arrows in glass" /><div class="preloader_name">Arrows in glass</div></div><div class="preloader"><div class="info">24 Fr / 128x128</div><img src="/preloaders/139/Sun watch.gif" alt="Sun watch" title="139: Sun watch" /><div class="preloader_name">Sun watch</div></div><div class="preloader"><div class="info">12 Fr / 128x128</div><img src="/preloaders/126/Sharp edges.gif" alt="Sharp edges" title="126: Sharp edges" /><div class="preloader_name">Sharp edges</div></div><div class="preloader"><div class="info">16 Fr / 128x128</div><img src="/preloaders/124/Ball in bowl.gif" alt="Ball in bowl" title="124: Ball in bowl" /><div class="preloader_name">Ball in bowl</div></div><div class="preloader"><div class="info">19 Fr / 128x60</div><img src="/preloaders/123/Bouncing snake.gif" alt="Bouncing snake" title="123: Bouncing snake" /><div class="preloader_name">Bouncing snake</div></div><div class="preloader"><div class="info">16 Fr / 64x64</div><img src="/preloaders/110/Radar.gif" alt="Radar" title="110: Radar" /><div class="preloader_name">Radar</div></div><div class="preloader"><div class="info">20 Fr / 128x128</div><img src="/preloaders/91/Spinning line.gif" alt="Spinning line" title="91: Spinning line" /><div class="preloader_name">Spinning line</div></div><div class="preloader"><div class="info">18 Fr / 128x128</div><img src="/preloaders/89/Fading line.gif" alt="Fading line" title="89: Fading line" /><div class="preloader_name">Fading line</div></div><div class="preloader"><div class="info">8 Fr / 128x128</div><img src="/preloaders/75/Flower.gif" alt="Flower" title="75: Flower" /><div class="preloader_name">Flower</div></div><div class="preloader"><div class="info">28 Fr / 128x128</div><img src="/preloaders/69/Pulsating circle.gif" alt="Pulsating circle" title="69: Pulsating circle" /><div class="preloader_name">Pulsating circle</div></div><div class="preloader"><div class="info">20 Fr / 128x128</div><img src="/preloaders/45/4 Segments.gif" alt="4 Segments" title="45: 4 Segments" /><div class="preloader_name">4 Segments</div></div><div class="preloader"><div class="info">19 Fr / 128x128</div><img src="/preloaders/42/Radar.gif" alt="Radar" title="42: Radar" /><div class="preloader_name">Radar</div></div><div class="preloader"><div class="info">20 Fr / 128x128</div><img src="/preloaders/39/Funnel.gif" alt="Funnel" title="39: Funnel" /><div class="preloader_name">Funnel</div></div><div class="preloader"><div class="info">12 Fr / 128x128</div><img src="/preloaders/35/Fading lines.gif" alt="Fading lines" title="35: Fading lines" /><div class="preloader_name">Fading lines</div></div><div class="preloader"><div class="info">8 Fr / 128x128</div><img src="/preloaders/25/Snake.gif" alt="Snake" title="25: Snake" /><div class="preloader_name">Snake</div></div><div class="preloader"><div class="info">8 Fr / 128x128</div><img src="/preloaders/8/Triangles indicator.gif" alt="Triangles indicator" title="8: Triangles indicator" /><div class="preloader_name">Triangles indicator</div></div><div class="preloader"><div class="info">10 Fr / 128x128</div><img src="/preloaders/7/Surrounded indicator.gif" alt="Surrounded indicator" title="7: Surrounded indicator" /><div class="preloader_name">Surrounded indicator</div></div><div class="preloader"><div class="info">12 Fr / 128x128</div><img src="/preloaders/6/Flowing gradient.gif" alt="Flowing gradient" title="6: Flowing gradient" /><div class="preloader_name">Flowing gradient</div></div><div class="preloader"><div class="info">8 Fr / 128x128</div><img src="/preloaders/5/Filled fading balls.gif" alt="Filled fading balls" title="5: Filled fading balls" /><div class="preloader_name">Filled fading balls</div></div><div class="preloader"><div class="info">8 Fr / 128x128</div><img src="/preloaders/4/Fading balls.gif" alt="Fading balls" title="4: Fading balls" /><div class="preloader_name">Fading balls</div></div><div class="preloader"><div class="info">8 Fr / 128x128</div><img src="/preloaders/3/Chasing arrows.gif" alt="Chasing arrows" title="3: Chasing arrows" /><div class="preloader_name">Chasing arrows</div></div><div class="preloader"><div class="info">8 Fr / 128x128</div><img src="/preloaders/2/Broken circle.gif" alt="Broken circle" title="2: Broken circle" /><div class="preloader_name">Broken circle</div></div><div class="preloader"><div class="info">12 Fr / 128x128</div><img src="/preloaders/1/Ball in a pipe.gif" alt="Ball in a pipe" title="1: Ball in a pipe" /><div class="preloader_name">Ball in a pipe</div></div>                </div>
+            </div>
+            <div class="pr displaynone words">
+				<div class="help"><div>Type in your word, number or letter<br />Maximum length: <strong>30 symbols</strong></div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+                <div class="pr1">Word to animate</div>
+				<input type="hidden" id="wordTransformed" />
+				<!--input type="text" id="test"  style="position:absolute; left:350px; width:500px; z-index:1000000" /-->
+                <div class="pr2"><input type="text" name="word" id="word" value="Loading..." class="textfield" style="width:137px" maxlength="30" tabindex="1" /></div>
+            </div>
+            <div class="pr">
+				<div class="help"><div><img src="/images/small_browser_test_en.png" title="APNG browser test" alt="APNG browser test" width="140" height="30" style="border:1px solid #DDD" /><br />A button corresponds to the image type you need to generate (<strong>GIF - Animated GIF, APNG - Animated PNG format</strong>).<br /><br /><strong>Note:</strong> .GIF format supports only absolute transparency or no transparency at all. Therefore, when you select the GIF format and set background to transparent you will still be able to set a background color that will fill the back layer of semi-transparent parts of your image.</div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+                <div class="pr1">Image type</div>
+                <div class="pr2"><input type="radio" name="imageType" id="imageTypeGif" checked="checked" tabindex="2" /><label for="imageTypeGif">GIF</label> <input type="radio" id="imageTypePng" name="imageType" tabindex="3" /><label for="imageTypePng">APNG</label></div>
+            </div>
+            <div class="pr">
+				<div class="help"><div>Set the background of a preloader to transparent. <br /><br />For GIF images all semi-transparent pixels will be in front of the selected background color.</div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+                <div class="pr1">Transparent background</div>
+                <div class="pr2"><input type="radio" name="backTransp" id="backTranspYes" tabindex="4" /><label for="backTranspYes">Yes</label> <input type="radio" id="backTranspNo" name="backTransp" checked="checked" tabindex="5" /><label for="backTranspNo">No</label></div>
+            </div>
+            <div class="pr fc">
+				<div class="help"><div>The color of the preloader itself </div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+                <div class="pr_overlay"></div>
+                <div class="pr1">Foreground color</div>
+                <div class="pr2"><input type="text" class="textfield color_p" id="foreColor" value="000000" tabindex="6" /><div class="color" id="foreColorP"></div></div>
+            </div>
+            <div class="pr bc">
+				<div class="help"><div>The background color of a preloader.<br /><br />All transparent pixels will be filled with the given background. If "Use environment colors" function is used, the pixels that are converted to semi-transparent will be filled with the selected background color with the respective foreground color amount </div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+                <div class="pr_overlay"></div>
+                <div class="pr1">Background color</div>
+                <div class="pr2"><input type="text" class="textfield color_p" id="backColor" value="FFFFFF" tabindex="7" /><div class="color" id="backColorP"></div></div>
+            </div>
+            <div class="pr">
+				<div class="help"><div>Identifies the interval of time between frames switching. The closer the slider is to + the faster the animation goes and vise versa.</div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+                <div class="pr1">Animation speed</div>
+                <div class="pr2">
+                    <div class="slider" id="slider" style="">
+							<input class="slider-input" id="slider-input" />
+						</div>
+						<input id="sliderValue5h" maxlength="3" class="displaynone" />
+
+                </div>
+				<script src="/jscripts/slider.js" type="text/javascript"></script>
+				<script type="text/javascript">
+				var r = new Slider(document.getElementById("slider"), document.getElementById("slider-input"));
+					r.setMinimum(minSpeed);
+					r.setMaximum(maxSpeed);
+
+					var ri = document.getElementById("sliderValue5h");
+					ri.onchange = function () {
+					r.setValue(parseInt(this.value));
+					};
+
+
+					r.onchange = function () {
+					var cr = document.getElementById("color-result");
+					ri.value = r.getValue();
+
+					if (typeof window.onchange == "function")
+					window.onchange();
+					
+					new autoGenerate();
+					};
+
+					r.setValue(defaultSpeed);
+
+					function fixSize(){
+					r.recalculate();
+					}
+				</script>
+            </div>
+            <div class="pr">
+				<div class="help"><div>Denotes width and height of a preloader in pixels. The default <strong>best quality maximum size</strong> of each image is set when selected from the list. <br /><br /> In order for the image to have proportional width and height, check the "Constrain proportions" box and it will change the other parameter in regards to the entered one. <br /><br />If you want to get back to the original size of the image, click on the "Reset sizes" link under "Preloader size" title.</div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+                <div class="pr1">Preloader size (px)<div style="margin-top:5px;"><input type="checkbox" id="constrain" checked="checked" tabindex="8" /><label for="constrain" style="font-size:10px">Constrain proportions</label></div></div>
+                <div class="pr2 size">
+					<div class="size_slider"></div>
+					<div class="reset_sizes"></div>
+                    <div class="width">Width</div>
+                    <div class="height">Height</div>
+                    <input type="text" id="width" value="128" class="textfield" tabindex="9" /> <input type="text" id="height" class="textfield" value="128" tabindex="10" />
+                </div>
+            </div>
+			<div class="pr" style="margin-top:35px;">
+				<div class="help"><div>This feature allows to generate preloaders with the default coloring scheme provided. <br /><br />"Use environment colors" and "Foreground color" options are disabled when this feauture is used.</div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+				<div class="pr1">Keep original colors</div>
+				<div class="pr2"><input type="radio" name="origColors" id="origColorsYes" tabindex="11" /><label for="origColorsYes">Yes</label> <input type="radio" id="origColorsNo" name="origColors" checked="checked" tabindex="12" /><label for="origColorsNo">No</label></div>
+			</div>
+			<div class="pr" id="downloadOptions">
+				<div class="pr1"><strong>Additional download options:</strong><br />
+					<div style="margin-top:5px;">
+						<input type="checkbox" id="downloadSprites" tabindex="13" /><label for="downloadSprites">Download as sprites</label><br />
+					</div>
+					<div style="margin-top:5px;">
+						<input type="checkbox" class="inactive" id="animateJS" tabindex="14" /><label for="animateJS">Animate by pure JavaScript</label><br />
+					</div>
+					<div style="margin-top:5px;">
+						<input type="checkbox" class="inactive" id="animateCanvas" tabindex="15" /><label for="animateCanvas">Animate by Canvas &amp; Javascript</label>
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="displaynone" id="advancedOptions">
+				<div class="pr" style="margin-top:-15px;">
+					<div class="help"><div>Inverts the colors of a preloader. <br /><br />The algorithm works in regards to RGB invertion scheme</div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+					<div class="pr1">Invert colors</div>
+					<div class="pr2"><input type="radio" name="inverseColors" id="inverseColorsYes" tabindex="16" /><label for="inverseColorsYes">Yes</label> <input type="radio" id="inverseColorsNo" name="inverseColors" checked="checked" tabindex="17" /><label for="inverseColorsNo">No</label></div>
+				</div>
+				<div class="pr">
+					<div class="help"><div>Flips images vertically and/or horizontally.<br /><br />Note that some images are not affected by this feature as they may be absolutely symmetric in respect to center point</div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+					<div class="pr1">Flip image</div>
+					<div class="pr2"><input type="checkbox" name="flipHor" id="flipHor" tabindex="18" /><label for="flipHor">Hor.</label> <input type="checkbox" id="flipVert" name="flipVert" tabindex="19" /><label for="flipVert">Vert.</label></div>
+				</div>
+				<div class="pr gtt">
+					<div class="help"><div>Make the background color reflect in the preloader image.<br /><br />This feature is disabled when "Keep original colors" option is on</div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+					<div class="pr_overlay"></div>
+					<div class="pr1">Use environment colors</div>
+					<div class="pr2"><input type="radio" name="grayTransp" id="grayTranspYes" tabindex="20" /><label for="grayTranspYes">Yes</label> <input type="radio" id="grayTranspNo" name="grayTransp" checked="checked" tabindex="21" /><label for="grayTranspNo">No</label></div>
+				</div>
+				<div class="pr">
+					<div class="help"><div>Set the sequence of preloader frames in reverse order, so animation goes backwards if the option is selected</div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+					<div class="pr1">Reverse animation</div>
+					<div class="pr2"><input type="radio" name="reverse" id="reverseYes" tabindex="22" /><label for="reverseYes">Yes</label> <input type="radio" id="reverseNo" name="reverse" checked="checked" tabindex="23" /><label for="reverseNo">No</label></div>
+				</div>
+				<div class="pr">
+					<div class="help"><div>The total amount of frames in the generated image. <br /><br />It's advised to reduce frames amount by 4, 8, 16 and so on, otherwise it may negatively affect the animation quality</div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+					<div class="pr1">Frames amount</div>
+					<div class="pr2"><input type="text" value="15" class="textfield" id="framesAmount" tabindex="24" /></div>
+				</div>
+				<div class="pr">
+					<div class="help"><div>Having set this option you will get your preloaders generated automatically 2 seconds after you change parameters.<br /><br /></div><img src="/images/arrow.gif" class="help_arrow" alt="arrow" /></div>
+					<div class="pr1">Generate automatically</div>
+					<div class="pr2"><input type="radio" name="gen_auto" id="genAutoYes" tabindex="25" /><label for="genAutoYes">Yes</label> <input type="radio" id="genAutoNo" name="gen_auto" checked="checked" tabindex="26" /><label for="genAutoNo">No</label></div>
+				</div>
+			</div>
+			<div class="pr" style="padding:0px 30px 0 0;">
+				<a href="javascript:;" id="resetForm" class="feature_link" style="float:left">Reset form</a>
+				<a href="javascript:;" id="advanced" class="feature_link" style="float:right">Advanced options</a>
+			</div>
+            <div class="pr" style="margin-top:20px;">
+                <a href="javascript:void(0)" class="generate_button"  tabindex="27"></a>
+            </div>
+        </div>
+        <div class="generator">
+            <div class="preview_back">
+                <div class="transp"></div>
+                <div class="white"></div>
+                <div class="black"></div>
+                <div class="colorful"></div>
+            </div>
+			<div class="ad">
+			
+				
+					<br /><!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+<!-- BuySellAds Zone Code -->
+<div id="bsap_1262860" class="bsarocks bsap_92fbf923e69420d6f221d0f66ade2c47"></div>
+<!-- End BuySellAds Zone Code -->
+								</div>
+            <div class="generator_content">
+			</div>
+            <div class="loading">Loading...</div>
+        </div>
+					<div class="clearer"></div>
+			<br />
+			<div class="bottom_b right">
+				<a class="hidey" href="javascript:;">Hide ads for now</a>
+				<a class="showey" href="javascript:;">Show ads</a>
+				<div>
+								<!-- BuySellAds Zone Code -->
+				<div id="bsap_1279786" class="bsarocks bsap_92fbf923e69420d6f221d0f66ade2c47"></div>
+				<!-- End BuySellAds Zone Code -->
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="clearer"></div>
+	</div>
+	
+	<div class="footer">
+		<div class="footer-inner">
+			<div class="copyright">
+				&copy; 2012 <a href="http://onlinegenerator.net"><span class="og-logo"></span> OnlineGenerator.net</a>
+			</div>
+			<div class="footer-links">
+				<ul class="footer-nav">
+					<li><a href="/en/terms_of_use">Terms of use</a></li>
+					<li><a href="/en/manual">How to use</a></li>
+					<li><a href="/en/contact">Contact us / Advertise</a></li>
+				</ul>
+				<ul class="our-generators">
+					<li><a href="http://iconizer.net">Iconizer.net</a></li>
+					<li><a href="http://cssload.net">CSS Load.net</a></li>
+					<li><a href="http://animizer.net">Animizer.net (coming soon)</a></li>
+				</ul>
+				<ul class="follow">
+					<li><a href="http://www.facebook.com/Preloadersnet" class="facebook" title="Facebook">Facebook</a></li>
+					<li><a href="http://twitter.com/preloadersnet" class="twitter" title="Twitter">Twitter</a></li>
+					<li><a href="http://vk.com/preloadersnet" class="vk" title="VK">VK</a></li>
+					<li><a href="http://preloaders_new/en/subscribe" class="email" title="E-mail">E-mail</a></li>
+				</ul>
+			</div>
+			<div class="footer-social">
+				<div class="share">
+					<span class="st_facebook_hcount" id="st_facebook_hcount"></span>
+					<span class="st_twitter_hcount" id="st_twitter_hcount"></span>
+					<span class="st_plusone_hcount" id="st_plusone_hcount"></span>
+					<span class="st_sharethis_hcount" id="st_sharethis_hcount"></span>
+					<script type="text/javascript">
+						document.getElementById('st_facebook_hcount').setAttribute('displayText', 'Facebook');
+						document.getElementById('st_twitter_hcount').setAttribute('displayText', 'Tweet');
+						document.getElementById('st_plusone_hcount').setAttribute('displayText', 'g+');
+						document.getElementById('st_sharethis_hcount').setAttribute('displayText', 'More');
+					</script>
+					<script type="text/javascript">var switchTo5x=true;</script>
+					<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+					<script type="text/javascript">stLight.options({publisher: "a53ba798-595e-4365-9510-8288c845a0a1"}); </script>
+					<div class="generated"> 11 018 295 Preloaders generated</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

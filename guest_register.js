@@ -1,3 +1,14 @@
+function unitValidate() {
+	return (jQuery.inArray($('div.guestLoginUnit input').val(),unitValidate.validUnits) > -1);
+}
+
+function secretValidate() {
+	var secret_regex = /^([0-9]{4})$/; // 4 year DOB
+	var secret_val = $('div.guestLoginSecret input').val();
+	return (secret_val !== undefined) && secret_val.match(secret_regex);
+}
+
+
 function inputsValidate() {
 	var unit = $('div.guestLoginUnit');
 	var secret = $('div.guestLoginSecret');
@@ -16,19 +27,32 @@ function inputsValidate() {
 	var unit_val = $(unit).find('input').val();
 	var secret_val = $(secret).find('input').val();
 
-	var check_unit = (jQuery.inArray(unit_val, inputsValidate.validUnits) > -1);
-	var check_secret = (secret_val !== undefined) && secret_val.match(secret_regex);
-	if ( (check_unit) && check_secret) {
-		var loading = $('<img></img>').attr('src','images/loading.gif');
-		$(unit).find('input').removeAttr('disabled');
-		$(unit).after(loading);
+	var check_unit = unitValidate();
+	var check_secret = secretValidate();
+	if ( check_unit && check_secret) {
+		//$(unit).find('input').removeAttr('disabled');
+		$('div.guestHeaderBlock').hide();
+		$('div.guestResponseMessage').hide();
+		$('.guestLogoutButton').hide();
+//		$('h1').next().html('Accessing...').next().show();
+		$('h1').next().html('').next().show();
+//		$(secret).hide().
 		$(our_form).submit();
 		return true;
 	} else if (check_unit) {
+		$(secret).show();
+/*
 		var keyboard=$(unit).find('input').keyboard().getkeyboard();
-		keyboard.destroy();
-//		$(unit).find('input').attr('disabled','disabled');
-		$(secret).show().find('input').focus();
+		if (keyboard) {	
+			keyboard.destroy();
+		}
+*/
+//$(unit).find('input').attr('disabled','disabled');
+		//$(secret).show().find('input').focus().val( $(secret).show().find('input').val() );
+//		if ($(secret).find('input:focus').length==0) {
+		if (jQuery.inArray($(unit).find('input').val(), inputsValidate.validUnits) > -1) {
+			$(secret).find('input').focus().caretToEnd();
+		}
 		return false;
 	} 
 }
@@ -36,16 +60,27 @@ function inputsValidate() {
 $( function() {
 
 	inputsValidate.validUnits= jQuery.parseJSON( $( '#housingUnitCodes' ).html() );
-
-  $('div.guestLoginUnit input').focus( function() {
-		inputsValidate();
-		var inp = $('div.guestLoginUnit').find('input');
-		if ( ($(inp).val() !== undefined) && jQuery.inArray($(inp).val(), inputsValidate.validUnits) > -1) { 
-			$(inp).val('');
+	unitValidate.validUnits= jQuery.parseJSON( $( '#housingUnitCodes' ).html() );
+	var loading = $('<img></img>').attr('src','images/loading-big.gif').hide();
+	$('h1').next().after( $( loading ) );
+//.before($('div.guestResponseMessage'));
+  $('div.guestLoginUnit input').blur( function() {
+		if ( (!unitValidate()) && (!($('div.guestLoginSecret input:visible').length>0))) {
+			$(this).focus();
 		}
 	});
 
-	$('.calTodayLink').remove();
+  $('div.guestLoginUnit input').focus( function() {
+		if (secretValidate() && unitValidate()) {
+			$('div.guestLoginGo').closest('form').submit();
+			return false;
+		}
+		if (unitValidate()) {
+				$(this).val('');
+		}
+	});
+
+/*	$('.calTodayLink').remove();
 	var params = {
 		alwaysOpen: false,
 		stayOpen: false,
@@ -55,6 +90,7 @@ $( function() {
 		autoAccept: true,
 		position: { at2: 'right center', my: 'left center' }
 	};
+*/
 // Remove the comment block for an onscreen keyboard
 /*
 	$('div.guestLoginSecret input').keyboard( params );
@@ -65,6 +101,6 @@ $( function() {
 		if (inputsValidate()) {
 			clearInterval(watch);
 		} 
-		} ,100);
+		} ,200);
 });
 

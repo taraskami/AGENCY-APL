@@ -6,6 +6,10 @@ body.guestLoginScreen {
 	background-color: #FFFFBB;
 }
 
+.guestLoginScreenInvisible {
+	font-color: #FFFFBB;
+}	
+
 body.guestMenuScreen {
 	background-color: #BBFFBB;
 }
@@ -62,6 +66,17 @@ div.guestAGENCYFooter {
 	border: solid black 3px;
 	border-radius: 12px;
 	font-weight: bold;
+}
+
+.guestRefreshButton {
+	display: inline-block;
+	margin: 0px;
+	background-color: #FF9999;
+	font-size: 100%;
+	border: solid black 2px;
+	border-radius: 12px;
+	font-weight: bold;
+
 }
 
 .guestMenuButtons .guestMenuButton {

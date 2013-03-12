@@ -56,6 +56,8 @@ function guest_find_client_id($filter1,&$msg,$current_id) {
 			$msg[] = implode(oline(),$msg1);
 			return false;
 		}
+		$filter['ILIKE:housing_unit_code']=$unit;
+		$filter=array_merge($filter,$filter1);
 		if ($dob) {
 			$filter['dob']=$dob;
 		}
@@ -63,10 +65,8 @@ function guest_find_client_id($filter1,&$msg,$current_id) {
 			$filter['>=:dob']=$yob.'-01-01';
 			$filter['<=:dob']=$yob.'-12-31';
 		}
-		$filter['ILIKE:housing_unit_code']=$unit;
-		$filter=array_merge($filter,$filter1);
 		$c_def=get_def('client');
-		$c_def['sel_sql']='SELECT * FROM client LEFT JOIN residence_own USING (client_id)'; 
+		$c_def['sel_sql']='SELECT * FROM residence_own_current LEFT JOIN client USING (client_id)'; 
 		$clients=get_generic($filter,NULL,NULL,$c_def);
 		if (count($clients)==0) {
 			$msg[] = span('Matching tenant not found','class="error"');

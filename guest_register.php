@@ -3,6 +3,7 @@
 $quiet=true;
 include 'includes.php';
 link_style_sheet('guest_register.css','screen',' class="styleSheetScreen"');
+link_javascript('caretTo.js');
 link_javascript('guest_register.js');
 
 // onscreen keyboard numberpad
@@ -29,6 +30,9 @@ $signout_msg='Sign the guest who is leaving';
 $signout_msg='My guest is leaving';
 $signout_msg='Sign a guest out';
 $logout_msg='Log Out';
+$refresh_msg='Cancel / Refresh';
+$refresh_link=span(hlink($_SERVER['SCRIPT_NAME'],$refresh_msg,'','class="guestMenuLink"'),'class="guestMenuButton guestLogoutButton guestMenuButtonSmall"');
+//$refresh_link=span(hlink($_SERVER['SCRIPT_NAME'],$refresh_msg,'','class="guestMenuLink"'),'class="guestRefreshButton"');
 $logout_link=span(hlink($_SERVER['SCRIPT_NAME'],$logout_msg,'','class="guestMenuLink"'),'class="guestMenuButton guestLogoutButton"');
 $menu_link=span(hlink($_SERVER['SCRIPT_NAME'].'?menu=menu','Return to Menu','','class="guestMenuLink"'),'class="guestMenuButton"');
 $menu_buttons=div($menu_link . $logout_link,'','class="guestMenuButtons"');
@@ -137,6 +141,8 @@ if (!$menu) {
 		$title2 = 'Please log in';
 		$form1=guest_select_form($filter_project);
 		$out .= $form1;
+		$refresh=div($refresh_link,'','class="guestMenuButtons"')
+;
 }
 
 if ($q=$_SESSION[$SESSION_ID_VAR]) {
@@ -152,9 +158,11 @@ if ($q=$_SESSION[$SESSION_ID_VAR]) {
 out(html_start());
 //out(html_heading_tag(organization_logo_small() .span($title,'valign="bottom"'). agency_logo_small(),1));
 out(html_heading_tag($title,1));
+
 out($title2 ? html_heading_tag($title2,2) : '');
 		out($message ? div(implode(oline(),$message),'','class="guestResponseMessage"') : '');
 out(div($out,'','class="guestHeaderBlock"'));
+out($refresh);
 
 $footer=oline('Last refreshed at ' . datetimeof('now','US'). '.  ' . dead_link('Administration...')) . 'AGENCY Software running at ' . org_name();
 //$footer=oline('Last refreshed at ' . datetimeof('now','US'). '.  ' . dead_link('Administration...')) . organization_logo_small().'AGENCY Software running at ' . org_name().agency_logo_small();
