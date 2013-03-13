@@ -63,9 +63,6 @@ ini_set('session.use_trans_sid',0);
 // Included files have been moved into the below file
 include_once $off . 'command_line_includes.php'; //add any new files to this included file (which doesn't involve authentication).
 
-// Defined in agency_config_local.php:
-date_default_timezone_set(AG_TIMEZONE);
-
 // per the PHP manual for header, header's must come before any output.
 // This code to disable caching lifted from the header manual page:
 //header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");    // Date in the past

@@ -35,6 +35,9 @@ should be included in this distribution.
 include $off . 'sql_layer.php';
 include $off . 'io.php';
 
+// Defined in agency_config_local.php:
+date_default_timezone_set(AG_TIMEZONE);
+
 define('AG_OUTPUT_MODE',orr($MODE,'HTML')); // set to "TEXT" to disable HTML output
 switch (AG_OUTPUT_MODE) {
  case 'HTML' :
@@ -121,6 +124,7 @@ include $off . 'token.php';
 include $off . 'email.php';
 include $off . 'photo.php';
 include $off . 'guest.php';
+include $off . 'reach.php';
 include $off . 'kiosk.php'; // Technically this isn't needed for command-line, but I think harmless here
 
 /* read configuration */
