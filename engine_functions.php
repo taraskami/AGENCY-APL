@@ -3040,7 +3040,8 @@ function engine_delete_filter($rec,$def)
 		$type = $pr['data_type'];
 
 		if (in_array($type,array(AG_MAIN_OBJECT_DB,'staff'))
-		    && !$pr['virtual_field'] && !$pr['view_field_only']) {
+		    and (!$pr['virtual_field']) and (!$pr['view_field_only'])
+			and (!be_null($val))) {
 			return array($key => $val);
 		}
 	}
