@@ -177,7 +177,7 @@ function client_show( $id )
 	$out=tablestart("","border=3 cellpadding=2");
 
 	// Current Registrations:
-	$out .= rowrlcell("Current Registrations & Status",
+	$reg_status = 
 				jail_status_f($id)
 				. hospital_status_f($id)
 /*
@@ -187,9 +187,10 @@ function client_show( $id )
 				. oline(crp_status_f($id))
 				. cd_reg_f($id)
 */
-				. oline(last_entry_f($id,true))
-				. (($bed=which_current_bed($id)) ? oline(which_current_bed_f($bed)) : "")
-			  );
+				. (is_enabled('entry') ? oline(last_entry_f($id,true)) : '')
+				. (($bed=which_current_bed($id)) ? oline(which_current_bed_f($bed)) : "");
+
+	$out .= $reg_status ? rowrlcell("Current Registrations & Status",$reg_status) : '';
 
 	//Bar Status
 	$out .= is_enabled('bar') ? row(
