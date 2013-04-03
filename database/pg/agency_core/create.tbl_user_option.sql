@@ -1,6 +1,6 @@
 CREATE TABLE tbl_user_option (
 staff_id               INTEGER NOT NULL PRIMARY KEY REFERENCES tbl_staff (staff_id),
-opt_alerts_email           BOOLEAN NOT NULL DEFAULT FALSE,
+opt_alerts_email           BOOLEAN NOT NULL DEFAULT TRUE,
 options_array		TEXT, --a serialized user_options array
 added_at               TIMESTAMP(0) NOT NULL DEFAULT current_timestamp,
 added_by               INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
