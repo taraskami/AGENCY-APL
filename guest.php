@@ -18,8 +18,8 @@ function guest_find_client_id($filter1,&$msg,$current_id) {
 //	$name_last=$_POST['name_last'];
 //	$name_first=$_POST['name_first'];
 	$unit=$_POST['housing_unit_code'];
-	$prefix=sql_fetch_to_array('SELECT unit_code_prefix FROM l_housing_project',$filter1);
-	$prefix_regex=implode('|',$prefix);
+	$prefix=sql_fetch_to_array(agency_query('SELECT unit_code_prefix FROM l_housing_project',$filter1));
+	$prefix_regex=implode('|',$prefix[0]);
 	$dob=$_POST['dob'];
 	$yob=$_POST['yob'];
 	$msg1=array();
