@@ -91,9 +91,22 @@ define('AG_KIOSK_MODE',false);
  * the matched array, serialized.
  */
 
-//define('AG_LOCAL_PARAMETERS_BY_MACHINE_ID',serialize(
-//	array('208.54.32.222'=>array('guest_register_housing_project_code'=>'HOUSING_1'),
-//	'*'=>array('guest_register_housing_project_code'=>'HOUSING_2'))));
+/*
+define('AG_LOCAL_PARAMETERS_BY_MACHINE_ID',serialize(
+	array(
+		'208.54.32.222'=> array(
+			'guest_register_housing_project_code'=>'HOUSING_1'
+		),
+		'208.54.32.122'=>array(
+			'guest_register_housing_project_code'=>array('HOUSING_1','HOUSING_2'),
+			'guest_register_housing_project_label'=>'I am a custom welcome message for co-located projects'
+		),
+		'*'=>array(
+			'guest_register_housing_project_code'=>'HOUSING_2'
+		)
+	)
+);
+*/
 
 /*
  * Error Logging

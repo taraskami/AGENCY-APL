@@ -18,7 +18,8 @@ function guest_find_client_id($filter1,&$msg,$current_id) {
 //	$name_last=$_POST['name_last'];
 //	$name_first=$_POST['name_first'];
 	$unit=$_POST['housing_unit_code'];
-	$prefix=sql_assign('SELECT unit_code_prefix FROM l_housing_project',$filter1);
+	$prefix=sql_fetch_to_array('SELECT unit_code_prefix FROM l_housing_project',$filter1);
+	$prefix_regex=implode('|',$prefix);
 	$dob=$_POST['dob'];
 	$yob=$_POST['yob'];
 	$msg1=array();
@@ -34,11 +35,13 @@ function guest_find_client_id($filter1,&$msg,$current_id) {
 		}
 */
 	if ($unit or ($dob or $yob)) {
-		if (!preg_match('/^('.$prefix.')?[-0-9_]*$/i',$unit,$match)) {
+		if (!preg_match('/^('.$prefix_regex.')?[-0-9_]*$/i',$unit,$match)) {
 			$msg1[] = span('Invalid format for unit number: $unit','class="error"');
 		} else if (!$match[1]) {
 			// e.g., if tenant types "204", convert to "A204"
-			$unit = $prefix . $unit;
+			$find_unit_filter=array('~:housing_unit_code'=>"($prefix_regex)$unit");
+			$unit=sql_assign('SELECT housing_unit_code FROM housing_unit_current',$find_unit_filter);
+			//$unit = $prefix . $unit;
 		}
 /*
 		if (!$dob=dateof($dob,'SQL')) {
@@ -103,7 +106,7 @@ function guest_select_form($unit_filter=array()) {
 	. formvartext('name_last')
 */
 	$def=get_def('housing_unit');
-	$def['sel_sql']='SELECT substring(housing_unit_code FROM \'^[a-zA-Z]*([-0-9_]+)$\') AS housing_unit_code FROM housing_unit';
+	$def['sel_sql']='SELECT substring(housing_unit_code FROM \'^[a-zA-Z]*([-0-9_]+)$\') AS housing_unit_code FROM housing_unit_current';
 	$units=get_generic($unit_filter,NULL,NULL,$def);
 	$units=array_fetch_column($units,'housing_unit_code');
 	$units=div(json_encode($units),'housingUnitCodes','class="serverData"');

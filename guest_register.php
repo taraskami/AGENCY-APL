@@ -13,6 +13,8 @@ link_javascript('jquery.keyboard.min.js');
 // Which housing project are we running at?
 $local=unserialize(AG_LOCAL_PARAMETERS);
 $housing_project_code=$local['guest_register_housing_project_code'];
+$housing_project_label=$local['guest_register_housing_project_label']; // Custom label, optional, for co-located projects
+
 if (!$housing_project_code) {
 	outline('No housing project code in AG_LOCAL_PARAMETERS.  Stopping');
 	outline('These are the local parameters: ' . dump_array($local));
@@ -20,9 +22,17 @@ if (!$housing_project_code) {
 	exit;
 }	
 
-$filter_project=array('housing_project_code'=>$housing_project_code);
+if (!is_array($housing_project_code)) {
+	$housing_project_code=array($housing_project_code);
+}
+
+$filter_project=array('IN:housing_project_code'=>$housing_project_code);
 //toggle_query_display();
-$title='Welcome to ' . sql_lookup_description($housing_project_code,'l_housing_project','housing_project_code','description');
+if (!$housing_project_label) {
+	$housing_project_label=sql_lookup_description($housing_project_code[0],'l_housing_project','housing_project_code','description');
+}
+
+$title='Welcome to ' . $housing_project_label;
 
 $signin_msg='Select your visiting guest';
 $signin_msg='Sign a guest in';
@@ -121,8 +131,7 @@ switch ($menu) {
 		break;	
 }
 if ($menu=='menu') {
-		$filter=array('housing_project_code'=>$housing_project_code);
-		if (!$id=guest_find_client_id($filter,$message,$_SESSION[$SESSION_ID_VAR])) {
+		if (!$id=guest_find_client_id($filter_project,$message,$_SESSION[$SESSION_ID_VAR])) {
 			$menu=NULL;
 		} else {
 			$_SESSION[$SESSION_ID_VAR]=$id;
