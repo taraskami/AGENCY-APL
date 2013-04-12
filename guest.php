@@ -18,8 +18,8 @@ function guest_find_client_id($filter1,&$msg,$current_id) {
 //	$name_last=$_POST['name_last'];
 //	$name_first=$_POST['name_first'];
 	$unit=$_POST['housing_unit_code'];
-	$prefix=sql_fetch_to_array(agency_query('SELECT unit_code_prefix FROM l_housing_project',$filter1));
-	$prefix_regex=implode('|',$prefix[0]);
+	$prefix=sql_fetch_column(agency_query('SELECT unit_code_prefix FROM l_housing_project',$filter1),'unit_code_prefix');
+	$prefix_regex=implode('|',$prefix);
 	$dob=$_POST['dob'];
 	$yob=$_POST['yob'];
 	$msg1=array();
@@ -40,7 +40,7 @@ function guest_find_client_id($filter1,&$msg,$current_id) {
 		} else if (!$match[1]) {
 			// e.g., if tenant types "204", convert to "A204"
 			$find_unit_filter=array('~:housing_unit_code'=>"($prefix_regex)$unit");
-			$unit=sql_assign('SELECT housing_unit_code FROM housing_unit_current',$find_unit_filter);
+			$unit=sql_assign('SELECT housing_unit_code FROM residence_own_current',$find_unit_filter);
 			//$unit = $prefix . $unit;
 		}
 /*
@@ -106,7 +106,7 @@ function guest_select_form($unit_filter=array()) {
 	. formvartext('name_last')
 */
 	$def=get_def('housing_unit');
-	$def['sel_sql']='SELECT substring(housing_unit_code FROM \'^[a-zA-Z]*([-0-9_]+)$\') AS housing_unit_code FROM housing_unit_current';
+	$def['sel_sql']='SELECT substring(housing_unit_code FROM \'^[a-zA-Z]*([-0-9_]+)$\') AS housing_unit_code FROM residence_own_current';
 	$units=get_generic($unit_filter,NULL,NULL,$def);
 	$units=array_fetch_column($units,'housing_unit_code');
 	$units=div(json_encode($units),'housingUnitCodes','class="serverData"');
