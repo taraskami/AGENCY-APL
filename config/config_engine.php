@@ -151,6 +151,7 @@ $engine['global_default'] = array(
 				  'parent_show' => true,          // will default to load on the parent table/page
 				  'post_with_transactions'=>true, //records will be posted within transactions
 				  'prepend_finished_add_eval' => null, //evaluate code and prepend result to finished view
+				  'quick_search' => array(), // Configuration options for quick searches
 				  'rec_init_from_previous'=>null,      //if true, this will fill in the form with the clients last record
 				  'registration'=> null, // array to specify registration (adding) duplicate-checking
 				  'require_delete_comment' => true,    //will force a comment to be entered when deleting a record

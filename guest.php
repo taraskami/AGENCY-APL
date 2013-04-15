@@ -244,5 +244,8 @@ function post_a_guest_exit($client_id,$guest_id,$msg) {
 	return post_generic($update_rec,$def,$msg,$update_filter);
 }
 
+function guest_search($object='guest',$query_string='') {
+	return object_quick_search($object,$query_string);
+}
 
 ?>

@@ -61,6 +61,10 @@ $engine['guest'] = array(
 			. '. enquote1(sqlify(orr($rec["dob"],"2099-01-01")))'
 			. '. ")"'
 	),
+	'quick_search'=>array(
+		'match_fields'=>array('name_full'),
+		'match_fields_date'=>array('dob')
+	),
 	'fields' => array(
 		'guest_photo' => array(
 			'data_type' => 'attachment',

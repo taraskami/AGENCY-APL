@@ -186,7 +186,7 @@ div.childRecordListGenericData { margin-left: 25px; }
 #objectCommandBox, #objectCommandBox a, #objectCommandBox acronym, #objectCommandBox input { font-size: 75%; }
 
 /* Quick Search */
-#QuickSearch { width: 230px; padding: 2px; vertical-align: middle; position: relative; right: 0; }
+#QuickSearch { width: 320px; padding: 2px; vertical-align: middle; position: relative; right: 0; }
 .QuickSearchTabInactive, .QuickSearchTab { 
 	float: left; 
 	border-top: solid 1px #000088; 

@@ -361,6 +361,62 @@ function log_search()
 
 }
 
+function object_quick_search($object, $query_string='')
+{
+	$def=get_def($object);
+	$qdef=$def['quick_search'];
+
+	$query_string = orr($query_string,$_REQUEST['QuickSearch']);
+	if (is_valid($query_string,'integer_db')) {
+		$filter=array($def['id_field']=>$query_string);
+		$found = count(get_generic($filter,NULL,NULL,$def));
+		if ($found > 0) {
+			global $log_page;
+			$object_page=orr($def['quick_search']['jump_page'],$log_page,'display.php');
+			if ($object_page=='display.php') {
+				$jump_url="display.php?object=$object&action=view&id=$query_string";
+			} else {
+				header('Location: '.$object_page . '?action=show&id='.$query_string);
+			}
+			page_close($silent=true);
+			exit;
+		}
+	}
+	if (dateof($query_string) and ($mf=$qdef['match_fields_date'])) {
+		foreach($mf as $m) {
+			$filter[]=array($m=>dateof($query_string,'SQL'));
+		}
+	} elseif  (ssn_of($query_string) and ($mf=$qdef['match_fields_ssn'])) {
+		foreach($mf as $m) {
+			$filter=array($m=>ssn_of($query_string,'SQL'));
+		}
+	} else {
+		$query_string=sql_escape_string($query_string);
+		$filter=array();
+		// this filter will match names either in "first last" or "last, first"
+		$match_fields=orr($def['quick_search']['match_fields'],array('name_full'));
+		foreach ($match_fields as $field) {
+			$filter['ILIKE:'.$field] = '%'.$query_string.'%';
+		}
+	}
+	//Convert filter to OR
+	if (count($filter)>1) {
+		$filter = array($filter);
+	}
+
+	$control = array_merge(array( 'object'=> $object,
+						'action'=>'list',
+						'list'=>array('filter'=>$filter),
+						'page'=>'display.php'
+						),
+				     orr($_REQUEST['control'],array()));
+	$result = call_engine($control,'control',true,true,$TOTAL,$PERM);
+	if (!$PERM) { return 'No Permissions'; }
+	$sub = oline('Found '.$TOTAL.' results for '.bold($query_string),2);
+	return $sub . $result;
+
+}
+
 function staff_search()
 {
 	$s = $_REQUEST['QuickSearch'];
