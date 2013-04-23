@@ -32,6 +32,8 @@ INSERT INTO tbl_l_hispanic_origin VALUES
  ('998','Not Hispanic*','998',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_hispanic_origin VALUES
  ('999','Unkown','999',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_hispanic_origin (hispanic_origin_code,description,added_by,changed_by) VALUES 
+ ('HISP_GEN','Hispanic, specificity unknown',sys_user(),sys_user());
 
 CREATE VIEW l_hispanic_origin AS (SELECT * FROM tbl_l_hispanic_origin WHERE NOT is_deleted);
 
