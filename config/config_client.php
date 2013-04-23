@@ -173,6 +173,9 @@ $engine["client"] = array(
 					// 'default'=>13, // 13 = English
 					'label'=>'Primary Language'
 				),
+				'med_allergies'=> array('label'=>'Allergies'),
+
+
 				  "name_last" => array( 
 								'label'=>'Last name',
 								'value'=>'$GLOBALS["AG_DEMO_MODE"] ? preg_replace("/[a-z]/","x",preg_replace("/[A-Z]/","X",trim($x))) : $x',
