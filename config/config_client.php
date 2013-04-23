@@ -241,6 +241,10 @@ $engine["client"] = array(
 							   'is_html'=>true,
 							   'label_format_list'=>'smaller($x)',
 							   'label_list'=>'Picture'),
+				'clinical_id'=>array('display'=>'hide'),
+				'king_cty_id'=>array('display'=>'hide'),
+				'spc_id'=>array('display'=>'hide'),
+				'sexual_minority_status_code'=>array('display'=>'hide')
 					 //clinical
 /* Commenting out example of fancy ID handling.
 					 'clinical_id' => array('label'=>'Clinical ID',
@@ -254,6 +258,7 @@ $engine["client"] = array(
 											   || ($action=="add" && sql_num_rows(get_generic(array("clinical_id"=>$x),"","","client"))==0)'
 											   =>'This {$Y} already exists')),
 */
+/*
 					 'king_cty_id' => array('label' => 'King County ID',
 									'valid'=>array('be_null($x) || ($action=="edit" 
 														 && sql_num_rows(get_generic(array("!client_id"=>$rec["client_id"],
@@ -267,6 +272,7 @@ $engine["client"] = array(
 																			     "spc_id"=>$x),"","","client"))==0)
 											   || ($action=="add" && sql_num_rows(get_generic(array("spc_id"=>$x),"","","client"))==0)'
 										    =>'This {$Y} already exists'))
+*/
 				  )
 		);
 include 'config_client_multi.php'; // Configure multi--ethnicity & disability
