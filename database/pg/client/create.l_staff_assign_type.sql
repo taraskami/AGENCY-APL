@@ -15,6 +15,7 @@ CREATE TABLE tbl_l_staff_assign_type (
     sys_log                 TEXT
 );
 
+INSERT INTO tbl_l_staff_assign_type VALUES ('CM','Case Manager',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_staff_assign_type VALUES ('CM_OTHER', 'Other Case Manager',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_staff_assign_type VALUES ('CM_MH_PP', 'MH Case Manager (Private Pay)',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_staff_assign_type VALUES ('CSS', 'Clinical Support Specialist',sys_user(),current_timestamp,sys_user(),current_timestamp);
