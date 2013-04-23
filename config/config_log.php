@@ -33,13 +33,15 @@ should be included in this distribution.
 
 $engine['log'] = array(
 	'allow_object_references'=>array('client','bar'),
-	'add_another'=>true,
+//	'add_another'=>true,
 	'enable_staff_alerts'=>true,
 	'enable_staff_alerts_view'=>true,
 	'include_info_additional'=>true,
 	'list_fields'=>array('custom1','log_type_code','staff_alerts','clients','additional','subject'),
 //	'subtitle_eval_code'=>'($total>0) ? smaller(hlink("log_browse.php?action=show_client_logs&cid=".$id,"Show full text of these logs")) : ""',
 	'subtitle_html'=>smaller(hlink('log_browse.php?action=browse','Go to log index')),
+	'allow_edit'=>false,
+	'allow_delete'=>false,
 //	'allow_add'=>false,
 //	'add_link_show'=>true,
 	'list_hide_view_links' => true,
