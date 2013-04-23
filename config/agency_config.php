@@ -524,6 +524,7 @@ $AG_ENGINE_TABLES_CORE=array(
     'report',
 	'report_block',
     'staff',
+    'l_staff_position',
 //  'staff_driver_authorization',
     'staff_employment',
 //  'staff_identifier',
