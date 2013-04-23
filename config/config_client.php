@@ -169,6 +169,10 @@ $engine["client"] = array(
 						      "post_add"=>false),
 				  'resident_id'=>array(
 								'display'=>'hide'),
+				'language_code'=> array(
+					// 'default'=>13, // 13 = English
+					'label'=>'Primary Language'
+				),
 				  "name_last" => array( 
 								'label'=>'Last name',
 								'value'=>'$GLOBALS["AG_DEMO_MODE"] ? preg_replace("/[a-z]/","x",preg_replace("/[A-Z]/","X",trim($x))) : $x',
