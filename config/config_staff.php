@@ -81,6 +81,7 @@ $engine["staff"] = array(
 							  'comment'=>'Enter only if different from First Name'),
 				'name_full'=>array('label'=>'Full Name'),
 				'staff_email'=>array(
+							   'comment'=>'Leave blank except for irregular cases',
 							   'value'=>'$x ? hlink("mailto:%20".$x,$x) : $x',
 							   'is_html'=>true,
 							   'add_query_modify_condition'=>array('1==1'=>'ENGINE_UNSET_FIELD'), //always unset
