@@ -1,6 +1,6 @@
 CREATE TABLE tbl_housing_unit_subsidy (
 	housing_unit_subsidy_id		SERIAL PRIMARY KEY,
-	housing_project_code    	VARCHAR(10) NOT NULL REFERENCES tbl_l_agency_project (agency_project_code),
+	housing_project_code    	VARCHAR(10) NOT NULL REFERENCES tbl_l_housing_project (housing_project_code),
 	housing_unit_code			VARCHAR(10) NOT NULL REFERENCES tbl_housing_unit (housing_unit_code),
 	housing_unit_subsidy_date 	DATE NOT NULL,
 	housing_unit_subsidy_date_end DATE,
