@@ -37,7 +37,7 @@ $engine['report_block'] = array(
 	'perm_edit'=>'admin',
 	'add_link_show'=>true,
 	'list_order'=>array('report_code'=>false,'sort_order_id'=>false),
-	'list_fields' => array( 'is_enabled','report_code','report_block_title','report_block_comment'),
+	'list_fields' => array( 'is_enabled','report_code','report_block_title','report_block_comment','report_block_sql'),
 	'add_another'=>true,
 	'add_another_and_remember'=>true,
 	'subtitle_html'=>smaller(link_wiki_public('Reports','Report Help')),

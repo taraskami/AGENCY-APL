@@ -811,4 +811,21 @@ function list_report($control,$def,$control_array_variable='',&$REC_NUM)
 		return div($out,'','class="listMain listObjectReport listObjectReportCustom"');
 }
 
+function post_report($rec,$def,&$mesg,$filter='',$control=array()) {
+	if (!be_null($filter) and ($filter!=array())) {
+		return post_generic($rec,$def,$mesg,$filter,$control);
+	}
+	if (($new_rec=post_generic($rec,$def,$mesg,$filter,$control))) { // and ($sql=$rec['quick_sql'])) {
+		$b_def=get_def('report_block');
+		$control2=array();
+		$block=blank_generic($b_def,array('report_code'=>$rec['report_code'],'report_block_sql'=>$rec['quick_sql']),$control2);
+		if (post_generic($block,$b_def,$mesg,$filter,$control2)) {
+			return $new_rec;
+		} else {
+			return false;
+		}
+	}
+
+}
+
 ?>
