@@ -72,6 +72,24 @@ function addSelectedObject( object ) {
 	}
 }
 
+// lifted from http://stackoverflow.com/questions/6524288/jquery-event-for-user-pressing-enter-in-a-textbox
+(function($) {
+    $.fn.onEnter = function(func) {
+        this.bind('keypress', function(e) {
+            if (e.keyCode == 13) func.apply(this, [e]);    
+        });               
+        return this; 
+     };
+})(jQuery);
+
+//Trigger search on enter in Object Picker fields
+$(function() {
+	$('input[name=objectPickerSearchText]').onEnter( function( e ) {
+		e.preventDefault();
+		$(this).closest('div').find('input.objectPickerSubmit').last().click();
+	} );
+});
+
 $(function() {
 	$(".objectPickerSubmit").live("click", function(event) {
 		event.preventDefault();
