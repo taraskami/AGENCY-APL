@@ -30,6 +30,7 @@ CREATE TABLE tbl_l_permission_type (
 CREATE VIEW l_permission_type AS SELECT * FROM tbl_l_permission_type WHERE NOT is_deleted;
 
 INSERT INTO tbl_l_permission_type VALUES ('ADMIN', 'Administrative',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_permission_type VALUES ('ADD_REMOTE_ACCESS', 'Add/edit Remote Access',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_permission_type VALUES ('REPORTS', 'Reports',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_permission_type VALUES ('STAFF', 'STAFF Records',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_permission_type VALUES ('OPEN_QUERY', 'Run Direct SQL Queries',sys_user(),current_timestamp,sys_user(),current_timestamp);
