@@ -13,7 +13,7 @@ CREATE TABLE tbl_client (
 	gender_code 			VARCHAR(10) NOT NULL REFERENCES tbl_l_gender ( gender_code ),
 	hispanic_origin_code		VARCHAR(10) NOT NULL REFERENCES tbl_l_hispanic_origin,
 	needs_interpreter_code 		VARCHAR(10) NOT NULL REFERENCES tbl_l_yes_no ( yes_no_code ),
-	language_code 			VARCHAR(10) NOT NULL REFERENCES tbl_l_language DEFAULT 0 /* 0=unknown */  ( language_code ),
+	language_code 			VARCHAR(10) NOT NULL REFERENCES tbl_l_language (language_code) DEFAULT 0 /* 0=unknown */ ,
 	comments 			TEXT,
 	med_issues 			TEXT,
 	medications 			TEXT,
