@@ -818,7 +818,8 @@ function post_report($rec,$def,&$mesg,$filter='',$control=array()) {
 	if (($new_rec=post_generic($rec,$def,$mesg,$filter,$control))) { // and ($sql=$rec['quick_sql'])) {
 		$b_def=get_def('report_block');
 		$control2=array();
-		$block=blank_generic($b_def,array('report_code'=>$rec['report_code'],'report_block_sql'=>$rec['quick_sql']),$control2);
+		$rec_init=array('report_code'=>$rec['report_code'],'report_block_sql'=>$rec['quick_sql']);
+		$block=blank_generic($b_def,$rec_init,$control2);
 		if (post_generic($block,$b_def,$mesg,$filter,$control2)) {
 			return $new_rec;
 		} else {
