@@ -316,3 +316,22 @@ $( function() {
   });
 
 });
+
+$( function() {
+	$(".formWipeoutLink").click( function (e) {
+		e.preventDefault();
+		var varname = $(this).next().html();
+		$('input[name=' + varname + ']').val('');
+	});
+
+	$('.engineValueUnsetLink').live( 'click', function(e) {
+		e.preventDefault();
+		$(this).closest('.engineValueContainer').find('.engineValue').val(null);
+		$(this).closest('.engineValueContainer').find('.engineValueLabel').remove();
+		$(this).closest('.engineValueContainer').find('.objectPickerToForm').show();
+		$(this).closest('.engineValueContainer').find('.objectPickerToggleLink').hide();	
+		$(this).hide();
+	});
+
+});
+
