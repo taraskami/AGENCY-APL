@@ -84,6 +84,7 @@ $engine['staff_assign']=array(
 										     'comment'=>'required for non-'.$AG_TEXT['ORGANIZATION_SHORT'].' staff'
 										     ),
 							    'agency_code'=>array(
+											 'label'=>'Organization', 
 										     'valid'=>array(
 													  '!be_null($rec["staff_id"]) || !be_null($x)'=>
 													  'Field Agency is required for non-'.$AG_TEXT['ORGANIZATION_SHORT'].' staff'
