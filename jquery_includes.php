@@ -35,7 +35,7 @@ link_style_sheet('jquery.datepick.css','screen',' class="styleSheetScreen"');
 link_style_sheet('jquery.clockpick.css','screen',' class="styleSheetScreen"');
 //link_style_sheet('jquery.keyboard.css','screen',' class="styleSheetScreen"');
 
-link_javascript('jquery-1.4.4.min.js');
+link_javascript('jquery-1.10.2.min.js');
 link_javascript('jquery-ui-1.8.custom.min.js');
 link_javascript('jquery.datepick.pack.js');
 link_javascript('jquery.clockpick.js');
