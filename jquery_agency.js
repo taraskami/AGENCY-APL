@@ -129,7 +129,7 @@ $(function() {
 		$(this).hide().before('<a href="#" class="toggleLink fancyLink">'+text+'</a>');
 	});
 
-	$(".toggleLink").live( 'click', function(event) {
+	$(document).on( 'click', '.toggleLink', function(event) {
 		event.preventDefault();
 		$(this).next().toggle();
 	});
@@ -169,7 +169,7 @@ $(function() {
 
 $(function() {
 /* To remove test warning, click on red spacer cells */
-	$(".topNavSpacerTest").live( "click", function() {
+	$(document).on('click','.topNavSpacerTest', function() {
 		$(".agencyTestWarningBox").remove();
 		$(".topNavSpacerTest").addClass('topNavSpacer').removeClass('topNavSpacerTest');
 	});
@@ -324,7 +324,7 @@ $( function() {
 		$('input[name=' + varname + ']').val('');
 	});
 
-	$('.engineValueUnsetLink').live( 'click', function(e) {
+	$(document).on('click','.engineValueUnsetLink', function(e) {
 		e.preventDefault();
 		$(this).closest('.engineValueContainer').find('.engineValue').val(null);
 		$(this).closest('.engineValueContainer').find('.engineValueLabel').remove();

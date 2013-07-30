@@ -91,7 +91,7 @@ $(function() {
 
 $(function() {
 	// Toggle object picker change link
-	$('.objectPickerToggleLink').live( 'click',function(e) {
+	$(document).on('click','.objectPickerToggleLink',function(e) {
 		e.preventDefault();
 		var selector = $(this).closest('.engineValueContainer').find('.objectPickerToForm');
 		var was_visible=$(selector).is(':visible');
@@ -111,7 +111,7 @@ $(function() {
 
 
 $(function() {
-	$(".objectPickerSubmit").live("click", function(event) {
+	$(document).on('click','.objectPickerSubmit', function(event) {
 		event.preventDefault();
 		var method =$(event.target).closest('div').find("[name=objectPickerMethod]").val();
 		if (!method) {
@@ -230,7 +230,7 @@ $(function() {
 		$(".ajObjectSearchResult").hide();
 		$("#objectSelectorShowLink").show();
 	});
-	$('.selectedObjectRemove').live( 'click', function(event) {
+	$(document).on('click','.selectedObjectRemove', function(event) {
 		event.preventDefault();
 		data=$(this).closest('span').data('selectedObject');
 		if ( ($(this).closest('div').find('span')).length==1) {
