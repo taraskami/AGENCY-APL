@@ -37,7 +37,7 @@ link_style_sheet('jquery.clockpick.css','screen',' class="styleSheetScreen"');
 
 link_javascript('jquery-1.10.2.min.js');
 link_javascript('jquery-ui-1.8.custom.min.js');
-link_javascript('jquery.datepick.pack.js');
+link_javascript('jquery.datepick.min.js');
 link_javascript('jquery.clockpick.js');
 link_javascript('jquery.elastic.js');
 link_javascript('jquery_agency.js');
