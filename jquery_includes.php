@@ -30,13 +30,13 @@ should be included in this distribution.
 </LICENSE>
 */
 
-link_style_sheet('pepper-grinder/jquery-ui-1.8.custom.css','screen',' class="styleSheetScreen"');
+link_style_sheet('pepper-grinder/jquery-ui-1.10.3.custom.min.css','screen',' class="styleSheetScreen"');
 link_style_sheet('jquery.datepick.css','screen',' class="styleSheetScreen"');
 link_style_sheet('jquery.clockpick.css','screen',' class="styleSheetScreen"');
 //link_style_sheet('jquery.keyboard.css','screen',' class="styleSheetScreen"');
 
 link_javascript('jquery-1.10.2.min.js');
-link_javascript('jquery-ui-1.8.custom.min.js');
+link_javascript('jquery-ui-1.10.3.custom.min.js');
 link_javascript('jquery.datepick.min.js');
 link_javascript('jquery.clockpick.js');
 link_javascript('jquery.elastic.js');
