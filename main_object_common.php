@@ -554,7 +554,7 @@ function update_thumbnail($id)
       if ($file  = current_photo_file($id)) {
 
 		$thumb = client_photo_filename($id,"THUMB");
-		if (exec("convert -geometry 120x160 \"$file\" $thumb"))
+		if (exec("convert -geometry 120 \"$file\" $thumb"))
 		{
 			outline ("Couldn't convert $file to thumbnail");
 			return false;
@@ -616,7 +616,7 @@ function client_photo( $idnum, $scale=1, $all_in_array=false )
 	if (!$all_in_array)
 	{
 		return hlink(  client_photo_url($idnum,4), 
-				   httpimage(client_photo_url($idnum,$scale),120*$scale,160*$scale,0));
+				   httpimage(client_photo_url($idnum,$scale),120*$scale,NULL,0));
 	}
 	$base_f=client_photo_filename($idnum,"BASE_F"); // not id-speficic
 	$base_h=client_photo_filename($idnum,"BASE_H"); // "
@@ -630,7 +630,7 @@ function client_photo( $idnum, $scale=1, $all_in_array=false )
 		}
 		$hlink=$base_h."/". rawurlencode(basename($f));
 		$p["file"]=$f;
-		$p["http"]=hlink($hlink,httpimage($hlink,120*$scale,160*$scale,0));
+		$p["http"]=hlink($hlink,httpimage($hlink,120*$scale,NULL,0));
 		if (preg_match("/120x160/i",$f))
 		{
 			$p["size"]="thumb";

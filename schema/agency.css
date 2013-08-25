@@ -453,3 +453,15 @@ a.linkWikiPublic {
 	font-weight: bold;
 	border-radius: 20px;
 }
+
+canvas.imageCapture {
+	border: dashed 8px red;
+}
+
+.imageCaptureContainer {
+	float: left;
+}
+
+.imageSendContainer {
+}
+

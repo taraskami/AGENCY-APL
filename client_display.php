@@ -113,8 +113,8 @@ if (!$client_not_found) {
 	array_unshift($commands,bottomcell(smaller(
 								 oline(hlink_if($_SERVER['PHP_SELF']."?action=print_client_id&id={$client['client_id']}",
 										    "Print ID Card", is_id_station()))
-								 . oline(hlink_if("get_photo.php?client_id={$client['client_id']}",
-											(is_photo_station() ? "Take" : "Upload") . " new photo",true))
+//								 . oline(hlink_if("get_photo.php?client_id={$client['client_id']}",
+//											(is_photo_station() ? "Take" : "Upload") . " new photo",true))
 								 . link_engine(array('object'=>AG_MAIN_OBJECT_DB,
 												'format'=>'data',
 											   'id'=>$client[AG_MAIN_OBJECT_DB.'_id']),

@@ -98,7 +98,7 @@ function client_show( $id )
 	
 	if ($_REQUEST['display_all_photos'] && (!$protected) )
 	{
-		$photo_list = client_photo($client[$ID_FIELD],1,true);
+		$photo_list = client_photo($id,1,true);
 		foreach ($photo_list as $p)
 		{
 			$p_row .= cell(oline($p["http"]) 
@@ -113,7 +113,7 @@ function client_show( $id )
 		}
 		$photos = oline(table(row(cell(bigger(bold("Showing all ".AG_MAIN_OBJECT." photos...")))) . $p_row,"","bgcolor=\"{$colors['blank']}\" border=\"1\""));
 	}
-	$ids = oline(bold(smaller("AGENCY ".ucfirst(AG_MAIN_OBJECT)." ID # " . blue($client[$ID_FIELD]))));
+	$ids = oline(bold(smaller("AGENCY ".ucfirst(AG_MAIN_OBJECT)." ID # " . blue($id))));
 	if ($client["clinical_id"])
 	{
 		$ids .= oline(smaller("Clinical ID (Case ID) # " . $client["clinical_id"]));
@@ -131,7 +131,7 @@ function client_show( $id )
 	}
 
 	//-----client notes-----//
-	$comments = client_note_f($client[$ID_FIELD]);
+	$comments = client_note_f($id);
 	$client_note_hide_button = oline(right(Java_Engine::hide_show_button('ClientNote',false) . smaller('Notes',3)));
 
 	out(div($client_note_hide_button . Java_Engine::hide_show_content($comments,'ClientNote',false),'',' class="clientComment"'));
@@ -153,7 +153,7 @@ function client_show( $id )
 		: client_name($client);
 
 	$out .= tablestart("",'class=""')
-		. row(cell(oline(client_photo( $protected ? 0 : $client[$ID_FIELD]),.25),'rowspan="3"') //passing 0 for protected clients
+		. row(cell(oline(client_photo( $protected ? 0 : $id),.25),'rowspan="3"') //passing 0 for protected clients
 			. topcell( $elevated_concern . $protected_f . oline(bold(bigger($name,3)).smaller(blue(' (ID #'.$id.')'))). $deceased_f,'colspan=2')) 
 		.row(cell(oline('')))
 		. row(cell(table(
@@ -169,7 +169,11 @@ function client_show( $id )
 							 ? ", " . timeof($client["last_photo_at"]) : "")
 						    ),2) 
 				: "")
-			     . smaller("Card issue # " . orr($client["issue_no"], "(missing)"),2))
+				 . hlink('#','New Photo',NULL,'class="photoDialogSelectorLink"')
+				 . oline(div(photo_dialog_box($client['client_id']),'','class="photoDialog hidden"'))	
+
+			     //. smaller("Card issue # " . orr($client["issue_no"], "(missing)"),2))
+				)
 			) . row(cell(""))
 			. tableend();
 	out(oline($out) . $photos);

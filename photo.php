@@ -65,4 +65,26 @@ function object_photo_filename( $id, $object, $scale, $all_in_array=false ) {
 	return $p;
 }
 
+function photo_dialog_box( $id,$object=AG_MAIN_OBJECT) {
+//function button( $label="Submit", $type='', $name='',$value='', $onClick='' , $options=null )
+	return
+		formto('get_photo.php',"file_form",'class="photoUploadButton" enctype=multipart/form-data')
+		. hiddenvar("MAX_FILE_SIZE",3000000)
+		. hiddenvar("client_id",$id)
+		. hiddenvar("object",$object)
+		. hiddenvar("action","file_upload")
+		. hiddenvar('photo_data')
+		. span( oline('Click image to send.')
+		. '<canvas class="imageCapture"></canvas>'
+		,'class="imageSendContainer hidden"')
+		. span( oline('Click video to capture, or'
+		. button('Select file for upload','','','','','class="imageCaptureUploadButton"')
+		. formfile('userfile','class="imageCaptureUpload hidden"'))
+		. '<video autoplay class="videoStream"></video>'
+		,'class="imageCaptureContainer"')
+		. formend()
+		. div('New Photo for ' . client_name($id),'','class="photoDialogTitle serverData"')
+		;
+}
+
 ?>
