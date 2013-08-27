@@ -19,7 +19,7 @@ BEGIN
 		RAISE EXCEPTION ''Client % has a current income record (income_id: %).  Cannot add record from % to %'',NEW.client_id, iid,NEW.income_date,NEW.income_date_end;
 	END IF;	
 	RETURN NEW;
-END;' LANGUAGE 'PLPGSQL';
+END;' LANGUAGE PLPGSQL;
 
 CREATE TRIGGER verify_income_record  BEFORE INSERT
     ON tbl_income FOR EACH ROW

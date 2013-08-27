@@ -55,19 +55,19 @@ DROP FUNCTION table_log ();
 -- create function
 CREATE FUNCTION table_log ()
     RETURNS opaque
-    AS 'MODULE_PATHNAME' LANGUAGE 'C';
+    AS 'MODULE_PATHNAME' LANGUAGE C;
 CREATE FUNCTION "table_log_restore_table" (VARCHAR, VARCHAR, CHAR, CHAR, CHAR, TIMESTAMP, CHAR, INT, INT)
     RETURNS VARCHAR
-    AS 'MODULE_PATHNAME', 'table_log_restore_table' LANGUAGE 'C';
+    AS 'MODULE_PATHNAME', 'table_log_restore_table' LANGUAGE C;
 CREATE FUNCTION "table_log_restore_table" (VARCHAR, VARCHAR, CHAR, CHAR, CHAR, TIMESTAMP, CHAR, INT)
     RETURNS VARCHAR
-    AS 'MODULE_PATHNAME', 'table_log_restore_table' LANGUAGE 'C';
+    AS 'MODULE_PATHNAME', 'table_log_restore_table' LANGUAGE C;
 CREATE FUNCTION "table_log_restore_table" (VARCHAR, VARCHAR, CHAR, CHAR, CHAR, TIMESTAMP, CHAR)
     RETURNS VARCHAR
-    AS 'MODULE_PATHNAME', 'table_log_restore_table' LANGUAGE 'C';
+    AS 'MODULE_PATHNAME', 'table_log_restore_table' LANGUAGE C;
 CREATE FUNCTION "table_log_restore_table" (VARCHAR, VARCHAR, CHAR, CHAR, CHAR, TIMESTAMP)
     RETURNS VARCHAR
-    AS 'MODULE_PATHNAME', 'table_log_restore_table' LANGUAGE 'C';
+    AS 'MODULE_PATHNAME', 'table_log_restore_table' LANGUAGE C;
 End adding functions
 */
 
