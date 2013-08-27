@@ -23,7 +23,7 @@ CREATE TABLE tbl_client_note (
 	deleted_comment		TEXT,
 	sys_log			TEXT
 	CONSTRAINT dismissed_check CHECK (COALESCE(is_dismissed::text,dismissed_at::text,dismissed_by::text,dismissed_comment) IS NULL
-		OR ( ( (is_dismissed::text || dismissed_at::text || dismissed_by::text) IS NOT NULL) AND is_entry_dismissable));
+		OR ( ( (is_dismissed::text || dismissed_at::text || dismissed_by::text) IS NOT NULL) AND is_entry_dismissable))
 );
 
 /*
