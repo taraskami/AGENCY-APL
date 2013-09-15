@@ -246,8 +246,9 @@ function create_system_log($type, $message)
 	 */
 	global $UID;
 
-	agency_query(sql_insert('system_log',array('FIELD:added_at'=>'current_timestamp',
+	agency_query(sql_insert('tbl_system_log',array('FIELD:added_at'=>'current_timestamp',
 							     'added_by'=>$UID,
+							     'changed_by'=>$UID,
 							     'event_type'=>$type,
 							     'message'=>$message)));
 }

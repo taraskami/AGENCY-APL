@@ -60,13 +60,13 @@ switch (AG_MAIN_OBJECT_DB) {
 						     $engine['pss']['table_post'] => '',
 						     $engine['referral_clinical']['table_post'] => '',
 						     $engine['residence_clinical']['table_post'] => '',
-						     $engine['veteran_status_clinical']['table_post'] => '',
+						     $engine['veteran_status_clinical']['table_post'] => ''
 
 						     //---non-engine tables---//
 						     // 					    $clientref_table => '', these are engine tables now
 						     // 					    $payments_table => '',
-						     $bedreg_table => 'client', // doesn't use client_id for field name
-						     $bedreghist_table => 'client'
+//						     $bedreg_table => 'client', // doesn't use client_id for field name
+//						     $bedreghist_table => 'client'
 					    );
 
 	 //last DAL to be entered in SHAMIS
