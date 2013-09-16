@@ -42,7 +42,7 @@ $(function() {
 		event.preventDefault();
 		var tmp=new Date();
 		var tmp2=1+tmp.getMonth()+'/'+tmp.getDate()+'/'+tmp.getFullYear();
-		$(event.target).prev().prev().val(tmp2);
+		$(event.target).prev().prev().val(tmp2).change();
 	});
 
 	$('.field_date').datepick( {
