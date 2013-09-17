@@ -35,7 +35,7 @@ $engine['permission']=array(
 			'allow_delete'=>true,
 			'perm'=>'admin',
 			'perm_list'=>'any',
-			'list_fields' => array('permission_type_code','permission_basis','permission_date','permission_date_end','permission_read','permission_write','permission_super'),
+			'list_fields' => array('permission_type_code','permission_basis','criteria','permission_date','permission_date_end','RWS'),
 			'valid_record'=>array('sql_true($rec["permission_read"]) or sql_true($rec["permission_write"]) or sql_true($rec["permission_super"])'
 							=>'You must select at least one permission mode (read, write or super).'),
 			'widget'=>array(
@@ -51,6 +51,21 @@ $engine['permission']=array(
 					    'required_fields'=>array('permission_read','permission_write','permission_super')
 					    ),
 			'fields' => array( 
+					  'RWS' => array(
+						'value'=>'(sql_true($rec["permission_read"]) ? "R" : "") 
+								 . (sql_true($rec["permission_write"]) ? "W" : "") 
+								 . (sql_true($rec["permission_super"]) ? "S" : "")',
+					  ),
+					  'permission_date_end'=>array('label'=>'End Date'),
+					  'criteria'=>array(
+						'value'=>'implode(oline(),array_filter(array(
+									be_null($rec["staff_id"]) ? "" : staff_link($rec["staff_id"]),
+									be_null($rec["agency_project_code"]) ? "" : ("Project: " . sql_lookup_description($rec["agency_project_code"],"l_agency_project","agency_project_code")),
+									be_null($rec["agency_program_code"]) ? "" : ("Program: " . sql_lookup_description($rec["agency_program_code"],"l_agency_program","agency_program_code")),
+									be_null($rec["staff_position_code"]) ? "" : ("Position: " . sql_lookup_description($rec["staff_position_code"],"l_staff_position","staff_position_code"))
+								)))',
+						'is_html'=>true
+						),
 					  'permission_id' =>
 					  array( 'label' => 'Permission #',
 						   'display' => 'display',
