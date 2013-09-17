@@ -995,7 +995,7 @@ function engine($control='',$control_array_variable='control')
 		}
 		$allow_var = 'allow_' . $action;
 		if (!$$allow_var) {
-			$message .= oline('This record cannot be ' . $action . 'ed.');
+			$message .= oline('This record cannot be ' . $verb);
 			break;
 		}
 
@@ -1062,8 +1062,8 @@ function engine($control='',$control_array_variable='control')
 
 			$res = $def['fn'][$action]($filter,$def,$action,$message,$act_record);
 			$message .= oline($res ?
-						'Record '.$id.' successfully ' .$action .'ed from '.$def['table'].'.'
-						: 'Error.  Record not ' .$action.'ed.');
+						'Record '.$id.' successfully ' .$verb .' from '.$def['table'].'.'
+						: 'Error.  Record not ' .$verb.'.');
 			/* generate a list of records as fall-through */
 			if ($list = $control['list']) {
 				$list['fields']=$def['list_fields'];
