@@ -238,7 +238,7 @@ $(function() {
 		}
 	});
 /* Toggle Advanced Controls */
-	$("#advancedControlButton").click( function() { $(".advancedControl").toggle() } );
+	$("#advancedControlButton").click( function(e) { e.preventDefault(); $(".advancedControl").toggle(); } );
 });
 
 $(function() {
