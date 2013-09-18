@@ -247,4 +247,71 @@ $(function() {
 		event.preventDefault();
 		$("#enterVisitorForm").toggle("slow");
 	});
+
+$( function() {
+  // Webcam stuff here
+
+  $('.photoDialogSelectorLink').click( function(e) {
+		e.preventDefault();
+		var title = $('.photoDialog').find('.photoDialogTitle').html();
+		$('.photoDialog').dialog( {title: title, width: 'auto',height: 'auto', position: { my: "center top", at: "center top", of: window }}).show();
+//		$('.photoDialog').show();
+		var onFailSoHard = function(e) {
+			console.log('Reeeejected!', e);
+		};
+
+		navigator.getMedia = ( navigator.getUserMedia ||
+                       navigator.webkitGetUserMedia ||
+                       navigator.mozGetUserMedia ||
+                       navigator.msGetUserMedia);
+
+//navigator.getMedia (constraints, success, error);
+
+  // Not showing vendor prefixes.
+	//navigator.getUserMedia({video: true, audio: true}, function(localMediaStream) {
+	navigator.getMedia({video: true, audio: false}, function(localMediaStream) {
+		var myVideo = document.querySelector('video.videoStream');
+		myVideo.src = window.URL.createObjectURL(localMediaStream);
+  
+  	// Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
+  	// See crbug.com/110938.
+		myVideo.onloadedmetadata = function(e) {
+			// Ready to go. Do some stuff.
+		};
+	}, onFailSoHard);
+	});
+
+	$('video.videoStream').click( function(e) {
+		e.preventDefault();
+		var myVideo = document.querySelector('video.videoStream');
+		var canvas = document.querySelector('canvas.imageCapture');
+		var context = canvas.getContext('2d');
+		$(this).closest('.photoDialog').find('.imageSendContainer').show();
+		canvas.width=myVideo.videoWidth;
+		canvas.height=myVideo.videoHeight;
+		context.drawImage(myVideo, 0, 0,myVideo.videoWidth,myVideo.videoHeight);
+		console.log('W: ' + myVideo.videoWidth+', H: ' + myVideo.videoHeight);
+	});
+
+	$('canvas.imageCapture').click( function(e) {
+		e.preventDefault();
+		var canvas = document.querySelector('canvas.imageCapture');
+		var form = $(this).closest('form');
+		$(form).find('input[name=photo_data]').val(canvas.toDataURL('image/jpeg'));
+		$(form).submit();
+	});
+
+	// Submit form when upload file selected
+	$('.imageCaptureUpload').change( function() { 
+		if ($(this).val() != "") {
+			$(this).closest('form').submit();
+		}
+	});
+
+	// Upload dialog is clunky and hidden.  A cleaner button triggers it.
+	$('.imageCaptureUploadButton').click( function(e) {
+		e.preventDefault();
+		$(this).closest('div').find('.imageCaptureUpload').click();
+	});
+
 });
