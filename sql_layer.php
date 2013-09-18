@@ -110,6 +110,11 @@ function sql_escape_literal($s)
 
 function sql_metadata($table)
 {
+	static $cache;
+	if (isset($cache[$table])) {
+		return $cache[$table];
+	}
+
 	switch ($GLOBALS['WHICH_DB']) {
 	case 'my' :
 	      outline('No metadata function for MySQL');
@@ -250,6 +255,7 @@ function sql_metadata($table)
 
 	      }
 
+          $cache[$table]=$fields;
 	      return $fields;	
 	      break;
 	default :
@@ -311,30 +317,36 @@ function sql_field_default($table,$field_name)
 
 function sql_field_comment($table,$field)
 {
+	static $cached_comments;
+
 	switch ($GLOBALS['WHICH_DB']) {
 	case 'my':
 		outline('No field_comment function for MySQL');
 		return null;
-		/*
-SELECT a.attname,
-  pg_catalog.format_type(a.atttypid, a.atttypmod),
-  a.attnotnull, a.atthasdef, a.attnum, pg_catalog.col_description(a.attrelid, a.attnum)
-FROM pg_catalog.pg_attribute a
-WHERE a.attrelid = '3541239459' AND a.attnum > 0 AND NOT a.attisdropped
-ORDER BY a.attnum*/
 	case 'pg':
-		$sql = agency_query("SELECT pg_catalog.col_description(a.attrelid, a.attnum)
-                              FROM pg_catalog.pg_attribute a, pg_class c
-                              WHERE c.relname='$table'
-                                  AND a.attrelid = c.oid
-                                  AND a.attname = '$field'");
-		$comment = sql_fetch_assoc($sql);
-		return $comment['col_description'];
+		if (!$cached_comments) {
+			$c_sql = ' 
+SELECT c.relname AS table,a.attname AS column,pg_catalog.col_description(a.attrelid, a.attnum) AS comment
+FROM pg_catalog.pg_attribute a, pg_class c
+WHERE  a.attrelid = c.oid
+AND pg_catalog.col_description(a.attrelid, a.attnum) IS NOT NULL;
+';
+			$comments=agency_query($c_sql);
+			while ($c = sql_fetch_assoc($comments)) {
+				$cached_comments[$c['table']][$c['field']]=$c['comment'];
+			}
+		}
+
+		return isset($c[$table][$field])
+			? $c[$table][$field]
+			: '';
 	}
 }
 
 function sql_relation_kind($sql_relation)
 {
+	  // This function seems unused as it's no longer called by is_table or is_view
+	  // It might have other uses, though, so leaving it for now.
       switch ($GLOBALS['WHICH_DB'])
       {
       case 'my' :
@@ -372,12 +384,21 @@ function sql_relation_kind($sql_relation)
 
 function is_table($table)
 {
-      return (sql_relation_kind($table)=='table');
+	  static $cache;
+	  if (!$cache) {
+		$cache=sql_fetch_column('select tablename from pg_tables where tableowner=(select current_user)','tablename');
+	  }
+
+	  return in_array($table,$cache) ? true : false;
 }
 
 function is_view($view)
 {
-      return (sql_relation_kind($view)=='view');
+	  static $cache;
+	  if (!$cache) {
+		$cache=sql_fetch_column('select viewname from pg_views where viewowner=(select current_user)','viewname');
+	  }
+	  return in_array($view,$cache) ? true : false;
 }
 
 function isTableView($relation)
