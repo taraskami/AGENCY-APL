@@ -111,7 +111,7 @@ function sql_escape_literal($s)
 function sql_metadata($table)
 {
 	static $cache;
-	if (isset($cache[$table])) {
+	if (array_key_exists($table,$cache)) {
 		return $cache[$table];
 	}
 
@@ -385,18 +385,17 @@ function sql_relation_kind($sql_relation)
 function is_table($table)
 {
 	  static $cache;
-	  if (!$cache) {
-		$cache=sql_fetch_column('select tablename from pg_tables where tableowner=(select current_user)','tablename');
+	  if (!is_array($cache)) {
+		$cache=sql_fetch_column(agency_query('select tablename from pg_tables where tableowner=(select current_user)'),'tablename');
 	  }
-
 	  return in_array($table,$cache) ? true : false;
 }
 
 function is_view($view)
 {
 	  static $cache;
-	  if (!$cache) {
-		$cache=sql_fetch_column('select viewname from pg_views where viewowner=(select current_user)','viewname');
+	  if (!is_array($cache)) {
+		$cache=sql_fetch_column(agency_query('select viewname from pg_views where viewowner=(select current_user)'),'viewname');
 	  }
 	  return in_array($view,$cache) ? true : false;
 }
