@@ -313,5 +313,6 @@ $( function() {
 		e.preventDefault();
 		$(this).closest('div').find('.imageCaptureUpload').click();
 	});
+  });
 
 });
