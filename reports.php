@@ -172,7 +172,7 @@ function report_get_user_var($name,$report_code,$type=NULL)
 		// Reassemble timestamps
 		$val=$_REQUEST[$varname.'_date_'].' ' . $_REQUEST[$varname.'_time_'];
 	} elseif ($type=='PICK_MULTI') {
-		$val=array_keys($_REQUEST[$varname]);
+		$val=is_array($_REQUEST[$varname]) ? array_keys($_REQUEST[$varname]) : $_REQUEST[$varname];
 	} else {
 		$val=$_REQUEST[$varname];
 	}	
@@ -198,7 +198,6 @@ function report_generate($report,&$msg)
 		$type  = $var['type'];
 		$name  = $var['name'];
 		$value = report_get_user_var($name,$report['report_code'],$type);
-
 		switch ($type) {
 		case 'DATE' :
 			$value_sql = dateof($value,'SQL');
@@ -213,8 +212,12 @@ function report_generate($report,&$msg)
 			$value_header = dateof($value) . ' ' . timeof($value);
 			break;
 		case 'PICK_MULTI' :
-			$value_sql=implode("','",$value); // When used wrapped in single quotes, 'v','a','l','u','e'
-			$value_header = implode(',',$value);
+			if (is_array($value)) {
+				$value_sql=implode("','",$value); // When used wrapped in single quotes, 'v','a','l','u','e'
+				$value_header = implode(',',$value);
+			} else {
+				$value_sql = $value_header = $value;
+			}
 			break;
 		default:
 			$value_sql = $value;
@@ -751,12 +754,22 @@ function link_report($report_code,$label,$init=array(),$action='',$template=null
 				? 'display.php?control[object]=report&control[id]='.$report_code
 				: AG_REPORTS_URL . '?' .$key.'='.$report_code);
 	$url .= $action ? (($redirect ? '&control[action]=' : '&action=') . $action ): '';
-	$url .= $template ?  '&'.AG_REPORTS_VARIABLE_PREFIX.'template='. $template : '';
 	
 	if (!be_null($init) && is_assoc_array($init)) {
+		// Template & Action specified in variable array
+		// override.
+		if (!isset($init['template'])) {
+			$init['template']=$template;
+		}
+		if (!isset($init['action'])) {
+			$init['action']=$action;
+		}
 		foreach ($init as $var => $val) {
 			$url .= '&'.AG_REPORTS_VARIABLE_PREFIX.$var.'='.$val;
 		}
+	} else {
+		$url .= $template ?  '&'.AG_REPORTS_VARIABLE_PREFIX.'template='. $template : '';
+		$url .= $action ?  '&'.AG_REPORTS_VARIABLE_PREFIX.'action='. $action : '';
 	}
 	$perm = $rep['permission_type_codes'];
 	return hlink_if($url,$label,(be_null($perm) || ($perm==array()) || has_perm($perm)));
