@@ -129,6 +129,13 @@ function client_show( $id )
 	if ($client['spc_id']) {
 		$ids .= oline(smaller('SPC ID# '.$client['spc_id']));
 	}
+	// Export IDs
+	$c_filt=client_filter($id);
+	$x_ids=get_generic($c_filt,NULL,NULL,'client_export_id');
+	foreach ($x_ids as $x) {
+		$ids .= oline(smaller(sql_lookup_description($x['export_organization_code'],'l_export_organization').' # ' . $x['export_id']));
+	}
+	$ids .= add_link('client_export_id','Add an ID',NULL,client_filter($id));
 
 	//-----client notes-----//
 	$comments = client_note_f($id);
