@@ -74,6 +74,9 @@ function list_link($object,$label='',$filter='',$order='',$options=null)
 	$def=get_def($object);
 	$plur=$def['plural'];
 	$list_a=array('filter'=>orr($filter,array()),'order'=>orr($order,array()));
+	if ($def['add_link_show']) {
+		$list_a['display_add_link']=true;
+	}
 	return link_engine(array('object'=>$object,'action'=>'list','id'=>'list','list'=>$list_a),orr($label,'List ' . $plur),'',$options);
 }
 
