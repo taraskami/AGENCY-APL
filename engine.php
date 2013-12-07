@@ -376,9 +376,16 @@ function engine($control='',$control_array_variable='control')
 			     * Valid record
 			     */
 			    $step='confirm';
+				if ($def['allow_skip_confirm'] and (!$def['password_required'])) {
+					// Check if it's valid here, so can skip review (if allowed)
+		    		$def['fn']['confirm']($REC,$def,$confirm_message,$action,$REC_LAST);
+					if (!$confirm_message) {
+						$confirmed_valid = true;
+					}	
+				}	
 		    }
 	    }
-	    if ($step=='confirm_pass' or $step=='post') {
+	    if ( ($step=='confirm_pass') or ($step=='post') or $confirmed_valid) {
 		    if ($passed_password) {
 			    $step='post';
 		    } else {
@@ -553,10 +560,16 @@ function engine($control='',$control_array_variable='control')
 		    /*
 		     * Valid record, user is prompted to confirm record before posting
 		     */
-		    $def['fn']['confirm']($REC,$def,$message,$action,$REC_LAST);
-		    $message = ($message
+
+			// FIXME: This avoids re-confirming record overhead
+			//  	  which should be safe, if params haven't changed
+			
+		    if (!$confirm_message) {
+				$def['fn']['confirm']($REC,$def,$confirm_message,$action,$REC_LAST);
+			}
+		    $message = ($confirm_message
 				    ? (black(oline('Please review these warnings: ',2))
-					 . $message . oline(hrule()))
+					 . $confirm_message . oline(hrule()))
 				    : 'Please review your record.');
 
 		    /*

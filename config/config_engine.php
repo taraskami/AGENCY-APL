@@ -184,6 +184,7 @@ $engine['global_default'] = array(
 				  'allow_list' => true,
 				  'allow_view' => true,
 				  'allow_download' => true,
+				  'allow_skip_confirm' => false, // If add/edit record has no confirmation warnings, post directly without review
 				  //'label_format' => '$x',
 				  //'value_format' => 'bold($x)', redundant!!
 				  //title added below
