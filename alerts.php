@@ -53,7 +53,7 @@ function get_alerts($filter,$order="",$limit="")
 {
 	global $alert_order;
 	$def=get_def('alert');
-	return get_generic($filter,orr($order,$alert_order,$def['list_order']),$limit,$def);
+	return get_generic($filter,orr($order,$alert_order,list_query_order($def['list_order'])),$limit,$def);
 }
 
 function get_alerts_for_log( $logno, $separator="" )
@@ -158,6 +158,20 @@ EOF
 
 		$i = 0;
 		foreach ($alerts as $x) {
+			// Redirect reference to referenced table
+			if ($x['ref_table']=='reference') {
+				$r_def=$r_def ? $r_def : get_def('reference');
+				$refs=(get_generic(array($r_def['id_field']=>$x['ref_id']),NULL,NULL,$r_def));
+				if (count($refs) < 1) {
+					// Bad reference, skip
+					continue;
+				}
+				$ref_rec=array_shift($refs);
+				$x['ref_table']=$ref_rec['from_table'];
+				$x['ref_id']=$ref_rec['from_id'];
+				$x['alert_subject']=preg_replace('/^(reference)/i',$x['ref_table'],$x['alert_subject']);
+			}
+
 			$extra=$action=$user=$action2=$user2='';
 			$color_flip = !$color_flip;
 			$rowclass = $color_flip ? '2' : '1';
