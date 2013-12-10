@@ -61,16 +61,26 @@ if (($control['action']=='add') and is_enabled('object_reg_search')) {
 	}
 }
 
-$stuff=engine($control);
+// This test is copied (repeated) from engine,
+// to avoid calling without required info
+// Otherwise people get a (harmless) "error"
+// that nonetheless has caused major confusion for users
 
-$formatted_title = $stuff['title'];
-$commands   = $stuff['commands'];
-$message    = $stuff['message'];
-$help       = $stuff['help'];
-$output     = $stuff['output'];
-$menu       = $stuff['menu'];
 
-$title = strip_tags($formatted_title);
+if (!$control['object'] or !$control['action'] or (!$control['id'] and (!in_array($control['action'],array('add','list'))) )) {
+	// return array('message'=>dump_array($control) . "ERROR: engine() must have an action ($action), object ($object) and id ($id) passed.");
+	$title='AGENCY';
+} else {
+	$stuff=engine($control);
+	$formatted_title = $stuff['title'];
+	$commands   = $stuff['commands'];
+	$message    = $stuff['message'];
+	$help       = $stuff['help'];
+	$output     = $stuff['output'];
+	$menu       = $stuff['menu'];
+	$title = strip_tags($formatted_title);
+}
+
 
 agency_top_header($commands);
 
