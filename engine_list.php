@@ -699,6 +699,7 @@ function list_links($max,$position,$total,$control,$control_array_variable)
 	 */
       $num_pages = ceil($total / $max);
       $current_page = floor($position/ $max) +1;
+      $current_page = floor(($position+$max-1)/ $max) +1;
       $jump_links=array();
       for ($x=0;$x<$num_pages;$x++)
       {
@@ -706,7 +707,7 @@ function list_links($max,$position,$total,$control,$control_array_variable)
 	    $new_position = $x * $max;
 	    $control['list']['max']=$max;
 	    $control['list']['position']=$new_position;
-	    array_push($jump_links, (($position==$new_position) 
+	    array_push($jump_links, ( ($page==$current_page)
 		       ? dead_link($page) 
 		       : link_engine($control,$page,$control_array_variable)).' ');
 	    if (($current_page-1)==$page) // previous page link
