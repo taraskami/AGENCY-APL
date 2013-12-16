@@ -479,8 +479,10 @@ function timeof( $datetime, $format="ampm", $secs="" )
 		$datetime=datetimeof("now");
 	}
 
-	$re_datetime = $re_hours24 . $re_sep . $re_mins24 . $sep
-		. "((" . $re_secs24 . "))" . $re_trail;
+	//$re_datetime = $re_hours24 . $re_sep . $re_mins24 . $sep
+	//	. "((" . $re_secs24 . "))" . $re_trail;
+	$re_datetime = $re_hours24 . $re_sep . $re_mins24 . 
+		'(' . $sep . $re_secs24 . ")?" . $re_trail;
 
 	$re_time = $re_hours . $re_sep . $re_mins
             . "(" . "(" . $re_sep . $re_secs . ")?"
@@ -1111,11 +1113,6 @@ function headtitle( $a, $refresh=0 )
 {
     html_header($a,$refresh);
     headline( center( $a ));
-}
-
-function blink( $a)
-{
-      return "<blink>" . $a . "</blink>";
 }
 
 function style( $ml, $style='type="text/css"' )
