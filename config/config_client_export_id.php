@@ -32,24 +32,20 @@ should be included in this distribution.
 */
 
 
-$engine['client_export_id'] = 
-    array(
-	    // 'singular' => 'Client SHA ID Record',
-	    'perm' => 'rent',
-	    'list_fields' => array('export_organization_code', 'export_id'),
-	    'fields'=>
-	    array('export_organization_code' => 
-		    array('valid'=>
-			    array(
-				    '!($x == "SAFE_HARB" and $action=="add") '=>'Cannot add new Safe Harbors record',
-				    '!($x == "PAYROLL")' => 'Clients do not have Payroll identifiers')
-			    )
+$engine['client_export_id'] = array(
+	'singular'=>'ID Number',
+	'perm' => 'reach',
+	'require_password'=>false,
+    'list_fields' => array('export_organization_code', 'export_id'),
+    'fields'=> array(
+		'export_id'=>array('label'=>'ID Number'),
+		'export_organization_code' => array(
+			'label'=>'ID Type',
+			'invalid'=> array(
+			    '($x == "HCH") and (!has_perm("ADMIN"))'=>'Admin perms needed for HCH IDs'
 		    )
-	    
-	    /*	  'fields' => array(
-	     'export_organization_code' => array('default' => 'SHA',
-	     'display' => 'display')
-	     ) */
-	    );
+	    )
+   	) 
+);
 
 ?>
