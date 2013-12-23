@@ -192,6 +192,13 @@ $engine['global_default'] = array(
 				  'perm_void' => 'admin',
 				  'title_format' => null);
 
+// Default perms for lookup tables
+$engine['lookup_default'] = array(
+	'perm_delete' => 'admin',
+	'perm_add' => 'admin',
+	'perm_edit' => 'admin'
+);
+
 $engine['field_default'] = array(
 				'add_another_remember'=>null, //set this to true for fields engine will remember on add_another
 				'add_main_objects'=>null, //will display a client selector if null

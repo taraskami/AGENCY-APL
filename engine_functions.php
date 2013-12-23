@@ -536,6 +536,17 @@ function get_def($object)
 
 	$def = config_undefined_object($object);
 
+	if ( $lookup_table) {
+		// Use special defaults for lookup tables
+		foreach ($engine['lookup_default'] as $option=>$val) {
+			if ($option=='fields') {
+				// At least for now, can only specify table-level for lookups
+				continue;
+			}
+			$def[$option]=orr($def[$perm],$val);
+		}
+	}
+
 	if ( $survey_table ) {
 		$def['add_link_always'] = orrn($def['add_link_always'],false);
 	}
