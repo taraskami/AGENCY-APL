@@ -972,8 +972,9 @@ function page_close($silent=false)
 		 * Errors occured
 		 */
 		$vars = get_phpinfo();
+		$AG_EMAIL_ERROR_CACHE  .= "\n\n" . $vars;
 		mail( is_array($mail_errors_to) ? implode($mail_errors_to,',') : $mail_errors_to,
-			 "AGENCY Error: $NICK ($UID) running {$_SERVER['PHP_SELF']}",$AG_EMAIL_ERROR_CACHE . "\n\n" . $vars);
+			 "AGENCY Error: $NICK ($UID) running {$_SERVER['PHP_SELF']}",strip_tags($AG_EMAIL_ERROR_CACHE));
 
 	}
 

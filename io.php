@@ -213,7 +213,7 @@ function log_error( $error_text, $silent=false, $die = false )
 			$vars = get_phpinfo();
 			$error_string .= oline() . $vars;
 			mail( is_array($mail_errors_to) ? implode($mail_errors_to,',') : $mail_errors_to,
-				 "AGENCY Error: $NICK ($UID) running {$_SERVER['PHP_SELF']}",$AG_EMAIL_ERROR_CACHE . $error_string);
+				 "AGENCY Error: $NICK ($UID) running {$_SERVER['PHP_SELF']}",strip_tags($AG_EMAIL_ERROR_CACHE . $error_string));
 		} else {
 			//append email cache to be sent by page_close()
 			$AG_EMAIL_ERROR_CACHE .= "\n".$error_string;
