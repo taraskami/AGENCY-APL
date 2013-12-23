@@ -1,5 +1,3 @@
-//config_safe_harbors_consent.php
-
 <?php
 /*
 <LICENSE>
