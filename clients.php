@@ -951,7 +951,7 @@ function client_note_f ($id)
 // 	$filter['is_front_page'] = sql_true();
 	$res = get_generic($filter,' added_at DESC','','client_note');
 	if (count($res) < 1) {
-		return html_no_print(link_engine(array('object'=>'client_note','action'=>'add','rec_init'=>client_filter($id)),'Add a Note'));
+		return html_no_print(link_engine(array('object'=>'client_note','action'=>'add','rec_init'=>client_filter($id)),'Add a ' . $def['singular']));
 
 	}
  	$out = html_no_print(jump_to_object_link('client_note'));
@@ -1391,6 +1391,8 @@ function assignments_f($staff_id, $my=false) {
 	global $colors, $UID, $AG_USER_OPTION;
 
 	$def = get_def('staff_assign');
+	$sing = $def['singular'];
+	$plural = $def['plural'];
 
 	//these settings are stored across sessions
 	$hide = $AG_USER_OPTION->show_hide('assignments_f');
@@ -1426,7 +1428,7 @@ function assignments_f($staff_id, $my=false) {
 				
 				foreach ($assign as $type=>$id) {
 					$formatted = alt(link_engine(array('object'=>'staff_assign','action'=>'view','id'=>$id),black($type),'',' class="fancyLink"'),
-							     'Click to view staff assignment');
+							     'Click to view ' . $sing);
 					array_push($tmp,$formatted);
 					$t_type = $types[$type];
 					switch ($t_type) {
@@ -1477,14 +1479,14 @@ function assignments_f($staff_id, $my=false) {
 		}
 	}
 	else {
-		$out = row(cell('No staff assignments',' style="padding: 0px 4px 0px 4px; white-space: nowrap;"'),'class="generalData1"');
+		$out = row(cell('No ' . $plural,' style="padding: 0px 4px 0px 4px; white-space: nowrap;"'),'class="generalData1"');
 	}
 	
 		
 	$width = $hide ? ' boxHeaderEmpty' : '';
 	$title=row(cell(($my
 			     ? 'My ' . ucwords(AG_MAIN_OBJECT) . ' List ('.orr($cnt,'0').')'
-			     : 'Assignments ('.orr($cnt,'0').') for ' . staff_link($staff_id)).$show_hide_link
+			     : $plural . ' ('.orr($cnt,'0').') for ' . staff_link($staff_id)).$show_hide_link
 			    ,' style="color: red; " class="staff boxHeader'.$width.'"'));
 	$out = table($title . $out,null,' bgcolor="" cellspacing="0" cellpadding="0" style=" border: 1px solid black;"');
 	return $out;

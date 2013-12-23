@@ -328,7 +328,7 @@ function client_staff_assignments_f($id) {
 			$tmp=array();
 			foreach ($assign as $type=>$id) {
 				$formatted = alt(link_engine(array('object'=>'staff_assign','action'=>'view','id'=>$id),blue($type)),
-						     'Click to view staff assignment');
+						     'Click to view ' . $def['singular']);
 				array_push($tmp,$formatted);
 			}
 
@@ -336,7 +336,7 @@ function client_staff_assignments_f($id) {
 		}
 		
 	} else {
-		$out = oline('No staff assignments');
+		$out = oline('No ' . $def['plural']);
 	}
 	return smaller($out);
 }
