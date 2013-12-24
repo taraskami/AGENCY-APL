@@ -281,6 +281,9 @@ function client_link( $idnum, $name="lookup", $url="" , $options=null)
 function is_client( $idnum )
 {
 	global $client_table, $client_table_id;
+	if (!is_valid('integer_db',$idnum)) {
+		return false;
+	}
 	$q = sql_query("SELECT * from $client_table WHERE $client_table_id = $idnum");
 	return ($q && (sql_num_rows($q) > 0) );
 }
