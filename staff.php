@@ -837,7 +837,6 @@ function staff_record_association_form($id = false)
 	}
 
 	global $AG_HEAD_TAG;
-	$AG_HEAD_TAG .= Java_Engine::get_js(Java_Engine::populate_select_js());
 	$AG_HEAD_TAG .= Java_Engine::get_js('var arrPop=new Array()'."\n".'arrPop = '.Java_Engine::php_to_js_array($staffs)); 
 
 	$out .= anchor('staffAssoc');

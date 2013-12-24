@@ -135,7 +135,6 @@ class Java_Engine {
 						}
 						break;
 					case 'populate_on_select':
-						$this->add_javascript($this->populate_select_js());
 						$populate_field=$action['populate_field']; //only one select may be populated at this juncture
 						$populate_element=$this->variable_to_element($populate_field);
 						$this->FLAG[$populate_field]['blank_selects']=true;
@@ -150,7 +149,8 @@ class Java_Engine {
 						$table=$action['table']; //this must be specified
 						$from_field=orr($action['from_field'],$field);
 						$pop_field=orr($action['pop_field'],$populate_field);
-						$label_field=orr($action['label_field'],$pop_field);
+						$label_field=orr($action['label_field'],$this->def['fields'][$pop_field]['lookup']['label_field'],$pop_field);
+
 						$populate_array=$this->generate_populate_select_array($table,$from_field,$pop_field,$label_field);
 						$this->add_javascript('var arrPop=new Array()'."\n".'arrPop = '.$populate_array); 
 						if (!be_null($this->rec[$populate_field])) {
@@ -277,7 +277,7 @@ class Java_Engine {
 	function generate_populate_select_array($table,$from_field,$pop_field,$label_field) {
 		//returns a 3-dimensional array: [parent select code][populate select code][populate select label]
 		//in order to use this function, the associated sorting values must reside in the same table
-		$res=agency_query("SELECT $from_field AS from_field, $pop_field AS pop_field, $label_field AS label_field FROM $table",'',$pop_field);
+		$res=agency_query("SELECT $from_field AS from_field, $pop_field AS pop_field, $label_field AS label_field FROM $table",'',"$from_field,$label_field");
 		$array=array();
 		while ($a=sql_fetch_assoc($res)) {
 			$from=$a['from_field'];
@@ -626,43 +626,5 @@ class Java_Engine {
 		function enableIt(obj){ obj.disabled = false; }';
 	}
 
-	function populate_select_js() {
-		return 
-			'function populateSelect( fFrom, fPop, intStart, fFromStart ) {
-			      var a = arrPop
-				var b, c, d, intItem, intType
-				
-				if ( intStart !== "" ) {
-					for ( b = 0; b < a.length; b++ ) {
-						if ( a[b][1] == intStart ) {
-							intType = a[b][0];
-						}
-					}
-					for ( c = 0; c < fFrom.length; c++ ) {
-						if ( fFrom.options[ c ].value == intType ) {
-							fFrom.selectedIndex = c;
-						}
-					}
-				}
-				if ( fFromStart !== null ) { //a method to start with a blank list
-					intType=fFromStart;
-				}
-				
-				if ( intType == null ) {
-					intType = fFrom.options[ fFrom.selectedIndex ].value
-						}
-				
-				fPop.options.length = 0;
-				
-				for ( d = 0; d < a.length; d++ ) {
-					if ( a[d][0] == intType ) {
-						fPop.options[ fPop.options.length ] = new Option( a[d][2], a[d][1] );
-					}
-					if ( a[d][1] == intStart && intStart !== "") {
-						fPop.selectedIndex = fPop.options.length - 1;
-					}
-				}
-		     }';
-	}
 } //end class Java_Engine
 ?>

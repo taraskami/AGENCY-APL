@@ -132,3 +132,46 @@ function getDaysInMonth(month,year)
 	}
 	return days;
 }
+
+function populateSelect( fFrom, fPop, intStart, fFromStart ) {
+		var a = arrPop;
+		var b, c, d, intItem, intType;
+	// Note this function was hastily hacked to work with non-select lists
+	// (e.g., for selectors).  It appears to work, but may have problems
+	if ( fFrom.type=='select') {
+		if ( intStart !== "" ) {
+			for ( b = 0; b < a.length; b++ ) {
+				if ( a[b][1] == intStart ) {
+					intType = a[b][0];
+				}
+			}
+			for ( c = 0; c < fFrom.length; c++ ) {
+				if ( fFrom.options[ c ].value == intType ) {
+					fFrom.selectedIndex = c;
+				}
+			}
+		}
+ 		 if ( intType == null ) {
+			intType = fFrom.options[ fFrom.selectedIndex ].value;
+		}
+
+	} else {
+		intType =  fFrom.value;
+	}
+
+		//if ( fFromStart !== null ) { //a method to start with a blank list
+		if ( (fFromStart !== null) && (fFromStart !== undefined) ) { //a method to start with a blank list
+			intType=fFromStart;
+		}
+
+		fPop.options.length = 0;
+
+		for ( d = 0; d < a.length; d++ ) {
+			if ( a[d][0] == intType ) {
+				fPop.options[ fPop.options.length ] = new Option( a[d][2], a[d][1] );
+			}
+			if ( a[d][1] == intStart && intStart !== "") {
+				fPop.selectedIndex = fPop.options.length - 1;
+			}
+		}
+}
