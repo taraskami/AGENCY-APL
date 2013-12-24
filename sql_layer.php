@@ -674,6 +674,7 @@ function array_fetch_column( $array, $field_name )
 function sql_fetch_column( $result, $field_name )
 {
 // Take a sql result, return an array
+		$col=array();	
         while ( $row=sql_fetch_assoc( $result) )
         {
                 $col[]=$row[$field_name];
