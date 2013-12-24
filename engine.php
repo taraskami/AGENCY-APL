@@ -318,6 +318,26 @@ function engine($control='',$control_array_variable='control')
 			break;
 		}
 
+		// For auto-close below, cloned records don't have a REC-INIT.
+		// So try to build an appopriate parent filter instead
+		// FIXME: If defs had parent objects, this would be easier
+		// FIXME: Hacked this to only work with client and staff IDs for now
+		if ($REC_INIT) {
+			$active_filter=$REC_INIT;
+		} else {
+			if (in_array('client_id',array_keys($def['fields']))) {
+				$active_filter=client_filter($REC['client_id']);
+			} elseif (in_array('staff_id',array_keys($def['fields']))) {
+				$active_filter=array('staff_id'=>$REC['staff_id']);
+			} elseif ($object=='housing_unit_subsidy') {
+				// Quick Hack for SPC
+				$active_filter=array('housing_unit_code'=>$REC['housing_unit_code']);
+			} elseif ($object=='income') {
+				// Quick Hack for SPC
+				$active_filter=array('client_id'=>$REC['client_id']);
+			}
+		}
+
 	    if ($step=='submit') {
 			$db_refs=array();
 			merge_object_reference_db($object,$id,$db_refs);
@@ -337,7 +357,7 @@ function engine($control='',$control_array_variable='control')
 				merge_object_reference_db($object,$id,$control);
 			    $action = 'view';
 		    } elseif ( $rec_changed and ($action=='add') and $def['single_active_record']
-				   and ($res = $def['fn']['get_active']($filter=$REC_INIT,$REC,$def))
+				   and ($res = $def['fn']['get_active']($filter=$active_filter,$REC,$def))
 				   and (count($res) > 0) ) {
 			    /*
 			     * Verify/close active record
