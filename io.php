@@ -267,11 +267,11 @@ function div($content, $id="", $options="" )
         . ">\n".$content.'</div>'."\n";
 }
 
-function alt($text=null,$title=null) {
+function alt($text=null,$title=null,$options=null) {
 // 	return '<alt title="'.$title.'">'.$text.'</alt>';
 	//this wasn't really a valid use (there is no alt tag in xhtml anyway)
-	$title = $title ? ' title="'.$title.'"' : '';
-	return span($text,$title);
+	$options .= $title ? ' title="'.$title.'"' : '';
+	return span($text,$options);
 }
 
 function acronym($text=null,$title=null) {
