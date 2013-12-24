@@ -62,6 +62,24 @@ a.fancyLink:hover, a.fancyLink:active { color: #f00; text-decoration: underline;
 
 span.testDbWarningLink,
 a.toggleLink { font-size: 65%; }
+.engineMessage { 
+	font-size: 120%; 
+	border: solid 2px black; 
+	color: red; 
+	padding: 12px;
+	margin-left: 10px;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	margin-top: 10px;
+	width: auto;
+	font-style: italic;
+	background-color: #ffffee;
+	display: inline-block;
+}
+
+.engineTitle {
+	display: block;
+}
 div.engineMessageResultDetail { font-size: 80%; border: solid 1px black; }
 div.hiddenDetail { font-size: 70%; background-color: #FFDDDD; display: none; }
 

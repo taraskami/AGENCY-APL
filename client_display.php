@@ -127,7 +127,7 @@ if (!$client_not_found) {
 
 agency_top_header($commands);
 
-out($message);
+out($message ? div($message,'','class="engineMessage"') : '');
 ($client_not_found && out($not_found_message)) || client_show( $ID );
 
 page_close();

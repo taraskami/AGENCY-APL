@@ -89,7 +89,8 @@ if ($menu) {
 }
 
 if ($message) {
-	$message = oline().box(bigger(red($message)));
+//	$message = oline().box(bigger(red($message)));
+	$message = div($message,'','class="engineMessage"');
 }
 
 out(div($formatted_title . $message . $help . $output,'engineMain'));
