@@ -373,10 +373,11 @@ function object_quick_search($object, $query_string='')
 		if ($found > 0) {
 			$object_page=orr($def['quick_search']['jump_page'],'display.php');
 			if ($object_page=='display.php') {
-				$jump_url="display.php?object=$object&action=view&id=$query_string";
+				$jump_url="display.php?control[object]=$object&control[action]=view&control[id]=$query_string";
 			} else {
-				header('Location: '.$object_page . '?action=show&id='.$query_string);
+				$jump_url=$object_page . '?action=show&id='.$query_string;
 			}
+			header('Location: '.$jump_url);
 			page_close($silent=true);
 			exit;
 		}
