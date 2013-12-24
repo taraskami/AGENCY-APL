@@ -33,7 +33,7 @@ should be included in this distribution.
 
 $engine['permission']=array(
 			'allow_delete'=>true,
-			'perm'=>'admin',
+			'perm'=>'super_user',
 			'perm_list'=>'any',
 			'list_fields' => array('permission_type_code','permission_basis','criteria','permission_date','permission_date_end','RWS'),
 			'valid_record'=>array('sql_true($rec["permission_read"]) or sql_true($rec["permission_write"]) or sql_true($rec["permission_super"])'
