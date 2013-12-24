@@ -694,6 +694,7 @@ function toggle_query_display($state=NULL)
 {
 	global $query_display;
 	$query_display = orr($state,$query_display) ? null : 'Y';
+	return true;
 }
 
 function sql_nextval($seq)
