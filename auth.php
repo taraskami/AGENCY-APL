@@ -1060,7 +1060,7 @@ function user_identity_management()
 
 function get_super_user_ids()
 {
-	$res = sql_fetch_column(agency_query("SELECT staff_id FROM permission WHERE permission_type_code = 'SUPER_USER'"),'staff_id');
+	$res = sql_fetch_column(agency_query("SELECT staff_id FROM permission_current WHERE permission_type_code = 'SUPER_USER'"),'staff_id');
 	return orr($res,array());
 }
 

@@ -2259,7 +2259,7 @@ function agency_top_header($commands="")
 			div(formto(htmlspecialchars($_SERVER['REQUEST_URI'])) 
 				. selectto('ASSUME_IDENTITY')
 				. selectitem('-1','(choose from list)')
-				. do_pick_sql("SELECT staff_id AS value, CASE WHEN name_first < 'A' THEN name_last ELSE name_last || ', ' || name_first END as label FROM staff WHERE is_active AND ($tmp_id_check OR staff_id NOT IN (SELECT staff_id FROM permission WHERE permission_type_code='SUPER_USER')) AND NOT name_first < 'A' ORDER BY 2",$AUID,false)
+				. do_pick_sql("SELECT staff_id AS value, CASE WHEN name_first < 'A' THEN name_last ELSE name_last || ', ' || name_first END as label FROM staff WHERE is_active AND ($tmp_id_check OR staff_id NOT IN (SELECT staff_id FROM permission_current WHERE permission_type_code='SUPER_USER')) AND NOT name_first < 'A' ORDER BY 2",$AUID,false)
 				. selectend()
 				. button("Switch Identity") 
 				. formend(),'agencySuperUser');
