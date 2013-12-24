@@ -46,12 +46,13 @@ $user_field = $multi['field'];
 $f_def = $c_def['fields'][$user_field];
 $a = array_keys($c_def['fields']);
 $table = $f_def['lookup']['table'];
+$lookup_field = $f_def['lookup']['value_field'];
 $order=is_array($multi['other_codes']) ? implode($multi['other_codes'],"','") : '';			
 $sql=orr($multi['sel_sql'],"SELECT * FROM $table");
-$codes=agency_query("$sql ORDER BY $user_field IN ('$order'), description"); 
+$codes=agency_query("$sql ORDER BY $lookup_field IN ('$order'), description"); 
 while ($item=sql_fetch_assoc($codes))
 {
-$code=$item[$user_field];
+$code=$item[$lookup_field];
 $fake_field = "multi_{$child_object}_multi_$code";
 foreach($a as $field)
 {
