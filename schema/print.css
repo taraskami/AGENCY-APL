@@ -70,7 +70,7 @@ a.calendarConBox, a.navCalendar,div.navCalendar { color: #fff; background-color:
 	 */
 /* End Calendar */
 
-.agencyNoPrint { display: none; }
+.agencyNoPrint,.hidden { display: none; }
 /* Printer Friendly Functionality Stuff Here */
 #printerFriendlyCancel { display: block; font-size: 75%;}
 
