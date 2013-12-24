@@ -48,7 +48,10 @@ function sql_query($query)
 {
 	global $query_display,$WHICH_DB;
 	if ($query_display) {
-		out(div(webify("Querying ($WHICH_DB) with $query"),'',' class="sqlCode"'));
+		$string="Querying ($WHICH_DB) with $query";
+		out( ($GLOBALS['MODE']=='TEXT')
+			? $string
+			: div(webify($string),'',' class="sqlCode"'));
 	}
 	switch ($GLOBALS['WHICH_DB']) {
 	case 'my' :
