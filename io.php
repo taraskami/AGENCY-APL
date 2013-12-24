@@ -674,6 +674,9 @@ function dateof( $datetime,$format="",$long="" )
 	 *    SQL = yyyy-mm-dd
 	 *    TS = Unix Timestamp (uses strtotime), but doesn't deal w/ time portion
 	 *    WORDY = January 1, 2005
+	 *	  MONTH = 01/05
+	 *	  MONTH_WORDY = January, 2005
+	 *	  MONTH_SQL = 2005-01
 	 *    NO_SEP = yyyymmdd
 	 *    NO_SEP_SHORT = yymmdd
 	 *	
@@ -816,6 +819,15 @@ function dateof( $datetime,$format="",$long="" )
     case 'WORDY' :
 	    return date('F j, Y',strtotime($century . lpad($year,2,'0') . $sql_sep .
 						     lpad($month,2,'0') .  $sql_sep . lpad($day,2,'0')));
+    case 'MONTH_WORDY' :
+	    return date('F, Y',strtotime($century . lpad($year,2,'0') . $sql_sep .
+						     lpad($month,2,'0') .  $sql_sep . lpad($day,2,'0')));
+    case 'MONTH' :
+	    return $month . $us_sep 
+		    . ($long ? $century : '' ) . lpad($year,2,'0');
+    case 'MONTH_SQL' :
+	    return ($long ? $century : ''). lpad($year,2,'0') . $sql_sep .
+		    lpad($month,2,'0');
     default :
 	    return false;
     }
