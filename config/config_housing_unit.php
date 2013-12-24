@@ -35,6 +35,7 @@ $engine['housing_unit']=array(
 					'cancel_add_url'=>'housing_menu.php',
 					'perm'=>'housing_admin,housing_scattered',
 					'perm_list'=>'any',
+					'object_label'=>'sql_lookup_description($id,"housing_unit","housing_unit_id","housing_unit_code")',
 					'list_fields'=>array(
 								   'housing_unit_code',
 								   'housing_unit_date',

@@ -337,32 +337,17 @@ function info_additional_label($id) {
 }
 
 function object_label($object,$id) {
-	switch ($object) {
-		case 'log' :
-			$def=get_def('log');
-			$table=$def['table'];
-			$id_f=$def['id_field'];
-			$l=sql_assign("SELECT SUBSTRING(COALESCE(subject,log_text) FROM 0 FOR 50) FROM $table",array($id_f => $id));
-			break;
-		case 'client' :
-			$l = client_name($id,0,true);
-			break;
-		case 'staff' :
-			$l = staff_name($id);
-			break;
-		case 'info_additional' :
-			$l = info_additional_label($id);
-			break;
-		case 'housing_unit' :
-			$l=sql_lookup_description($id,'housing_unit','housing_unit_id','housing_unit_code');
-			break;
-		case 'guest' :
-			$l=sql_lookup_description($id,'guest','guest_id','name_full');
-			break;
-		default :
-			$def = get_def($object);
-			$l = $def['singular'] . ' ' . $id;
-			break;
+	$def = get_def($object);
+	if ($def['object_label']) {
+		$rec = get_generic(array($def['id_field']=>$id),'','',$def);
+		if (count($rec)==0) {
+			return '';
+		} else {
+			$rec=$rec[0];
+		}
+		$l = eval('return ' . $def['object_label'] . ';');
+	} else {
+		$l = $def['singular'] . ' ' . $id;
 	}
 	return $l;
 }

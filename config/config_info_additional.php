@@ -34,6 +34,7 @@ should be included in this distribution.
 
 $engine['info_additional'] = array(
 	'singular'=>'Additional Information',
+	'object_label'=>'info_additional_label($id)',
 	'allow_edit'=>false,
 	'perm_edit'=>'super_user'
 	// You should be very careful not to edit these records once added!

@@ -36,6 +36,7 @@ $engine["staff"] = array(
 		"perm" => "admin",
 		'perm_list'=>'any',
 		'perm_view'=>'any',
+		'object_label'=>'staff_name($id)',
 		'list_fields'=>array('is_active','staff_photo','staff_id','staff_summary','staff_phone'),
 		'list_order'=>array('is_active'=>true),
 		"title" => 'ucwords($action) . "ing Staff record for " . staff_link($rec["staff_id"])',

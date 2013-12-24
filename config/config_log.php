@@ -37,6 +37,7 @@ $engine['log'] = array(
 	'enable_staff_alerts'=>true,
 	'enable_staff_alerts_view'=>true,
 	'include_info_additional'=>true,
+	'object_label'=>'sql_assign("SELECT SUBSTRING(COALESCE(subject,log_text) FROM 0 FOR 50) FROM " . $def["table"] . ",array(" . def["id_field"] . " => " . $id . "))"',
 	'list_fields'=>array('custom1','log_type_code','staff_alerts','clients','additional','subject'),
 //	'subtitle_eval_code'=>'($total>0) ? smaller(hlink("log_browse.php?action=show_client_logs&cid=".$id,"Show full text of these logs")) : ""',
 	'subtitle_html'=>smaller(hlink('log_browse.php?action=browse','Go to log index')),

@@ -46,6 +46,7 @@ $engine['guest'] = array(
 	),
 	//'list_fields'=>array('name_full','dob','name_alias','photo','tenants'),
 	'list_fields'=>array('name_full','dob','name_alias','bar_status','photo'),
+	'object_label'=>'sql_lookup_description($id,"guest","guest_id","name_full")',
 	/* Registration (adding) configuration */
 	'registration'=>array(
 		'search_fields'=>array('name_last','name_first','dob'),
