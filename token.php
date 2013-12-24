@@ -113,11 +113,21 @@ function issue_token( $email, &$msg,$username=NULL ) {
 		$msg .= 'Error adding token to database';
 		return false;
 	}
+/*
 	$text="You have requested to reset your AGENCY Password\n"
 		. "\n"
 		. "Use this link to do so: \n"
 		. "\n"
 		. reset_password_link($token,$email) . "\n";
+*/
+	$text=div(
+  		link_agency_public_home(html_image('http://agency-software.org/agency_logo_medium.png'))
+		.html_heading_tag('You have requested to reset your AGENCY Password',1)
+		. oline('Use this link to do so:')
+		. oline()
+		. bigger(reset_password_link($token,$email))
+		,'','style="background-color: #DDDDFF;"');
+
 	return send_email($email,'Reset your AGENCY Password',$text);
 }
 
