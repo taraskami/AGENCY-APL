@@ -239,3 +239,11 @@ CREATE OR REPLACE FUNCTION enable_table_logging_all() RETURNS boolean AS $$
 	return true
 $$ LANGUAGE pltcl;
 
+CREATE OR REPLACE FUNCTION system_live_at() RETURNS timestamp(0) AS $$
+
+	SELECT message::timestamp(0) FROM system_log WHERE event_type='SYSTEM_LIVE'
+	-- Should only be 1, but just in case
+	ORDER BY added_at DESC LIMIT 1;
+$$ LANGUAGE sql IMMUTABLE;
+
+

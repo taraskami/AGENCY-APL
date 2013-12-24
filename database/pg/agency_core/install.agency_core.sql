@@ -87,12 +87,6 @@ ALTER TABLE tbl_staff ADD FOREIGN KEY (gender_code) REFERENCES tbl_l_gender (gen
 
 /* unduplication capability */
 \i create.tbl_duplication_staff.sql
-/**********************IMPORTANT**********************\
- *                                                   *
- *  This file should be modified as it creates the   *
- *  admin and system users (and passwords)           *
- *                                                   *
-\*****************************************************/
 
 /* must be created after sys_user() function is created */
 \i create.tbl_user_login.sql
@@ -147,6 +141,12 @@ INSERT INTO db_list
 	);
 */
 
+/* system log */
+\i create.tbl_system_log.sql
+
+--Record when system was installed.  Later accessible as system_live_at()
+INSERT INTO tbl_system_log (event_type,message,added_at,added_by,changed_at,changed_by) VALUES ('SYSTEM_LIVE',current_timestamp::text,current_timestamp,sys_user(),current_timestamp,sys_user());
+
 /* internal vs remote access */
 \i create.tbl_db_access.sql
 
@@ -191,9 +191,6 @@ INSERT INTO db_list
 /* news */
 \i create.l_news_priority.sql
 \i create.tbl_news.sql
-
-/* system log */
-\i create.tbl_system_log.sql
 
 /* Enable alert notifications on objects */
 select
