@@ -35,9 +35,6 @@ should be included in this distribution.
 include $off . 'sql_layer.php';
 include $off . 'io.php';
 
-// Defined in agency_config_local.php:
-date_default_timezone_set(AG_TIMEZONE);
-
 define('AG_OUTPUT_MODE',orr($MODE,'HTML')); // set to "TEXT" to disable HTML output
 switch (AG_OUTPUT_MODE) {
  case 'HTML' :
@@ -67,6 +64,9 @@ if (is_file($local_config_file)) {
 		  'You may need to copy a sample <b>agency_config_local</b> file to <b>agency_config_local.php</b> (and edit accordingly).');
 	die();
 }
+
+// Defined in agency_config_local.php:
+date_default_timezone_set(AG_TIMEZONE);
 
 /*
  * agency_config_db.php is new file to hold db username/password.
