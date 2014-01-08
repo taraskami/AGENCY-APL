@@ -1749,7 +1749,7 @@ function js_link_disable($message = '')
 
 }
 
-function hiddenvar( $name, $value, $options='' )
+function hiddenvar( $name, $value='', $options='' )
 {
     return "<input type=\"hidden\" name=\"$name\" value=\"$value\" $options/>\n";
 }
