@@ -736,7 +736,7 @@ function report_export_items()
 	return $options;
 }
 
-function link_report($report_code,$label,$init=array(),$action='',$template=null)
+function link_report($report_code,$label='',$init=array(),$action='',$template=null)
 {
 	/*
 	 * Generate link to a report, by default to options page
@@ -746,7 +746,7 @@ function link_report($report_code,$label,$init=array(),$action='',$template=null
 	 */
 
 	$redirect=in_array($action,array('view','edit','delete','clone'));
-
+	$label=orr($label,$report_code);
 	if (!($rep=get_report_from_db($report_code))) {
 		out(div("warning: link_report couldn't find report $report_code",'','class="warning"'));
 		return false; 
