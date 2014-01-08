@@ -685,7 +685,10 @@ function project_to_program($project) {
 
 function is_human_staff($sid)
 {
-	return sql_true(call_sql_function('is_human_staff',$sid));
+	if (!is_valid($sid,'integer_db')) {
+		return false;
+	}
+	return sql_true(call_sql_function('is_human_staff',$sid)) ? true : false;
 }
 
 function staff_summary($rec)
