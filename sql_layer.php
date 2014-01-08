@@ -111,7 +111,7 @@ function sql_escape_literal($s)
 function sql_metadata($table)
 {
 	static $cache;
-	if (array_key_exists($table,$cache)) {
+	if ($cache and array_key_exists($table,$cache)) {
 		return $cache[$table];
 	}
 
