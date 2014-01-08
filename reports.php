@@ -88,6 +88,10 @@ function report_parse_var_text( $text ) {
         $var['name']    = $ex[1];
         $var['prompt']  = $ex[2];
         $var['default'] = $ex[3];
+		if (preg_match('/^EVAL:(.*)$/i',$var['default'],$matches)) {
+			$var['default'] = eval( 'return ' . $matches[1] . ';');	
+		}
+
 		if (in_array($var['type'],$pick_types)) {
 			while ($tmp_line = array_shift($lines))	{
 				$tmp_line = explot($tmp_line);
