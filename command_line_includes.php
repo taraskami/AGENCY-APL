@@ -151,6 +151,12 @@ switch (AG_MAIN_OBJECT_DB) {
 	 break;
 }
 
+// FIXME:  This is needed to work with 9.2+, but the real
+//         fix is to make the strings standard-conforming!
+if (!sql_query('SET standard_conforming_strings=off;')) {
+	outline('warning: failed to set standard_conforming_strings=off');
+}
+
 // set AG_FULL_INI to false, prior to including command_line_includes.php
 // if, for whatever reason, engine array is not needed. This would mainly
 // be for scripts were quick performance is critical. Otherwise, simply
