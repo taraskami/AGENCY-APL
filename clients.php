@@ -129,14 +129,15 @@ function client_show( $id )
 	if ($client['spc_id']) {
 		$ids .= oline(smaller('SPC ID# '.$client['spc_id']));
 	}
-	// Export IDs
-	$c_filt=client_filter($id);
-	$x_ids=get_generic($c_filt,NULL,NULL,'client_export_id');
-	foreach ($x_ids as $x) {
-		$ids .= oline(smaller(sql_lookup_description($x['export_organization_code'],'l_export_organization').' # ' . $x['export_id']));
+	if ($ex_id_def=get_def('client_export_id')) {
+		// Export IDs
+		$c_filt=client_filter($id);
+		$x_ids=get_generic($c_filt,NULL,NULL,$ex_id_def);
+		foreach ($x_ids as $x) {
+			$ids .= oline(smaller(sql_lookup_description($x['export_organization_code'],'l_export_organization').' # ' . $x['export_id']));
+		}
+		$ids .= add_link('client_export_id','Add an ID',NULL,client_filter($id));
 	}
-	$ids .= add_link('client_export_id','Add an ID',NULL,client_filter($id));
-
 	//-----client notes-----//
 	$comments = client_note_f($id);
 	$client_note_hide_button = oline(right(Java_Engine::hide_show_button('ClientNote',false) . smaller('Notes',3)));
