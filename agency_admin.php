@@ -40,7 +40,8 @@ function agency_menu_admin()
 	 * AGENCY Administration
 	 */
 
-	switch ($_REQUEST['action']) {
+	$action=$_REQUEST['action'];
+	switch ($action) {
 	case 'admin_view_object_def' :
 		$object = $_REQUEST['object_name'];
 		if ($def = get_def($object)) {
@@ -80,6 +81,44 @@ function agency_menu_admin()
 		}
 		setcookie('AG_MACHINE_ID',AG_MACHINE_ID_COOKIE_PREFIX.array_search($machine,$machines),$unit*$quant,$path,$domain,true,true);	
 		break;
+	case 'staff_assign_transfer' :
+	case 'staff_assign_close' :
+		$sa_def=get_def('staff_assign');
+		if (!(has_perm('admin') and has_perm($sa_def['perm_edit']) and has_perm($sa_def['perm_add']))) {
+			$error .= oline('Insufficient permissions to transfer or close caseload');
+			break;
+		}
+		$tr_date=dateof($_REQUEST['staff_assign_transfer_date'],'SQL');
+		$tr_sid=$_REQUEST['staff_assign_transfer_staff_id'];
+		if (!($tr_date and is_valid($tr_sid,'integer_db'))) {
+			$error .= oline('invalid date or staff ID for transferring or closing caseload');
+			break;
+		}
+		if ($tr_sid==$GLOBALS['SYS_USER']) {
+			$error .= oline('Cannot transfer caseload from system user.  They should not have a caseload anyway!');
+			break;
+		}
+		$tr_sid_to=$_REQUEST['staff_assign_transfer_staff_id_to'];
+		if ($action=='staff_assign_transfer') {
+			if (!(is_valid($tr_sid_to,'integer_db') and ($tr_sid_to!=$GLOBALS['sys_user']))) {
+				$error .= oline('Invalid Staff ID to transfer caseload to');
+				break;
+			}
+			if ($tr_sid_to==$tr_sid) {
+				$error .= oline('Cannot transfer caseload to the same person!');
+				break;
+			}
+			call_sql_function('staff_assign_transfer',$tr_sid,$tr_sid_to,$GLOBALS['UID'],enquote1($tr_date));
+			break;
+		} elseif ($action=='staff_assign_close') {
+			if ($tr_sid_to and ($tr_sid_to!=-1)) {
+				$error .= oline('Caseload close requested, but transfer to staff specified.  Maybe you meant to transfer a caseload?');
+				break;
+			}
+			call_sql_function('staff_assign_close',$tr_sid,$GLOBALS['UID'],enquote1($tr_date));
+			break;
+		}
+		break;
 	}
 
 	$button = button('Go','','','','',' class="agencyForm"');
@@ -107,6 +146,7 @@ function agency_menu_admin()
 	
 	// Staff Accounts 
 	$sdef = get_def('staff');
+
 	$menu['Staff Account Administration'] = formto('display.php')
 		. hiddenvar('control[action]','view')
 		. hiddenvar('control[object]','staff')
@@ -116,6 +156,25 @@ function agency_menu_admin()
 		. button_if('View/edit this account', '', 'view_staff','','',has_perm($sdef['perm_view']))
 		. formend()
 		. show_all_permissions();
+
+	// Transfer or close assignments
+	if (has_perm($sdef['perm_edit']) and has_perm('admin')) {
+		$menu['Transfer/Close Caseload']= 
+		formto()
+		. 'Transfer or close? '
+		. selectto('action')
+		. selectitem('','Choose...')
+		. selectitem('staff_assign_transfer','Transfer a caseload')
+		. selectitem('staff_assign_close','Close a caseload')
+		. selectend()
+		. oline()
+		. oline('Transfer/Close for ' . pick_staff_to('staff_assign_transfer_staff_id'))
+		. oline('Transfer caseload to ' . pick_staff_to('staff_assign_transfer_staff_id_to'))
+		. oline('Date original assignment ends (new assignments will start next day) ' . formdate('staff_assign_transfer_date'))
+		. button()
+		. formend()
+		;
+	}		
 	
 	// Client Unduplication
 	$menu[ucwords(AG_MAIN_OBJECT).' Unduplication'] = html_list(

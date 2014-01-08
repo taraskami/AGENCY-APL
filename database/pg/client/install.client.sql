@@ -58,6 +58,9 @@
 /* client-specific permissions */
 \i add.client_permission_type.sql
 
+/* Staff assign (caseload) transfers and closes */
+\i functions/create.functions.staff_assign_transfer_and_close.sql
+
 /**********************************************************\
  *                       Child Records                    *
  *                                                        *
