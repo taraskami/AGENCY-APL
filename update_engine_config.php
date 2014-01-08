@@ -47,7 +47,7 @@ if (PHP_SAPI=='cli') {
 
 } else {
 
-	$AG_FULL_INI = false;
+//	$AG_FULL_INI = false;
 	include 'includes.php';
 
 	if ($table=$_REQUEST['UPDATE_ENGINE_OBJECT'])

@@ -752,6 +752,10 @@ function config_object($object)
 	    }
 
       }
+		if (!is_array($OBJECT['fields'])) { 
+			// Skip final processing for weird objects without fields, like generic_sql_query
+			return $OBJECT;
+		}
 	  foreach ($OBJECT['fields'] as $k=>$field) {
 	    if (!isset($config_object['fields'][$k]['length']) and ($field['data_type']=='text')) {
 			// don't set length unless manually specified for text fields

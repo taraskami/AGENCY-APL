@@ -36,6 +36,7 @@ $engine['def_array'] = array(
 	'allow_add'=>false,
 	'allow_delete'=>false,
 	'allow_edit'=>false,
-	'id_field'=>'object'
+	'id_field'=>'object',
+	'fields'=>array('object'=>array(),'def_array_text'=>array())
 );
 ?>
