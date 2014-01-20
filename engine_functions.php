@@ -1081,6 +1081,10 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 		  $new['label']=ucwords(AG_MAIN_OBJECT);
 		  $new['order_by_instead']=AG_MAIN_OBJECT_DB.'_name('.$field.')';
 
+	    } elseif ( strstr($field,'attachment') ) {
+
+		  $new['data_type']='attachment';
+
 	    } elseif ($field == 'dob' ) {
 
 		    /*
