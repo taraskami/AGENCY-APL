@@ -2613,7 +2613,7 @@ function confirm_generic($rec,$def,&$mesg,$action,$rec_last)
 					$confirmed = false;
 					$mesg .= empty($msg) 
 						? oline("Please review field $label.")
-						: oline(str_replace('{$Y}',$label,$msg));                
+						: oline(str_replace(array('{$Y}','{$x}'),array($label,$x),$msg));                
 				}
 			}
 		}
