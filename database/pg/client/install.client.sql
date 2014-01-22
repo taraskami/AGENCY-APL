@@ -90,7 +90,7 @@
 
 /* Hospital table */
 \i create.tbl_hospital.sql
-\i create.view.l_hospital.sql
+\i create.l_hospital.sql
 
 /* Entry Table */
 \i create.l_entry_location.sql
