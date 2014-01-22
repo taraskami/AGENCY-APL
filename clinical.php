@@ -410,11 +410,11 @@ function hospital_status_f($id,$security_override = false)
 	}
 
 	$res = get_generic(client_filter($id),'hospital_date DESC','1',$def);
-	if (sql_num_rows($res) < 1) {
+	if (count($res) < 1) {
 		return false;
 	}
 
-	$rec = sql_fetch_assoc($res);
+	$rec = array_shift($res);
 	if (be_null($rec['hospital_date_end'])) {
 
 		$days = $rec['days_in_hospital'] . ($rec['days_in_hospital'] > 1 ? ' days' : ' day');
