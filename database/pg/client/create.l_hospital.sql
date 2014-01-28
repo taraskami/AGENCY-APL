@@ -19,7 +19,9 @@ INSERT INTO tbl_l_hospital (hospital_code,description,added_by,changed_by) VALUE
 INSERT INTO tbl_l_hospital (hospital_code,description,added_by,changed_by) VALUES ('SWEDISH','Swedish Medical Center',sys_user(),sys_user());
 INSERT INTO tbl_l_hospital (hospital_code,description,added_by,changed_by) VALUES ('UW','UW Medical Center',sys_user(),sys_user());
 INSERT INTO tbl_l_hospital (hospital_code,description,added_by,changed_by) VALUES ('VM','Virginia Mason Medical Center',sys_user(),sys_user());
-
+INSERT INTO tbl_l_hospital (hospital_code,description,added_by,changed_by) VALUES ('HIGHLINE','Highline',sys_user(),sys_user());
+INSERT INTO tbl_l_hospital (hospital_code,description,added_by,changed_by) VALUES ('NAVOS','Navos',sys_user(),sys_user());
+INSERT INTO tbl_l_hospital (hospital_code,description,added_by,changed_by) VALUES ('FAIRFAX','Fairfax',sys_user(),sys_user());
 
 CREATE VIEW l_hospital AS (SELECT * FROM tbl_l_hospital WHERE NOT is_deleted);
 

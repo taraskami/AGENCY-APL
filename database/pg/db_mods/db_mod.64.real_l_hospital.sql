@@ -40,5 +40,5 @@ DROP VIEW l_hospital;
 -- this should break if you already have tbl_l_hospital
 \i ../client/create.l_hospital.sql
 
---COMMIT;
+COMMIT;
 
