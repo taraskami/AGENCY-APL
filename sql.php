@@ -420,8 +420,8 @@ function read_filter( $filter, $bool="AND", $lang="SQL")
 			else
 			{
 				$d=explode(",",$value);
-				$d1=$d[0];
-				$d2=$d[1];
+				$d1=dateof($d[0],'SQL');
+				$d2=dateof($d[1],'SQL');
 			}
 			if (! ($d1 || $d2))
 			{
@@ -430,8 +430,10 @@ function read_filter( $filter, $bool="AND", $lang="SQL")
 			$sql .= " $not \n ";
 			if ($op=="OVERLAPSORNULL")
 			{
-				$sql .= $d2 ? "((($f1<=$d2) OR ($f1 IS NULL))\n      AND " : "(";
-				$sql .=	"    (($f2>=$d1) OR ($f2 IS NULL)) )";
+				//$sql .= $d2 ? "((($f1<=$d2) OR ($f1 IS NULL))\n      AND " : "(";
+				//$sql .=	"    (($f2>=$d1) OR ($f2 IS NULL)) )";
+				$sql .= $d2 ? "((($f1 IS NULL) OR ($f1<=$d2))\n      AND " : "(";
+				$sql .=	"    (($f2 IS NULL) OR ($f2>=$d1)) )";
 			}
 			else
 			{
