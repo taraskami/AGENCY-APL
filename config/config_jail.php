@@ -34,12 +34,13 @@ should be included in this distribution.
 $engine['jail'] = array(
 				'singular'=>'Jail Record',
 				'enable_staff_alerts_view'=>true,
-				'list_fields'=>array('jail_date','jail_date_end','days_in_jail','ba_number','custom1'),
+				'list_fields'=>array('jail_date','jail_date_end','days_in_jail','ba_number'),
 				'perm_list'=>'any',
 				'perm_view'=>'any',
 				'perm'=>'admin',
 				'fields'=>array(
 						    'days_in_jail'=>array(
+										'label'=>'Days In Jail',
 									   'is_html'=>true,
 									   'value'=>'$rec["date_date_end"] 
                                                               ? $x
@@ -79,7 +80,8 @@ $engine['jail'] = array(
 											  'be_null($x)||($x!=="KC")||($rec_last["jail_date_end"]==$rec["jail_date_end"])'=>'Source can\'t be KC.',
 											  '!in_array($x, array("KC","KCJAIL"))'=>'This {$Y} is for imported records only. Please choose another {$Y}.'								 
 											  )
-									   ),
+									   )
+/*
 					'custom1' => array(
 							   'label' => 'Charge Detail',
 							   'value' => '$rec["ba_number"] && (sql_num_rows(get_generic(array("ba_number"=>$rec["ba_number"]),"","","jail_charge"))>0) ? link_engine(array("object"=>"jail_charge","action"=>"list","list"=>array("filter"=>array("ba_number"=>$rec["ba_number"]))),"View Charge Details") : ""',
@@ -88,6 +90,7 @@ $engine['jail'] = array(
 							   'display'=>'display',
 							   'is_html'=>true
 							   )
+*/
 					)
 				
 			);

@@ -4,6 +4,7 @@
  * The table and some core permissions are created in agency_core.
  */
 
+INSERT INTO tbl_l_permission_type VALUES ('JILS_IMPORT', 'Import from JILS',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_permission_type VALUES ('HOUSING', 'Housing',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_permission_type VALUES ('RENT', 'Rent Charges',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_permission_type VALUES ('CLINICAL', 'Clinical',sys_user(),current_timestamp,sys_user(),current_timestamp);

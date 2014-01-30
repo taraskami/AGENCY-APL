@@ -17,5 +17,6 @@ CREATE TABLE tbl_l_data_source (
 
 INSERT INTO tbl_l_data_source VALUES ('AGENCY','Agency',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_data_source VALUES ('KC','King County Reports',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_data_source VALUES ('JILS','JILS (KC Jail Inmate Lookup Service)',sys_user(),current_timestamp,sys_user(),current_timestamp);
 
 CREATE VIEW l_data_source AS (SELECT * FROM tbl_l_data_source WHERE NOT is_deleted);

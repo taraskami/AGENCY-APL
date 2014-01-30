@@ -51,4 +51,48 @@ function jail_status_f($id)
 
 }
 
+function upsert_jail_record( $rec, &$msg ) {
+//outline(dump_array($rec));
+	$date_range=new date_range( $rec['jail_date'],$rec['jail_date_end']);
+	$ba_number=$rec['ba_number'];
+	$rec_description='BA: ' . $ba_number . ', ' . $date_range->display();
+	$match_criteria=array(
+		'OVERLAPSORNULL:jail_date,jail_date_end'=>$date_range
+	);
+	if ($ba_number) {
+		$match_criteria['ba_number']=$ba_number;
+	}
+	$filter=client_filter($rec['client_id']);
+	$filter[]=$match_criteria;
+	$match_recs=get_generic($filter,NULL,NULL,'jail');
+	// No match?  Post and stop
+	if (count($match_recs)==0) {
+		$res = agency_query(sql_insert('tbl_jail',$rec,true));
+		if ($res) {
+			$msg[] = 'Successfully posted new jail record for ' . $rec_description;
+		} else {
+			$msg[] = red('failed to post new jail record for ' . $rec_description);
+		}
+	} elseif (count($match_recs)>1) {
+		// Multiple overlaps?  Yikes
+		$msg[]=red('Found multiple overlapping records for ' . $rec_description . '.  Giving up');
+		$res =  false;
+	} else {
+		$mr=$match_recs[0];
+		if ($mr['ba_number'] and ($mr['ba_number'] !=$ba_number)) {
+			$msg[]=red('BA Mismatch for ' .$rec_description.'. Giving up');
+			$res=false;
+		}
+/*
+		$jd_match=
+			(dateof($mr['jail_date'])==dateof($rec['jail_date']))
+			and (timeof($mr['jail_date'])==
+*/
+			$msg[]=red('JILS Update ability not yet fully implemented.  Can\'t process ' .$rec_description.'. Giving up');
+			$res=false;
+	}
+	$msg_return.=implode(oline(),$msg);
+	return $res;
+}	
+
 ?>

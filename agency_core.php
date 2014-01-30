@@ -47,6 +47,7 @@ function is_enabled( $feature ) {
 		case 'entry' :
 		case 'entry_visitor' :
 		case 'charge_and_payment' :
+//		case 'jils_import' :
 			return false;
 		default :
 			return true;
