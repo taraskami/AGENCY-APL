@@ -25,6 +25,7 @@ if ($jils_text) {
 //	$jils_parse_regex = '/^.*Other Jail Search Resources(.*)Custody\/Facility.*Booking Events:(.*)Data Accuracy Disclaimer.*$/s';
 //	outline("Client: " . client_link($client_id));
 	if (preg_match($jils_parse_regex,$jils_text,$matches)) {
+//outline("Matches: " . dump_array($matches));
 		$name=trim($matches[1]);
 		$booking=$matches[2];
 		$bookings=explode("\n",$booking);
@@ -39,7 +40,8 @@ if ($jils_text) {
 			'sys_log'=>'Added with jils_import, name='.$name
 		);
 		foreach($bookings as $b) {
-			if (preg_match('/^BA: (.*) Book Date: (.*) Release Date: (.*)$/',$b,$m)) {
+//outline("Got booking: " . dump_array($b));
+			if (preg_match('/^.*BA: (.*) Book Date: (.*) Release Date: ?(.*)$/',$b,$m)) {
 //outline("Matched $b" . dump_array($m));
 				$j=$jail_template;
 				$j['ba_number']=$m[1];
@@ -49,9 +51,11 @@ if ($jils_text) {
 					$j['jail_date_end_source_code']='JILS';
 				}
 				$jails[]=$j;
-				if(upsert_jail_record($j)) {
+				if(upsert_jail_record($j,$msg_tmp)) {
 					$success++;
 				} else {
+					$msg[]=$msg_tmp;
+					$msg_tmp='';
 					$fail++;
 				}
 			}
@@ -64,7 +68,7 @@ if ($jils_text) {
 		outline("Raw Form: " . webify($jils_text));
 		outline("Matches: " . dump_array($matches));
 preg_match('/.*/s',$jils_text,$matches);
-outline(red("Full match: " . dump_array($matches)));
+//outline(red("Full match: " . dump_array($matches)));
 
 	}
 }
@@ -82,7 +86,7 @@ outline(red("Full match: " . dump_array($matches)));
 	if ($success or $fail) {
 		outline(bigger(bold("Results for " . client_link($client_id))),2);
 		out( $success ? oline(bigger(bold("$success records imported successfully"))) : '');
-		out( $fail ? oline(bigger(bold("$fail records failed to import"))) : '');
+		out( $fail ? oline(bigger(bold("$fail records failed to import"))) .oline(implode(oline(),$msg)) : '');
 		outline();
 		outline(bold("You can close this page now"));
 	} else {

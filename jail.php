@@ -51,14 +51,21 @@ function jail_status_f($id)
 
 }
 
-function upsert_jail_record( $rec, &$msg ) {
+function upsert_jail_record( $rec, &$msg_return ) {
 //outline(dump_array($rec));
 	$date_range=new date_range( $rec['jail_date'],$rec['jail_date_end']);
 	$ba_number=$rec['ba_number'];
 	$rec_description='BA: ' . $ba_number . ', ' . $date_range->display();
-	$match_criteria=array(
-		'OVERLAPSORNULL:jail_date,jail_date_end'=>$date_range
-	);
+	if ($rec['jail_date_end']) {
+		$match_criteria=array(
+			'OVERLAPSORNULL:jail_date,jail_date_end'=>$date_range
+		);
+	} else {
+		$match_criteria=array(
+			'NULL:jail_date_end'=>'dummy',
+			'>=:jail_date'=>$rec['jail_date']
+		);
+	}
 	if ($ba_number) {
 		$match_criteria['ba_number']=$ba_number;
 	}
@@ -79,10 +86,24 @@ function upsert_jail_record( $rec, &$msg ) {
 		$res =  false;
 	} else {
 		$mr=$match_recs[0];
-		if ($mr['ba_number'] and ($mr['ba_number'] !=$ba_number)) {
-			$msg[]=red('BA Mismatch for ' .$rec_description.'. Giving up');
+//outline("FROM DB: " . dump_array($mr));
+//outline("New rec" . dump_array($rec));
+
+		if (
+			(datetimeof($mr['jail_date'])==datetimeof($rec['jail_date']))
+			and (
+				(datetimeof($mr['jail_date_end'])==datetimeof($rec['jail_date_end']))
+			)
+//			and (datetimeof($mr['jail_date_end'])==datetimeof($rec['jail_date_end']))
+			and ($mr['ba_number']==$rec['ba_number'])
+		) {
+			$msg[]='Record already exists.';
 			$res=false;
 		}
+		elseif ($mr['ba_number'] and ($mr['ba_number'] !=$ba_number)) {
+			$msg[]=red('BA Mismatch for ' .$rec_description.'. Giving up');
+			$res=false;
+		} else {
 /*
 		$jd_match=
 			(dateof($mr['jail_date'])==dateof($rec['jail_date']))
@@ -90,6 +111,7 @@ function upsert_jail_record( $rec, &$msg ) {
 */
 			$msg[]=red('JILS Update ability not yet fully implemented.  Can\'t process ' .$rec_description.'. Giving up');
 			$res=false;
+		}
 	}
 	$msg_return.=implode(oline(),$msg);
 	return $res;
