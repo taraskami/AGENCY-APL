@@ -90,8 +90,17 @@ preg_match('/.*/s',$jils_text,$matches);
 		outline();
 		outline(bold("You can close this page now"));
 	} else {
+$help_text=
+	oline("Choose Search Jail Booking Service")
+	.oline("Fill in the search form and hit submit")
+	.oline("Click on the client name link in the search results")
+	.oline("Select and copy the whole page.  (ctrl-a,ctrl-c)")
+	.oline("Paste the page into the box below.  (ctrl-v)");
+$help_text=div($help_text.toggle_label("How to use JILS"),'','class="hiddenDetail"');
 		outline(span(bigger(bold($client_title)),'class="engineTitle"'),2);
-		outline(bold('1. Lookup the client in  '. $jils_link . '.'),2);
+		outline(bold('1. Lookup the client in  '. $jils_link . '.' ));
+		outline($help_text,2);
+
 		outline(bold('2. Copy the page, and paste it into this box:'));
 		out($form);
 	}
