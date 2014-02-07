@@ -138,6 +138,9 @@ function populateSelect( fFrom, fPop, intStart, fFromStart ) {
 		var b, c, d, intItem, intType;
 	// Note this function was hastily hacked to work with non-select lists
 	// (e.g., for selectors).  It appears to work, but may have problems
+	if ( (fFrom===undefined) || (fPop===undefined) ) {
+		return;
+	}
 	if ( fFrom.type=='select') {
 		if ( intStart !== "" ) {
 			for ( b = 0; b < a.length; b++ ) {
@@ -164,8 +167,9 @@ function populateSelect( fFrom, fPop, intStart, fFromStart ) {
 			intType=fFromStart;
 		}
 
-		fPop.options.length = 0;
-
+		if (fPop.options.length !== undefined) {
+			fPop.options.length = 0;
+		}
 		for ( d = 0; d < a.length; d++ ) {
 			if ( a[d][0] == intType ) {
 				fPop.options[ fPop.options.length ] = new Option( a[d][2], a[d][1] );

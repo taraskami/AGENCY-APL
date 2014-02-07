@@ -126,7 +126,7 @@ $(function() {
 				} else {
 					var base = 'RandomDivId';
 					var x=0;
-					while ($(base + ++x).length>0) {}
+					while ($('#'+(base + ++x)).length>0) {}
 					var id = base + x;
 					$(target).attr('id',id);
 				}
@@ -146,7 +146,9 @@ $(function() {
 				$('#'+selected.target).closest('.engineValueContainer').find('.objectPickerToForm').hide();
 				$('#'+selected.target).closest('.engineValueContainer').find('.objectPickerToggleLink').html('change').show();
 				$('#'+selected.target).closest('.engineValueContainer').find('.engineValueUnsetLink').show();
-				$(this).closest('div.ajObjectSearchResult').dialog('close').hide();
+				//$(this).closest('div.ajObjectSearchResult').dialog('close').hide();
+				$(this).closest('div.ajObjectSearchResult').dialog('close').empty();
+				$('#'+selected.target).change();
 			} else {
 				addSelectedObject( selected );
 			}
@@ -184,7 +186,7 @@ function process_selector_event( event,method,target_el ) {
 				complete: function(){ $(spinner).remove();}, 
 				success: function(html){
 					$("#aj_client_selector_my_clients").val(false);
-					$(".ajObjectSearchResult").html(html).dialog( { modal: true, title: 'Select a ' + obj, width: 'auto' } ); 
+					$(".ajObjectSearchResult").html(html).dialog( { position: { my: "center top", at: "center top" }, modal: true, title: 'Select a ' + obj, width: 'auto' } ); 
 					//var button = '<td><button type="button" class="objectPickerSubmit">SELECT</button></td>';
 					var button = '<td><button type="button" class="objectPickerSubmit">SELECT'
 							+ (target_el ? '<span class="serverData">'+target_el+'</span>' : '')
@@ -216,19 +218,19 @@ $(function() {
 	$("#objectReferenceContainer").append(section_to+section_from).draggable().hide();
 	$("#objectReferenceContainer div").hide();
 	$("#infoAdditionalContainer").append("<h2>Additional Information</h2>").draggable().hide();
-	var closeButton = '<a id="objectSelectorHideLink" class="fancyLink">close</a>';
-	$("#objectSelectorForm").tabs().draggable().hide().append(closeButton);
+	var closeButton = '<a class="fancyLink objectSelectorHideLink">close</a>';
+	$(".objectSelectorForm").tabs().draggable().hide().append(closeButton);
 	addPreSelectedObjects();
-	$("#objectSelectorShowLink").click( function(event) {
+	$(".objectSelectorShowLink").click( function(event) {
 		event.preventDefault();
-		$("#objectSelectorForm").show();
+		$(".objectSelectorForm").show(); // FIXME: Which one?
 		$(this).hide();
 	} );
-	$("#objectSelectorHideLink").click( function(event) {
+	$(".objectSelectorHideLink").click( function(event) {
 		event.preventDefault();
-		$("#objectSelectorForm").hide();
+		$(".objectSelectorForm").hide(); // FIXME: which one?
 		$(".ajObjectSearchResult").hide();
-		$("#objectSelectorShowLink").show();
+		$(".objectSelectorShowLink").show(); // FIXME: which one?
 	});
 	$(document).on('click','.selectedObjectRemove', function(event) {
 		event.preventDefault();

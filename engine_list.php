@@ -409,12 +409,19 @@ function show_query($fields,$result,$control,$def,$total,$control_array_variable
 		$a = sql_to_php_generic($a,$def);
 
 		$row_content = $fn($fields,$position,$a,$control,$def,$control_array_variable,$REC_NUM);
+		$row_data=array(
+			
+			'objectPickerObject'=>$def['object'],
+			'objectPickerId'=>$a[$def['id_field']],
+			'objectPickerMethod'=>'SearchResult',
+			'objectPickerLabel'=>object_label($def['object'],$a[$def['id_field']]));
         $row_content = 	$row_content
 			.cell(''
 			. hiddenvar('objectPickerObject',$def['object'])
 			. hiddenvar('objectPickerId',$a[$def['id_field']])
 			. hiddenvar('objectPickerMethod','SearchResult')
-			. hiddenvar('objectPickerLabel',object_label($def['object'],$a[$def['id_field']]))
+			. hiddenvar('objectPickerLabel',htmlspecialchars(object_label($def['object'],$a[$def['id_field']])))
+			. json_encode($row_data)
 			,'class="hidden"');
 
 		if ($reverse) {

@@ -409,7 +409,7 @@ function object_qs_filter($qs_text,$object=AG_MAIN_OBJECT_DB)
 		case 'guest':
 			$filter['ILIKE:guest_name(guest_id)']="%$qs_text%";
 			break;
-		case 'client':
+		case 'clientx':
 			if ( is_numeric( $qs_text )  && ($qs_text <= AG_POSTGRESQL_MAX_INT)) {
 				// check for unduplicated clients
 				$client = sql_fetch_assoc(client_get($qs_text));
@@ -451,16 +451,20 @@ function object_qs_filter($qs_text,$object=AG_MAIN_OBJECT_DB)
 			}
 			break; /// end case client
 		default :
+			$qdef=$def['quick_search'];
 			if (dateof($qs_text) and ($mf=$qdef['match_fields_date'])) {
 				foreach($mf as $m) {
 					$filter[]=array($m=>dateof($qs_text,'SQL'));
 				}
 			} elseif  (ssn_of($qs_text) and ($mf=$qdef['match_fields_ssn'])) {
 				foreach($mf as $m) {
-					$filter=array($m=>ssn_of($qs_text,'SQL'));
+					$filter[]=array($m=>ssn_of($qs_text));
+				}
+			} elseif  (is_numeric($qs_text) and ($mf=$qdef['match_fields_numeric'])) {
+				foreach($mf as $m) {
+					$filter[]=array($m=>$qs_text);
 				}
 			} else {
-				$qdef=$def['quick_search'];
 				$query_string=sql_escape_string($query_string);
 				$filter=array();
 				$match_fields=orr($qdef['match_fields'],$def['list_fields']);

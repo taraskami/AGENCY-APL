@@ -76,4 +76,13 @@ a.selectedObjectRemove {
 	font-size: 65%;
 }
 
+a.objectPickerToggleLink {
+	font-size: 75%;
+}
+
+a.engineValueUnsetLink {
+	font-size: 75%;
+}
+
 .objectSelectorTitle { font-weight: bold; }
+

@@ -176,12 +176,13 @@ function post_object_references( $rec,$def,$refs, &$mesg ) {
 function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_count=1, $label='',$class='')
 {
 	$def=get_def($object);
+	$object_label = $def['singular'];
 	$main_def=get_def(AG_MAIN_OBJECT);
 	$main_id_field=$main_def['id_field'];
 	$obj_opt='object="'.$object.'"';
 	$Uobj = ucfirst($object);
 	$div_id=orr($div_id,'ObjectSelector'.$Uobj);
-	$label=div(orr($label,"Select " . ucfirst(orr($object,'objects'))),'objectSelectorTitle' . $Uobj,'class="objectSelectorTitle"');
+	$label=div(orr($label,"Select " . ucfirst(orr($object_label,'objects'))),'','class="objectSelectorTitle objectSelectorTitle'.$Uobj.'"');
 	$op=hiddenvar('objectPickerObject',$object);
 	$method='Pick';
 	$id_field=$def['id_field'];
@@ -194,7 +195,7 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 				$label_field='XXXXXX, XXX';
 				break;
 			} // else fall through...
-		case AG_MAIN_OBJECT :
+//		case AG_MAIN_OBJECT :
 		case 'staff' :
 		case 'guest' :
 			$label_field= $object . '_name(' . $id_field . ')';
@@ -224,7 +225,7 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 			. selectend()
 			. button('Add','','','','','class="objectPickerSubmit" ' . $obj_option);
 	}
-    $object_picker = div($op,'objectSelectorPick' . $Uobj);
+    $object_picker = div($op,'','class="objectSelectorPick' . $Uobj.'"');
 
     return
         div( span($label)

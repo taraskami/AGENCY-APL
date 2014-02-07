@@ -1548,7 +1548,7 @@ function value_generic($value,$def,$key,$action,$do_formatting=true,$rec=array()
 	$type=$field['data_type'];
 	//fixme: this should really be done at the formatting stage, since it doesn't webify anything
 	// that is occasionally a link (such as DAL progress note field).
-	if (!(in_array($type,array('html','lookup','table_switch','lookup_multi','array','staff_list','attachment')) and $do_formatting) and (!$field['is_html'])) {
+	if (!(in_array($type,array('html','selector','lookup','table_switch','lookup_multi','array','staff_list','attachment')) and $do_formatting) and (!$field['is_html'])) {
 		$value=webify($value); 
 	}
       $show_value = $field['show_lookup_code_'.$action];
@@ -1610,7 +1610,7 @@ function value_generic($value,$def,$key,$action,$do_formatting=true,$rec=array()
 		$value = timeof($value,'ampm');
 	} elseif ($type == 'currency') {
 		$value = orr(currency_of($value),$value); //this is required for pre-formatted values
-      } elseif ($type == 'lookup') {
+      } elseif (($type == 'lookup') or ($type=='selector')) {
 		if (!be_null($value)) {
 			// <Optimize Me!>
 			$look=$field['lookup'];
@@ -1771,7 +1771,7 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 	  $out .= $data_dict 
 			? row(cell(div($data_dict . toggle_label("Data dictionary for $object"),'','class="hiddenDetail"'),'colspan=2'))
 			: '';
-      foreach ($rec as $key=>$value) {
+		foreach ($rec as $key=>$value) {
 	    $disp = $fields[$key]["display_{$action}"];
 	    if ($disp=='multi_disp') { // THIS STUFF ALL NEEDS TO GO SOON!!
 		  $sub_value = $value[$fields[$key]['multi_field']];
@@ -1956,8 +1956,9 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 	$len = $pr['length'];
 	switch ($type) {
 
+	case AG_MAIN_OBJECT_DB:
 	case 'selector':
-		if (!($object=orr($def[$key]['selector_object'],$def[$key]['lookup']['table']))) {
+		if (!($object=orr($def['fields'][$key]['selector_object'],$def['fields'][$key]['lookup']['table']))) {
 			if (preg_match('/^(.*)_id$/',$key,$match)) {
 				$object=$match[1];
 			}
@@ -1969,7 +1970,8 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 		//$allowed=$pr[$action.'_main_objects'] || be_null($value); //edit & add
 		$allowed=true;  //FIXME
 		$field .= ( $value ? para(elink_value($object,$value),'class="engineValueLabel"') : '')
-			. hiddenvar($formvar.'['.$key.']',$value,'class="engineValue"');
+			//. hiddenvar($formvar.'['.$key.']',$value,'class="engineValue" ' .$element_options);
+			. formvartext($formvar.'['.$key.']',$value,'class="engineValue hidden" ' .$element_options);
 		if ($allowed) {
 			$div_dummy='';
 			if (!$value) {
@@ -1979,7 +1981,7 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 			}
 			$wipeout=hlink('#','unset',NULL,'class="engineValueUnsetLink' . (!$value ? ' hidden' : '') . '"');
 			$selector = object_selector_generic( $object,$div_dummy,'',1,'','objectPickerToForm' . $s_class);
-			$field .= $selector . hlink('#','change...',NULL,'class="fancyLink objectPickerToggleLink ' . $c_class.'"')
+			$field .= $selector . hlink('#','change',NULL,'class="fancyLink objectPickerToggleLink ' . $c_class.'"')
 					. ' ' . $wipeout;
 		}
 		break;
@@ -1991,7 +1993,7 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 	case 'staff_list':
 		$field = make_staff_list_form($value,$key,$def,$control,$formvar);
 		break;
-      case AG_MAIN_OBJECT_DB:
+	case 'DISABLED' . AG_MAIN_OBJECT_DB:
 		$allowed=$pr[$action.'_main_objects'] || be_null($value); //edit & add
 		$field = $value 
 			? (client_link($value) . hiddenvar($formvar.'['.$key.']',$value))
@@ -2195,7 +2197,7 @@ function form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec,$formvar
       $label=label_generic($key,$def,$action);
       $label = $not_valid_flag ? span($label,'class=engineFormError') : $label; //display in red invalid fields
 
-	if (in_array($type,array('lookup','lookup_multi'))) {
+	if (in_array($type,array('lookup','lookup_multi','selector'))) {
 		//FIXME: test for has_perm
 		$label .= oline() . smaller(add_link($pr['lookup']['table'],'','class="fancyLink advancedControl" target="_blank"'),2);
 	}

@@ -36,6 +36,14 @@ $engine["client"] = array(
 		'cancel_add_url'=>$agency_home_url,
 		'list_fields'=>array('custom1','custom2','custom3','custom4','custom5'),
 		'list_hide_view_links' => true,
+		'object_label'=>'client_link($rec["client_id"])',
+		'quick_search'=>array(
+			'jump_page'=>'client_display.php',
+			'match_fields'=>array('name_full_alias'),
+			'match_fields_ssn'=>array('ssn'),
+			'match_fields_numeric'=>array('client_id'),
+			'match_fields_date'=>array('dob')
+		),
 		'child_records'=> array(
 						//FIXME: this is hacky, and needs to be more configurable/generic for
 						//other child record types
