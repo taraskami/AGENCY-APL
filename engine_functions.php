@@ -3966,7 +3966,8 @@ function auto_close_generic($def,$action,$id,$date)
 		return bold('This record couldn\'t be closed due to the following errors (it might need to be edited manually):')
 			. div($message,'','class="indent"');
 	} 
-
+	$rec['changed_at']=datetimeof('now','SQL');
+	$rec['changed_by']=$GLOBALS['UID'];
 	$a      = $def['fn']['post']($rec,$def,$message,$filter);
 
 	$_SESSION['approved_auto_close_'.md5($object . $id)] = null; //unset authorization
