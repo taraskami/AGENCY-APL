@@ -1274,7 +1274,7 @@ function set_engine_defaults($object,$table='')
 	    ? 'tbl_' . $object : $table;
 	$primaries=sql_primary_keys($table);
 	if ($strip_from=strpos($primaries,',')) {
-		$primary = susbstr($primaries,0,$strip_from);
+		$primary = substr($primaries,0,$strip_from);
 	} else {
 		$primary = $primaries;
 	}
