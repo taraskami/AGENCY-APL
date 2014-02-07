@@ -307,6 +307,10 @@ function attachment_label($a_attachment_rec, $a_attachment_id, $extension, $date
 
 	$parent_id_field = $parent_def['id_field'];
 
+	if ($parent_def['fields'][$a_attachment_rec['parent_field_name']]['attachment_use_filename_original']) {
+		$att_rec=array_shift(get_generic(array('attachment_id'=>$a_attachment_rec['attachment_id']),NULL,NULL,'attachment'));
+		return $att_rec['filename_original'];
+	}
 
 	if ($parent_rec and array_key_exists(AG_MAIN_OBJECT.'_id', $parent_rec)) {
 		// check if there is a client id.

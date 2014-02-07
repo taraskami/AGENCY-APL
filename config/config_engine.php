@@ -206,6 +206,7 @@ $engine['field_default'] = array(
 				'append_only' => null, // data can only be appended, no change to existing
 				'array_max_elements'=>null, //default is 10 for data type array
 				'boolean_form_type'=>null, //allow different options for booleans (checkbox,allow_null)
+				'attachment_use_filename_original'=>false, 
 				'cell_align_label'=>null, //default is right (choose right,left,center)
 				'cell_align_value'=>null, //default is left
 				'edit_main_objects'=>null, //will display a client selector to change client_id (USE CAREFULLY)
