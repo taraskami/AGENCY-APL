@@ -1101,7 +1101,7 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 
 	    } elseif (preg_match('/(.*)_code$/i',$field,$matches)
 //		    && isTableView('l_' . $matches[1])) {
-		    && is_view('l_' . $matches[1])) {
+		    && is_view('l_' . $matches[1]) and ($object != ('l_'.$matches[1]))) {
 
 		    /*
 		     * sql_metadata might return this information (if the lookup table is referenced in the db), 
@@ -1127,11 +1127,14 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 			    $new['label'] = 'Project';
 
 		    }		  
-			if ($object==('l_'.$matches[1])) {
+		} elseif (preg_match('/(.*)_code$/i',$field,$matches) and ($object==('l_'.$matches[1]))) {
+
 				// Code field in lookup table
 				$new['force_case']='upper';
 				$new['valid']['preg_match(\'/^[A-Z0-9_]*$/\',$x)'] ='{$Y} should only contain letters, numbers and underscores';
-			}
+		    	$new['data_type'] = $meta[$field]['data_type'];
+		   		$new['length']    = $meta[$field]['length'];
+				$new['display_edit'] = 'display'; // Don't allow changing codes.  Can be overriden in config file
 
 	    } elseif (preg_match('/(.*)_code_other$/i',$field,$m) and in_array($m[1].'_code',$fields)) {
 
