@@ -35,14 +35,6 @@ should be included in this distribution.
  * Should be in agency_config, but UID not available yet.
  */
 
-$AG_OPENOFFICE_SYS_VARS = array(
-    'confidential' => confidential('',0,'TEXT'),
-    'staff_id'=>$GLOBALS['UID'],
-	"today"=>dateof('now'),
-	'USER'=>$GLOBALS['NICK'],
-	'now'=>datetimeof(''), 
-	'UID'=>$GLOBALS['UID']);
-
 function ooify($value)
 {
        $cg_oo = $GLOBALS['AG_OPEN_OFFICE_TRANSLATIONS'];
@@ -167,7 +159,7 @@ function oo_merge_set( $data_recs, $template_strings, $group_field="" )
 {
 		global $DEBUG;
 		$result=array();
-        $sys_vars=$GLOBALS['AG_OPENOFFICE_SYS_VARS'];
+        $sys_vars=report_system_variables();
         $tot_recs=is_array($data_recs) ? count($data_recs) : sql_num_rows($data_recs);
         for ($count=0; $count < $tot_recs; $count++)
         {
@@ -554,7 +546,7 @@ function template_merge( $data_sets, $template='',$extra_vars=array())
         ? $template
         : AG_TEMPLATE_DIRECTORY . '/' . $template;
 
-	$global_vars=array_merge($extra_vars,$GLOBALS['AG_OPENOFFICE_SYS_VARS']);
+	$global_vars=array_merge($extra_vars,report_system_variables());
 	//$global_vars['debug_msg']=dump_array($data_sets);
 	$blocks=$data_sets['report_block'];
 	unset($data_sets['report_block']);
@@ -563,6 +555,8 @@ function template_merge( $data_sets, $template='',$extra_vars=array())
 	$doc->LoadTemplate($template);
 	//$doc->SetOption('noerr','true');
 	// Global blocks
+//outline("Global vars = " . dump_array($global_vars));
+//outline("Report vars = " . dump_array($global_vars));
 	$doc->MergeField('global',$global_vars);
 	$doc->MergeField('report',$data_sets);
 	for ($x=0;$x<count($blocks);$x++) {
@@ -574,20 +568,49 @@ function template_merge( $data_sets, $template='',$extra_vars=array())
 	}
 
 	$doc->MergeBlock('sections',range(1,count($blocks)));
+	// FIXME: move me to a config file or something
+	$type_conversions=array(
+		'float'=>'num',
+		'integer'=>'num',
+		AG_MAIN_OBJECT_DB => 'num',
+		'date'=>'date',
+		'time'=>'time',
+		'timestamp'=>'date',
+		'datetime'=>'date'
+	);
+
 	// Report blocks
 	for ($x=1;$x<=count($blocks);$x++) {
 		// Template numbering starts at 1, arrays at 0
 		$block=$blocks[$x-1];
 		$block_vals=$block['values'];
 		unset($block['values']);
-		// Block vars
-		$doc->MergeBlock('section'.$x,array($block));
-		// Block values
-		$doc->MergeBlock("data$x",range(1,count($block_vals)));
-		for ($y=1;$y<=count($block_vals);$y++) {
-			$headers=array_keys($block_vals[$y-1][0]);
-			$doc->MergeBlock("headers$x-$y,headers{$x}-{$y}a",$headers);
-			$doc->MergeBlock("values$x-$y",$block_vals[$y-1]);
+		if ($default_template) {
+			// Block vars
+			$doc->MergeBlock('section'.$x,array($block));
+			// Block values
+			$doc->MergeBlock("data$x",range(1,count($block_vals)));
+			for ($y=1;$y<=count($block_vals);$y++) {
+				$headers=array_keys($block_vals[$y-1][0]);
+/*
+				$headers=array();
+				foreach($block['data_types'] as $k=>$v) {
+					$headers[]=array('val'=>$k,'type'=>$type_conversions[$v]);
+
+				}
+*/
+/*
+				$header_keys=array_keys($block_vals[$y-1][0]);
+				foreach ($header_keys as $h) {
+					$headers=array('val'=>$h
+*/
+				$doc->MergeBlock("headers$x-$y,headers{$x}-{$y}a",$headers);
+				$doc->MergeBlock("values$x-$y",$block_vals[$y-1]);
+			}
+		} else {
+	       $values=$blocks[0]['values'][0];
+			// outline(dump_array($values));
+	       $doc->MergeBlock('data',$values);
 		}
 	}
 	$doc->Show(OPENTBS_DOWNLOAD);

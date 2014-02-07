@@ -408,11 +408,20 @@ function report_generate($report,&$msg)
 function report_system_variables() {
 // Fixme, I wanted this is agency_config.php, but the UID info not available before it is included.
 	$sys_vars = array(
+		'confidential' => confidential('',0,'TEXT'),
+		'staff_id'=>$GLOBALS['UID'],
+		'org_name'=>org_name(),
+		'org_name_short'=>org_name('short'),
 		'today'=>dateof('now'),
+		'today_wordy'=>dateof('now','WORDY'),
 		'now'=>timeof('now'),
 		'UID'=>$GLOBALS['UID'],
 		'UID_NAME'=>staff_name($GLOBALS['UID']),
 		'org'=>org_name('short'),
+		'target_date'=>dateof(target_date()),
+		'target_date_wordy'=>dateof(target_date(),'WORDY'),
+		'target_month'=>dateof(target_date(),'MONTH'),
+		'target_month_wordy'=>dateof(target_date(),'MONTH_WORDY'),
 		'org_label'=>org_name());
 	uksort($sys_vars, 'strlen_cmp');
 	return $sys_vars;
@@ -446,7 +455,12 @@ function report_generate_export_template($report,$template,&$msg)
 			
 			// fetch_all causing problems with NULL
 			//$report['sql'][$x]['values'] = pg_fetch_all($r);
-
+			$tmp_rpt_def=config_generic_sql(array(),$r);
+			$data_types=array();
+			foreach ($tmp_rpt_def['fields'] as $k=>$v) {
+				$data_types[$k]=$v['data_type'];
+			}
+			$report['report_block'][$x]['data_types']=$data_types;
 			if (sql_num_rows($r)===0) {
 			  $report['report_block'][$x]['values'][$cnt][][0]=$report['report_block'][$x]['message_if_empty'];
 			} else {
@@ -535,7 +549,8 @@ function report_user_options_form($report)
 			foreach( $p['options'] as $li=>$lab) {
 				// default is set a) if default is passed, and equals current option
 				// or default is array, and $li is one of the keys
-				$defaulti = ( ( is_array($default) and in_array($li,array_keys($default)))
+				//$defaulti = ( ( is_array($default) and in_array($li,array_keys($default)))
+				$defaulti = ( ( is_array($default) and (in_array($li,$default) or ($default[$li]=='on')))
 					or ($li==$default)
 					// or, b) no default is passed, but default is configured to current option
 					or ( (!$default) and ($li==$p['default']) ));
