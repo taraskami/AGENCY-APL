@@ -1786,6 +1786,7 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 		  $value = $fields[$key] 
 			  ? eval('return '. $fields[$key]['value_'.$action].';')
 			  : $value;
+		  $x=$value; // set X, so that for virtual fields it will be available for value_format
 		  if ($disp=='hide') {
 			// nothing...want to capture special fields that don't have $disp
 			// set, so this test goes above the one below...!$disp
@@ -1812,6 +1813,7 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 			      //nothing
 			} else {
 			      $value =  eval('return '.$fields[$key]['value_'.$action].';');
+					$x=$value;
 				$out .= $def['fn']['view_row']($key,$value,$def,$action,$rec);
 			}
 		  }

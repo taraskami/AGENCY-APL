@@ -630,7 +630,7 @@ function show_query_row_generic($fields,$position,$rec,$control,$def,$control_ar
 		foreach($fields as $key) {
 
 			//EVALUATE value
-			$x=$rec[$key];
+			$x_raw=$x=$rec[$key];
 			$value = $def['fields'][$key] 
 				? eval('return '.$def['fields'][$key]['value_list'].';')
 				: $x;
@@ -1386,6 +1386,7 @@ function child_list_add_link($def,$filter,$control)
 //		$add_link = table($tmp_link,'',' class="" style="display: inline; vertical-align: -50%;"');
 		$add_link = implode($tmp_link,' | ');
 	} elseif ($code=$def['add_link_alternate']) {
+		$rec=$filter;
 		$add_link=eval('return '.$code.';');
 	} else {
 		$add_link=link_engine(array('object'=>$object,
