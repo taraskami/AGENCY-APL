@@ -101,7 +101,9 @@ define('AG_WIKI_PUBLIC_BASE_URL',$agency_wiki_public_url);
 
 //links
 $agency_home_url= ( is_secure_transport() ? 'https://' : 'http://' )
-				.$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']). ($off ? ('/'.$off) : '');
+				.$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']);
+				.((substr($agency_home_url,-1)=='/') ? '' : '/')
+				.($off ? ('/'.$off) : '');
 $organization_home_url=$agency_wiki_public_url . 'Not_set_organization_home_url';
 define('AG_AGENCY_ADMIN_URL','menu.php#admin');
 $agency_search_url=$off.'object_query.php';
