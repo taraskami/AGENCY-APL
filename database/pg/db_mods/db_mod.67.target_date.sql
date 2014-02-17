@@ -38,8 +38,8 @@ INSERT INTO tbl_db_revision_history
 	 );
 
 /* target_date */
-\i create.tbl_target_date.sql
-\i functions/create.functions.target_date.sql
+\i ../agency_core/create.tbl_target_date.sql
+\i ../agency_core/functions/create.functions.target_date.sql
 
 COMMIT;
 

@@ -157,4 +157,21 @@ function set_machine_id_cookie() {
 			. smaller('('.hlink($_SERVER['PHP_SELF'],'Reload now'). ')');
 	return oline($status,2) . $form . $note;
 }
+
+function target_date() {
+	static $t_date;
+	if (!$t_date) {
+		$t_date=dateof(call_sql_function('target_date'));
+	}
+	return $t_date;
+}
+
+function target_date_effective_at() {
+	static $t_date;
+	if (!$t_date) {
+		$t_date=dateof(call_sql_function('target_date_effective_at'));
+	}
+	return $t_date;
+}
+
 ?>
