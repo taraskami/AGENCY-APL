@@ -150,6 +150,10 @@ INSERT INTO tbl_system_log (event_type,message,added_at,added_by,changed_at,chan
 /* internal vs remote access */
 \i create.tbl_db_access.sql
 
+/* target_date */
+\i create.tbl_target_date.sql
+\i functions/create.functions.target_date.sql
+
 /* this file should be edited for access rules. The default is only to allow local access */
 \i add.initial_access.sql
 
