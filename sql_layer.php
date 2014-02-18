@@ -158,22 +158,19 @@ function sql_metadata($table)
 			}
 
 			$type = $a['format_type'];
-
-			if (preg_match('/^char(acter)?(\s(.*))?/i',$type,$m)) {
+			if (preg_match('/^char(acter)?(\s?(.*))?/i',$type,$m)) {
 
 				$rest = $m[3];
 
-				if (preg_match('/\[\]$/i',$rest)) {
+				$is_array=preg_match('/\[\]$/i',$rest) ? '[]' : '';
 
-					$b['data_type'] = 'varchar[]';
+				if (preg_match('/varying/i',$rest)) {
 
-				} elseif (preg_match('/varying/i',$rest)) {
-
-					$b['data_type'] = 'varchar';
+					$b['data_type'] = 'varchar' . $is_array;
 
 				} else {
 
-					$b['data_type'] = 'character';
+					$b['data_type'] = 'character' . $is_array;
 
 				} 
 				
