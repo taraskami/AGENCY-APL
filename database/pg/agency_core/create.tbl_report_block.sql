@@ -38,5 +38,3 @@ CREATE TABLE tbl_report_block (
 
 );
 
-CREATE VIEW report_block AS (SELECT *,COALESCE(sort_order_id_manual,report_block_id) AS sort_order_id FROM tbl_report_block WHERE NOT is_deleted ORDER BY COALESCE(sort_order_id_manual,report_block_id));
-
