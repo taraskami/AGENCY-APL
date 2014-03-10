@@ -195,8 +195,10 @@ function post_attachment($session_key, $object, $key)
 	return (is_numeric($a_attachment_id)) ? $a_attachment_id : false;
 }
 
-function link_attachment($value, $key, $short_format=false)
+function link_attachment($value, $key='dummy', $short_format=false)
 {
+	// FIXME: $key appears unused
+
 	/*
 	 * Link to a pending or stored attachment.
 	 * Parameters are the value in the field, 
