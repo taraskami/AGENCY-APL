@@ -464,8 +464,18 @@ function object_qs_filter($qs_text,$object=AG_MAIN_OBJECT_DB)
 				foreach($mf as $m) {
 					$filter[]=array($m=>$qs_text);
 				}
-			} else {
-				$query_string=sql_escape_string($query_string);
+			}
+			if ((!$filter) and (!be_null($qdef['match_fields_custom']))) {
+					$qs_text=sql_escape_string($qs_text);
+					foreach ($qdef['match_fields_custom'] as $mc_k=>$mc_v) {
+						if (preg_match($mc_k,$qs_text)) {
+							$filter[]=array(str_replace('$x',$qs_text,key($mc_v))=>str_replace('$x',$qs_text,$mc_v[key($mc_v)]));
+							break;
+						}
+					}
+			}
+			if (!$filter) {
+				//$query_string=sql_escape_string($query_string);
 				$filter=array();
 				$match_fields=orr($qdef['match_fields'],$def['list_fields']);
 				foreach ($match_fields as $field) {

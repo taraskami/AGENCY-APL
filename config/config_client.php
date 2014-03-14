@@ -42,7 +42,8 @@ $engine["client"] = array(
 			'match_fields'=>array('name_full_alias'),
 			'match_fields_ssn'=>array('ssn'),
 			'match_fields_numeric'=>array('client_id'),
-			'match_fields_date'=>array('dob')
+			'match_fields_date'=>array('dob'),
+			'match_fields_custom'=>array('/^[a-z]{1,4}[0-9]{2,5}$/i'=>array('FIELDIN:client_id'=>'(SELECT client_id FROM residence_own_current WHERE lower(housing_unit_code)=lower(\'$x\'))'))
 		),
 		'child_records'=> array(
 						//FIXME: this is hacky, and needs to be more configurable/generic for
@@ -102,7 +103,7 @@ $engine["client"] = array(
 //						'client_export_id'    => 'housing',
 //						'payment'             => 'housing',
 //						'payment_test'        => 'housing',
-//						'service_housing'     => 'housing',
+						'service_housing'     => 'housing',
 //						'data_gathering_1811' => 'housing',
 						//-------HEET--------//
 //						'heet_reg'      => 'HEET',
