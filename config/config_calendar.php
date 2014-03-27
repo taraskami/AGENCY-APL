@@ -33,6 +33,7 @@ should be included in this distribution.
 
 $engine['calendar'] = array(
 				    'perm'=>'calendar_admin',
+					'child_records'=>array('calendar_appointment'),
 				    'fields'=>array(
 							  'calendar_id'=>array(
 										     'display'=>'display',

@@ -48,7 +48,11 @@ $engine['calendar_appointment'] = array(
 											     'is_html'=>true,
 											     'label'=>'Calendar',
 											     'value'=>'Calendar::link_calendar($x)',
-											     'value_format_list'=>'smaller($x,2)'),
+											     'value_format_list'=>'smaller($x,2)',
+												'lookup'=>array(),
+												'data_type'=>'varchar'
+								),
+												
 								  
 								  'client_id'=>array(
 											   'add_main_objects'=>true,
