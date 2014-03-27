@@ -149,6 +149,8 @@ $AG_ENGINE_TABLES=array_merge($AG_ENGINE_TABLES_CORE,array(AG_MAIN_OBJECT_DB,
 //				'guest_authorization',
 //				'guest_identification',
 //				'guest_visit',
+//				'work_order',
+//				'work_order_comment',
 				//---Staff & Users---//
 				'address_staff',
  				'calendar',
