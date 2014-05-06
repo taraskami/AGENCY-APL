@@ -38,8 +38,8 @@ should be included in this distribution.
 define('AG_PRODUCTION_DATABASE_NAME','agency_client');
 define('AG_PRODUCTION_DATABASE_SERVER','localhost');
 
-define('AG_LIST_EMPTY_HIDE',true); //show empty records by default
-define('AG_LIST_GROUPING_EXPANDED',false); //default child record groupings to expanded
+define('AG_LIST_EMPTY_HIDE',false); //show empty records by default
+define('AG_LIST_GROUPING_EXPANDED',true); //default child record groupings to expanded
 
 $AG_ENGINE_TABLES=array_merge($AG_ENGINE_TABLES_CORE,array(AG_MAIN_OBJECT_DB,
 				//---General Client---//
