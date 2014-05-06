@@ -485,3 +485,34 @@ canvas.imageCapture {
 .imageSendContainer {
 }
 
+/* Report User Options */
+.reportUserOptionSelect td {
+	padding: 8px;
+	border-collapse: collapse;
+}
+
+.reportUserOptionSelect td.leftcell {
+	border-bottom: solid #B2B3FF 2px;
+	padding-right: 0px;
+
+}
+
+.reportUserOptionSelect td.rightcell {
+	background-color: #D2D3FF;
+	border: solid black 1px;
+	padding-left: 0px;
+	padding: 10px;
+	border-radius: 10px;
+}
+
+span.reportUserOptionSelect {
+	background-color: #B2B3FF;
+
+}
+
+table.reportUserOptionSelect {
+	border: solid 3px black;
+	padding: 20px;
+	border-radius: 5px;
+}
+

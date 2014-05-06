@@ -560,30 +560,34 @@ function report_user_options_form($report)
 				 		. '&nbsp;'.$lab,' class="radioButtonSet"') . oline()
 					: selectitem( $li,$lab,$defaulti);
 			}
-			$opt .= row(cell($label) . cell($cell. (!$multi ? selectend() : '') ));
+			$var_opt[]=array($label,$cell. (!$multi ? selectend() : ''));
 			break;
 		case 'DATE' :
-				 $opt .= row(cell($userprompt) . cell(formdate($varname,orr($default,$p['default'],dateof('now')))));
+				 $var_opt[] = array($userprompt,formdate($varname,orr($default,$p['default'],dateof('now'))));
 				 break;
 		case 'TIME' :
-				 $opt .= row(cell($userprompt) . cell(formtime($varname,orr($default,$p['default'],timeof('now')))));
+				 $var_opt[] = array($userprompt,formtime($varname,orr($default,$p['default'],timeof('now'))));
 				 break;
 		case 'TIMESTAMP' :
-				 $opt .= row(cell($userprompt) . cell(oline(formdate($varname.'_date_',orr(dateof($default),$p['default'],dateof('now'))))
-												. formtime($varname.'_time_',orr(timeof($default),timeof($p['default']),timeof('now')))));
+				 $var_opt[]= array($userprompt,oline(formdate($varname.'_date_',orr(dateof($default),$p['default'],dateof('now'))))
+												. formtime($varname.'_time_',orr(timeof($default),timeof($p['default']),timeof('now'))));
 				 break;
 		case 'VALUE' :
 		case 'TEXT' :
-			$opt .= row(cell($userprompt) . cell(formvartext($varname,orr($default,$p['default']))));
+			$var_opt[] = array($userprompt,formvartext($varname,orr($default,$p['default'])));
 			break;
 		case 'TEXT_AREA':
-			$opt .= row(cell($userprompt) . cell(formtextarea($varname,orr($default,$p['default']))));
+			$var_opt[] = array($userprompt,formtextarea($varname,orr($default,$p['default'])));
 			break;
 		default :
-			$opt .= row(cell(alert_mark('Don\'t know how to handle a ' . $p['type']),' colspan="2"'));
+			$var_opt[] = array(alert_mark('Don\'t know how to handle a ' . $p['type']),'');
 		}
 	}
-	$opt=table_blank($opt);
+	foreach ($var_opt as $vo) {
+		$var_opt_rows.=row(cell($vo[0],'class="leftCell"').cell($vo[1],'class="rightCell"'));
+
+	}
+	$opt=table_blank($var_opt_rows,'','class="reportUserOptionSelect"');
 	}
 
 	// output options
@@ -593,8 +597,8 @@ function report_user_options_form($report)
 	$out .= $opt;
 	$out .= oline(). button('Submit','','','','','class="engineButton"');
 	$out .= formend();
-
-	return $out;
+	$out .= oline() . hrule() .oline();
+	return span($out,'class="reportUserOptionSelect"');
 }
 
 function report_output_select($report,$form=false)
