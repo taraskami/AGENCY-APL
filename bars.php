@@ -46,6 +46,9 @@ function bar_status( $id, $group="",$start="",$end="",$brc="",$which=array())
 	 *  hence you can find out if a client was barred on a specific date
 	 *  brc is a flag...if set it checks if client was barred to brc
 	 */
+
+	if (!is_enabled('bar')) { return false; }
+
 	$c_def=get_def(AG_MAIN_OBJECT_DB);
 	$g_def=get_def('guest');
 	$c_field=$c_def['id_field'];
