@@ -433,14 +433,19 @@ define('AG_BEDREG_URL','bed_reg.php');
 define('AG_MAP_URL','http://maps.google.com/?q=');
 
 
-$AG_MENU_LINKS = array(//of the form 'link_text'=>url
-			   hlink($agency_home_url,'Home'),
-			   hlink(AG_LOG_URL,'Logs'),
-			   hlink($calendar_url.'?Menu','Calendar'),
-			   hlink(AG_BEDREG_URL,'BedReg'),
-			   hlink(AG_REPORTS_URL,'Reports'),
-			   hlink('menu.php','Menu')
-			   );
+//$AG_MENU_LINKS = array(//of the form 'url'=>'link text'
+$AG_MENU_LINKS[]= hlink($agency_home_url,'Home');
+$AG_MENU_LINKS[]= hlink(AG_LOG_URL,'Logs');
+if (is_enabled('calendar')) {
+	$AG_MENU_LINKS[]= hlink($calendar_url.'?Menu','Calendar');
+}
+
+if (is_enabled('entry')) {
+	$AG_MENU_LINKS[]= hlink('entry_browse.php','Entry');
+}
+$AG_MENU_LINKS[]= hlink(AG_BEDREG_URL,'BedReg');
+$AG_MENU_LINKS[]= hlink(AG_REPORTS_URL,'Reports');
+$AG_MENU_LINKS[]= hlink('menu.php','Menu');
 
 
 /*
