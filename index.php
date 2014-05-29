@@ -52,8 +52,8 @@ $links=span($links_func(),'class="homeLinks"');
 $links_sidebar_func=AG_MAIN_OBJECT_DB.'_home_sidebar_left';
 $news=div(link_engine($news_control,'What\'s<br />New?','','class="fancyLink"'),'','class="newsLink"');
 $title=span($AG_TEXT['AGENCY_HOME_TITLE'],'class="homePageTitle"');
-$org_info=span(oline().'running at ' . span(org_name(),'class="homePageOrgName"'),'class="homePageOrgInfo"');
-$title=para($title.$org_info);
+$org_info=span('running at ' . span(link_organization_home(org_name()),'class="homePageOrgName"'),'class="homePageOrgInfo"');
+$title=para($title.oline().$org_info);
 //$spacer = oline('',3);
 array_push($commands,
 	     //bottomcell(html_heading_1(
