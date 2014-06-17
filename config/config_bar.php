@@ -97,7 +97,7 @@ $engine["bar"]=array(
              'value_field'=>'staff_id',
              'label_field'=>'staff_name(staff_id)')
 ),
-			'guest_id'=>array('value'=>'guest_link($x)','is_html'=>true),
+			'guest_id'=>array('value'=>'guest_link($x_raw)','is_html'=>true),
 				"reinstate_condition" => array(
 									 "label" => "Conditions for Reinstatement",
 									 "comment" => "Describe rules for reinstatement"
