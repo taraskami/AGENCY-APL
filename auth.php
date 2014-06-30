@@ -173,6 +173,7 @@ class Auth {
 
 	    $hash = $this->set_hash(microtime());
 	    $destination = htmlentities(str_replace('logout_agency=Y','',$_SERVER['REQUEST_URI']));
+		if ($destination=='//') { $destination='/'; } // FIXME:  Bandaid hack	
 	    $post_variables = $this->post_variables();
 	    $advisory_box=div($AG_TEXT['LOGIN_ADVISORY'],'loginAdvisory');
 	    $login_form=formto($destination,'',$this->get_onsubmit())  //this should take care of DESIRED variables coming in via GET
