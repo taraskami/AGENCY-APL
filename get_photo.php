@@ -40,7 +40,7 @@ include "includes.php";
 $IP_ADDRESS = $_SERVER['REMOTE_ADDR'];
 $id_card_config = $AG_ID_CARD_CONFIG[$IP_ADDRESS];
 $tmp_directory = orr($id_card_config['directory'],'photo_upload');
-$source_dir = "$AG_HOME_BY_FILE/agencylink/".$tmp_directory;
+$source_dir = "$AG_DATA_BY_FILE/agencylink/".$tmp_directory;
 $webcam_file='webcam.jpg';
 
 $destination_prefix=$source_dir . '/'. $IP_ADDRESS;
