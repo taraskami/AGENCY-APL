@@ -43,6 +43,11 @@ $engine["staff"] = array(
 		"title_add"=>'ucwords($action) . "ing a new staff record."',
 		'title_list'=>'ucwords($action) . "ing Staff"',
 		'cancel_add_url'=>AG_ADMIN_URL,
+		'quick_search'=>array(
+			'jump_page'=>'staff_display.php',
+			'match_fields'=>array('name_first || \' \' || name_last', 'name_last || \', \' || name_first'),
+			'match_fields_numeric'=>array('staff_id')
+		),
 		'child_records' => array('alert',
 						 //'address_staff',
 						 'alert_notify',
