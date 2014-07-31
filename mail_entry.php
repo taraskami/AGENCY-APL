@@ -107,8 +107,7 @@ if (is_array($selected))
 // This shows the search results
 if (isset($QuickSearch))
 {
-	$out .= table(mail_search(dewebify($QuickSearch),
-					  $_REQUEST["mail_date_def"],$_REQUEST["mail_type_def"]));
+	$out .= table(object_search('mail',dewebify($QuickSearch)));
 }
 //$_SESSION["action"]=orr($_REQUEST["action"],$_SESSION["action"]);
 //$action = $_SESSION["action"];

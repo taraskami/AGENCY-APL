@@ -238,150 +238,30 @@ function build_where_string( $fields, $alias )
 	return $where;
 }		
 
-
-function search( $fields, $select_sql, $alias, $show_heads_func, $noun="record", $plural_noun="records",$allow_other="N")
-{
-// This page performs a search based on global variables
-
-// The fields that can be searched on are defined in the $fields array.
-// In order for a field to be searched, the field name must be included
-// in this array.  Additionally, the variables $fieldnameText and
-// $fieldnameType (i.e., for "Gender" field "GenderText" and "GenderType"
-// must be passed.  The Text is the value to search for, and the Type
-// is the type of comparison test being made (see the switch on "type"
-// in build_where_string for the possible types.
-
-// the following additional variables are used:
-// $order : sort order field
-// $limit : limit number of queries
-// $revorder : boolean to reverse sort order
-// $showsql : display sql query
-
-// $select_to_url : if this is set, it will enable the selection
-// of displayed clients, with the results being passed to this url.
-
-
-	global $order, $limit, $revorder, $showsql, $select_to_url;
-
-	$select_to_url = orr($select_to_url,$_REQUEST['select_to_url']);
-	$where = build_where_string( $fields, $alias );
-
-	$query= $select_sql . "\n";
-
-// Note this depends on the select sql having (and ending with)
-// a WHERE clause (even if only where 1=1).
-	$query .= $where ? " AND $where" : "";
-	$query .= $order ? (" ORDER BY $order" . ($revorder ? " DESC" : "")) : "";
-	$query .= $limit ? " LIMIT $limit " : "";
-//	$query = eregi_replace("'", "\"", $query);
-//	$query = stripslashes($query);
-
-	$a=sql_query( $query ) or sql_die("Couldn't query<br>Query was: $query");
-	$count = sql_num_rows($a);
-	if ($count > 0 )
-	{
-		$result .= oline(bigger("The following $count " . (($count==1) ? $noun : $plural_noun )
-		. " matched your search:"),2);
-		$result .= oline( $show_heads_func( $a , $select_to_url, $allow_other ))
-		. oline("Click on a " . $noun . " to see a full entry");
-	}
-	else
-	{
-		$result = oline("Sorry, no $plural_noun matched your search criteria",2);
-		$result .= oline( $show_heads_func( $a , $select_to_url, $allow_other ));
-	}
-
-	if ($showsql)
-	{
-		$result .= hrule()
-		. oline("Query is $query");
-	}
-	return $result;
-}
-
-function iandr_search()
-{
-// This performs an i & r agency search based on global variables
-// like client_search, but currently much simpler.
-
-	global $iandr_select_sql, $agency_nameText, $agency_nameType;
-
-	//I am hacking this to customize the query, after not being able to get the search function to easily accept 'OR' queries
-	// JH 11/11/2004
-	$agency_nameText = orr($agency_nameText,$_REQUEST['QuickSearch']);
-	if (!get_magic_quotes_gpc()) {
-		$agency_nameText = addslashes($agency_nameText);
-	}
-
-	$agency_nameType = 'sub'; //$_REQUEST['agency_nameType'];
-
-	$sql = $iandr_select_sql . ' AND (agency_name ILIKE \'%'.$agency_nameText.'%\' OR svc_info ILIKE \'%'.$agency_nameText.'%\')';
-	$res = agency_query($sql);
-	$count = sql_num_rows($res);
-	if ($count > 0) {
-		$result .= oline(bigger("The following $count " . (($count==1) ? 'agency' : 'agencies' )
-						. " matched your search:"),2);
-	} else {
-		$result = oline("Sorry, no $plural_noun matched your search criteria",2);
-	}
-	$result .= oline( show_iandr_heads( $res ));
-
-	return $result;
-}
-
-function log_search()
-{
-	
-	$query_string = $_REQUEST['QuickSearch'];
-	if (is_numeric($query_string) && ($query_string < AG_POSTGRESQL_MAX_INT)) {
-		$log = sql_num_rows(get_log($query_string));
-		if ($log > 0) {
-			global $log_page;
-			header('Location: '.$log_page . '?action=show&id='.$query_string);
-			page_close($silent=true);
-			exit;
-		}
-	}
-	$filter=array();
-	// this filter will match names either in "first last" or "last, first"
-	foreach (array('log_text','subject') as $field) {
-		$filter['ILIKE:'.$field] = '%'.$query_string.'%';
-	}
-	$filter = array($filter);
-	$control = array_merge(array( 'object'=> ('log'),
-						'action'=>'list',
-						'list'=>array('filter'=>$filter),
-						'page'=>'display.php'
-						),
-				     orr($_REQUEST['control'],array()));
-	$result = call_engine($control,'control',true,true,$TOTAL,$PERM);
-	if (!$PERM) { return 'No Permissions'; }
-	$sub = oline('Found '.$TOTAL.' results for '.bold($query_string),2);
-	return $sub . $result;
-
-}
-
 function object_quick_search($object, $query_string='')
 {
+	$query_string = strip_tags(orr($query_string,$_REQUEST['QuickSearch']));
+
+	// First do any global QS functions/shortcuts:
+
+	if (preg_match('/^([a-z_]{3,}):([0-9]*)$/i',$query_string,$m)) {
+
+		/*
+		 * Engine Object search of the form {obj}:xxxx
+		 * where {obj} is the name of the object (or the
+		 * first 3 or more characters of the name)
+		 */
+
+		if ($found = search_engine_object($m[1],$m[2])) {
+			return $found;
+		}
+
+	}
+
+	// Then do the object-specific search:
+
 	$def=get_def($object);
 	$qdef=$def['quick_search'];
-
-	$query_string = orr($query_string,$_REQUEST['QuickSearch']);
-	if (is_valid($query_string,'integer_db')) {
-		$filter=array($def['id_field']=>$query_string);
-		$found = count(get_generic($filter,NULL,NULL,$def));
-		if ($found > 0) {
-			$object_page=orr($def['quick_search']['jump_page'],'display.php');
-			if ($object_page=='display.php') {
-				$jump_url="display.php?control[object]=$object&control[action]=view&control[id]=$query_string";
-			} else {
-				$jump_url=$object_page . '?action=show&id='.$query_string;
-			}
-			header('Location: '.$jump_url);
-			page_close($silent=true);
-			exit;
-		}
-	}
 	$filter=object_qs_filter($query_string,$object);
 	$control = array_merge(array( 'object'=> $object,
 						'action'=>'list',
@@ -391,7 +271,24 @@ function object_quick_search($object, $query_string='')
 				     orr($_REQUEST['control'],array()));
 	$result = call_engine($control,'control',true,true,$TOTAL,$PERM);
 	if (!$PERM) { return 'No Permissions'; }
-	$sub = oline('Found '.$TOTAL.' results for '.bold($query_string),2);
+	if ($TOTAL==1) {
+			// Jump to view if only 1 result
+			// FIXME: this is _way_ inefficient.  Already ran query and got formatted results
+			// now will run query again to fetch ID and jump
+			$rec=array_shift(get_generic($filter,NULL,1,$def));
+			$id=$rec[$def['id_field']];
+			$object_page=orr($def['quick_search']['jump_page'],'display.php');
+			if ($object_page=='display.php') {
+				$jump_url="display.php?control[object]=$object&control[action]=view&control[id]=$id";
+			} else {
+				$jump_url=$object_page . '?action=show&id='.$id;
+			}
+			header('Location: '.$jump_url);
+			page_close($silent=true);
+			exit;
+	}
+
+	$sub = oline($TOTAL.' ' . $def['plural'] . ' matched your search for '.bold(webify($query_string)),2);
 	return $sub . $result;
 
 }
@@ -403,56 +300,21 @@ function object_qs_filter($qs_text,$object=AG_MAIN_OBJECT_DB)
 	}
 	$def=get_def($object);
 	switch( strtolower($object) ) {
+/*
+		// Custom handling should be doable & done via config file, but you
+		// could do it here for something complex or funky
 		case 'staff':
 			$filter['ILIKE:staff_name(staff_id)']="%$qs_text%";
 			break;
-		case 'guest':
-			$filter['ILIKE:guest_name(guest_id)']="%$qs_text%";
-			break;
-		case 'clientx':
-			if ( is_numeric( $qs_text )  && ($qs_text <= AG_POSTGRESQL_MAX_INT)) {
-				// check for unduplicated clients
-				$client = sql_fetch_assoc(client_get($qs_text));
-				if ($client) {
-					$qs_text = orr($client['client_id'],$qs_text);
-				} 
-				$filter[AG_MAIN_OBJECT_DB.'_id']=$qs_text;
-			} elseif( $x = dateof($qs_text,'SQL') ) {
-				/* DOB */
-				$filter['dob']=dateof($qs_text,'SQL');
-			} elseif( $x = ssn_of($qs_text) ) {
-				$filter['ssn']=$qs_text;
-			} elseif (preg_match('/^c(ase)?[: ]*([0-9]{1,6})/i',$qs_text,$matches)) {
-				/* Clinical ID */
-				$filter['clinical_id'] = $matches[2];
-			} elseif (preg_match('/^kc(id)?[: ]*([0-9]{1,6})/i',$qs_text,$matches)) {
-				/* KCID */
-				$filter['king_cty_id'] = $matches[2];
-			} elseif (preg_match('/a(uth)?[: ]*([0-9]{1,7})/i',$qs_text,$matches)) {
-				/* KC clinical authorization number */
-				$rec = array_shift(get_generic(array('kc_authorization_id'=>$matches[2]),'','','clinical_reg'));
-				if ( $x = $rec[AG_MAIN_OBJECT_DB . '_id'] ) {
-					$filter['client_id']=$x;
-				}
-			} elseif ( $x = unit_no_of($qs_text)) {
-				/* Housing Unit (most recent occupant) */
-				$rec = sql_fetch_assoc(get_last_residence($x));
-				if ( $x = $rec[AG_MAIN_OBJECT_DB . '_id'] ) {
-					$filter['client_id']=$x;
-				}
-			} elseif (preg_match('/^([a-z_]{3,}):([0-9]*)$/i',$qs_text,$m)) {
-				/*
-				 * Engine Object search of the form {obj}:xxxx
-				 * where {obj} is the name of the object (or the
-				 * first 3 or more characters of the name)
-				 */
-			} else {
-				$filter['ILIKE:name_full_alias']="%$qs_text%";
-			}
-			break; /// end case client
+*/
 		default :
 			$qdef=$def['quick_search'];
-			if (dateof($qs_text) and ($mf=$qdef['match_fields_date'])) {
+			if  (is_numeric($qs_text) and ($mf=$qdef['match_fields_numeric'])) {
+				foreach($mf as $m) {
+					$filter[]=array($m=>$qs_text);
+				}
+			}
+			elseif (dateof($qs_text) and ($mf=$qdef['match_fields_date'])) {
 				foreach($mf as $m) {
 					$filter[]=array($m=>dateof($qs_text,'SQL'));
 				}
@@ -460,14 +322,10 @@ function object_qs_filter($qs_text,$object=AG_MAIN_OBJECT_DB)
 				foreach($mf as $m) {
 					$filter[]=array($m=>ssn_of($qs_text));
 				}
-			} elseif  (is_numeric($qs_text) and ($mf=$qdef['match_fields_numeric'])) {
-				foreach($mf as $m) {
-					$filter[]=array($m=>$qs_text);
-				}
-			}
-			if ((!$filter) and (!be_null($qdef['match_fields_custom']))) {
+			} elseif ((!$filter) and (!be_null($qdef['match_fields_custom']))) {
 					$qs_text=sql_escape_string($qs_text);
 					foreach ($qdef['match_fields_custom'] as $mc_k=>$mc_v) {
+						// $x in custom field string will be replaced with qs_text
 						if (preg_match($mc_k,$qs_text)) {
 							$filter[]=array(str_replace('$x',$qs_text,key($mc_v))=>str_replace('$x',$qs_text,$mc_v[key($mc_v)]));
 							break;
@@ -475,7 +333,6 @@ function object_qs_filter($qs_text,$object=AG_MAIN_OBJECT_DB)
 					}
 			}
 			if (!$filter) {
-				//$query_string=sql_escape_string($query_string);
 				$filter=array();
 				$match_fields=orr($qdef['match_fields'],$def['list_fields']);
 				foreach ($match_fields as $field) {
@@ -490,36 +347,6 @@ function object_qs_filter($qs_text,$object=AG_MAIN_OBJECT_DB)
 			break; // End default case
 	}
 	return $filter;
-}
-
-function staff_search()
-{
-	$s = $_REQUEST['QuickSearch'];
-	if (is_numeric($s) && is_staff($s)) {
-
-		header('Location: ' . AG_STAFF_PAGE . '?id='.$s);
-		page_close();
-		exit;
-
-	}
-
-	$filter=array();
-	// this filter will match names either in "first last" or "last, first"
-	foreach (array('agency_project_code','agency_program_code',
-			   'name_last','name_first','name_first||\' \'||name_last','name_last||\', \'||name_first') as $field) {
-		$filter['ILIKE:'.$field] = '%'.$s.'%';
-	}
-	$filter = array($filter);
-	$control = array_merge(array( 'object'=> ('staff'),
-						'action'=>'list',
-						'list'=>array('filter'=>$filter),
-						'page'=>'display.php'
-						),
-				     orr($_REQUEST['control'],array()));
-	$result = call_engine($control,'control',true,true,$TOTAL,$PERM);
-	if (!$PERM) { return 'No Permissions'; }
-	$sub = oline('Found '.$TOTAL.' results for '.bold($s),2);
-	return $sub . $result;
 }
 
 function search_engine_object($obj,$id,$redirect=true)

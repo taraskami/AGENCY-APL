@@ -55,9 +55,8 @@ switch ($qs_type) {
 	}
 }
 
-$title = $AG_QUICK_SEARCHES[$qs_type];
 agency_top_header();
-out(html_heading_1($title.' Search Results') .$out);
+out(html_heading_1('Search Results') .$out);
 page_close();
 
 ?>
