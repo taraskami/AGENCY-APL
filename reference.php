@@ -130,6 +130,9 @@ function populate_object_references( $control ) {
 				. div(toggle_label('...').substr($ref['label'],$max_length),'','class="hiddenDetail"');
 			$ref['label']=$label;
 */
+//FIXME: For the same reason, we need to strip the tags out of labels, if they are coming from the server
+
+			$ref['label']=strip_tags($ref['label']);
 			$ref['refType']=$type;
 			$ref['Number']=$x++;
 			$pre_refs .= div(json_encode($ref));
