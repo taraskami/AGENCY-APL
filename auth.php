@@ -314,8 +314,8 @@ class Auth {
 		    //Now, check for remote access
 		    if (!$this->is_internal_access()) {
 		       
-		            if (!$this->staff_login_allowed()) { //check if remote login allowed (this calls staff_remote_login_allowed()
-				       
+		            if (! ($this->staff_login_allowed() and $this->staff_remote_login_allowed())) {
+
 			            $this->failed++;
 				    $err = $this->verbose_user_errors
 					    ? 'You aren\'t allowed remote access'
@@ -389,7 +389,7 @@ class Auth {
 			$GLOBALS['UID'] = $_SESSION['USER_INFO'][$AG_AUTH_DEFINITION['USER_ID_FIELD']]; //set UID for returning user
 
 			// this doesn't check for strong password if remote
-			if (!$this->staff_login_allowed()) { // re-check login allowed
+			if (!($this->staff_login_allowed() and ($this->is_internal_access() or $this->staff_remote_login_allowed()))) { // re-check login allowed
 
 				return false;
 
@@ -603,9 +603,7 @@ class Auth {
 
 	function is_internal_access()
 	{
-
-		return sql_true(call_sql_function('is_internal_access'));
-
+		return sql_true(call_sql_function('is_internal_access',enquote1($_SERVER['REMOTE_ADDR'])));
 	}
 
 	function staff_remote_login_allowed($sid = null)
@@ -623,7 +621,6 @@ class Auth {
 		global $UID;
 		$sid = orr($sid,$UID);
 		return sql_true(call_sql_function('staff_login_allowed',$sid));
-
 	}
 
 } //end class Auth()

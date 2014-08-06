@@ -22,9 +22,14 @@ BEGIN
 	RETURN COALESCE(dburl,'');
 END;$$ LANGUAGE plpgsql STABLE;
 
+CREATE OR REPLACE FUNCTION is_internal_access( cidr ) RETURNS BOOLEAN AS $$
+BEGIN
+	RETURN COALESCE((SELECT is_internal FROM db_access WHERE COALESCE($1, inet_client_addr(),'127.0.0.1'::cidr) <<= access_ip),false);
+END;$$ LANGUAGE plpgsql STABLE;
+
 CREATE OR REPLACE FUNCTION is_internal_access() RETURNS BOOLEAN AS $$
 
-	SELECT is_internal FROM db_access WHERE COALESCE(inet_client_addr(),'127.0.0.1'::cidr) <<= access_ip;
+	SELECT is_internal_access( NULL::cidr);
 
 $$ LANGUAGE sql STABLE;
 

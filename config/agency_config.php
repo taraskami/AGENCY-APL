@@ -515,6 +515,7 @@ $AG_ENGINE_TABLES_CORE=array(
     'alert_notify',
     'attachment',
     'attachment_link',
+    'db_access',
     'db_revision_history', // database modifications applied
     'info_additional',
     'info_additional_type',
