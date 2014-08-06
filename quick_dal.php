@@ -140,7 +140,7 @@ if ($step=='confirmed' and (!$AG_AUTH->reconfirm_password())) {
 							 'fields'=>array_merge($def['list_fields'],array('client_id'))));
 		$ocount = count($records);
 		$message = html_heading_3('Posted '.$ocount . ' '.($ocount > 1 ? $def['plural'] : $def['singular']).':')
-			. call_engine($control,$control_array_variable='control',$NO_TITLE=true,$NO_MESSAGES=true,&$TOTAL_RECORDS,&$PERM);
+			. call_engine($control,$control_array_variable='control',$NO_TITLE=true,$NO_MESSAGES=true,$TOTAL_RECORDS,$PERM);
 
 		/*
 		 * Starting again, clearing out session variables and keys
