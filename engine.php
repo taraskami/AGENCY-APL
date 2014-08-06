@@ -739,7 +739,7 @@ function engine($control='',$control_array_variable='control')
 					$tab_links .= html_list_item(hlink("#$div_id",$t_def['plural']));
 				}
 				$tabs = html_list($tab_links,'class="'.$obj.'"');	
-				$object_refs_show_link = hlink('','Refer to other records...',NULL,'class="fancyLink" id="objectSelectorShowLink"');
+				$object_refs_show_link = hlink('','Refer to other records...',NULL,'class="fancyLink objectSelectorShowLink"');
 				$object_refs = div($tabs . $object_refs,'objectSelectorForm','class=objectSelectorForm');
 			} // end O. R. Form
 
