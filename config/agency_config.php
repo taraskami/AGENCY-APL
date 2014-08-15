@@ -164,6 +164,8 @@ define('AG_AUTH_PASSWORD_USERNAME_CHECK',true);
 
 define('AG_AUTH_PASSWORD_DICT',false); //set to dictionary path (usually /usr/share/dict/words)
 
+define('AG_AUTH_INTERNAL_ACCESS_ONLY',false);
+
 $AG_AUTH_LEET = array('!'=>'l', //used for dictionary and username comparison checks
 			    '1'=>'l',
 			    '|'=>'l',

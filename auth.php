@@ -612,7 +612,10 @@ class Auth {
 		global $UID;
 		$sid = orr($sid,$UID);
 
-		return sql_true(call_sql_function('staff_remote_login_allowed',$sid));
+		return 
+			( AG_AUTH_INTERNAL_ACCESS_ONLY === false )
+			? true
+			: sql_true(call_sql_function('staff_remote_login_allowed',sql_escape_literal($sid)));
 
 	}
 
