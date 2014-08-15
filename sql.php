@@ -41,8 +41,7 @@ function sql_set($vals)
 	    }
 	    elseif ($value || (is_numeric($value) && ($value==0)))
 	    {
-// 		    $value= enquote1(addslashes($value));
-		    $value = enquote1(sql_escape_string($value));
+		    $value = sql_escape_literal($value);
 	    }
 	    else
 	    {
@@ -93,8 +92,7 @@ function sql_insert($table,$vals,$returning = false)
 
 			} else {
 
-// 				$values .= enquote1(addslashes($value)). ",";
-				$values .= enquote1(sql_escape_string($value)). ",";
+				$values .= sql_escape_literal($value). ",";
 
 			}
 
@@ -348,28 +346,38 @@ function read_filter( $filter, $bool="AND", $lang="SQL")
 			$field = preg_replace('/<----->/','::',$field); //added for casting to different types
 			unset($tmp);
 		}
+		$field_safe=sql_escape_identifier($field);
+		// If the escaped field is the same as the original,
+		// use the original w/o quotes
+		if ($field_safe==('"'.$field.'"')) {
+			$field_safe=$field;
+		}
 		if (is_array($value) && is_assoc_array($value)) // if associative, call recursively
 		{
 			$sql .= "(" . read_filter($value, reverse_op($bool)) . ") \n$bool ";
 			continue;
 		}
 		elseif (is_array($value)) { // if array of values, compare all to field
+			$value_safe=array();
+			foreach ($value as $t_val) {
+				$value_safe[]= sql_escape_literal($t_val);
+			}
 			if (($op=="IN") || ($op=="NOT IN")) {
-				$sql .= "$field $op ('" . implode("','",$value) . "') \n$bool ";
+				$sql .= "$field_safe $op (" . implode(',',$value_safe) . ") \n$bool ";
 			} elseif ($op == 'ARRAY_EQUALS' or $op == 'ARRAY_CONTAINS') {
 				// I think for ARRAY_CONTAINS, this should be OR
 				$tmp_bool= $op=='ARRAY_CONTAINS' ? 'OR' : 'AND';
 				$t_sql = array();
-				foreach ($value as $t_val) {
-					$t_sql[] = enquote1(sql_escape_string($t_val))." = ANY ($field)";
+				foreach ($value_safe as $t_val) {
+					$t_sql[] = $t_val." = ANY ($field_safe)";
 				}
 				$t_eq = '';
 				if ($op == 'ARRAY_EQUALS') {
-					$t_eq = ' AND ARRAY_COUNT('.$field.') = '.count($value);
+					$t_eq = ' AND ARRAY_COUNT('.$field_safe.') = '.count($value);
 				}
 				$sql .= '('.implode(" $tmp_bool ",$t_sql).$t_eq.')'."\n$bool ";
 			} else {
-				$sql .= "($field $op'" . implode( "' ".reverse_op($bool)." $field$op'", $value ). "') \n $bool ";
+				$sql .= "($field_safe $op" . implode( " ".reverse_op($bool)." $field_safe$op", $value_safe ). ") \n $bool ";
 			}
 			continue;
 		}
@@ -383,6 +391,26 @@ function read_filter( $filter, $bool="AND", $lang="SQL")
 			{
 				// nothing to be done in this case, string is passed literally
 				// caller is responsible for enquoting
+
+				// Actually, this creates an SQL injection problem
+				// So we're going to (try to) break apart the string and escape and quote each side
+				// This might break or yield imperfect results if "AND" is part of either argument
+				// which seems unlikely.  Mostly will be dates or numeric values,
+				// but name_last BETWEEN A AND AND B AND will parse to BETWEEN 'A' AND 'AND B AND'
+				// At least for now, I will lose no sleep over this
+
+				// FIXME: This will also break if the values are already enquoted.
+				// From a quick glance at the code, this is not currently being done except once in
+				// clinical.php, which is not really being used.
+				// Need a good regex to safely detect this.
+				// Or could say if field: specified, leave it alone
+
+				if (preg_match('/^(.*)\sAND\s(.*)$/i',$value,$matches)) {
+					$value =sql_escape_literal($matches[1]) . ' AND ' . sql_escape_literal($matches[2]);
+				} else {
+					// Discard if no match.  It will either break the query anyway, or could be malicious
+					break;
+				}
 			}
 			else
 			{
@@ -398,24 +426,31 @@ function read_filter( $filter, $bool="AND", $lang="SQL")
 				}
 				if ( ! $field_flag)
 				{
-					$d1=enquote1(sql_escape_string($d1));
-					$d2=enquote1(sql_escape_string($d2));
+					$d1=sql_escape_literal($d1);
+					$d2=sql_escape_literal($d2);
 				}
 				$value = "$d1 AND $d2";
 			}
-			$sql .= "$field BETWEEN $value";  
+			$sql .= "$field_safe BETWEEN $value";  
 			break;
 		case "OVERLAPS" :
 		case "OVERLAPSORNULL" :
 		// daterange overlap
 		{
 			$f=explode(",",$field);
-			$f1 = $f[0];
-			$f2 = $f[1];
+			$f1 = sql_escape_identifier($f[0]);
+			$f2 = sql_escape_identifier($f[1]);
+			if ($f1=='"'.$f[0].'"') {
+				$f1=$f[0];
+			}
+			if ($f2=='"'.$f[1].'"') {
+				$f2=$f[1];
+			}
+
 			if (@get_class($value)=="date_range")
 			{
-				$d1 = enquote1(sql_escape_string($value->start));
-				$d2 = enquote1(sql_escape_string($value->end));
+				$d1 = sql_escape_literal($value->start);
+				$d2 = sql_escape_literal($value->end);
 			}
 			else
 			{
@@ -450,9 +485,9 @@ function read_filter( $filter, $bool="AND", $lang="SQL")
 		default :
 			if ( ! $field_flag)
 			{
-				$value=enquote1(sqlify($value)); // no quotes around value (because it's a field name)
+				$value=sql_escape_literal($value); // no quotes around value (because it's a field name)
 			}	
-            $sql .= "$field $op $value";
+            $sql .= "$field_safe $op $value";
 		}
 		}
 		$sql .= " \n$bool ";
@@ -699,7 +734,7 @@ function toggle_query_display($state=NULL)
 
 function sql_nextval($seq)
 {
-	$res = sql_query('SELECT NEXTVAL('.enquote1(sql_escape_string($seq)).')');
+	$res = sql_query('SELECT NEXTVAL('.sql_escape_literal($seq).')');
 	$tmp = sql_fetch_assoc($res);
 	return $tmp['nextval'];
 }

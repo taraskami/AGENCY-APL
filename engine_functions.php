@@ -2421,8 +2421,8 @@ function get_active_generic(&$filter,$rec,$def,$order='')
 	} elseif (in_array($start,$fields) and in_array($end,$fields)) {
 		$new_filter = array();
 
-		$start_date_compare = ($e_comp = orr($rec[$end],$rec[$start]))   ? enquote1(sql_escape_string($e_comp))   : 'CURRENT_DATE';
-		$end_date_compare   = $rec[$start] ? enquote1(sql_escape_string($rec[$start])) : 'CURRENT_DATE';
+		$start_date_compare = ($e_comp = orr($rec[$end],$rec[$start]))   ? sql_escape_literal($e_comp)   : 'CURRENT_DATE';
+		$end_date_compare   = $rec[$start] ? sql_escape_literal($rec[$start]) : 'CURRENT_DATE';
 
 		$new_filter['FIELD<=:'.$start] = $start_date_compare;
 		$new_filter[]                  = array('FIELD>=:'.$end=>$end_date_compare,

@@ -101,13 +101,33 @@ function sql_escape_string($s)
 	}
 }
 
+function sql_escape_identifier($s)
+{
+	switch ( $GLOBALS['WHICH_DB'] ) {
+	case 'my':
+		return mysql_escape_identifier($s); // ??
+	case 'pg':
+		// 5.4.4+
+		if (function_exists('pg_escape_identifier')) {
+			return pg_escape_identifier($s);
+		} else {
+			return '"' . $s . '"';
+		}
+	}
+}
+
 function sql_escape_literal($s)
 {
 	switch ( $GLOBALS['WHICH_DB'] ) {
 	case 'my':
 		return mysql_escape_literal($s);
 	case 'pg':
-		return pg_escape_literal($s);
+		// 5.4.4+
+		if (function_exists('pg_escape_literal')) {
+			return pg_escape_literal($s);
+		} else {
+			return enquote1(sql_escape_string($s));
+		}
 	}
 }
 
@@ -526,7 +546,7 @@ function sql_field_type($res,$field_number)
 function sql_primary_keys($table)
 {
 	static $keys;
-	$keys[$table]=orr($keys[$table],call_sql_function('primary_key',enquote1($table)));
+	$keys[$table]=orr($keys[$table],call_sql_function('primary_key',sql_escape_literal($table)));
 	return $keys[$table];
 }
 
@@ -1028,7 +1048,7 @@ function sql_build_value($value,$type)
 		$value = 'NULL';
 		break;
 	default:
-		$value = enquote1(sqlify($value));
+		$value = sql_escape_literal($value);
 	}
 	return $value;
 }
@@ -1043,7 +1063,7 @@ function sql_verify_dump($sql)
 
 function sql_get_sequence($name)
 {
-	$res = agency_query('SELECT NEXTVAL('.enquote1($name).')');
+	$res = agency_query('SELECT NEXTVAL('.sql_escape_literal($name).')');
 	if ($res && sql_num_rows($res) > 0) {
 		$a = sql_fetch_assoc($res);
 		return $a['nextval'];

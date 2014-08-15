@@ -174,7 +174,7 @@ function report_get_user_var($name,$report_code,$type=NULL)
 	$varname = AG_REPORTS_VARIABLE_PREFIX.$name;
 	if (!isset($_REQUEST[$varname]) and isset($_REQUEST[$varname.'_date_']) and isset($_REQUEST[$varname.'_time_'])) {
 		// Reassemble timestamps
-		$val=$_REQUEST[$varname.'_date_'].' ' . $_REQUEST[$varname.'_time_'];
+		$val=datetimeof($_REQUEST[$varname.'_date_'].' ' . $_REQUEST[$varname.'_time_']);
 	} elseif ($type=='PICK_MULTI') {
 		$val=is_array($_REQUEST[$varname]) ? array_keys($_REQUEST[$varname]) : $_REQUEST[$varname];
 	} else {

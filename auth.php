@@ -428,7 +428,7 @@ class Auth {
 		$res=agency_query("SELECT {$password_query} AS password 
                                 FROM {$AG_AUTH_DEFINITION['VIEW']} 
                                    LEFT JOIN {$AG_AUTH_DEFINITION['STAFF_TABLE']} USING ({$AG_AUTH_DEFINITION['USER_ID_FIELD']})
-                                WHERE {$AG_AUTH_DEFINITION['USERNAME_FIELD']}=".enquote1(sql_escape_string($username))." AND login_allowed AND is_active");
+                                WHERE {$AG_AUTH_DEFINITION['USERNAME_FIELD']}=".sql_escape_literal($username)." AND login_allowed AND is_active");
 		if (sql_num_rows($res)<1)
 		{
 			return false;
@@ -459,7 +459,7 @@ class Auth {
 	{
 		global $AG_AUTH_DEFINITION;
 		$username= $AG_AUTH_DEFINITION['CASE_SENSITIVE_USERNAME'] ? $username : strtolower($username);
-		$res=agency_query("SELECT * FROM {$AG_AUTH_DEFINITION['STAFF_TABLE']} WHERE {$AG_AUTH_DEFINITION['USERNAME_FIELD']}=".enquote1(sql_escape_string($username))." AND login_allowed AND is_active");
+		$res=agency_query("SELECT * FROM {$AG_AUTH_DEFINITION['STAFF_TABLE']} WHERE {$AG_AUTH_DEFINITION['USERNAME_FIELD']}=".sql_escape_literal($username)." AND login_allowed AND is_active");
 		if (!$res)
 		{
 			return false;
@@ -603,7 +603,7 @@ class Auth {
 
 	function is_internal_access()
 	{
-		return sql_true(call_sql_function('is_internal_access',enquote1($_SERVER['REMOTE_ADDR'])));
+		return sql_true(call_sql_function('is_internal_access',sql_escape_literal($_SERVER['REMOTE_ADDR'])));
 	}
 
 	function staff_remote_login_allowed($sid = null)
@@ -623,7 +623,7 @@ class Auth {
 	{
 		global $UID;
 		$sid = orr($sid,$UID);
-		return sql_true(call_sql_function('staff_login_allowed',$sid));
+		return sql_true(call_sql_function('staff_login_allowed',sql_escape_literal($sid)));
 	}
 
 } //end class Auth()

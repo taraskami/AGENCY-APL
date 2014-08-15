@@ -270,7 +270,7 @@ function query_row( $f_def, $row_opts='',$cell_opts="" )
 		if ($d1 && $d2) {
 			$default = new date_range($d1,$d2);
 		} else {
-			$default = $d1;
+			$default = dateof($d1,'SQL');
 		}
 		//$row .= formdate( $form_name,$default,"",true );
             $cell .= formdate_range( $form_name,$default,'',true );
@@ -309,9 +309,11 @@ function select_object_to( $formname,$default='' )
 		. formend();
 }
 
-function get_posted_filter()
+function get_posted_filter($object)
 {
+	$def=get_def($object);
 	$filter=array();
+	$obj_fields=array_keys($def['fields']);
 	//a mungy little hack to get date ranges working
 	$REQUEST=$_REQUEST;
 	$dates=array();
@@ -362,6 +364,10 @@ function get_posted_filter()
 		}
 		$field=$matches[1];
 		$piece=$matches[2];
+		if (!in_array($field,$obj_fields)) {
+			// Field not in object, discard
+			continue;
+		}
 		if ($piece=="key")
 		{
 			$tmp[$field]["op"]=$value;
@@ -437,7 +443,8 @@ if ($group==array()) { unset($group); }
 //to avoid confusion with variable namespace, I set $_SESSION variables to uppercase...
 if (isset($_REQUEST[$fil_var]))
 {
-	$_SESSION[strtoupper($fil_var)]=$_REQUEST[$fil_var];
+// FIXME: I think fil_var is unused
+//	$_SESSION[strtoupper($fil_var)]=$_REQUEST[$fil_var];
 }
 $filter=$_SESSION[strtoupper($fil_var)];
 if (isset($_REQUEST[$obj_var]))
@@ -467,7 +474,7 @@ if ($type) {
 	$sel_sql=$def["sel_sql"];
 
 	if ($_REQUEST["action"]=="add") {
-		$filter = get_posted_filter();
+		$filter = get_posted_filter($type);
 		$_SESSION[strtoupper($control_var)]['list']['filter']=$_SESSION[strtoupper($fil_var)]=$filter;
 	}
 
