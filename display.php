@@ -61,6 +61,41 @@ if (($control['action']=='add') and is_enabled('object_reg_search')) {
 	}
 }
 
+if (($control['action']=='list') and $control['format']=='raw' and $control['source']=='quick_browse') {
+	//moved hack from engine_list.php, and then from object_query
+	//  Adding here for quick_browse, and using the non-standard option 'source' in control
+
+	// small, probably temporary(!) hack for search results
+	// if client_id exists in the record, but not in list fields,
+	// and it's not in the filter (as a pure client_id=x)
+	// , then add it to the list fields
+	$def=get_def($control['object']);
+	$rec_fields = $def['fields'];
+	$tmp_fields = $def['list_fields'];
+	$filter = orr($filter,array());
+	foreach (array(AG_MAIN_OBJECT_DB.'_id','staff_id') as $key) {
+		if (array_key_exists($key,$rec_fields) 
+		    && (!in_array($key,$tmp_fields))
+		    && (!array_key_exists($key,$filter)
+			  || (is_array($filter[$key])))
+	//	    && (!in_array($type,array('staff','client')))) 
+	) {
+			$control['list']['fields']=$def['list_fields'];
+			$control['list']['fields'][]=$key;
+/*
+			//get photo into results hack
+			$xw = substr($key,0,1);
+			if ($xw=='s') {
+				$engine[$type]['fields']['customXobject'.$xw] = $engine['staff']['fields']['staff_photo'];
+			} else {
+				$engine[$type]['fields']['customXobject'.$xw] = $engine[AG_MAIN_OBJECT_DB]['fields']['custom5'];
+			}
+			array_push($engine[$type]['list_fields'],'customXobject'.$xw);
+			//end photo hack
+*/
+		}
+	}
+}
 // This test is copied (repeated) from engine,
 // to avoid calling without required info
 // Otherwise people get a (harmless) "error"

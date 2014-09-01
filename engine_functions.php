@@ -4277,6 +4277,7 @@ function engine_browser_control() {
 		. form_field('text','control[object]','','class="agencyForm"') .div(json_encode(all_db_objects()),NULL,'class="autoComplete"'). $button
 		. hiddenvar('control[action]','list')
 		. hiddenvar('control[format]','raw')
+		. hiddenvar('control[source]','quick_browse') // This is a non-standard, hacked option read in display.php
 		. formend();
 }	
 
