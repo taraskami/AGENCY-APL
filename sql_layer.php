@@ -44,7 +44,7 @@ define('AG_DATABASE_UNDEFINED_ERROR','Database Type Unknown or not set');
    */
 define('AG_POSTGRESQL_MAX_INT',2147483647);
 
-function sql_query($query)
+function sql_query($query,$params=array())
 {
 	global $query_display,$WHICH_DB;
 	if ($query_display) {
@@ -57,7 +57,7 @@ function sql_query($query)
 	case 'my' :
 		return mysql_query($query);
 	case 'pg' :
-		return pg_query($query);
+		return pg_query_params($query,$params);
 	default :
 		return AG_DATABASE_UNDEFINED_ERROR;
 	}
