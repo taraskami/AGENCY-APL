@@ -179,4 +179,40 @@ function new_password_form($email,$token) {
 	return ($message ? oline(alert_mark($message),2) : '' ) . $dialog;
 }
 
+// FIXME: These functions called token are not like the tokens above
+// 
+
+function tokenize( $val, $context='*' ) {
+	// FIXME: duplicated
+	$t_var='AG_TOKENIZED_VALS';
+	if (array_key_exists($val,$_SESSION[$t_var])) {
+		$token=array_shift(array_keys($_SESSION[$t_var][$val]));
+		if ( (!in_array($context,$_SESSION[$t_var][$val][$token])) ) {
+			$_SESSION[$t_var][$val][$token][]=$context;
+		}
+		return $token;
+	}
+	foreach ($_SESSION[$t_var] as $v) {
+		$tokens[]=array_shift(array_keys($v));
+	}
+	while (in_array(($token=rand(1,1000000)),$tokens)) {
+		//
+	}
+	$_SESSION[$t_var][$val]=array($token=>array($context));
+	return $token;
+}
+
+function detokenize( $token, $context='*' ) {
+	// FIXME: duplicated
+	$t_var='AG_TOKENIZED_VALS';
+	foreach ($_SESSION[$t_var] as $k=>$v) {
+			if ($token==array_shift(array_keys($v))) {
+			if (in_array($context,$v[$token])) {
+				return $k;
+			}
+		}
+	}
+	return NULL;
+}
+
 ?>

@@ -1165,13 +1165,13 @@ function open_office_button($control,$def,$header='',$options='')
 			//nothing but the default template...no list
 		} else {
 			foreach ($templates as $t) {
-				$template_list .= selectitem($t[0],$t[1]);
+				$template_list .= selectitem(tokenize($t[0],'generic_sql'),$t[1]);
 				if ($t[0]=='spreadsheet') {
 					$spreadsheet_found = true;
 				}
 			}
 			if (!$spreadsheet_found) {
-				$template_list .= selectitem('spreadsheet','(default)') . $template_list;
+				$template_list .= selectitem(tokenize('spreadsheet','generic_sql'),'(default)') . $template_list;
 			}
 			$template_list = oline().selectto(AG_REPORTS_VARIABLE_PREFIX.'template',$options)
 				.$template_list 
@@ -1180,13 +1180,13 @@ function open_office_button($control,$def,$header='',$options='')
 		$multi_templates = true;
 	}
 
-	$template_list = orr($template_list,hiddenvar(AG_REPORTS_VARIABLE_PREFIX.'template','spreadsheet'));
+	$template_list = orr($template_list,hiddenvar(AG_REPORTS_VARIABLE_PREFIX.'template',tokenize('spreadsheet','generic_sql')));
 
       $button_text = $multi_templates ? 'Export File' : 'Spreadsheet';
       $header=orr($header,$control['export_header'],$sql);
       $form = formto(AG_OPENOFFICE_GEN_PAGE)
-		. hiddenvar('sql1',htmlentities($sql))
-		. hiddenvar('report_header',htmlentities($header))
+		. hiddenvar('sql1',tokenize($sql,'generic_sql'))
+		. hiddenvar('report_header',tokenize($header,'generic_sql'))
 		. hiddenvar('sql_count','1')
 		. $template_list
 		. button($button_text,'','','','',$options)

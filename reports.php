@@ -177,8 +177,20 @@ function report_get_user_var($name,$report_code,$type=NULL)
 		$val=datetimeof($_REQUEST[$varname.'_date_'].' ' . $_REQUEST[$varname.'_time_']);
 	} elseif ($type=='PICK_MULTI') {
 		$val=is_array($_REQUEST[$varname]) ? array_keys($_REQUEST[$varname]) : $_REQUEST[$varname];
+		if (is_array($val)) {
+			foreach ($val as $v) {
+				$new_val[]=detokenize($v,report_token_context($name,$report_code));
+			}
+		} else {
+			$new_val=detokenize($v,report_token_context($name,$report_code));
+		}
+		$val=$new_val;
+			
 	} else {
 		$val=$_REQUEST[$varname];
+		if (in_array($type,array('PICK','PICK_MULTI'))) {
+			$val=detokenize($val,report_token_context($name,$report_code));
+		}
 	}	
 	$_SESSION['report_options_'.$report_code.'_'.$varname] = $val;
 	return $val;
@@ -305,7 +317,7 @@ function report_generate($report,&$msg)
 	$report['report_footer'] = str_replace($pattern_h,$replace_,$report['report_footer']);
 	$report['report_comment'] = str_replace($pattern_h,$replace_,$report['report_comment']);
 
-	$template = orr($_REQUEST[AG_REPORTS_VARIABLE_PREFIX.'template'],'screen');
+	$template = orr(report_get_user_var('template',$report['report_code'],'PICK'),'screen');
 	// FIXME: drop this line
 	$report['output_template_codes']=orr($report['output_template_codes'],array());
 	
@@ -497,14 +509,14 @@ function report_generate_from_posted(&$mesg)
 	$report = array();
 	//FIXME:
 	$report = get_report_from_db('AD-HOC_QUERY');
-	$report['report_block'][0]['report_block_sql'][0] = dewebify($_REQUEST['sql1']);
-	$report['report_header'] = dewebify($_REQUEST["report_header"]);
+	$report['report_block'][0]['report_block_sql'][0] = detokenize($_REQUEST['sql1'],'generic_sql');
+	$report['report_header'] = detokenize($_REQUEST["report_header"],'generic_sql');
 
 	//fixme: this still relies on sql being acquired from the browser. even though it is checked
 	//       it is still a dangerous idea.
 	//note: requested sql is tested in report_generate_openoffice() or report_generate_export()
 
-	$template = $_REQUEST[AG_REPORTS_VARIABLE_PREFIX.'template'];
+	$template = detokenize($_REQUEST[AG_REPORTS_VARIABLE_PREFIX.'template'],'generic_sql');
 	switch ($template) {
 		//fixme: this is currently in too many places. make common function
 	case 'sql_data_csv':
@@ -536,8 +548,13 @@ function report_user_options_form($report)
 		$multi		= false; // reset for PICK / PICK_MULTI
 
 		// store report variables for session
+		$tokenized_types=array('PICK','PICK_MULTI');
+		$form_val=$_REQUEST[$varname];
+		$form_val=in_array($p['type'],$tokenized_types)
+				? detokenize($form_val,report_token_context($p['name'],$report['report_code']))
+				: $form_val;
 		$default = $_SESSION['report_options_'.$report['report_code'].'_'.$varname] = 
-			orr($_REQUEST[$varname],$_SESSION['report_options_'.$report['report_code'].'_'.$varname]);
+			orr($form_val,$_SESSION['report_options_'.$report['report_code'].'_'.$varname]);
 		
 		switch ($p['type']) {
 		case 'PICK_MULTI' :
@@ -556,9 +573,9 @@ function report_user_options_form($report)
 					or ( (!$default) and ($li==$p['default']) ));
 
 				$cell .= ($multi)
-					? span(formcheck($varname .'['.$li.']', ($defaulti ? 'checked="checked"' : ''))
+					? span(formcheck($varname .'['.tokenize($li,report_token_context($p['name'],$report['report_code'])).']', ($defaulti ? 'checked="checked"' : ''))
 				 		. '&nbsp;'.$lab,' class="radioButtonSet"') . oline()
-					: selectitem( $li,$lab,$defaulti);
+					: selectitem( tokenize($li,report_token_context($p['name'],$report['report_code'])),$lab,$defaulti);
 			}
 			$var_opt[]=array($label,$cell. (!$multi ? selectend() : ''));
 			break;
@@ -628,7 +645,7 @@ function report_output_select($report,$form=false)
 	$out= selectto(AG_REPORTS_VARIABLE_PREFIX . 'template');
 	foreach(array('list','other','x_items') as $grp) {
 		foreach($$grp as $r) {
-			$g[]= selectitem($r[0],$r[1],$r[0]==report_get_user_var('template',$report['report_code']));
+			$g[]= selectitem(tokenize($r[0],report_token_context('template',$report['report_code'])),$r[1],$r[0]==report_get_user_var('template',$report['report_code']));
 		}
 		if (count($g)>0) {
 			$out .=html_optgroup(implode($g),$labels[$grp]);
@@ -637,6 +654,12 @@ function report_output_select($report,$form=false)
 	}
 	$out .= selectend();
 	return $out;
+}
+
+function report_token_context($var,$report_code) {
+
+	return 'report_' . $report_code . '_' . $var;
+
 }
 
 function explot( $line )
@@ -788,10 +811,10 @@ function link_report($report_code,$label='',$init=array(),$action='',$template=n
 			$init['action']=$action;
 		}
 		foreach ($init as $var => $val) {
-			$url .= '&'.AG_REPORTS_VARIABLE_PREFIX.$var.'='.$val;
+			$url .= '&'.AG_REPORTS_VARIABLE_PREFIX.$var.'='.tokenize($val,report_token_context($var,$report_code));
 		}
 	} else {
-		$url .= $template ?  '&'.AG_REPORTS_VARIABLE_PREFIX.'template='. $template : '';
+		$url .= $template ?  '&'.AG_REPORTS_VARIABLE_PREFIX.'template='. tokenize($template,report_token_context($var,$report_code)) : '';
 		$url .= $action ?  '&'.AG_REPORTS_VARIABLE_PREFIX.'action='. $action : '';
 	}
 	$perm = $rep['permission_type_codes'];
@@ -802,7 +825,7 @@ function track_report_usage($report)
 {
 	global $UID;
 	$IP = $_SERVER['REMOTE_ADDR'];
-	$output = $_REQUEST[AG_REPORTS_VARIABLE_PREFIX.'template'];
+	$output=report_get_user_var('template',$report['report_code']);
 	$record = array('generated_by' => $UID,
 			    'report_id' => $report['report_id'],
 			    'report_code' => $report['report_code'],
