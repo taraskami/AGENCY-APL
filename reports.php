@@ -801,20 +801,27 @@ function link_report($report_code,$label='',$init=array(),$action='',$template=n
 				: AG_REPORTS_URL . '?' .$key.'='.$report_code);
 	$url .= $action ? (($redirect ? '&control[action]=' : '&action=') . $action ): '';
 	
+	$tokenized_types=array('PICK','PICK_MULTI');  // FIXME
+	foreach(report_parse_var_text($rep['variables']) as $v) {
+		$r_var[$v['name']]=$v['type'];
+	}
 	if (!be_null($init) && is_assoc_array($init)) {
 		// Template & Action specified in variable array
 		// override.
-		if (!isset($init['template'])) {
+		if (!isset($init['template']) and (!be_null($template))) {
 			$init['template']=$template;
 		}
-		if (!isset($init['action'])) {
+		if ((!isset($init['action'])) and (!be_null($action))) {
 			$init['action']=$action;
 		}
 		foreach ($init as $var => $val) {
-			$url .= '&'.AG_REPORTS_VARIABLE_PREFIX.$var.'='.tokenize($val,report_token_context($var,$report_code));
+			if (in_array($r_var[$var],$tokenized_types)) {
+				$val=tokenize($val,report_token_context($var,$report_code));
+			}
+			$url .= '&'.AG_REPORTS_VARIABLE_PREFIX.$var.'='.$val;
 		}
 	} else {
-		$url .= $template ?  '&'.AG_REPORTS_VARIABLE_PREFIX.'template='. tokenize($template,report_token_context($var,$report_code)) : '';
+		$url .= $template ?  '&'.AG_REPORTS_VARIABLE_PREFIX.'template='. tokenize($template,report_token_context('template',$report_code)) : '';
 		$url .= $action ?  '&'.AG_REPORTS_VARIABLE_PREFIX.'action='. $action : '';
 	}
 	$perm = $rep['permission_type_codes'];
