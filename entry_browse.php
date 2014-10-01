@@ -120,14 +120,15 @@ if (isset($_REQUEST['enterClient'])) {
 		// Find and show client notes flagged for this location	
 		$note_filter=array(
 			$ef_def['id_field']=>$e_c,
+			'FIELD>=:COALESCE(flag_entry_until,current_timestamp)'=>'current_timestamp',
 			'ARRAY_CONTAINS:flag_entry_codes'=>array($this_entry_location));
 		$notes=get_generic($note_filter,'','','client_note');
 		while ($note=array_shift($notes)) {
 			$note_f[]=$note['note'] . smaller(' ('.elink('client_note',$note['client_note_id'],'view record','target="_blank"').')');
 		}
 		$note_f=$note_f
-				? (html_heading_1('There is a message regarding this ' .$ef_def['singular'] .':')
-					. div(oline().implode(oline(),$note_f).toggle_label('View message...'),'','class="hiddenDetail"'))
+				? (html_heading_1('There are message(s) regarding this ' .$ef_def['singular'] .':')
+					. div(oline().implode(oline() . hrule() . oline(),$note_f).toggle_label('View message...'),'','class="hiddenDetail"'))
 				: '';
 		$rec=array();
 		$cont=array('action'=>'add','object'=>'entry','id'=>'dummy');
