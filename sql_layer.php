@@ -353,12 +353,12 @@ AND pg_catalog.col_description(a.attrelid, a.attnum) IS NOT NULL;
 ';
 			$comments=agency_query($c_sql);
 			while ($c = sql_fetch_assoc($comments)) {
-				$cached_comments[$c['table']][$c['field']]=$c['comment'];
+				$cached_comments[$c['table']][$c['column']]=$c['comment'];
 			}
 		}
 
-		return isset($c[$table][$field])
-			? $c[$table][$field]
+		return isset($cached_comments[$table][$field])
+			? $cached_comments[$table][$field]
 			: '';
 	}
 }
