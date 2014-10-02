@@ -480,7 +480,7 @@ function read_filter( $filter, $bool="AND", $lang="SQL")
 		}
 		case "NULL" :
 		case "NOT NULL" :
-			$sql .="$field IS $op";
+			$sql .="$field_safe IS $op";
 			break;
 		default :
 			if ( ! $field_flag)
