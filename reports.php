@@ -68,7 +68,29 @@ function get_report_from_db( $report_code )
 	return $rec;
 }
 
-function report_parse_var_text( $text ) {
+function report_parse_var_text( $text, $get_defaults=true ) {
+/*
+  I'm adding the get_defaults option here, defaulting to current behavior of true.
+  Recently EVAL was added as an option for defaults, and
+  also link_report was changed to call this function.
+
+  The problem with those two combined is that if the EVAL results in a 
+  fatal error (not a parse error, but for example a function not found),
+  the entire script will just crash.  (I discovered this when just such an
+  EVAL called from a report link on the home page caused the home page to crash.)
+
+  Apparently there is no way to trap the eval(), and the alternative is to
+  write the thing to a file and include it.  That seems like a lot of hassle.
+
+  The upshot of having link_report use the false option is that the report links won't
+  cause a crash.  The report itself still won't run, but that seems more limited and reasonable,
+  even if not ideal.  FIXME.
+
+  (n.b., if you break a report in this manner, I think you will need to "view data list" from the
+  reports page, and then view the report from there and edit the offending EVAL. Or better yet,
+  just keep the report record in a tab after you edit it.)
+*/
+
 	$var_types=array('PICK','PICK_MULTI','DATE','TIME','TIMESTAMP','TEXT','TEXT_AREA','VALUE');
 	$pick_types=array('PICK','PICK_MULTI');
 	$endpick_types=array('ENDPICK','ENDPICK_MULTI');
@@ -87,11 +109,12 @@ function report_parse_var_text( $text ) {
 		$var['type']    = strtoupper($ex[0]);
         $var['name']    = $ex[1];
         $var['prompt']  = $ex[2];
+	if ($get_defaults) {
         $var['default'] = $ex[3];
 		if (preg_match('/^EVAL:(.*)$/i',$var['default'],$matches)) {
 			$var['default'] = eval( 'return ' . $matches[1] . ';');	
 		}
-
+	}
 		if (in_array($var['type'],$pick_types)) {
 			while ($tmp_line = array_shift($lines))	{
 				$tmp_line = explot($tmp_line);
@@ -802,7 +825,7 @@ function link_report($report_code,$label='',$init=array(),$action='',$template=n
 	$url .= $action ? (($redirect ? '&control[action]=' : '&action=') . $action ): '';
 	
 	$tokenized_types=array('PICK','PICK_MULTI');  // FIXME
-	foreach(report_parse_var_text($rep['variables']) as $v) {
+	foreach(report_parse_var_text($rep['variables'],false) as $v) {
 		$r_var[$v['name']]=$v['type'];
 	}
 	if (!be_null($init) && is_assoc_array($init)) {
