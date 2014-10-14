@@ -855,7 +855,7 @@ function track_report_usage($report)
 {
 	global $UID;
 	$IP = $_SERVER['REMOTE_ADDR'];
-	$output=report_get_user_var('template',$report['report_code']);
+	$output=report_get_user_var('template',$report['report_code'],'PICK');
 	$record = array('generated_by' => $UID,
 			    'report_id' => $report['report_id'],
 			    'report_code' => $report['report_code'],
