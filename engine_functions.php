@@ -2273,7 +2273,14 @@ function form_generic($rec,$def,$control)
 			}
 			continue;
 		} elseif ($disp=='hide') {
-			$out .= hiddenvar("rec[$key]",$value);	
+			// For hidden array values, mimic what would be expected from form
+			if (is_array($value) and (count($value)>0)) {
+				$out .= row(cell('Hidden variable.  You should not see this row.').cell(form_field_generic($key,$value,$def,$control,$Java_Engine /*,'rec'*/)),'class="hidden"');	
+			} else {
+				// FIXME: case used for arrays above might work for all, and be more standards-compliant
+				// (e.g., no hiddenvars in tables outside of rows and cells
+				$out .= hiddenvar("rec[$key]",$value);	
+			}
 		} elseif ($disp=='display') {
 			$out .= hiddenvar("rec[$key]",$value); //moving hidden variable above $value change - JH 2/7/05
 			// EVALUATE $value
