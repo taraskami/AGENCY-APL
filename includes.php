@@ -86,6 +86,8 @@ link_style_sheet('object_reference.css','screen',' class="styleSheetScreen"');
 link_style_sheet('custom.css','screen',' class="styleSheetScreen"');
 
 link_javascript('agency.js');
+link_javascript('md5.js');
+
 
 require_once('jquery_includes.php');  //all the jquery stuff
 

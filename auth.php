@@ -532,7 +532,9 @@ class Auth {
 
 	function get_onsubmit($style='Hash')
 	{
-		return 'onsubmit="do'.$style.'ChallengeResponse(); return true;"';
+		return ($style=='Hash')
+			? 'onsubmit="do'.$style.'ChallengeResponse(); return true;"'
+			: 'class="doChallengeResponse"';
 	}
 
 	function get_password_field($auto_focus=false)

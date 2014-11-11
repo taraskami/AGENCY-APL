@@ -1367,9 +1367,13 @@ function md5_header_tags($varname="",$with_hash=false,$hash_varname='')
 {
 	global $form_name, $agency_home_url;
       $varname=orr($varname,"password");
+	if (!$with_hash) {
+		// The DoChallengeResponse() function was moved to agency.js
+		// FIXME:  The hash version should move as well
+		return '';
+	}
 
       return  "
-      <script language=\"javascript\" type=\"text/javascript\" src=\"".$agency_home_url."md5.js\"></script>
       <script language=\"javascript\" type=\"text/javascript\">
 	 <!--
 	    function do".($with_hash ? 'Hash' : '')."ChallengeResponse() {".

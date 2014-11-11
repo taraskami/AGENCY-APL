@@ -333,5 +333,11 @@ $( function() {
 		$(this).hide();
 	});
 
+	// This replaces the doChallengeResponse function for password fields
+	$(document).on('submit','form.doChallengeResponse',function() {
+		$(this).find('input.passwordField').each( function() {
+			$(this).val( MD5($(this).val()));
+		} );
+	});
 });
 
