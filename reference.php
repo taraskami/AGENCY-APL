@@ -47,13 +47,15 @@ function merge_object_reference_db($object,$id,&$control) {
 		$f_id = $ref['from_id'];
 		$f_obj = $ref['from_table'];
 		if ( ($f_obj==$object) and ($f_id==$id) ) { // FROM this object, so TO another
-			$db_refs['to'][]=array(
+			$ref_hash=$t_obj.':'.$t_id;
+			$db_refs['to'][$ref_hash]=array(
 				'object'=>$t_obj, 
 				'id' => $t_id, 
 				'label' => object_label($t_obj,$t_id),
 				'canRemove'=>false);
 		} elseif ( ($t_obj==$object) and ($t_id==$id) ) {
-			$db_refs['from'][]=array(
+			$ref_hash=$f_obj.':'.$f_id;
+			$db_refs['from'][$ref_hash]=array(
 				'object'=>$f_obj, 
 				'id' => $f_id, 
 				'label' => object_label($f_obj,$f_id),
@@ -63,55 +65,89 @@ function merge_object_reference_db($object,$id,&$control) {
 	// FIXME: inefficient nested looping, must be a better way!
 	foreach( $start_refs_to as $ref) {
 		$skip=false;
-		foreach ($db_refs['to'] as $db) {
+		foreach ($db_refs['to'] as $hash=>$db) {
 			if ($ref['object']==$db['object'] and $ref['id']==$db['id']) {
 				$skip=true; // skip on match
 			}
 		}
 		if (!$skip) {
-			$db_refs['to'][]=array('object'=>$ref['object'],'id'=>$ref['id'],'label'=>$ref['label']);
+			$db_refs['to'][$hash]=array('object'=>$ref['object'],'id'=>$ref['id'],'label'=>$ref['label']);
 		}
 	}
 	foreach( $start_refs_from as $ref) {
-		foreach ($db_refs['from'] as $db) {
+		foreach ($db_refs['from'] as $hash=>$db) {
 			if ($ref['object']==$db['object']
 				and $ref['id']==$db['id']) {
 					break 2; // skip on match
 			}
-			$db_refs['from'][]=array('object'=>$ref['object'],'id'=>$ref['id'],'label'=>$ref['label']);
+			$db_refs['from'][$hash]=array('object'=>$ref['object'],'id'=>$ref['id'],'label'=>$ref['label']);
 		}
 	}
+	$db_refs['pending']=$control['object_references']['pending'];
 	$control['object_references']=$db_refs;
 	return;
 }
 
 function process_object_reference_generic($def,$rec,&$control)
 {
-	if (in_array($control['action'],array('add','edit'))) {
-		// Add action always ref to something else
-		$sent_objects=orr($_REQUEST['selectedObject'],array());
-		foreach($sent_objects as $ref) {
-			$ref=json_decode(rawurldecode($ref),true);
-			if ($ref['refType']<>'to') {
-				continue;
-			}
-			$obj_ref_req[]=$ref;
+	global $AG_AUTH,$UID;
+	// Add action always ref to something else
+	$action=$control['action'];
+	$sent_objects=orr($_REQUEST['selectedObject'],array());
+	foreach($sent_objects as $ref) {
+		$ref=json_decode(rawurldecode($ref),true);
+		if (!in_array($ref['refType'],array('pending','removed'))) {
+			continue;
 		}
-		// FIXME:
-		//$refs = array_unique(array_merge(orr($obj_ref_req,array()),orr($control['object_references'],array())));
-		$refs = array_merge(orr($obj_ref_req,array()),orr($control['object_references']['to'],array()));
-		$tmp_ref=array();
-		foreach ($refs as $ref) {
-			if (!in_array($ref,$tmp_ref)) {
-				$tmp_ref[]=$ref;
-			}
+		if (!in_array($ref['object'],$def['allow_object_references'])) {
+			// discard invalid objects
+			continue;
 		}
-		$refs=$tmp_ref;
+		$ref_hash=$ref['object'].':'.$ref['id'];
+		if ($ref['refType']=='pending') {
+			$obj_ref_req[$ref_hash]=$ref;
+		} else {
+			$removed[$ref_hash]=$ref;
+		}
+	}
+	foreach ($control['object_references']['pending'] as $hash=>$ref) {
+		$in_request = array_key_exists($hash,$obj_ref_req);
+		$in_removed = array_key_exists($hash,$removed);
+		if ( (!$in_request) and (!$in_removed)) {
+			$obj_ref_req[$hash]=$ref;
+		}
+	}
+//	$refs = array_merge(orr($obj_ref_req,array()),orr($control['object_references']['pending'],array()));
+	$refs = $obj_ref_req;
+	if (in_array($action,array('add','edit'))) {
 		if ($control['step'] == 'new') {
 			$refs = array();
 		}
-		$control['object_references']['to'] = $refs;
+		$control['object_references']['pending'] = $refs;
 		return;
+	}
+	if (($action != 'view') or (!$refs) or (!$_REQUEST['addReferences'])) {
+		return;
+	}
+	// Post pending alerts from view
+	if ($def['require_password'] and (!$AG_AUTH->reconfirm_password())) {
+		$control['object_references']['pending']=$refs;
+		return 'Couldn\'t post references.  Incorrect password for '.staff_link($UID);
+	}
+	foreach ($refs as $ref) {
+		if ($ref['refType']<>'pending') {
+			$new_refs[]=$ref;
+			continue;
+		}
+		$ref['refType']='to';
+		$ref['sys_log'] = 'Reference added through AGENCY interface.';
+		$post_refs[]=$ref;
+	}
+	if (!post_object_references($rec,$def,$post_refs,$post_msg)) {
+		return 'Failed to post reference: '.$post_msg;
+	} else {
+		$control['object_references']['pending']=array();
+		return 'Successfully posted references';
 	}
 }
 
@@ -119,7 +155,8 @@ function populate_object_references( $control ) {
 	$x=1;
 	$refs_to=orr($control['object_references']['to'],array());
 	$refs_from=orr($control['object_references']['from'],array());
-	foreach (array('to'=>$refs_to,'from'=>$refs_from) as $type=>$refs) {
+	$refs_pending=orr($control['object_references']['pending'],array());
+	foreach (array('to'=>$refs_to,'from'=>$refs_from,'pending'=>$refs_pending) as $type=>$refs) {
 		foreach ($refs as $ref) {
 /*
 //FIXME: this should work, but doesn't because the labels can't handle embedded codes & such
@@ -141,9 +178,29 @@ function populate_object_references( $control ) {
 	return div($pre_refs,'preSelectedObjects','class="serverData"');
 }
 
-function object_reference_container($title='') {
-	return div('','infoAdditionalContainer')
-	. div('','objectReferenceContainer')
+function object_reference_container($def,$control) {
+	global $AG_AUTH;
+	$action=$control['action'];
+	$needs_password=$def['require_password'];
+	if ($action=='view') {
+		if ($needs_password) {
+			$pass1=$AG_AUTH->get_onsubmit('');
+			$pass2= 'Password: ' . $AG_AUTH->get_password_field(false);
+		}
+		$form=	formto('','',$pass1)
+			. $pending
+			. $pass2
+			.  button()
+			. hiddenvar('addReferences','dummy')
+			.formend();
+	}
+	$to=div(html_heading_tag('Refers To',2),'objectReferenceContainerReferenceTo','class="hidden objectReferenceContainerReferenceTo"');
+	$from=div(html_heading_tag('Referenced By',2),'objectReferenceContainerReferenceBy','class="hidden objectReferenceContainerReferenceBy"');
+	$pending=div($form.html_heading_tag('Pending References',2),'objectReferenceContainerReferencePending','class="hidden objectReferenceContainerReferencePending"');
+
+	return div(html_heading_tag('Additional Info',2),'infoAdditionalContainer','class="infoAdditionalContainer hidden"')
+	. div($pending . $to . $from,'objectReferenceContainer','class="objectReferenceContainer hidden"')
+	. div('','objectReferenceRemovedContainer','class="objectReferenceRemovedContainer hidden"')
 	. div('','','class="ajObjectSearchResult"');
 }
 
@@ -354,6 +411,19 @@ function object_label($object,$id) {
 		$l = $def['singular'] . ' ' . $id;
 	}
 	return $l;
+}
+
+function object_reference_form( $objs, &$show_link, $target_div='') {
+	foreach ($objs as $obj ) {
+		$t_def=get_def($obj);
+		$div_id='';
+		$object_refs .= object_selector_generic($obj,$div_id);
+		$tab_links .= html_list_item(hlink("#$div_id",$t_def['plural']));
+	}
+	$tabs = html_list($tab_links,'class="'.$obj.'"');	
+	$show_link = hlink('','Refer to other records...',NULL,'class="fancyLink objectSelectorShowLink"');
+	$object_refs = div($tabs . $object_refs,'objectSelectorForm','class=objectSelectorForm');
+	return $object_refs;
 }
 
 ?>

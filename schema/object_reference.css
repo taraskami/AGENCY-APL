@@ -64,8 +64,23 @@ div#objectReferenceContainer H3 {
 	color: #9E5322;
 }
 
-#objectSelectorShowLink {
-	font-size: 75%;
+div.objectReferenceContainerReferencePending {
+	background-color: #efffd0;
+	padding: 8px;
+	margin-bottom: 10px;	
+}
+
+div.objectReferenceContainerReferencePending form {
+	font-size: 70%;
+}
+
+div.objectReferenceContainerReferencePending input.PasswordField {
+	width: 40%;
+}
+
+.objectSelectorShowLink {
+	color: #D02020;
+	font-weight: bold;
 }
 
 #objectSelectorHideLink {

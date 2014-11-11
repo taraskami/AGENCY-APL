@@ -3549,7 +3549,7 @@ function process_staff_alert_generic($def,$rec,&$control)
 	$adef = get_def('alert');
 	//check password
 	if (!$AG_AUTH->reconfirm_password()) {
-		return 'Incorrect password for '.staff_link($UID);
+		return 'Couldn\'t post Staff Alerts. Incorrect password for '.staff_link($UID);
 	}
 
 	// require text and subject

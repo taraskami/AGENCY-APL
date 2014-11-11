@@ -341,7 +341,7 @@ function engine($control='',$control_array_variable='control')
 	    if ($step=='submit') {
 			$db_refs=array();
 			merge_object_reference_db($object,$id,$db_refs);
-			$refs_changed=($db_refs['object_references']['to']!=$control['object_references']['to']);
+			$refs_changed=(count(orr($control['object_references']['pending'],array())) > 0);
 		    $rec_changed=$def['fn']['rec_changed']($REC,$REC_LAST,$def);
 		    if (!$def['fn']['valid']($REC,$def,$message,$action,$REC_LAST)) { 
 			    /*
@@ -503,7 +503,7 @@ function engine($control='',$control_array_variable='control')
 			  /*
 			   * Post object references
 			   */
-			  if (!$post_failed && ($refs = $control['object_references']['to'])) {
+			  if (!$post_failed && ($refs = $control['object_references']['pending'])) {
 				  $post_failed = !post_object_references($a,$def,$refs,$message);
 				  if ((!$post_failed) and (!$rec_changed)) {
 					$message .= 'successfully posted object references to otherwise unchanged record.';
@@ -602,7 +602,7 @@ function engine($control='',$control_array_variable='control')
 
 		    $return_to_edit = hlink($_SERVER['PHP_SELF'].'?'.$control_array_variable.'[step]=continued'.$link_control,
 						    'Return to edit','',' class="linkButton"');
-			$object_refs = populate_object_references($control) . object_reference_container();
+			$object_refs = populate_object_references($control) . object_reference_container($def,$control);
 		    $view_rec = ($format=='data') 
 			    ? view_generic($REC,$def,$action,$control) 
 			    : $def['fn']['view']($REC,$def,$action,$control);
@@ -727,21 +727,14 @@ function engine($control='',$control_array_variable='control')
 		    }
 			/* Pass on already-selected objects */
 			$pre_refs = populate_object_references($control);
-			$show_selected = object_reference_container();
+			$show_selected = object_reference_container($def,$control);
 
 			/* Object References Form */
 			if (in_array($action,array('add','edit')) and ($objs = $def['allow_object_references'])) {
 
-				foreach ($objs as $obj ) {
-					$t_def=get_def($obj);
-					$div_id='';
-					$object_refs .= object_selector_generic($obj,$div_id);
-					$tab_links .= html_list_item(hlink("#$div_id",$t_def['plural']));
-				}
-				$tabs = html_list($tab_links,'class="'.$obj.'"');	
-				$object_refs_show_link = hlink('','Refer to other records...',NULL,'class="fancyLink objectSelectorShowLink"');
-				$object_refs = div($tabs . $object_refs,'objectSelectorForm','class=objectSelectorForm');
-			} // end O. R. Form
+				$object_refs=object_reference_form( $objs, $object_refs_show_link);
+
+			}
 
 		    $title = $def['fn']['title']($action,$REC,$def);
 		    $sub_title = sub_title_generic($action,$REC,$def);
@@ -805,10 +798,11 @@ function engine($control='',$control_array_variable='control')
 						$prepend_add_html = eval('return '.$prepend_add_eval.';');
 					}
 				}
+
 				$title = oline($def['fn']['title']($action,$REC,$def));
 		    		$sub_title = sub_title_generic($action,$REC,$def);
 				$output .= $prepend_add_html; //this will be coming from 'add' or 'edit'
-				$output .= populate_object_references($control) . object_reference_container();
+				$output .= populate_object_references($control) . object_reference_container($def,$control);
 				$output .= ($format == 'data') 
 					? view_generic($REC,$def,$action,$control)
 					: $def['fn']['view']($REC,$def,$action,$control);
@@ -923,8 +917,16 @@ function engine($control='',$control_array_variable='control')
 					$staff_alert_form = oline() . add_staff_alert_form_generic($def,$REC,$control);
 				}
 
+				/*
+				 * Object References form
+				 */
+				if (($objs = $def['allow_object_references'])) {
+					$object_refs=object_reference_form( $objs, $object_refs_show_link,'view');
+				}
+				$object_refs_show_link = oline() . $object_refs_show_link;
+
 				array_push($commands,cell(table(row(topcell($revision_history_link . $clinical_kc_transmission_link),'height="100%"')
-									  . row(bottomcell($links . $staff_alert_form)))));
+									  . row(bottomcell($links . $staff_alert_form .$object_refs_show_link . $object_refs)))));
 			}
 		} else {
 			$message .= oline("You aren't allowed to $action $object records. Contact your system administrator");

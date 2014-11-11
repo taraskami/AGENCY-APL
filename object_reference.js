@@ -46,7 +46,7 @@ function addSelectedObject( object ) {
 	var dupe=false;
 	$(".selectedObject").each( function() {
 		data=$(this).data('selectedObject');
-		if ( (object.object==data.object) && (object.id==data.id) ) {
+		if ( (object.object==data.object) && (object.id==data.id) && (data.refType!='removed') ) {
 			dupe = true;
 		}
 	});
@@ -55,18 +55,24 @@ function addSelectedObject( object ) {
 	}
 	/* FIXME: this is an ugly hack, and also won't work for donor or other flavors */
  	if (object.object=='client') {
-		var lab = '<a href=client_display.php?id=' + object.id +' class=' + object.object + 'Link>'+object.label+'</a>';
+		var tmp_base = '<a href=client_display.php?id=' + object.id +' class=' + object.object + 'Link>';
 	} else {
-		var lab = '<a href=display.php?control[action]=view&control[object]=' + object.object + '&control[id]='
-			+ object.id +' class=' + object.object + 'Link>'+object.label + '</a>';
-	};
+		var tmp_base = '<a href=display.php?control[action]=view&control[object]=' + object.object + '&control[id]=';
+	}
+	// Here's another hack, to handle label passed as link or plain text	
+	var tmp_lab=$(object.label).text();
+	if (tmp_lab=='') {
+		tmp_lab=object.label;
+	}
+	var lab = tmp_base + tmp_lab + '</a>';
 	var val_remove = object.canRemove ? ' <a href=# class=selectedObjectRemove>(remove)</a>' : '';
 	var text = $('<span class="selectedObject"><li>' + lab + val_remove + "</li></span>");
 	text.data('selectedObject',object);
 	if (object.object=='info_additional') {
 		$("#infoAdditionalContainer").show().append(text).data("selectedObject",object);
 	} else {
-		$("#objectReferenceContainerReference" + (object.refType=='from' ? 'From' : 'To')).show().append(text).data("selectedObject",object);
+		var tmpRefType=object.refType.charAt(0).toUpperCase() + object.refType.slice(1);
+		$("#objectReferenceContainerReference" + tmpRefType).show().append(text).data("selectedObject",object);
 		$("#objectReferenceContainer").show();
 	}
 }
@@ -163,14 +169,14 @@ function process_selector_event( event,method,target_el ) {
 			var obj_id = $(event.target).closest('div').find("[name=objectPickerPickList]").val();
 			var obj_text = $(event.target).closest('div').find("[name=objectPickerPickList] :selected").text();
 			//addSelectedObject( { id: obj_id, label: obj_text, object: obj_name, canRemove: true, refType: 'to' });
-			return { id: obj_id, label: obj_text, object: obj_name, canRemove: true, refType: 'to', target: target_el };
+			return { id: obj_id, label: obj_text, object: obj_name, canRemove: true, refType: 'pending', target: target_el };
 			break;
 		case 'SearchResult':
 			var obj_name = $(event.target).closest('tr').find("[name=objectPickerObject]").val();
 			var obj_id = $(event.target).closest('tr').find("[name=objectPickerId]").val();
 			var obj_text = $(event.target).closest('tr').find("[name=objectPickerLabel]").val();
 			//addSelectedObject( { id: obj_id, label: obj_text, object: obj_name, canRemove: true, refType: 'to' });
-			return { id: obj_id, label: obj_text, object: obj_name, canRemove: true, refType: 'to', target: target_el };
+			return { id: obj_id, label: obj_text, object: obj_name, canRemove: true, refType: 'pending', target: target_el };
 			break;
 		case 'Search':
 			var search_text = $(event.target).closest('div').find("[name=objectPickerSearchText]").val();
@@ -213,11 +219,10 @@ function process_selector_event( event,method,target_el ) {
  */
 
 $(function() {
-	var section_to='<div id=objectReferenceContainerReferenceTo><h2>Refers to</h2></div>';
-	var section_from='<div id=objectReferenceContainerReferenceFrom><h2>Referenced By</h2></div>';
-	$("#objectReferenceContainer").append(section_to+section_from).draggable().hide();
-	$("#objectReferenceContainer div").hide();
-	$("#infoAdditionalContainer").append("<h2>Additional Information</h2>").draggable().hide();
+	$("#objectReferenceContainer").draggable();
+
+
+	$("#infoAdditionalContainer").draggable();
 	var closeButton = '<a class="fancyLink objectSelectorHideLink">close</a>';
 	$(".objectSelectorForm").tabs().draggable().hide().append(closeButton);
 	addPreSelectedObjects();
@@ -239,7 +244,10 @@ $(function() {
 			$(this).closest('div').hide();
 		}
 		if (data.canRemove) {
-			$(this).closest('span').remove();
+			//$(this).closest('span').remove();
+			data.refType='removed';
+			$(this).closest('span').data('selectedObject',data);
+			$("#objectReferenceRemovedContainer").append( $(this).closest('span') );
 			if ($("#objectReferenceContainer span").length==0) {
 				$("#objectReferenceContainer").hide();
 			}
@@ -249,9 +257,10 @@ $(function() {
 
 	/* On submit, add references to form */
 	$("form").submit( function(event) {
+		var form=this;
 		$(".selectedObject").each( function() {
 			var data='<input type="hidden" name="selectedObject[]" value = "'+encodeURIComponent(JSON.stringify($(this).data('selectedObject')))+'">';
-		$('#preSelectedObjects').before(data);
+		$(form).append(data);
 		});
 	});
 
