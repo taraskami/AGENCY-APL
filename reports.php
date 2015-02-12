@@ -708,6 +708,11 @@ function report_generate_export( $report,$template,&$mesg) {
 
 		return report_generate_export_sql($report['report_block'][0]['report_block_sql'][0],$template,$mesg); // if succesful, this will exit the script
 
+	case 'report_export_db_screen':
+	case 'report_export_db_file':
+		preg_match('/report_export_db_(.*)$/',$template,$matches);
+		return  report_export_db($report['report_code'],$matches[1]);
+
 	case 'spreadsheet' :
 
 		if (in_array('O_SPREAD',$report['suppress_output_codes'])) {
@@ -797,8 +802,57 @@ function report_export_items()
 	  $options[] = array('sql_dump_copy'    , 'SQL Dump (copy commands)');
 	  $options[] = array('sql_data_csv'     , 'CSV file');
 	  $options[] = array('sql_data_tab'     , 'Tab-delimited file');
+	  $options[] = array('report_export_db_screen' , 'Export this report for sharing with another system (on screen)');
+	  $options[] = array('report_export_db_file' , 'Export this report for sharing with another system (file download)');
 	}
 	return $options;
+}
+
+function report_export_db($report_code,$destination='screen') {
+	// This generates the SQL needed to load a report into another AGENCY system
+	if ( !(has_perm('sql_dump') and has_perm($report['permission_type_codes'])) ) {
+		return alert_mark('You do not have the necessary permissions to export this report.');
+	}
+	$r_def=get_def('report');
+	$rb_def=get_def('report_block');
+	$report=get_report_from_db($report_code);
+	$filter=array('report_code'=>$report_code);
+	$unset_fields=array('changed_at','added_at','sort_order_id','sort_order_id_manual','report_id','report_block_id','block_count','last_generated_at','last_generated_by','quick_sql');
+	$format='FULL';
+	foreach(array($r_def,$rb_def) as $def ) {
+		$table=$def['table_post'];
+		$rep=get_generic($filter,list_query_order($def['list_order']),NULL,$def,$true);
+		for ($x=0;$x<count($rep);$x++) {
+			$rep[$x]['changed_by']='sys_user()';
+			$rep[$x]['added_by']='sys_user()';
+			$def['fields']['added_by']['data_type']='integer'; // changing field to integer is a trick/hack to avoid enquoting
+			$def['fields']['changed_by']['data_type']='integer';
+			if (array_key_exists('report_category_code',$def['fields'])) {
+				$rep[$x]['report_category_code']='COALESCE( (SELECT report_category_code FROM l_report_category WHERE report_category_code='
+				.enquote1(sql_escape_string($rep[$x]['report_category_code'])) . '),'.enquote1('GENERAL') . ')';
+				$def['fields']['report_category_code']['data_type']='integer';
+			}
+		}
+
+		foreach ($unset_fields as $f) {
+			unset($def['fields'][$f]);
+		}		
+		$comment='Inserting ' . ( (count($rep) > 1) ? $def['plural'] : $def['singular']);
+		$rep_f.=sql_build_inserts($def,$rep,$table,$format,$comment);
+	}
+	$comment='This is the SQL to load the ' . $report['report_title']  . ' report.'
+		. "\nThis report was exported from AGENCY running at " . org_name() . ' at ' . datetimeof('now','US')
+		. ' by ' . staff_name($GLOBALS['UID']) .'.';
+	$final=sql_commentify($comment).$rep_f;
+	if ($destination=='screen') {
+		return div(webify($final),'','class="sqlCode"');
+	} else {
+		$filename='add.report.'.strtolower($report['report_code']).'.sql';
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
+		out($final);
+		page_close(true);
+		exit;
+	}
 }
 
 function link_report($report_code,$label='',$init=array(),$action='',$template=null)

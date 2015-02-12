@@ -967,7 +967,7 @@ function sql_build_column($name,$def)
 	return "\t" . $name . "     " . $def['data_type'];
 }
 
-function sql_build_inserts($def,$res,$table,$format)
+function sql_build_inserts($def,$res,$table,$format,$comment='')
 {
 	$fields = array_keys($def['fields']);
 
@@ -980,7 +980,7 @@ function sql_build_inserts($def,$res,$table,$format)
 	}
 
 	$field_list = implode(', ',$fields);
-	while ($a = sql_fetch_assoc($res)) {
+	while ($a = (is_array($res) ? array_shift($res) : sql_fetch_assoc($res))) {
 		$tmp_vals = array();
 		foreach ($fields as $field) {
 			$tmp_vals[] = sql_build_value($a[$field],$def['fields'][$field]['data_type']);
@@ -995,7 +995,7 @@ function sql_build_inserts($def,$res,$table,$format)
 			break;
 		}
 	}
-	return sql_commentify('Inserting data...')
+	return sql_commentify(orr($comment,'Inserting data...'))
 		. $inserts."\n\n\n";
 }
 

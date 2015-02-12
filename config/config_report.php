@@ -69,7 +69,6 @@ $engine['report'] = array(
 			'label_format_edit'=>'oline($x) . smaller(add_link("permission","Add a new Permission type","target=\"_blank\""))',
 			'label'=>'Permission',
 			'comment'=>'Any one of these permissions is sufficient'),
-		'sql_library_id'=>array('display'=>'hide'),
 						'variables' => array(
 								'comment' => 'Specify: Type, name, prompt, default (Example: VALUE min_gift "Specify minimum gift amount" 50)'),
 								'report_comment' => array( 
