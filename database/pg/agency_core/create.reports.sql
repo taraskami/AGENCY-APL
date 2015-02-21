@@ -29,8 +29,8 @@ DROP TABLE tbl_l_report_block_type;
 \i create.tbl_report.sql
 \i create.tbl_report_usage.sql
 \i create.tbl_report_block.sql
-\i create.view.report.sql
 \i create.view.report_block.sql
+\i create.view.report.sql
 
 /* Add core/sample reports */
 \i add.report.agency_core.sql
