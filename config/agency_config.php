@@ -19,7 +19,7 @@ as published by the Free Software Foundation.
 
 AGENCY is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
@@ -55,8 +55,8 @@ $agency_wiki_public_url='http://sourceforge.net/apps/mediawiki/agency/index.php?
 $AG_TEXT=//General Text Array - this is a first step, the next step would be to move this into the db...
 array(
       //general display...
-	'ORGANIZATION_SHORT' => 'CHA',
-	'ORGANIZATION' => 'Compass Housing Alliance',
+	'ORGANIZATION_SHORT' => 'GSSO',
+	'ORGANIZATION' => 'Generic Social Service Organization',
       'AGENCY_HOME_TITLE' => 'AGENCY Home Page',
 	'CONFIDENTIAL_STATEMENT'=>'Add your confidentiality statement in agency_config.php',
 	'COPYRIGHT_STATEMENT'=> link_agency_public_home() . ' is copyright (c) 2003-2012, by Ken Tanzer and <a href="http://www.desc.org">DESC</a>. <a href="license_info.php">More information</a>',
@@ -106,7 +106,7 @@ $agency_home_url= $_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF'])
 $agency_home_url=str_replace('//','/',$agency_home_url);
 $agency_home_url= ( is_secure_transport() ? 'https://' : 'http://' ) . $agency_home_url;
 
-$organization_home_url='http://www.compasshousingalliance.org/';
+$organization_home_url=$agency_wiki_public_url . 'Not_set_organization_home_url';
 define('AG_AGENCY_ADMIN_URL','menu.php#admin');
 $agency_search_url=$off.'object_query.php';
 define('AG_REPORTS_URL','canned_report.php');
@@ -117,9 +117,9 @@ $calendar_url = 'calendar_display.php';
 define('CALENDAR_REPORT_MEDICAL_URL',AG_REPORTS_URL.'?filename=clinical/med_calendar.cfg');
 define('CALENDAR_REPORT_INANIMATE_URL',AG_REPORTS_URL.'?filename=general/calendar.cfg');
 
+define('AG_ADMIN_URL',$AG_HOME_BY_URL);
 // You can disable self-serve password resets:
-//define('AG_PASSWORD_RESET_ENABLE',false);
-define('AG_PASSWORD_RESET_ENABLE',true);
+define('AG_PASSWORD_RESET_ENABLE',false);
 
 // Even if you disable resets, don't comment this line out
 define('AG_PASSWORD_RESET_URL','reset_password.php');
@@ -128,7 +128,7 @@ define('AG_PASSWORD_RESET_URL','reset_password.php');
  * Email Sender
  * This will be the 'From:' line in any emails sent
  */
-$AG_EMAIL_SENDER='Compass AGENCY Notifier <noreply@'.$_SERVER['SERVER_NAME'].'>';
+$AG_EMAIL_SENDER='AGENCY Notifier <noreply@'.$_SERVER['SERVER_NAME'].'>';
 
 /*
  * authorization and password configuration
@@ -167,7 +167,7 @@ define('AG_AUTH_PASSWORD_USERNAME_CHECK',true);
 
 define('AG_AUTH_PASSWORD_DICT',false); //set to dictionary path (usually /usr/share/dict/words)
 
-define('AG_AUTH_INTERNAL_ACCESS_ONLY',true);
+define('AG_AUTH_INTERNAL_ACCESS_ONLY',false);
 
 $AG_AUTH_LEET = array('!'=>'l', //used for dictionary and username comparison checks
 			    '1'=>'l',
@@ -424,7 +424,7 @@ define('AG_DEFAULT_PHONE_AREA_CODE','206');
 /*
  * Two-digit century cutoff: years less than value will be 20xx, otherwise, 19xx.
  */
-define('AG_DATE_CENTURY_CUTOFF',20);
+define('AG_DATE_CENTURY_CUTOFF',15);
 
 /* Report System Stuff */
 define('AG_REPORTS_VARIABLE_PREFIX','crv_'); //pre-fixed to all form-variables
