@@ -1078,8 +1078,7 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 		  $new['label']=ucwords(AG_MAIN_OBJECT);
 		  $new['order_by_instead']=AG_MAIN_OBJECT_DB.'_name('.$field.')';
 
-	    } elseif ( strstr($field,'attachment') ) {
-
+	    } elseif ( strstr($field,'attachment') and ($object != 'attachment_link') and ($object != 'attachment')) {
 		  $new['data_type']='attachment';
 
 	    } elseif ($field == 'dob' ) {
@@ -1136,7 +1135,7 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 		   		$new['length']    = $meta[$field]['length'];
 				$new['display_edit'] = 'display'; // Don't allow changing codes.  Can be overriden in config file
 
-	    } elseif (preg_match('/(.*)_code_other$/i',$field,$m) and in_array($m[1].'_code',$fields)) {
+	    } elseif (preg_match('/(.*)(_codes?)?_other$/i',$field,$m) and in_array($m[1].'_code',$fields)) {
 
 		    /*
 		     * lookup_code _other functionality - if a table has this_is_a_code field,
@@ -1146,7 +1145,11 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 		     *
 		     * below, 21=length(&nbsp;code&nbsp;other)
 		     */
-		    $new['label'] = ucwords(substr($new['label'],0,strlen($new['label'])-21)).' (please specify if Other)';
+		    if (preg_match('/^(.*)([- _]?other)$/i',$new['label'],$m_tmp) ) {
+		    	$new['label'] = $m_tmp[1];
+		}
+		    //$new['label'] = ucwords(substr($new['label'],0,strlen($new['label'])-21)).' (please specify if Other)';
+		    $new['comment'] ='(please specify if Other)';
 		    $new['valid'] = array('be_null($x) xor $rec['.$m[1].'_code'.']=="OTHER"'
 						  =>'{$Y} must (only) be filled in if Other is selected');
 
@@ -1702,6 +1705,7 @@ function label_generic($key,$def,$action,$do_formatting=true)
 	}
 
       $label=$field['label_'.$action];
+	$label=str_replace(' ',oline(),$label);
 	$display = $field['display_'.$action];
 	if (($type=='timestamp') and in_array($action,array('add','edit')) and !in_array($display,array('regular','display'))) {
 		if (!$field['null_ok']) {
@@ -2490,7 +2494,7 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 	    if ($type=='multi_rec') { //do nothing, but capture
 		    continue;
 	    } elseif ( (be_null(trim(is_array($value) ? implode('',$value) : $value))) && (!$fields[$key]['null_ok']) ) {	
-		    $mesg .= oline("Field $label cannot be blank.");
+		    $mesg .= oline('"Field ' . orr($label,$key) . ' cannot be blank.');
 		    $valid=false;
 	    } elseif ( ($type == 'attachment') && is_array($value)) {
 		    if ($value['uploaded'] == false)  { 
@@ -3056,6 +3060,7 @@ function delete_void_generic($filter,$def,$action,&$message,$stamp_rec=array())
 outline(read_filter($c_filter));
 */
 			} else {
+				$c_filter['is_deleted']=sql_false(); // Don't re-delete deleted records
 				if ($def['stamp_deletes']) {
 					$c_res = agency_query(sql_update($c_table,$stamp_rec_child,$c_filter));
 				} else {
@@ -3065,6 +3070,7 @@ outline(read_filter($c_filter));
 		}
 	}	
 	$table=orr($def['table_post'],$def['table']);
+	$filter['is_deleted']=sql_false(); // Don't re-delete deleted records
 	if ($def['stamp_deletes'] or ($action=='void')) {
 		$res = agency_query(sql_update($table,$stamp_rec,$filter));
 	} else {
@@ -3728,8 +3734,9 @@ function get_staff_alerts_generic($rec,$action,$def,$control)
 				. $hidden_row;
 			$i++;
 		}
-		return table($formatted_refs,'',
-				 ' class="" cellspacing="0" style="background-color: #efefef; border: 1px solid black;"');
+		return div(table($formatted_refs,'',
+				 ' class="draggable" cellspacing="0" style="background-color: #efefef; border: 1px solid black;"')
+				. toggle_label('show/hide alerts'),'','class="hiddenDetail hiddenDetailShow"');
 	}
 }
 
@@ -3844,6 +3851,7 @@ function build_lookup_query($field_def,$action)
 	// End FIXME
 
 	$tmp_order = orr($field_def['lookup_order'],'LABEL');
+	$other_last=true; // FIXME: I want to be an option
 	switch (strtoupper($tmp_order)) {
 	case 'TABLE_ORDER':
 		$look_order = null;
@@ -3871,6 +3879,9 @@ function build_lookup_query($field_def,$action)
 	default:
 	}
 	$filt = $look['filter'];
+	if ($look_order and $other_last) {
+		$look_order = "lower($look_order)='other',$look_order";
+	}
 	return make_agency_query("SELECT $look_code AS value, $look_label AS label FROM $look_table",$filt,$look_order);
 }
 
