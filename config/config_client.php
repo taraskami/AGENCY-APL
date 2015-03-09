@@ -36,15 +36,14 @@ $engine["client"] = array(
 		'cancel_add_url'=>$agency_home_url,
 		'list_fields'=>array('custom1','custom2','custom3','custom4','custom5'),
 		'list_hide_view_links' => true,
-		'object_label'=>'client_link($rec["client_id"]) . (($xxq=unit_no($rec["client_id"])) ? " ($xxq)" : "")',
+		'object_label'=>'client_link($rec["client_id"])',
 		'quick_search'=>array(
 			'jump_page'=>'client_display.php',
 			'match_fields'=>array('name_full_alias'),
 			'match_fields_ssn'=>array('ssn'),
 			'match_fields_numeric'=>array('client_id'),
 			'match_fields_date'=>array('dob'),
-//			'match_fields_custom'=>array('/^[a-z]{1,4}[0-9]{2,5}$/i'=>array('FIELDIN:client_id'=>'(SELECT client_id FROM residence_own_current WHERE lower(housing_unit_code)=lower(\'$x\'))'))
-			'match_fields_custom'=>array('/^[a-z]{1,4}[0-9]{2,5}$/i'=>array('FIELDIN:client_id'=>'(SELECT client_id FROM residence_own WHERE lower(housing_unit_code)=lower(\'$x\') ORDER BY residence_date DESC limit 1)'))
+			'match_fields_custom'=>array('/^[a-z]{1,4}[0-9]{2,5}$/i'=>array('FIELDIN:client_id'=>'(SELECT client_id FROM residence_own_current WHERE lower(housing_unit_code)=lower(\'$x\'))'))
 		),
 		'child_records'=> array(
 						//FIXME: this is hacky, and needs to be more configurable/generic for
@@ -54,24 +53,24 @@ $engine["client"] = array(
 						'client_note'         => 'general',
 						'staff_assign'        => 'general',
 //						'address_client'      => 'general',
-//						'immigrant'           => 'general',
+						'immigrant'           => 'general',
 						'disability'          => 'general',
 						'ethnicity'			  => 'general',
-//						'hiv'                 => 'general',
+						'hiv'                 => 'general',
 						'income'              => 'general',
 						'contact_information' => 'general',
 						'phone'               => 'general',
 //						'employment_status'   => 'general',
 						'education_level'     => 'general',
 						'housing_history'     => 'general',
-//						'jail'                => 'general',
+						'jail'                => 'general',
 //						'criminal_history'    => 'general',
-//						'bar'                 => 'general',
-//						'entry'               => 'general',
+						'bar'                 => 'general',
+						'entry'               => 'general',
 //						'medical_health'      => 'general',
 //						'nicotine_distribution' => 'general',
 //						'application_housing_other' => 'general',
-//						'elevated_concern'          => 'general',
+						'elevated_concern'          => 'general',
 //						'vocational_reg'            => 'general',
 //						'conditional_release' => 'general',
 //						'safe_harbors_data_entry'=>'general',
@@ -81,10 +80,10 @@ $engine["client"] = array(
  * commented out in those areas.  For simplicity sake,
  * I've combined them all into the general section.
  */
-//						'shelter_reg' => 'general',
-//						'bed'         => 'general',
-//						'calendar_appointment' => 'general',
-//						'hospital'             => 'general',
+						'shelter_reg' => 'general',
+						'bed'         => 'general',
+						'calendar_appointment' => 'general',
+						'hospital'             => 'general',
 						//---Housing Guests---//
 //						'guest_authorization' => 'guest',
 //						'guest_visit' => 'guest',
@@ -180,7 +179,7 @@ $engine["client"] = array(
 				  'resident_id'=>array(
 								'display'=>'hide'),
 				'language_code'=> array(
-					'default'=>13, // 13 = English
+					// 'default'=>13, // 13 = English
 					'label'=>'Primary Language'
 				),
 				'med_allergies'=> array('label'=>'Allergies'),
