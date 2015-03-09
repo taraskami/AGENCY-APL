@@ -424,7 +424,7 @@ define('AG_DEFAULT_PHONE_AREA_CODE','206');
 /*
  * Two-digit century cutoff: years less than value will be 20xx, otherwise, 19xx.
  */
-define('AG_DATE_CENTURY_CUTOFF',15);
+define('AG_DATE_CENTURY_CUTOFF',20);
 
 /* Report System Stuff */
 define('AG_REPORTS_VARIABLE_PREFIX','crv_'); //pre-fixed to all form-variables
