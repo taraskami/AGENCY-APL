@@ -2491,14 +2491,14 @@ function syntaxify( $string, $lang ) {
 }
 
 function generic_f( $object, $label_exec, $filter, $limit=NULL,$order='',$sep='',$pre='',$post='') {
-	$sep=orr($setp,oline());
+	$sep=orr($sep,oline());
 	$def=get_def($object);
 	$res=get_generic($filter,$order,$limit,$def);
 	if (count($res)==0) {
 		return false;
 	}
 	while ($rec=array_shift($res)) {
-		$label = eval($label_exec.';');
+		$label = eval('return ' .$label_exec.';');
 		$result[]=$pre . link_engine(array('object'=>$object,'id'=>$rec[$def['id_field']]),eval( 'return ' . $label_exec.';' ));
 	}
 	return implode($result,$sep) . $post;
