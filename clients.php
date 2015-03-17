@@ -188,6 +188,9 @@ function client_show( $id )
 
 	$out=tablestart("","border=3 cellpadding=2");
 
+	//----Household Composition----//
+	$out .= ((is_enabled('family') and ($fs=family_status_f($id))) ? rowrlcell("Household Composition",$fs) : '');
+
 	// Current Registrations:
 	$reg_status = 
 				jail_status_f($id)
