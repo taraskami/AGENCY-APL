@@ -25,7 +25,7 @@ if ($error) {
 }
 
 if (!has_perm('photo')) {
-	$filename=$AG_HOME_URL . $AG_IMAGES['NO_PHOTO'];
+	$filename=$AG_HOME_BY_FILE . $AG_IMAGES['NO_PHOTO'];
 } elseif ($AG_DEMO_MODE) {
 	$filename=$AG_HOME_URL . $AG_IMAGES['DEMO_PHOTO'];
 } elseif ($object=='photo_upload') {

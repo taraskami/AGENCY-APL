@@ -140,11 +140,14 @@ define('AG_ENGINE_CONFIG_ARRAY','engine');
 $AG_HOME_BY_FILE = '/var/www/html/agency';
 $AG_HOME_BY_URL =  '/agency';
 
+// Where data files live
+$AG_DATA_BY_FILE = '/var/www/html/agency';
+
 // Client photos
-$AG_CLIENT_PHOTO_BY_FILE  = $AG_HOME_BY_FILE . '/photos';
+$AG_CLIENT_PHOTO_BY_FILE  = $AG_DATA_BY_FILE . '/photos';
 
 // Stafff photos
-$AG_STAFF_PHOTO_BY_FILE = $AG_HOME_BY_FILE . '/photos/staff';
+$AG_STAFF_PHOTO_BY_FILE = $AG_DATA_BY_FILE . '/photos/staff';
 
 // Restrict certain users to certain pages
 // First page listed is where users will be

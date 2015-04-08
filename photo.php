@@ -13,7 +13,7 @@ function serve_photo( $contents) {
 }
 
 function object_photo_filename( $id, $object, $scale, $all_in_array=false ) {
-	global $AG_CLIENT_PHOTO_BY_FILE,$AG_HOME_BY_FILE,$AG_IMAGES, $AG_DEMO_MODE;
+	global $AG_CLIENT_PHOTO_BY_FILE,$AG_HOME_BY_FILE,$AG_DATA_BY_FILE,$AG_IMAGES, $AG_DEMO_MODE;
 	$ext='.jpg';
 	$thumb = '.120x160';
 	if ($object=='staff') {
@@ -21,7 +21,7 @@ function object_photo_filename( $id, $object, $scale, $all_in_array=false ) {
 	} elseif ($object==AG_MAIN_OBJECT_DB) {
 		$offset = "/pc" . substr("0". intval($id/1000),-2) .  "/$id";
 	} elseif ($object=='photo_upload') {
-		return (is_file( $a=$AG_HOME_BY_FILE . '/agencylink/photo_upload/' .$id) or true)
+		return (is_file( $a=$AG_DATA_BY_FILE . '/agencylink/photo_upload/' .$id) or true)
 			? $a
 			: 'Upload photo ' .$a . ' not found';
 	} else {
