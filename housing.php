@@ -287,7 +287,7 @@ function unit_no_of( $unit )
 	 * and return it, optionally in a format
 	 */
 
-	$unit_pr = '[A-Y]{1,3}[0-9]{3,4}';
+	$unit_pr = '[A-Y]{1,3}[0-9]{1,4}';
 	$leased_pr = 'Z[A-Z]{1}0[A-Z0-9]{3}';
 	preg_match('/^('.$unit_pr.'|'.$leased_pr.')(x[0-9]{1})?$/i', $unit, $matches);
 
