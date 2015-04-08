@@ -139,7 +139,7 @@ function housing_status_f( $id )
 	$out = oline(alt(link_engine(array('object'=>'residence_own',
 						     'action'=>'view',
 						     'id'=>$a['residence_own_id']),$msg0),
-			     'Click to view residence record').$msg . blue($project) . $msg2) . $msg3;
+			     'Click to view residence record').$msg . elink_value('l_housing_project',$a['housing_project_code']) . $msg2) . $msg3;
 
 	//display address for scattered site
 	if (in_array($a['housing_project_code'],array('SCATTERED','LEASED'))) {
