@@ -32,54 +32,6 @@ should be included in this distribution.
 */
 
 
-function show_query_row_client($fields,$position,$rec,$control,$def,$control_array_variable='')
-{
-
-	/*
-	 * If writing a generic function to mimic this, 
-	 * it must return count($fields)+2 cells as a string
-	 * keeping in mind that the column labels will be for 
-	 * the fields passed in the $fields variable
-	*/
-
-      global $colors;
-      $reverse=$control['list']['reverse'];
-      $MAX=$control['list']['position']+$control['list']['max'];
-      $count = $reverse 
-		? ($MAX-$position)+$control['list']['position']
-		: $position+1;
-      $control['list']['position']=$position;
-	$id=$rec[AG_MAIN_OBJECT_DB.'_id'];
-
-	$deceased = client_death_f($id,$death_date,true);
-
-	$out = ( $def['list_hide_view_links'] 
-		   ? cell('', 'width="2" class="generalData1"') //hide view links
-		   : cell(center(list_view_link($rec,$control,$def)),
-			    "bgcolor=\"width=\"20\" class=\"generalDataHeader\""))
-		. (($def['list_hide_numbers']) ? cell('','class="generalData1"') : cell(smaller($count),'class="generalData1"'))
-		. cell( oline(client_link($id))
-			  . ($deceased ? oline(smaller($deceased)) : '')
-			  . "ID #" . $id
-			  . ($rec['clinical_id'] ? smaller(" (clinical id " . $rec['clinical_id'] . ")") : "")
-//			  . smaller("<br>" . priority_status_f($id,"")) . " | " . smaller(" assess: ") . bigger(assessment_f($rec,"tiny"))
-//			  . smaller("<br>" . housing_status_f($id)),'class="generalData1"')
-			  ,'class="generalData1"')
-		
-            . cell( last_entry_f($id),'class="generalData1"')
-            . cell( bar_status_f($rec,'',$is_provisional ),'class="generalData1"')
-//            . cell( '&nbsp;','class="generalData1"')
-            . cell( smaller(oline(value_generic($rec['gender_code'],$def,'gender_code','list'))
-
-		   			. oline(multi_objects_f( 
-								 get_generic(client_filter($id),'','','ethnicity')
-								 ,'ethnicity','ethnicity_code'))
-				    . oline($GLOBALS['AG_DEMO_MODE'] ? '9/9/9999' : dateof($rec['dob']))
-				    . oline($GLOBALS['AG_DEMO_MODE'] ? '999-99-9999' : $rec['ssn'])) ,'class="generalData1"')
-            . cell( client_photo( sql_true($rec['is_protected_id']) ? 0 : $id, 0.5 ),'class="generalData1"'); //passing 0 for protected 
-      return $out;
-}
-
 function client_show( $id )
 {
 	global $UID,$colors;

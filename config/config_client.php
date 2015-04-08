@@ -34,7 +34,8 @@ should be included in this distribution.
 global $agency_home_url;
 $engine["client"] = array(
 		'cancel_add_url'=>$agency_home_url,
-		'list_fields'=>array('custom1','custom2','custom3','custom4','custom5'),
+// list_fields now created at end of file
+//		'list_fields'=>array('custom1','custom2','custom3','custom4','custom5'),
 		'list_hide_view_links' => true,
 		'object_label'=>'client_link($rec["client_id"])',
 		'quick_search'=>array(
@@ -227,29 +228,56 @@ $engine["client"] = array(
 					 
 					
 				  //for use with the custom show_query_row_client() function
-				  'custom1' => array(
+				  'family_status_f' => array(
 							   'display'=>'hide',
+							   'value_format_list'=>'family_status_f($rec["client_id"])',
+							   'is_html'=>true,
 							   'label_format_list'=>'smaller($x)',
-							   'label_list'=>ucfirst(AG_MAIN_OBJECT).' / ID # /<br />Overnight Eligibility | Assessed Score<br />Housing Status'),
-				  'custom2' => array(
+							   'label_list'=>'Household Composition'),
+				  'client_f' => array(
 							   'display'=>'hide',
+							   'value_format_list'=>
+								'oline(client_link($rec["client_id"]))
+									. ( ($qxq_deceased= client_death_f($rec["client_id"],$qxq_dummy,true)) ? oline(smaller($qxq_deceased)) : "")
+									. "ID #" . $rec["client_id"]
+									. ($rec["clinical_id"] ? smaller(" (clinical id " . $rec["clinical_id"] . ")") : "")',
+									// . smaller("<br>" . priority_status_f($rec["client_id"],"")) . " | " . smaller(" assess: ") . bigger(assessment_f($rec,"tiny"))
+									// . smaller("<br>" . housing_status_f($rec["client_id"]))',
+								'is_html'=>true,
+							   'label_format_list'=>'smaller($x)',
+							   'label_list'=>ucfirst(AG_MAIN_OBJECT).' / ID #'),
+// /<br />Overnight Eligibility | Assessed Score<br />Housing Status'),
+				  'last_entry_f' => array(
+							   'display'=>'hide',
+							   'value_format_list'=>'last_entry_f($rec["client_id"])',
+							   'is_html'=>true,
 							   'label_format_list'=>'smaller($x)',
 							   'label_list'=>'Last Entry'),
-				  'custom3' => array(
+				  'bar_status_f' => array(
 							   'display'=>'hide',
 							   'label_format_list'=>'smaller($x)',
-							   'label_list'=>'Bar Status'),
-				  'custom4' => array(
+							   'value_format_list'=>'bar_status_f($rec)',
+							   'is_html'=>true,
+							   'label_list'=>'Restriction Status'),
+				  'demographic_f' => array(
 							   'display'=>'hide',
+							   'value_format_list'=>
+								'smaller(oline(value_generic($rec["gender_code"],$def,"gender_code","list")) '
+								. '. oline(multi_objects_f(get_generic(client_filter($rec["client_id"]),"","","ethnicity")
+                                                                 ,"ethnicity","ethnicity_code")) '
+								. '. oline($GLOBALS["AG_DEMO_MODE"] ? "9/9/9999" : dateof($rec["dob"])) '
+								. '. oline($GLOBALS["AG_DEMO_MODE"] ? "999-99-9999" : $rec["ssn"]))',
+								'is_html'=>true,
 							   'label_format_list'=>'smaller($x)',
 							   'label_list'=>'Gender<br />Ethnicity<br />Date of Birth'),
-				  'custom5' => array(
+				  'photo_f' => array(
 							   'display'=>'hide',
 							   'display_list'=>'regular',
-							   'value'=>'client_photo( $rec["client_id"], 0.5 )',
+							   'value'=>'client_photo( sql_true($rec["is_protected_id"]) ? 0 : $rec["client_id"], 0.5 )',
 							   'is_html'=>true,
 							   'label_format_list'=>'smaller($x)',
 							   'label_list'=>'Picture'),
+
 				'clinical_id'=>array('display'=>'hide'),
 				'king_cty_id'=>array('display'=>'hide'),
 				'spc_id'=>array('display'=>'hide'),
@@ -284,5 +312,12 @@ $engine["client"] = array(
 */
 				  )
 		);
+$engine['client']['list_fields'][]='client_f'; 
+if (is_enabled('entry')) { $engine['client']['list_fields'][]='last_entry_f'; }
+if (is_enabled('bar')) { $engine['client']['list_fields'][]='bar_status_f'; }
+if (is_enabled('family')) { $engine['client']['list_fields'][]='family_status_f'; }
+$engine['client']['list_fields'][]='demographic_f'; 
+$engine['client']['list_fields'][]='photo_f'; 
+
 include 'config_client_multi.php'; // Configure multi--ethnicity & disability
 ?>
