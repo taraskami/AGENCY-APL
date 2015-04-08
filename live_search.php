@@ -15,12 +15,16 @@ if (has_perm($def['perm_view'])) {
 	$alias = (($type==AG_MAIN_OBJECT_DB) and array_key_exists(AG_MAIN_OBJECT_DB,$def['fields']))
 		? " || COALESCE(name_alias,'')"
 		: '';
-	$filter=array("ILIKE:{$type}_name({$type}_id) || ' (' || {$type}_id ||') ' $alias"=>'%'.$term.'%');
+	$filter=object_qs_filter($term,$type);
 	$name = ( $GLOBALS['AG_DEMO_MODE'] and ($type==AG_MAIN_OBJECT_DB))
 		? "'XXXXXX'"
 		: $type . '_name('.$type.'_id)';
-//toggle_query_display();
-	$results=sql_fetch_column(agency_query("SELECT $name || ' (' || {$type}_id || ')' AS {$type}_name FROM {$type}",$filter,NULL,100),"{$type}_name");
+	$query='SELECT ' . $def['id_field'] . ' FROM ' . $def['table'];
+	$recs=agency_query($query,$filter,NULL,100);
+	while ($x=sql_fetch_assoc($recs)) {
+		$id=$x[$def['id_field']];
+		$results[]=strip_tags(object_label($type,$id) . ' (' . $id. ')');
+	}
 	echo(json_encode($results));
 }
 
