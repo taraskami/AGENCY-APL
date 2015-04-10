@@ -252,7 +252,7 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 		case AG_MAIN_OBJECT :
 		case 'guest' :
 			if ($GLOBALS['AG_DEMO_MODE']) {
-				$label_field='XXXXXX, XXX';
+				$label_field='TEXT('.enquote1('XXXXXX, XXX').')';
 				break;
 			} // else fall through...
 //		case AG_MAIN_OBJECT :

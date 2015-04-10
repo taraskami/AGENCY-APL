@@ -429,7 +429,8 @@ function hospital_status_f($id,$security_override = false)
 		$text = $quick_summary
 			? ('Released from hospital on '.dateof($rec['hospital_date_end']))
 			: ( 'Released from '.$rec['facility'].' on '.dateof($rec['hospital_date_end']).'. '
-			    .bold(dal_due_between_date_f($id,$range)));
+			  //  .bold(dal_due_between_date_f($id,$range))
+			  );
 
 	} else {
 

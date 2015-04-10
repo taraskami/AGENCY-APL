@@ -1374,6 +1374,10 @@ function list_all_child_records($object,$id,$def,$output=false)
 
 function child_list_add_link($def,$filter,$control)
 {
+	if (!$def['allow_add']) {
+		return '';
+	}
+
 	$object = $control['object'];
 	$id = $control['id'];
       $singular=$def['singular'];

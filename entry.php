@@ -43,8 +43,11 @@ function last_entry_f($clientid, $java=false) {
 		? seclink('entry',$entered,
 			    'onclick="javascript:showHideElement(\'entryChildList\')"')
 		: $entered;
-	return 'Last Entry ('.value_generic($entry['entry_location_code'],$def,'entry_location_code','list').'): '
-		. $link;
+	$location = ((count_rows('l_entry_location') > 1)
+		? ' ('.value_generic($entry['entry_location_code'],$def,'entry_location_code','list').')'
+		: '')
+		.': ';
+	return 'Last Entry' . $location . $link;
 }
 
 function show_pick_entry($locations,$prefs)

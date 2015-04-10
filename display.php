@@ -80,8 +80,7 @@ if (($control['action']=='list') and $control['format']=='raw' and $control['sou
 			  || (is_array($filter[$key])))
 	//	    && (!in_array($type,array('staff','client')))) 
 	) {
-			$control['list']['fields']=$def['list_fields'];
-			$control['list']['fields'][]=$key;
+			$def['list_fields'][]=$key;
 /*
 			//get photo into results hack
 			$xw = substr($key,0,1);
@@ -95,6 +94,7 @@ if (($control['action']=='list') and $control['format']=='raw' and $control['sou
 */
 		}
 	}
+	$control['list']['fields']=$def['list_fields'];
 }
 // This test is copied (repeated) from engine,
 // to avoid calling without required info
