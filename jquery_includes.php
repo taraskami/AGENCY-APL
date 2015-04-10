@@ -42,5 +42,6 @@ link_javascript('jquery.clockpick.min.js');
 link_javascript('jquery.elastic.js');
 link_javascript('jquery_agency.js');
 link_javascript('object_reference.js');
+link_javascript('jquery.floatThead.min.js');
 //link_javascript('jquery.keyboard.min.js');
 ?>
