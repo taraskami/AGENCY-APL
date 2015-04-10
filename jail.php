@@ -98,11 +98,29 @@ function upsert_jail_record( $rec, &$msg_return ) {
 			and ($mr['ba_number']==$rec['ba_number'])
 		) {
 			$msg[]='Record already exists.';
-			$res=false;
-		}
-		elseif ($mr['ba_number'] and ($mr['ba_number'] !=$ba_number)) {
+			$res=true;
+		} elseif ($mr['ba_number'] and ($mr['ba_number'] !=$ba_number)) {
 			$msg[]=red('BA Mismatch for ' .$rec_description.'. Giving up');
 			$res=false;
+		} elseif ( (datetimeof($mr['jail_date'])==datetimeof($rec['jail_date']))
+			and (be_null($mr['jail_date_end']) and (!be_null($rec['jail_date_end'])) )
+			) {
+			if ($mr['comments'] and (!stristr($rec['comments'],$mr['comments']))) { $rec['comments']=sys_log_append($mr['comments'],$rec['comments']); }
+			if ($mr['sys_log'] and (!stristr($rec['sys_log'],$mr['sys_log']))) { $rec['sys_log']=sys_log_append($mr['sys_log'],$rec['sys_log']); }
+			$res = agency_query(sql_update('tbl_jail',$rec,array('jail_id'=>$mr['jail_id'])));
+			if ($res) {
+				if (sql_affected_rows($res)==1) {
+					$msg[] = 'Successfully updated release for ' . $rec_description;
+				} elseif (sql_affected_rows($res)==0) {
+					$msg[] = 'Tried to update release for ' . $rec_description . ', but no record updated.';
+					$res=false;
+				} elseif (sql_affected_rows($res)>1) {
+					$msg[] = 'Tried to update release for ' . $rec_description . '.  1 Record should have been updated, but instead ' . sql_affected_rows($res) . ' were actually updated.';
+					$res=false;
+				}
+			} else {
+				$msg[]='Failed to update release for ' . $rec_description . ' (query error)';
+			}
 		} else {
 /*
 		$jd_match=

@@ -34,7 +34,8 @@ should be included in this distribution.
 $engine['jail'] = array(
 				'singular'=>'Jail Record',
 				'enable_staff_alerts_view'=>true,
-				'list_fields'=>array('jail_date','jail_date_end','days_in_jail','ba_number'),
+				// Uncomment custom1 here and in the fields section below if you are using the jail charge table
+				'list_fields'=>array('jail_date','jail_date_end','days_in_jail','ba_number' /* ,'custom1'*/ ),
 				'perm_list'=>'any',
 				'perm_view'=>'any',
 				'perm'=>'admin',
