@@ -281,6 +281,26 @@ function start_of_month( $date )
 
 }
 
+function start_of_year( $date )
+{
+// take a date, and return 1st day of that year
+
+	// make sure we know what format we've got
+	$date = dateof( $date, "SQL" );
+	return year_of($date) . '-01-01';
+
+}
+
+function end_of_year( $date )
+{
+// take a date, and return last day of that year
+
+	// make sure we know what format we've got
+	$date = dateof( $date, "SQL" );
+	return year_of($date) . '-12-31';
+
+}
+
 function end_of_month( $date )
 {
 // take a date, and return last day of that month
