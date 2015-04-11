@@ -365,7 +365,7 @@ function engine_perm($control,$access_type='')
 		if (!is_numeric($id) || $id < AG_POSTGRESQL_MAX_INT) {
 			$res = get_generic(array($def['id_field']=>$id),'','',$def);
 			if (count($res) > 0) {
-				$rec = array_shift($res);
+				$rec = sql_to_php_generic(array_shift($res),$def);
 			}
 		}
 	}
