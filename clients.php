@@ -151,7 +151,6 @@ function client_show( $id )
 				. conditional_release_f($id)
 				. housing_status_f($id)
 				. tier_status_f($id)
-				. oline(crp_status_f($id))
 				. cd_reg_f($id)
 */
 				. (is_enabled('entry') ? oline(last_entry_f($id,true)) : '')
@@ -1091,13 +1090,6 @@ function assignments_f($staff_id, $my=false) {
 												   array('client_id'=>$client,'service_by'=>$UID),'class="fancyLink"');
 */
 						break;
-                                        case 'CM_CRP':
-/*
-                                                $t_add_links[$t_type] = link_multi_add('service_crp',
-                                                                                                   smaller('Add CRP Service(s)',2),
-                                                                                                   array('client_id'=>$client,'service_by'=>$UID),'class="fancyLink"');
-                                                break;
-*/						
 					default:
 					}
 				}

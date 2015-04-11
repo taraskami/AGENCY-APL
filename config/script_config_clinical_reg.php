@@ -35,66 +35,6 @@ should be included in this distribution.
 $AG_SCRIPT_CONFIG_CLINICAL_REG = 
 array(
 
-	/************************************ CRP **************************************/
-
-	'crp' => array('title' => 'CRP Registration',
-			   'benefit_project' => 'CRP',
-			   'objects' => array('clinical_reg_request' => array('group_field' => 'assessment_date',
-												'rec_fixed' => array('benefit_type_code' => '75',
-															   'benefit_change_code' => 'INITIAL',
-															   'previous_auth_id' => '',
-															   'funding_source_code' => 'KC'),
-												'send_to_kc' => true
-												),
-						    AG_MAIN_OBJECT_DB => array('send_to_kc' => true,
-											 'update_existing' => true,
-											 'hidden_fields' => array('veteran_status_code','spc_id','is_protected_id','resident_id','name_full','name_full_alias','issue_no','last_photo_at','comments','med_issues','medications','med_allergies')
-											 )
-//                                      This is not used by CRP as of this writing.
-//
-// 						    'referral_clinical' => array('many' => 3,
-// 											   'group_on_fields' => array('referral_clinical_date'),
-// 											   'rec_fixed' => array('referral_clinical_type_code' => 'INTO',
-// 															'referral_clinical_linkage_code' => 'NA'),
-// 											   'passed_fields' => array('referral_clinical_code'),
-// 											   'send_to_kc' => true,
-// 											   'rec_hidden' => array('referral_clinical_type_code' => 'SCREENING',
-// 															 'referral_clinical_linkage_code' => 'NA',
-// 															 'referral_clinical_code' => '9998')
-// 											   )
-						    )
-			   ),
-	'crp_exit' => array('title' => 'CRP Exit',
-				  'benefit_project' => 'CRP',
-				  'objects' => array('clinical_reg' => array('group_field'  => 'clinical_reg_date_end',
-											   'rec_fixed'    => array('clinical_exit_reason_code' => 'NCRATE',
-															   'kc_exit_type_code' => 'TERMINATE'),
-											   'fixed_fields' => array('clinical_reg_date',
-															   'benefit_type_code',
-															   'funding_source_code',
-															   'kc_authorization_id',
-															   'current_case_rate',
-															   'case_rate_reason_code',
-															   'kc_exit_type_code',
-															   'kc_authorization_status_code'),
-											   'update_existing' => true,
-											   'required_fields' => array('clinical_reg_date_end'),
-											   'send_to_kc' => true
-											   ),
-							   AG_MAIN_OBJECT_DB => array('send_to_kc' => true,
-												'update_existing' => true,
-												'hidden_fields' => array('veteran_status_code','spc_id','is_protected_id','resident_id','name_full','name_full_alias','issue_no','last_photo_at','comments','med_issues','medications','med_allergies')
-												),
-							   'referral_clinical' => array('many' => 3,
-												  'group_on_fields' => array('referral_clinical_date'),
-												  'rec_fixed' => array('referral_clinical_type_code' => 'TO'),
-												  'passed_fields' => array('referral_clinical_code',
-																   'referral_clinical_linkage_code'),
-												  'send_to_kc' => true)
-							   
-							   )
-				  ),
-
 	/************************************ HOST **************************************/
 	'host_60' => array('title' => 'HOST 60 Registration',
 				 'benefit_project' => 'HOST',

@@ -450,10 +450,6 @@ function tier_status($id,$tier=false)
 
 		$filter['benefit_type_code'] = $tier;
 
-	} else {
-
-		$filter['!benefit_type_code'] = '75'; //these are tracked in crp_status_f
-
 	}
 
 	$filter['!kc_authorization_status_code'] = 'CX';
@@ -2070,30 +2066,6 @@ function clinical_reg_verify_type_client_combination($client_id,$type,$date='',&
 
 	switch ($type) {
 
-	case 'crp' : // cannot currently be enrolled in crp
-
-		if (!be_null(clinical_get_tier($client_id,$date,'75'))) {
-			$message .= oline('Client is already enrolled in CRP for '.dateof($date));
-			return false;
-		}
-		// or pending
-		if (sql_num_rows(clinical_get_pending_registration($client_id,'75')) > 0) {
-			$message .= oline('Client has a pending CRP registration');
-			return false;
-		}
-		break;
-
-	case 'crp_exit' : // must have a crp benefit w/o an end date
-
-		if (sql_num_rows(get_generic(array(AG_MAIN_OBJECT_DB.'_id'=>$client_id,
-							     'benefit_type_code' => '75',
-							     'NULL:clinical_reg_date_end' => ''),'','','clinical_reg')) < 1) {
-
-			$message .= oline('No CRP registrations to exit');
-			return false;
-		}
-
-		break;
 	case 'host_60' : // cannot currently be enrolled in HOST
 	case 'host_61' : // cannot currently be enrolled in HOST
 	case 'pact_57' :

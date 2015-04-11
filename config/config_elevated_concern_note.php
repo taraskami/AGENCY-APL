@@ -33,7 +33,7 @@ should be included in this distribution.
 
 $engine['elevated_concern_note'] = array(
 						  'perm' => 'clinical,my_client_project',
-						  'object_union' => array('log','client_note','service_heet','service_cd','service_ir','service_crp','service_housing'),
+						  'object_union' => array('log','client_note','service_heet','service_cd','service_ir','service_housing'),
 						  'list_fields' => array('elevated_concern_note_id','elevated_concern_note_date','note_by','note_text'),
 						  'list_order' => array('elevated_concern_note_date'=>true),
 						  'list_hide_view_links'=>true,

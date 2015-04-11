@@ -114,9 +114,6 @@ $engine["client"] = array(
 						//---CD---//
 //						'cd_reg'       => 'CD',
 //						'service_cd'   => 'CD',
-						//---CRP---//
-//						'crp_reg'     => 'CRP',
-//						'service_crp' => 'CRP',
 						//---Other---//
 						//-------Clinical-------//
 //						'activity_evaluation'                => 'clinical',

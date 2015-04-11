@@ -48,8 +48,7 @@ BEGIN
 			AND (clinical_reg_date_end >= asof OR clinical_reg_date_end IS NULL)
 			AND kc_authorization_status_code NOT IN ('CX')
 	
-		 -- Sort by non-crp tiers, so these come up first
-		ORDER BY benefit_type_code != '75' DESC, clinical_reg_date DESC;
+		ORDER BY clinical_reg_date DESC;
 
 	ELSIF ttype IN ('HOST','SAGE') THEN
 
@@ -62,8 +61,7 @@ BEGIN
 			AND (clinical_reg_date_end >= asof OR clinical_reg_date_end IS NULL)
 			AND kc_authorization_status_code NOT IN ('CX')
 	
-		 -- Sort by non-crp tiers, so these come up first
-		ORDER BY benefit_type_code != '75' DESC, clinical_reg_date DESC;
+		ORDER BY clinical_reg_date DESC;
 
 	ELSE
 
@@ -76,8 +74,7 @@ BEGIN
 			AND (clinical_reg_date_end >= asof OR clinical_reg_date_end IS NULL)
 			AND kc_authorization_status_code NOT IN ('CX')
 	
-		 -- Sort by non-crp tiers, so these come up first
-		ORDER BY benefit_type_code != '75' DESC, clinical_reg_date DESC;
+		ORDER BY clinical_reg_date DESC;
 
 	END IF;
 
@@ -557,7 +554,7 @@ DECLARE
 	ctier RECORD;
 BEGIN
 	/*
-	 * For this to return true, it must find a valid, non-CRP and kc-funded tier for the date provided
+	 * For this to return true, it must find a valid kc-funded tier for the date provided
 	 */
 
 	SELECT INTO ctier * FROM clinical_reg
@@ -567,8 +564,7 @@ BEGIN
 			AND kc_authorization_status_code NOT IN ('CX')
 			AND funding_source_code = 'KC'
 	
-		 -- Sort by non-crp tiers, so these come up first
-		ORDER BY benefit_type_code != '75' DESC, clinical_reg_date DESC;
+		ORDER BY clinical_reg_date DESC;
 
 	IF ctier.benefit_type_code IS NOT NULL AND ctier.benefit_type_code <> '75' THEN
 
