@@ -390,11 +390,6 @@ $unique_constraint_tables=array("disability"=>"disability_code");
 //-----assessment (shelter)-----//
 $group_A_threshold_assessment_score=13; // Minimum score to be "Group A"
 
-//-----feedback-----//
-$feedback_table="feedback";
-$feedback_table_post="tbl_feedback";
-$feedback_url="feedback.php";
-
 //-----Bugzilla-----//
 //comment out these lines to disable Bugzilla links and queries
 /*

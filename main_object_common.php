@@ -692,7 +692,7 @@ function agency_home_links()
 {
 	///* setup home links */
 	$add_object_link = hlink("object_reg.php?object=" . AG_MAIN_OBJECT_DB,'Add '.ucfirst(AG_MAIN_OBJECT));
-	$home_links_1 = array(link_feedback(), //feedback
+	$home_links_1 = array(add_link('feedback'),
 				    link_admin(), //AGENCY admin
 				    $add_object_link
 				    );

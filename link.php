@@ -66,12 +66,6 @@ function link_email( $email )
         return hlink("mailto:%20$email",$email);
 }
 
-function link_feedback($sep=", ", $label="Feedback",$type="Link")
-{
-    global $feedback_url;
-    return hlink( $feedback_url . "?action=view",$label,$type);
-}
-
 function link_bedreg($label="BedReg",$type="Link")
 {
     return hlink(AG_BEDREG_URL,$label,$type);

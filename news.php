@@ -102,10 +102,9 @@ function navigate_news($def)
 			. formend()
 			);
 
-	global $feedback_url;
 	$add = html_list(
 			     html_list_item(link_engine($all_config,'All News'))
-			     . html_list_item(hlink($feedback_url,'Leave AGENCY Feedback'))
+			     . html_list_item(add_link('feedback','Leave AGENCY Feedback'))
 			     . html_list_item(link_engine(array('object'=>'news','action'=>'add'),'Add '.$def['singular']))
 			     );
 	return div($latest . $add . $search,'newsNavigate');
