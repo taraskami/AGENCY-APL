@@ -1529,7 +1529,7 @@ function blank_generic(&$def, $rec_init,&$control)
 		if (preg_match('/^(.*)_id$/',$o,$matches)) {
 			$t_def=get_def($matches[1]);
 			if ($t_def['id_field']==$o) {
-		        $control['object_references']['to'][]=array(
+		        $control['object_references']['pending'][]=array(
 	                'object'=>$t_def['object'],
     	            'id' => $rec_init[$o],
         	        'label' => object_label($t_def['object'],$rec_init[$o]));
