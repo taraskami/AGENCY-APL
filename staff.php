@@ -627,23 +627,6 @@ function post_staff1($logid, $posterid, $staffid)
 	}
 }
 
-function show_staff_heads( $staff )
-{
-        $result = tablestart("","border=1") ;
-        for ($i=0; $i<sql_num_rows($staff); $i++)
-                {
-                $info = sql_fetch_assoc($staff);
-                $result .= row(
-                cell($i+1)
-                .  cell( staff_photo($info["staff_id"],.35))
-					. cell(oline(staff_link($info["staff_id"]))
-					. $info["staff_position_code"]
-					. ", " . $info["agency_project_code"] ));
-                }
-        $result .= tableend();
-        return $result;
-}
-
 function staff_query($label = "",$format="all")
 {
 	$label=orr($label,"Staff Search");

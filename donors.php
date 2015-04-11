@@ -299,45 +299,6 @@ function client_show( $id )
 
 }
 
-function show_client_heads( $clients , $select_to_url = "" , $allow_other="N" )
-{
-	//    global $client_page;
-	
-	$result="";
-	if ($allow_other=="Y" && $select_to_url )
-	{
-		$result .= formto($select_to_url)
-			. formvartext("client_select")
-			. button("Enter Unregistered Client")
-			. formend();
-	}
-	if (sql_num_rows($clients)>0)
-	{
-		$result .= tablestart("","border=1")
-			. header_row("ID","Name","Type");
-	}
-	$select_char = ( strpos($select_to_url,'?')===false) // figure out whether to add vars to
-		? '?'
-		: '&';
-	
-	for ($i=0; $i<sql_num_rows($clients); $i++)
-	{
-            $info = sql_fetch_assoc($clients);
-            $result .= row(
-				   cell( ( $select_to_url ?
-					     hlink( $select_to_url
-							. $select_char
-							. "client_select="
-							. $info["donor_id"],"Select", "Button" )
-					     : ($i+1)
-					     ))
-				   .  cell( client_link($info["donor_id"],$info["donor_name"]))
-				   . cell($info["donor_type"]));
-	}
-	$result .= tableend();
-	return $result;
-}
-
 function donor_search($allow_other="N",$auto_forward=true,$use_old=false)
 {
 	return client_search($allow_other,$auto_forward,$use_old);
