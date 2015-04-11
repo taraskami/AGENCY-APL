@@ -1044,6 +1044,7 @@ function user_identity_management()
 			$def=get_def('staff');
 			$staff = array_shift(get_generic(array($def['id_field']=>$UID),'','',$def));
 			$NICK  = $staff['name_first'];
+			$GLOBALS['AG_USER_OPTION'] = new User_Option();
 
 		}
 		
