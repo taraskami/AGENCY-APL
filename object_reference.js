@@ -60,7 +60,7 @@ function addSelectedObject( object ) {
 		var tmp_base = '<a href=display.php?control[action]=view&control[object]=' + object.object + '&control[id]=';
 	}
 	// Here's another hack, to handle label passed as link or plain text	
-	var tmp_lab=$(object.label).text();
+	var tmp_lab=$("object.label").text();
 	if (tmp_lab=='') {
 		tmp_lab=object.label;
 	}
