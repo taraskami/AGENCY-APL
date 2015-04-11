@@ -50,7 +50,7 @@ $agency_donate_url='<form action="https://www.paypal.com/cgi-bin/webscr" method=
 <input type="image" src="images/pay_pal_donate_button.gif" border="0" name="submit" alt="Donate to AGENCY">
 </form>';
 
-$agency_wiki_public_url='http://sourceforge.net/apps/mediawiki/agency/index.php?title=';
+$agency_wiki_public_url='https://sourceforge.net/p/agency/wiki/';
 
 $AG_TEXT=//General Text Array - this is a first step, the next step would be to move this into the db...
 array(
