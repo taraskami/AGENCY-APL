@@ -3,7 +3,7 @@ CREATE TABLE tbl_staff_employment (
 	staff_id				INTEGER NOT NULL REFERENCES tbl_staff ( staff_id ),
 	agency_program_code			VARCHAR(10) REFERENCES tbl_l_agency_program,--NOT NULL,
 	agency_project_code			VARCHAR(10) REFERENCES tbl_l_agency_project,--NOT NULL,
-	staff_position_code		VARCHAR(10) REFERENCES tbl_l_staff_position(staff_position_code) NOT NULL,
+	staff_position_code		VARCHAR(20) REFERENCES tbl_l_staff_position(staff_position_code) NOT NULL,
 	staff_title			TEXT,
 	agency_facility_code		VARCHAR(10) REFERENCES tbl_l_agency_facility(agency_facility_code),
 	staff_shift_code			VARCHAR(10) REFERENCES tbl_l_staff_shift(staff_shift_code),
