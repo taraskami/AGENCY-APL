@@ -203,9 +203,11 @@ function client_show( $id )
 				   ));
 
 	// Meds & Allergies
-	$out .= row( rightcell("Medical Issues") . leftcell(
-									  ($client["med_issues"]) ? blue(italic($client["med_issues"]))
-									  : smaller("(none)") ) );
+	foreach( array('med_issues','medications','med_allergies') as $m ) {
+		$out .= $client[$m] ? 
+			row( rightcell(label_generic($m,$def,'view')) . leftcell(blue(italic($client[$m]))))
+			:'';
+	}
 	$out .= row(rightcell("Language")
 		  . leftcell ( lang_f($client)));
 	

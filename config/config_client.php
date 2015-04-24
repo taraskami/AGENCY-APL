@@ -184,6 +184,7 @@ $engine["client"] = array(
 					'label'=>'Primary Language'
 				),
 				'med_allergies'=> array('label'=>'Allergies'),
+				'med_issues'=>array('label'=>'Medical Issues'),
 
 
 				  "name_last" => array( 
