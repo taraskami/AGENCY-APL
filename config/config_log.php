@@ -32,12 +32,12 @@ should be included in this distribution.
 */
 
 $engine['log'] = array(
-	'allow_object_references'=>array('client','bar'),
+	'allow_object_references'=>array('client'),
 //	'add_another'=>true,
 	'enable_staff_alerts'=>true,
 	'enable_staff_alerts_view'=>true,
 	'include_info_additional'=>true,
-	'object_label'=>'sql_assign("SELECT SUBSTRING(COALESCE(subject,log_text) FROM 0 FOR 50) FROM " . $def["table"] . ",array(" . def["id_field"] . " => " . $id . "))"',
+	'object_label'=>'sql_assign("SELECT SUBSTRING(COALESCE(subject,log_text) FROM 0 FOR 50) FROM " . $def["table"],array($def["id_field"] => $id))',
 	'list_fields'=>array('custom1','log_type_code','staff_alerts','clients','additional','subject'),
 	'quick_search'=>array(
 		'jump_page'=>'display.php',
@@ -52,7 +52,7 @@ $engine['log'] = array(
 //	'add_link_show'=>true,
 	'list_hide_view_links' => true,
 	'perm'=>'any',
-	'list_order'=>array('added_at'=>false),
+	'list_order'=>array('added_at'=>true),
 	'list_max'=>25,
 	'title_view'=>'"Log ".$rec["log_id"] . " " . smaller(hlink(AG_LOG_URL,"go to Log index"))',
 	'title_add' =>'"Add A New Log Entry"',
@@ -90,7 +90,7 @@ $engine['log'] = array(
 			'comment'=>'Leave blank unless this is a very late entry'),
 	   'subject'=>array(
 			'is_html'=>true,
-			'value_format_list'=>'smaller($x)',
+			//'value_format_list'=>'smaller($x)',
 			'value_list'=>'div(elink("log",$rec["log_id"],$x) . div($rec["log_text"],"","class=\"hiddenLogText\"")
 							  ,"",(isset($rec["_staff_alert_ids"]) 
 							 && in_array($GLOBALS["UID"],sql_to_php_array($rec["_staff_alert_ids"])))
