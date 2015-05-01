@@ -1010,6 +1010,9 @@ function user_identity_management()
 		 */
 		$super_ids = get_super_user_ids();
 
+		// System User is not really a super-user, but their identity shouldn't be assumed anyway
+		$super_ids[] = $GLOBALS['sys_user'];
+
 		if (is_numeric($assume) && ($assume > 0)) {
 
 			/*
