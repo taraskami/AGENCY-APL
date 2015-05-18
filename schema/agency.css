@@ -201,6 +201,11 @@ table.multiAddForm select { width: 120px; }
 table.multiAddForm input[type=text] { width: 50px; }
 div.multiAddForm { margin: 25px; width: 70%; }
 
+/* Other? multiForm */
+table.multiForm .AdditionalInformation {
+	background-color: #DDDDFF;
+}
+
 /* Widget */
 
 .widgetChanged { background-color: #92c4ef; }

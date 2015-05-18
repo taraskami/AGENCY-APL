@@ -50,30 +50,26 @@ $lookup_field = $f_def['lookup']['value_field'];
 $order=is_array($multi['other_codes']) ? implode($multi['other_codes'],"','") : '';			
 $sql=orr($multi['sel_sql'],"SELECT * FROM $table");
 $codes=agency_query("$sql ORDER BY $lookup_field IN ('$order'), description"); 
-while ($item=sql_fetch_assoc($codes))
-{
-$code=$item[$lookup_field];
-$fake_field = "multi_{$child_object}_multi_$code";
-foreach($a as $field)
-{
-	if ($field=="added_by" || $field == "changed_by")
-	{
-		$rec[$fake_field][$field]=$GLOBALS["UID"];
-	}
-	elseif($field==$user_field)
-	{
-		$rec[$fake_field][$field] = $code;
-	}
-			else
-			{
-				$rec[$fake_field][$field] = null;
-			}
+//$template_rec=blank_generic($c_def,array(),$dummy_control);
+while ($item=sql_fetch_assoc($codes)) {
+	$code=$item[$lookup_field];
+	$fake_field = "multi_{$child_object}_multi_$code";
+	foreach($a as $field) {
+		if ($field=="added_by" || $field == "changed_by") {
+			$rec[$fake_field][$field]=$GLOBALS["UID"];
+		} elseif($field==$user_field) {
+			$rec[$fake_field][$field] = $code;
+		} elseif ($file==$multi_fields) {
+			$rec[$fake_field][$field] = null;
+		} else {
+			$rec[$fake_field][$field] = $template_rec[$field];
 		}
 	}
-	if ($multi['confirm_none']) {
-		$rec["multi_{$child_object}_multi_no_multi_records"] = array($user_field=>"multi_{$child_object}_multi_no_multi_records", $multi_fields=>false);
-	}
-	return $rec;
+}
+if ($multi['confirm_none']) {
+	$rec["multi_{$child_object}_multi_no_multi_records"] = array($user_field=>"multi_{$child_object}_multi_no_multi_records", $multi_fields=>false);
+}
+return $rec;
 }
 
 function add_generics_fields($def,$child_object)
@@ -104,7 +100,7 @@ function add_generics_fields($def,$child_object)
 							"multi_field"=>$multi_fields,
 							"multi_type"=>'boolean',
 							'multi_format'=>$format,
-							'null_ok'=>sql_true($rec['null_ok']));
+							'null_ok'=>sql_true($f_def['null_ok']));
 	}
 	if ($multi['confirm_none']) {
 		$def['fields']["multi_{$child_object}_multi_no_multi_records"] = array("data_type"=>"multi_rec",
@@ -147,12 +143,13 @@ function valid_generics($action,$big_rec,&$def,&$mesg,&$valid,$child_object)
 			//if ( (be_null($rec[$multi_fields]) or (
 			if ( ( ($def['fields'][$key]['multi_format']=='radio' and be_null($rec[$multi_fields]))
 				or ($def['fields'][$key]['multi_format']=='checkbox' and ~!sql_true($rec[$multi_fields])))
-				and (!$def['fields'][$key]['null_ok']===true)) {
+				and (!$subdef['fields'][$key]['null_ok']===true)) {
 				$mesg .= oline('Must specify ' . value_generic($rec[$user_field],$subdef,$user_field,$action));
 				$valid=false;
 				$def['fields'][$key]['not_valid_flag']=true;
 			}
-			if (sql_true($rec[$multi_fields]) and in_array($rec[$user_field],$subdef['fields'][$user_field]['require_comment_codes']) and be_null($rec['comment'])) {
+			$comment_field=$subdef['fields'][$user_field]['require_comment_field'];
+			if (sql_true($rec[$multi_fields]) and in_array($rec[$user_field],$subdef['fields'][$user_field]['require_comment_codes']) and be_null($rec[$comment_field])) {
 				$mesg .= oline('Comment required for ' . $subdef['singular'] . ' of ' . value_generic($rec[$user_field],$subdef,$user_field,$action));
 				$valid=false;
 				$def['fields'][$key]['not_valid_flag']=true;
@@ -173,8 +170,34 @@ function valid_generics($action,$big_rec,&$def,&$mesg,&$valid,$child_object)
 	}
 }
 
+function form_generics_row_header($key,$rec,$def) {
+// Pulling in the $rec to be able to maintain the proper order of labels
+
+	$c_def=$def['multi'][$key];
+	$child_def=get_def($key);
+	$fields=$c_def['visible_fields'];
+	if (be_null($fields)) { return ''; }
+
+	foreach ($rec as $k=>$v) {
+		// Any one of the recs will do, so find the first one and stop
+		if (preg_match('/multi_'.$key.'_multi/',$k)) {
+			$sub_rec=$v;
+			break;
+		}
+	}
+	foreach ($sub_rec as $k=>$v) {
+		if (in_array($k,$fields)) {
+			$labels[]=label_generic($k,$child_def,'add');
+		}
+	}
+	array_unshift($labels,''); // Blank header for multi_field
+	array_unshift($labels,''); // Blank header for checkbox
+	return header_row($labels);
+}
+
 function form_generics_row($key,$rec,$def,$child_object)
 {
+
 	$c_def = get_def($child_object);
 	$multi=$def['multi'][$child_object];    
 	$multi_fields=$multi['multi_fields'];
@@ -185,37 +208,49 @@ function form_generics_row($key,$rec,$def,$child_object)
 	if ($def['fields'][$key]['not_valid_flag']) { 
 		$label = span($label,'class="engineFormError"');
 	}
-	if (in_array($sub,$c_def['fields'][$user_field]['require_comment_codes'])) {
-		foreach($rec as $key=>$value) {
-			if (in_array($key,array($multi_fields,'comment'))) {
-				continue;
-			}
-			$out .= hiddenvar("rec[$sub2][$key]",$value);
+	$comment_field=$c_def['fields'][$user_field]['require_comment_field'];
+	foreach($rec as $key=>$value) {
+		if (in_array($key,array($multi_fields,$comment_field))) {
+			continue;
 		}
-				$out .= rowrlcell(
-					formcheck("rec[$sub2][$multi_fields]",sql_true($rec[$multi_fields]))
-					,$label.smaller(' (please describe) ')
-					. formvartext("rec[$sub2][comment]",$rec['comment']) 
+		if (in_array($value,$c_def['fields'][$user_field]['require_comment_codes'])) {
+			$comment=smaller(' (please describe) ')
+			. formvartext("rec[$sub2][$comment_field]",$rec[$comment_field]); 
+		} else {
+			$comment='';
+		}
+		$label.=$comment;
+		if (in_array($key,$multi['visible_fields'])) {
+			$additional[]=cell(form_field_generic($key,$rec[$key],$c_def,$control,$Java_Engine,"rec[$sub2]").$comment); // FIXME: control?
+		} elseif ($key==$multi_fields) {
+			switch ($def['fields'][$sub2]['multi_format']) {
+				case 'radio' :
+					$formval = sql_true($value) ? 'Y' : (sql_false($value) ? 'N' : NULL);
+					if ($def['fields'][$sub2]['null_ok']) {
+						$wipeout = formradio_wipeout("rec[$sub2][$key]");
+					}
+					$additional[] = rightcell($wipeout . yes_no_radio("rec[$sub2][$key]",'',$formval)).leftcell($label);
+					break;
+				default :
+					$additional[] .= rightcell(formcheck("rec[$sub2][$key]",sql_true($value))).leftcell($label);
+			}
+		} elseif (in_array($key,$multi['visible_fields_conditional'][$sub])) {
+			//$extra[]=rightcell($key).leftcell(form_field_generic($key,$rec[$key],$c_def,$control,$Java_Engine,"rec[$sub2]"));
+			$extra[]=row(rightcell(label_generic($key,$c_def,'add')).leftcell(form_field_generic($key,$rec[$key],$c_def,$control,$Java_Engine,"rec[$sub2]")));
+
+		} else {
+			$hidden[] = hiddenvar("rec[$sub2][$key]",$value);
+		}
+	}
+	$out .= row(
+		rightcell(formcheck("rec[$sub2][$multi_fields]",sql_true($rec[$multi_fields])))
+		.leftcell($label)
+		.implode('',$hidden)
+		.implode('',$additional)
 );
-	} else {
-		foreach($rec as $key=>$value)
-		{
-			if ($key==$multi_fields) {
-				switch ($def['fields'][$sub2]['multi_format']) {
-					case 'radio' :
-						$formval = sql_true($value) ? 'Y' : (sql_false($value) ? 'N' : NULL);
-						if ($def['fields'][$sub2]['null_ok']) {
-							$wipeout = formradio_wipeout("rec[$sub2][$key]");
-						}
-						$out .= rowrlcell($wipeout . yes_no_radio("rec[$sub2][$key]",'',$formval),$label);
-						break;
-					default :
-						$out .= rowrlcell(formcheck("rec[$sub2][$key]",sql_true($value)),"$label");
-				}
-			} else {
-				$out .= hiddenvar("rec[$sub2][$key]",$value);
-			}
-		}
+	if ($extra) {
+		$span=count($multi['visible_fields']);
+		$out.=row(topcell(italic(bold('Additional Information for '.$label)),'colspan="2"').cell(table(implode('',$extra)),'colspan="'.$span.'"'),'class="AdditionalInformation"');
 	}
 	return $out;
 }

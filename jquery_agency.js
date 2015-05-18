@@ -101,6 +101,25 @@ $(function() {
 	});
 });
 
+/* For multi forms, check the "selected" box if another input is entered for that row */
+$(function() {
+	$('table.multiForm input').click( function() {
+		if ( ($(this).val() || $(this).prop('checked')) ) {	
+			var target=$(this).closest('tr');
+			var target2=$(target).closest('table').closest('tr');
+			// If its an extra info row, need to get out of table and go up a row
+			if ($(target2).hasClass('AdditionalInformation')) {
+				target=$(target2).prev();
+			}
+			target=$(target).find('input').first();
+			if ( (!$(target).is($(this))) && ($(target).prop('checked')===false) ) {
+				$(target).click();
+			}
+		}
+	});
+});
+
+
 /* Hide & Toggle minor engine messages */
 $(function() {
 	$(".engineMessageResultDetail").hide().before('<a href="#" class="toggleLink">details...</a>');
@@ -339,5 +358,12 @@ $( function() {
 			$(this).val( MD5($(this).val()));
 		} );
 	});
+});
+
+/* Floating Headers */
+
+// For multi-forms
+$(function() {
+    $('table.multiForm').floatThead();
 });
 

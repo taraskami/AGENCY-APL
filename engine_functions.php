@@ -671,6 +671,7 @@ function config_object($object)
 				$OBJECT['multi'][$k]['blank_fn']=orr($v['blank_fn'],'blank_generics_add');
 				$OBJECT['multi'][$k]['add_fields_fn']=orr($v['add_fields_fn'],'add_generics_fields');
 				$OBJECT['multi'][$k]['form_row_fn']=orr($v['form_row_fn'],'form_generics_row');
+				$OBJECT['multi'][$k]['form_row_header_fn']=orr($v['form_row_header_fn'],'form_generics_row_header');
 				$OBJECT['multi'][$k]['valid_fn']=orr($v['valid_fn'],'valid_generics');
 				$OBJECT['multi'][$k]['post_fn']=orr($v['post_fn'],'post_generics');
 		}
@@ -2305,7 +2306,8 @@ function form_generic($rec,$def,$control)
 		if ($multi_out) {
 			foreach($multi_out as $key=>$multi) {
 				$out .= oline() . bigger(bold(oline(orr($def['multi'][$key]['sub_title'],'')))) . $def['multi'][$key]['sub_sub_title']
-		     . tablestart('','class="engineForm"')
+		     . tablestart('','class="engineForm multiForm"')
+		     . '<thead>'.$def['multi'][$key]['form_row_header_fn']($key,$rec,$def).'</thead>'
 		     . $multi
 		     . tableend();
 			}
@@ -2579,8 +2581,8 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 	    }
 
 		//require comments on specific values
-		if (in_array($value,$pr['require_comment_codes']) and be_null($rec['comment'])) {
-			$def['fields']['comment']['not_valid_flag']=true;
+		if (in_array($value,$pr['require_comment_codes']) and be_null($rec[$pr['require_comment_field']])) {
+			$def['fields'][$pr['require_comment_field']]['not_valid_flag']=true;
 			$VALID=false;
 			//$valid=false;
 			$mesg .= oline("Comment required for $label of " . value_generic($value,$def,$key,'view',true,$rec));
@@ -3192,6 +3194,9 @@ function process_generic(&$sess,&$form,$def)
 			$sess[$form_key] = $form_value;
 		} elseif ($type=='multi_rec') { //cycle through and assign sub-records
 			foreach ($form_value as $sub_key=>$sub_value) {
+				preg_match('/^multi_(.*)_multi/',$form_key,$matches);
+				$sub_object=$matches[1];
+				$sub_def=get_def($sub_object);
 				if ( ($fields['multi_type']=='boolean') 
 				     && ($sub_key==$fields['multi_field'])) {
 					if ($fields['multi_format']=='radio') {
@@ -3200,6 +3205,12 @@ function process_generic(&$sess,&$form,$def)
 						$sub_value=sql_true();
 					}
 					$sess[$form_key][$sub_key]=$sub_value;
+				} elseif($sub_def['fields'][$sub_key]['data_type']=='lookup_multi'
+					and ($found_options=array_keys($sub_value))) {
+					// Convert checkboxes to array, and verify options in lookup table
+					$l_table=$sub_def['fields'][$sub_key]['lookup']['table'];
+					$l_field=$sub_def['fields'][$sub_key]['lookup']['value_field'];
+					$sess[$form_key][$sub_key]=sql_fetch_column(sql_query('SELECT ' . $l_field . ' FROM ' . $l_table . ' WHERE ' . read_filter(array('IN:'.$l_field=>$found_options))),$l_field);
 				} else {
 					$sess[$form_key][$sub_key] = get_magic_quotes_gpc() ? stripslashes($sub_value) : $sub_value;
 				}
