@@ -181,7 +181,7 @@ function process_selector_event( event,method,target_el ) {
 		case 'Search':
 			var search_text = $(event.target).closest('div').find("[name=objectPickerSearchText]").val();
 			var obj = $(event.target).closest('div').find("[name=objectPickerObject]").val();
-			var my = $(event.target).closest('div').find("[name=objectPickerMyClients]").attr('checked');
+			var my = $(event.target).closest('div').find("[name=objectPickerMyClients]").prop('checked');
 			var args = qs_object(search_text,obj,my);
 			var spinner = $('<img/>').attr('src','images/loading.gif');
 			$.ajax({
@@ -204,6 +204,7 @@ function process_selector_event( event,method,target_el ) {
 					var length=$(".ajObjectSearchResult tr.generalData2,tr.generalData1").length;
 					if (length==1) { // FIXME: and autoselect_on_1
 						$('.ajObjectSearchResult button').click();
+						$('.ajObjectSearchResult').dialog('close').hide();
 					}
 					if (length==0) {
 						$('.ajObjectSearchResult').dialog('close').hide();

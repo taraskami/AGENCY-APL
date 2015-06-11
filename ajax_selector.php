@@ -37,17 +37,20 @@ $qs=$_REQUEST['QuickSearch'];
 $my=$_REQUEST['MyClients'];
 $obj=orr($_REQUEST['QuickSearchObject'],AG_MAIN_OBJECT_DB);
 
-if ($qs) {
+if ( ($def = get_def($obj))
+	and (has_perm($def['perm_list'])) 
+	and $qs) {
 	$filt = object_qs_filter($qs,$obj);
 } else {
-	// return false;
+	return false;
 }
+
 if ($my == 'true') {
-	$filt['IN:' . $obj .'_id'] = staff_client_assignments_ids($UID);
+	$filt['IN:' . $def['id_field'] ] = staff_client_assignments_ids($UID);
 }
 
 $control=array('action' => 'list', 'list' => array( 'filter' => $filt));
-$def = get_def($obj);
 $recs = list_generic($control,$def,'',$dummy);
 out( $recs );
+
 ?>
