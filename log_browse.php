@@ -134,7 +134,8 @@ $logs_per_screen = $USER_PREFS['logs_per_screen'] = $_SESSION['LOGS_PER_SCREEN']
 																	    $_SESSION['LOGS_PER_SCREEN'],
 																	    $USER_PREFS['logs_per_screen'],
 																	    25);
-if (isset($pick_logs)) {
+// First time, select all logs for user
+if (isset($pick_logs) or ($first_run=(!isset($LOG_FILTER)))) {
 
 	// set session variable
 	$_SESSION['SHOW_LOGS'] = $SHOW_LOGS = $pick_logs;
@@ -143,7 +144,7 @@ if (isset($pick_logs)) {
 
 	// and update filter for record selection
 	foreach($GLOBALS['log_types'] as $key) {
-		if (in_array($key,$SHOW_LOGS)) {
+		if (in_array($key,$SHOW_LOGS) or $first_run) {
 			$LOG_FILTER['ARRAY_CONTAINS:log_type_code'][]=$key;
 		}
 	}
@@ -346,6 +347,8 @@ case 'view' :
 				: 'You don\'t seem to have appropriate permissions to add a log type record.  Please ask your system administrator to do so.';
 		$out .= alert_mark($msg);
 	} elseif (!isset($LOG_FILTER)) {
+		//FIXME: this shouldn't happen and can probably be removed.
+		//If not set, $LOG_FILTER set to all logs earlier in code
 		$out .= alert_mark('Open Settings to Select Log(s) to view');
 	} elseif (isset($LOG_FILTER) && ($log_count==0)) {
 		$out .=oline(alert_mark('Your selection contains no log entries')) . bigger(bold($add_link));
