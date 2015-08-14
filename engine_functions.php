@@ -1719,7 +1719,7 @@ function label_generic($key,$def,$action,$do_formatting=true)
 	}
 
       $label=$field['label_'.$action];
-	$label=str_replace(' ',oline(),$label);
+	if ($do_formatting) { $label=str_replace(' ',oline(),$label); }
 	$display = $field['display_'.$action];
 	if (($type=='timestamp') and in_array($action,array('add','edit')) and !in_array($display,array('regular','display'))) {
 		if (!$field['null_ok']) {

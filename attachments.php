@@ -326,7 +326,7 @@ function attachment_label($a_attachment_rec, $a_attachment_id, $extension, $date
 	}
 
 	//get label from config:
-	$field_label = strtolower(label_generic($a_attachment_rec['parent_field_name'], $parent_def, 'view', false)); 
+	$field_label = str_replace(' ','_',strtolower(label_generic($a_attachment_rec['parent_field_name'], $parent_def, 'view', false))); 
 	return $prefix . $field_label 
 		. ( $datetime ?  '_'.$datetime : '')
 		. ( $extension ? '.'.$extension : '');
