@@ -157,10 +157,19 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 
       if ($rec_init and (in_array($action,array('add','widget')))) {
 	    foreach($rec_init as $key=>$value) {
-		    if (!get_magic_quotes_gpc()) {
-			    $value = addslashes($value);
-		    }
-		    $init_str .= '&'.$control_array_variable."[step]=new&{$control_array_variable}[rec_init][$key]=" . $value;
+			// FIXME: make url variable encoding a common function
+			if (is_array($value)) {
+				foreach ($value as $v) {
+					$v=htmlentities(urlencode($v));
+					$init_str .='&'.$control_array_variable.'[rec_init]['.$key.']='.$v;
+				}
+			} else {
+
+			    if (!get_magic_quotes_gpc()) {
+				    $value = addslashes($value);
+			    }
+		    	$init_str .= '&'.$control_array_variable."[step]=new&{$control_array_variable}[rec_init][$key]=" . $value;
+			}
 	    }
       }
 
