@@ -231,6 +231,7 @@ $engine['field_default'] = array(
 				'lookup' => null,
 				'lookup_order' => null, //can be one of {a field name or number},TABLE_ORDER, CODE, LABEL (default)
 				'lookup_format'=>null, //default is droplist, the other supported option is radio
+				'lookup_group'=>null, // SQL expression to group list items by.  Lookup table is aliased to "l" if needed to reference other tables
 				'never_to_form'=>null,
 				'null_ok' => null,
 				'null_post_value'=>null, //if null, engine will post this value

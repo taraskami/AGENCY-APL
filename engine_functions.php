@@ -3893,7 +3893,13 @@ function build_lookup_query($field_def,$action)
 	if ($look_order and $other_last) {
 		$look_order = "lower($look_order)='other',$look_order";
 	}
-	return make_agency_query("SELECT $look_code AS value, $look_label AS label FROM $look_table",$filt,$look_order);
+	if ($group=$field_def['lookup_group']) {
+		$g1=','.$group . ' AS grouping';
+		// can't specify the order in config, since it's also in the select list.
+		// Arbitrarily picking NULLS FIRST.  FIXME: could be an option
+		$look_order=$group . ' NULLS FIRST,'.$look_order;
+	}
+	return make_agency_query("SELECT $look_code AS value, $look_label AS label $g1 FROM $look_table AS l",$filt,$look_order);
 }
 
 function engine_password_cycle($def,$action,$step)

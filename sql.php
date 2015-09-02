@@ -545,9 +545,20 @@ function do_pick_sql( $query, $default_value="",$add_null=false, $format='',$for
 	$format=orr($format,'picklist');
 	!is_array($default_value) && ($default_value=array($default_value));
 	$result = agency_query($query);
-	$add_null && ($out .= selectitem('','(none or n/a or blank)') );
+	$add_null && ($null = selectitem('','(none or n/a or blank)') );
 	while ($item=sql_fetch_assoc($result))
 	{
+		if (array_key_exists('grouping',$item)) {
+			$group=true;
+			$g=$item['grouping'];
+			if ($g != $g_old) {
+				if ($out) {
+					$g_out[] = html_optgroup($out,$g_old);
+					$out='';
+				}
+				$g_old=$g;
+			}
+		}
 		$is_default = in_array($item['value'],$default_value);
 		if ($format=='picklist')
 		{
@@ -558,7 +569,11 @@ function do_pick_sql( $query, $default_value="",$add_null=false, $format='',$for
 			$out .= oline(formcheck("{$form_pre}[{$item['value']}]",$is_default,$opts) . ' ' . $item['label'] . ' (' . $item['value'] . ')');
 		}
 	}
-	return $out;
+	if ($group) {
+			$g_out[] = html_optgroup($out,$g);
+	}
+
+	return $null . ($group ? implode('',$g_out) : $out);
 }
 
 function sql_assign( $select,$filter='', $order='',$limit='', $offset='' )
