@@ -594,6 +594,8 @@ function datetimeof( $datetime='now', $format="SQL" , $lines='')
         return str_replace('-','',dateof($datetime,'SQL')).str_replace(':','',orr(timeof($datetime,'SQL'),'00:00:00'));
     case 'ICS':
         return str_replace('-','',dateof($datetime,'SQL')).'T'.str_replace(':','',orr(timeof($datetime,'SQL'),'00:00:00'));
+	case '@':
+		return dateof($datetime).'@'.timeof($datetime);
 	}
 
     if (!dateof($datetime) or !timeof($datetime)) { //if anything goes wonky w/ date times, this might be the culprit - JH 7/7/05
