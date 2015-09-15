@@ -920,6 +920,9 @@ function staff_remote_access_status_f($id)
 
 	global $UID;
 
+	$global=(AG_AUTH_INTERNAL_ACCESS_ONLY===true) ? '' : 'not ';
+	$global=smaller(oline().italic("(remote access is {$global}being enforced)"));
+
 	if (Auth::staff_remote_login_allowed($id)) {
 	  
 	  $out = 'Remote access allowed';
@@ -940,13 +943,13 @@ function staff_remote_access_status_f($id)
 	  } 
 	  elseif ($out){
 
-	    $out = span($out,' class="message"');
+	    $out = span($out.$global,' class="message"');
 
 	  }
 	}
 	elseif($out)  {
 	  
-	  $out = span($out,' class="message"');
+	  $out = span($out.$global,' class="message"');
 	  
 	}
 	
