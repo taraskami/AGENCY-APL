@@ -641,7 +641,18 @@ function show_query_row_generic($fields,$position,$rec,$control,$def,$control_ar
 			$value = $def['fields'][$key] 
 				? eval('return '.$def['fields'][$key]['value_list'].';')
 				: $x;
-			$out .= cell(value_generic($value,$def,$key,'list',true,$rec),'class="generalData1"');
+			$v_f=value_generic($value,$def,$key,'list',true,$rec);
+			if (preg_match('/^(.*)link_engine\((.*)[|]{2}(.*)[|]{2}(.*)[|]{2}(.*)\)(.*)$/',$v_f,$matches)) {
+				$l_obj=$matches[2];
+				$l_id=$matches[3];
+				$l_label=($matches[4]=='NULL') ? '' : $matches[4];
+				$l_action=$matches[5];
+				$l_con = array('action'=>$l_action,'object'=>$l_obj,'id'=>$l_id);
+				$l_link = link_engine($l_con,$l_label,'','target="_blank"');
+				$v_f = $matches[1] . $l_link . $matches[6];
+			}
+
+			$out .= cell($v_f,'class="generalData1"');
 
 		}
 
