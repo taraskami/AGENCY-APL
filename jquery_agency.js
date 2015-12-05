@@ -163,9 +163,11 @@ $(function() {
 $(function() {
 	$(".hiddenLogText").each( function() { 
 		var row=$(this).closest('tr');
-		var cols=$(row).children('td').length-1;
-		$(row).after( '<tr><td></td><td class="revealedLogText" colspan="' + cols +'">'
+		var cols=$(row).children('td').length-3;
+		$(row).after( '<tr><td></td><td></td><td class="revealedLogText" colspan="' + cols +'">'
+			+ '<div class="revealedLogText">'
 			+ $(this).html()
+			+ '</div>'
 			+ '</td></tr>');
 		$(this).remove();
 	});
@@ -175,7 +177,7 @@ $(function() {
 	$(".listObjectLog").first().before('&nbsp;<a href="#" class="toggleLogText">Show/hide text in place</a>');
 	$(".toggleLogText").click( function(event) {
 		event.preventDefault();
-		$(".revealedLogText").toggle();
+		$("td.revealedLogText").toggle();
 	});
 });
 $(function() {

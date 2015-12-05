@@ -91,7 +91,7 @@ $engine['log'] = array(
 	   'subject'=>array(
 			'is_html'=>true,
 			//'value_format_list'=>'smaller($x)',
-			'value_list'=>'div(elink("log",$rec["log_id"],$x) . div($rec["log_text"],"","class=\"hiddenLogText\"")
+			'value_list'=>'div(elink("log",$rec["log_id"],$x) . div(webify($rec["log_text"]),"","class=\"hiddenLogText\"")
 							  ,"",(isset($rec["_staff_alert_ids"]) 
 							 && in_array($GLOBALS["UID"],sql_to_php_array($rec["_staff_alert_ids"])))
 							  ? " style=\"background-color: #FFC0C0; padding: 3px;\""
