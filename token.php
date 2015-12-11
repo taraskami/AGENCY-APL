@@ -120,6 +120,7 @@ function issue_token( $email, &$msg,$username=NULL ) {
 		. "\n"
 		. reset_password_link($token,$email) . "\n";
 */
+/*
 	$text=div(
   		link_agency_public_home(html_image('http://agency-software.org/agency_logo_medium.png'))
 		.html_heading_tag('You have requested to reset your AGENCY Password',1)
@@ -127,7 +128,9 @@ function issue_token( $email, &$msg,$username=NULL ) {
 		. oline()
 		. bigger(reset_password_link($token,$email))
 		,'','style="background-color: #DDDDFF;"');
-
+*/
+	$text=sql_assign('SELECT template_password_reset FROM config_email ORDER BY config_email_id LIMIT 1');
+	$text=str_replace('$reset_password_url',reset_password_link($token,$email),$text);
 	return send_email($email,'Reset your AGENCY Password',$text);
 }
 

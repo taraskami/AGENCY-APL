@@ -1,28 +1,31 @@
 CREATE OR REPLACE FUNCTION alert_notify() RETURNS trigger AS $$
 DECLARE
     textMessage text;
+	textLabel   text;
     textSubject text;
     textSender  text;
     textRecipient text;
     emailAlert boolean;
     alert_url  text;
     url_base text;
-    change_opt_url text;
-    change_opt_blurb text;
+    settings_url text;
+	email_template text;
 
 BEGIN
      SELECT INTO emailAlert opt_alerts_email FROM user_option WHERE staff_id=NEW.staff_id;
      IF emailAlert THEN
-          SELECT INTO url_base agency_base_url();
+          textSender=email_sender();
           SELECT INTO textRecipient staff_email FROM staff WHERE staff_id=NEW.staff_id;
-          change_opt_url := url_base || E'display.php?control\%5baction\%5d=view&control\%5bobject\%5d=user_option&control\%5bformat\%5d=&control\%5bid\%5d=' || NEW.staff_id;
-          change_opt_blurb := E'You have received this email because your AGENCY user options are set to send an email whenever you receive a AGENCY alert.  If you prefer not to receive emails about your alerts, use the link below to change your settings:\n\n\"' || change_opt_url || '"';
-          textSender='AGENCY SYSTEM <No_Reply@xxx.org>';
+		  SELECT INTO email_template template_alert FROM config_email ORDER BY config_email_id DESC limit 1;
+          SELECT INTO url_base agency_base_url();
+          settings_url := url_base || E'display.php?control\%5baction\%5d=view&control\%5bobject\%5d=user_option&control\%5bformat\%5d=&control\%5bid\%5d=' || NEW.staff_id;
           alert_url := url_base || E'display.php?control\%5baction\%5d=view&control\%5bobject\%5d=alert&control%5bformat%5d=&control\%5bid\%5d=' || NEW.alert_id;
-          textSubject := get_db_name()||' Alert: ' || INITCAP(NEW.ref_table) || ' Record ' || NEW.ref_id;
-          textMessage := E'You have received an AGENCY alert\n\n'
-                    || alert_url || E'\n\n'
-                    || change_opt_blurb;
+          textLabel := INITCAP(NEW.ref_table) || ' Record ' || NEW.ref_id;
+          textSubject := get_db_name()||' Alert: ' || textLabel;
+          textMessage := replace(replace(replace(
+							email_template,'$alert_url',alert_url),
+                     		'$settings_url',settings_url),
+							'$label',textLabel);
           IF (is_test_db() IS FALSE) THEN
                perform pgmail(textSender,textRecipient,textSubject, textMessage);
           END IF;
