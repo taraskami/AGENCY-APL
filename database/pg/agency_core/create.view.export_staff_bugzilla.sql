@@ -18,7 +18,7 @@
 CREATE OR REPLACE VIEW export_staff_bugzilla AS
 SELECT
 	username_unix::varchar(255) AS login_name,
-	flipbits(staff_password)::varchar(128) AS cryptpassword,
+	md5(staff_password_md5)::varchar(128) AS cryptpassword,
 	staff_name(staff_id) AS realname
 FROM staff
 	LEFT JOIN staff_password USING (staff_id)

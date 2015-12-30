@@ -109,14 +109,6 @@ if ($action == 'set_password') {
 
 		$hash_method = 'MD5';
 
-	} else {
-
-		$pass_old  = flipbits($pass_old);
-		$pass_new  = flipbits($pass_new);
-		$pass_new1 = flipbits($pass_new1);
-
-		$hash_method = 'flipbits';
-
 	}
 
 	if (can_change_password($id) || password_check($pass_old,$hash_method,$id)) {

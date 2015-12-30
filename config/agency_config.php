@@ -156,7 +156,8 @@ array(
 	'PASSWORD_MD5_FIELD' => 'staff_password_md5',
 	  'STAFF_TABLE' => 'staff', // really it's a view, but why quibble?
       'USER_ID_FIELD' => 'staff_id',
-	'USE_MD5' => true,  //alternate method is flipbits (very insecure, but easy to recover lost user passwords)
+	'USE_MD5' => true,  // Currently only option supported.  Insecure "flipbits" has been removed.
+	'DEFAULT_METHOD'=> 'MD5',
 	'CASE_SENSITIVE_USERNAME' => false
       );
 
@@ -240,7 +241,7 @@ $generic_sql_security_checks = array(
 						 '/CREATE[\s\n]*('.implode('|',sql_drop_alter_relations_array()).')/i'=>'Query cannot create a <i>permanent</i> table, view, function, etc.',
 						 '/(DROP|ALTER)[\s\n]*('.implode('|',sql_drop_alter_relations_array()).')/i'=>'Query cannot drop or alter',
 
-						 '/flipbits/i'=>'I will not run this query because the use of flipbits is not allowed',
+						 '/flipbits/i'=>'I will not run this query because the use of flipbits is not allowed, even though flipbits is no longer used',
 						 '/password/i'=>'I will not run this query because access to passwords is forbidden.',
 						 '/\s(tbl_)?staff_password(\s|\)|$)/i'=>'I will not run this query because it appears to access the password table.',
 						 '/\stbl_client(\s|\)|$)/i'=>'I will not run this query&mdash;tbl_client cannot be accessed through this page.',

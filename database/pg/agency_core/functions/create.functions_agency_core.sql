@@ -98,26 +98,6 @@ BEGIN
 END;$$ LANGUAGE plpgsql IMMUTABLE;     
 
 
-/*
- * Flipbits are legacy code, for storing less secure (but retrievable) passwords
- */
-
-CREATE OR REPLACE FUNCTION flipbits( string text ) RETURNS text AS $$
-DECLARE
-     x               integer;
-     result          text;
-BEGIN
-     IF be_null(string) THEN
-          RETURN string;
-     END IF;
-
-     result := '';
-     FOR x in 1..length( string ) LOOP
-          result = result || chr(255-ascii(substring(string FROM x FOR 1)) );
-     END LOOP;
-     RETURN result;
-END; $$ LANGUAGE plpgsql IMMUTABLE;
-
 --------------------------------------------
 --
 --         Generic Procedural Functions

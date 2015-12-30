@@ -411,17 +411,9 @@ class Auth {
 		$username = $AG_AUTH_DEFINITION['CASE_SENSITIVE_USERNAME'] ? $username : strtolower($username);
 
 		// set password query
-		if ($raw && !$AG_AUTH_DEFINITION['USE_MD5']) {
-
-			$password_query = 'flipbits('.$AG_AUTH_DEFINITION['PASSWORD_FIELD'].')';
-
-		} elseif ($AG_AUTH_DEFINITION['USE_MD5']) {
+		if ($AG_AUTH_DEFINITION['USE_MD5']) {
 
 			$password_query = $AG_AUTH_DEFINITION['PASSWORD_MD5_FIELD'];
-
-		} else {
-
-			$password_query = "md5(flipbits({$AG_AUTH_DEFINITION['PASSWORD_FIELD']}))";
 
 		}
 

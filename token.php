@@ -63,7 +63,6 @@ function verify_and_set_password_by_email($password1,$password2,$email,$token,&$
 		$msg .= "Could not find a valid user for $email";
 		return false;
 	}
-	// FIXME: Remove flipbits PW option, or make this work for FB
 	if (!password_set(md5($password1),'MD5',$staff_id)) {
 		$msg .= 'There was an error setting your password.';
 		return false;

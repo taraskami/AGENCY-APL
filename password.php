@@ -71,33 +71,24 @@ function can_change_password( $staff_id,$user_id="" )
 
 }
 
-function flipbits( $string )
-{
-        for ($x=0;$x<strlen($string);$x++)
-        {
-                $y .= chr(255-ord(substr($string,$x,1)) );
-        }
-        return $y;
-}
-
 function password_check($password,$type="",$id="")
 {
 // Check the supplied password against a user (defaults to current user)
-// Type is the type of the supplied password. Currently flipbit is the
-// only option, but at some point we'll add MD5 or something more secure.
+// Type is the type of the supplied password. Currently MD5 is the only option
 
-	global $UID;
+	global $UID,$AG_AUTH_DEFINITION;
 	if (!$password) { // this will effectively disable blank passwords
 		return false;
 	}
-	$type=orr($type,"flipbits");
+
+	$type=orr($type,$AG_AUTH_DEFINITION['DEFAULT_METHOD']);
 	$id=orr($id,$UID);
 	$prec=get_password($id,$type);
 	//outline(webify("Found: $prec.  Supplied $password"));
 	return $prec==$password;
 }
 
-function get_password($id = '', $type='flipbits')
+function get_password($id = '', $type='')
 {
 	// FIXME: for now, this will remain it's own function since it works in methods other than md5
 	// Auth::get_user_password() only returns md5'ed values (fairly easy fix though)
@@ -118,16 +109,12 @@ function get_password($id = '', $type='flipbits')
 		return false;
 	}
 	$rec=sql_fetch_assoc($rec);
-//outline(dump_array($rec));
-	if ($type=="flipbits") // passwords are currently flipbitted, so return raw.
-	{
-		return $rec[$password_field];
-	}
-	elseif ($type=='MD5')
+	$type=orr($type,$def['DEFAULT_METHOD']);
+	if ($type=='MD5')
 	{
 	      return $def['USE_MD5']
 			? $rec[$password_field]
-			: md5(flipbits($rec[$def['PASSWORD_FIELD']]));
+			: false;
 	}
 }
 
@@ -151,19 +138,15 @@ function password_set($new_pass,$type,$id)
 
 	$password_table = $def['TABLE'];
 	$password_field = $def['USE_MD5'] ? $def['PASSWORD_MD5_FIELD'] : $def['PASSWORD_FIELD'];
-
 	if (!$new_pass) {
 
 		outline(alert_mark('Can\'t set password to blank.'));
 		return false;
 
 	}
+	$type=orr($type,$def['DEFAULT_METHOD']);
 
 	switch ($type) {
-
-	case 'flipbits' :
-
-		break;
 
 	case 'MD5':
 
@@ -320,6 +303,10 @@ function is_secure_transport()
 
 function http_authenticate()
 {
+	// 8/2015--Temporarily (permanently) disabling this.
+	// FIXME:  This function should be fixed or removed.
+	return false;
+
     // Authenticate using HTTP
     // Adding for calendar support
     if (! is_secure_transport())

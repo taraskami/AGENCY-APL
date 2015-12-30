@@ -42,10 +42,7 @@ SELECT
 	1
 ;
 
--- Uncomment one of these lines, depending on which type of password you want
--- (See http://www.desc.org/chasers_wiki/index.php/Chasers_config#passwords for more details)
-
---INSERT INTO tbl_staff_password (staff_id,staff_password,added_by,changed_by) VALUES (2,flipbits('PASSWORD'),1,1);
+-- This may need adjusting for different encryption methods
 INSERT INTO tbl_staff_password (staff_id,staff_password_md5,added_by,changed_by) 
 	VALUES (2,md5('PASSWORD' /*CHANGE THIS TO THE DESIRED PASSWORD */),1,1);
 
