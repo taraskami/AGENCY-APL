@@ -763,8 +763,11 @@ function sql_error( $res='' )
 	// Include backtrace?
 	// if has_perm is not defined, it's a very low-level error
 	// (likely db connection) and should be safe to dump debugging details
-	if ( (!function_exists('has_perm')) or has_perm('admin')) {
+	if ( be_null($GLOBALS['UID']) or (!function_exists('has_perm')) or has_perm('admin')) {
 		$msg .= div(dump_array(debug_backtrace()).toggle_label('Debugging details'),'','class="hiddenDetail"');
+	}
+	if ($GLOBALS['mode']=='TEXT') {
+		$msg=strip_tags($msg);
 	}
 	return $msg;
 }	
