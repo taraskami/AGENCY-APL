@@ -252,6 +252,7 @@ $engine['field_default'] = array(
 				'row_after_edit'=>null,
 				'row_after_view'=>null,
 				'skip_selector_control'=>null, // Right now, only for checkboxes, omits all/invert/none
+				'selector_object'=>null,
 				'staff_subset' => null, //defined subsets currently include staff_cm, staff_rc
 				'staff_inactive_add' => null, //default is to hide inactive staff on adds, set this to true to get all staff
 				'system_field' => null,

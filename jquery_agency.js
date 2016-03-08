@@ -359,7 +359,9 @@ $( function() {
 		$('input[name=' + varname + ']').val('');
 	});
 
-	$(document).on('click','.engineValueUnsetLink', function(e) {
+/*
+// FIXME: I think this can be removed
+   $(document).on('click','.engineValueUnsetLink', function(e) {
 		e.preventDefault();
 		$(this).closest('.engineValueContainer').find('.engineValue').val(null);
 		$(this).closest('.engineValueContainer').find('.engineValueLabel').remove();
@@ -367,7 +369,7 @@ $( function() {
 		$(this).closest('.engineValueContainer').find('.objectPickerToggleLink').hide();	
 		$(this).hide();
 	});
-
+*/
 	// This replaces the doChallengeResponse function for password fields
 	$(document).on('submit','form.doChallengeResponse',function() {
 		$(this).find('input.passwordField').each( function() {

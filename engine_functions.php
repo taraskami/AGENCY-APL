@@ -2035,8 +2035,9 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 
 	case AG_MAIN_OBJECT_DB:
 	case 'selector':
+	case 'array':
 		if (!($object=orr($def['fields'][$key]['selector_object'],$def['fields'][$key]['lookup']['table']))) {
-			if (preg_match('/^(.*)_id$/',$key,$match)) {
+			if (preg_match('/^(.*)_id(s?)$/',$key,$match)) {
 				$object=$match[1];
 			}
 		}
@@ -2044,22 +2045,27 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 			$field='Could not determine object for selector';
 			break;
 		}	
-		//$allowed=$pr[$action.'_main_objects'] || be_null($value); //edit & add
-		$allowed=true;  //FIXME
-		$field .= ( $value ? para(elink_value($object,$value),'class="engineValueLabel"') : '')
-			//. hiddenvar($formvar.'['.$key.']',$value,'class="engineValue" ' .$element_options);
-			. formvartext($formvar.'['.$key.']',$value,'class="engineValue hidden" ' .$element_options);
+		$max_count=orr($pr['array_max_elements'],1);
+		$allowed=($pr[$action.'_main_objects'] or  be_null($value) or (is_array($value) and (count($value) < $max_count))); //edit & add
+		// FIXME: this might/would break for arrays defined as selector with max count of 1.
+		// Not sure you'd ever have that, so good enough for now.  The problem is we've kind
+		// of munged data types, form types and db_types together, they really should be separated
+		$v_name=$formvar.'['.$key.']'.( (($type=='array') or ($max_count > 1)) ? '[]' : '');
+		$template= formvartext($v_name,NULL,'class="engineValue engineValueTemplate hidden" ' .$element_options);
+		if ($value) {
+			$v_arr = is_array($value) ? $value : array($value);
+			foreach ($v_arr as $val) {
+				$v_temp= formvartext($v_name,$val,'class="engineValue hidden" ' .$element_options);
+				$close_button=$allowed ? html_image('images/close_button.png','class="selectorRemoveItem"') : '';
+				$v_label= para(elink_value($object,$val) . $close_button,'class="engineValueLabel"');
+				$f_temp .= div($v_temp.$v_label,'','class="engineValueGrouping"');
+			}
+		}
+		$field .= $template . $f_temp;
 		if ($allowed) {
 			$div_dummy='';
-			if (!$value) {
-				$c_class=' hidden';
-			} else {
-				$s_class=' hidden';
-			}
-			$wipeout=hlink('#','unset',NULL,'class="engineValueUnsetLink' . (!$value ? ' hidden' : '') . '"');
-			$selector = object_selector_generic( $object,$div_dummy,'',1,'','objectPickerToForm' . $s_class);
-			$field .= $selector . hlink('#','change',NULL,'class="fancyLink objectPickerToggleLink ' . $c_class.'"')
-					. ' ' . $wipeout;
+			$s_class= ((!be_null($value)) and (count($value) >= $max_count)) ? ' hidden' : '';
+			$field .= object_selector_generic( $object,$div_dummy,'',$max_count,'','objectPickerToForm' . $s_class );
 		}
 		break;
 	case 'staff':

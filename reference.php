@@ -237,7 +237,9 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 {
 	$def=get_def($object);
 	$object_label = $def['singular'];
+	//$main_def=get_def(AG_MAIN_OBJECT);
 	$main_def=get_def(AG_MAIN_OBJECT_DB);
+	$object_label = $max_count > 1 ? $def['plural'] . smaller(' (max: ' . $max_count . ')') : $def['singular'];
 	$main_id_field=$main_def['id_field'];
 	$obj_opt='object="'.$object.'"';
 	$Uobj = ucfirst($object);
@@ -400,13 +402,20 @@ function info_additional_label($id) {
 function object_label($object,$id) {
 	$def = get_def($object);
 	if ($def['object_label']) {
-		$rec = get_generic(array($def['id_field']=>$id),'','',$def);
-		if (count($rec)==0) {
-			return '';
-		} else {
-			$rec=$rec[0];
+		if (preg_match('/^\{.*\}$/',$id)) {
+			$id=sql_to_php_array($id);
 		}
-		$l = eval('return ' . $def['object_label'] . ';');
+
+		if (is_array($id)) {
+			$filter=array($def['id_field']=>$id);
+		} else {
+			$filter=array($def['id_field']=>$id);
+		}
+		$recs = get_generic($filter,'','',$def);
+		foreach ($recs as $rec) {
+			$out[]= eval('return ' . $def['object_label'] . ';');
+		}
+		$l=implode($sep,$out);
 	} else {
 		$l = $def['singular'] . ' ' . $id;
 	}

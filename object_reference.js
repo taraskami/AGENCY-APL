@@ -38,6 +38,16 @@ function qs_object( searchText, obj, MyClients ) {
 		return args;
 };	
 
+/* helper functions for object selector, get max & currently selected */
+
+function get_max_select( el ) {
+	return $(el).closest('.engineValueContainer').find('input[name=objectPickerMaxSelect]').val();
+}
+
+function get_cur_select( el ) {
+	return $(el).closest('.engineValueContainer').find('.engineValueGrouping').length;
+}
+
 /* Object Picker */
 function addSelectedObject( object ) {
 	// Should have id, label, obj, canRemove, refType
@@ -96,37 +106,19 @@ $(function() {
 });
 
 $(function() {
-	// Toggle object picker change link
-	$(document).on('click','.objectPickerToggleLink',function(e) {
-		e.preventDefault();
-		var selector = $(this).closest('.engineValueContainer').find('.objectPickerToForm');
-		var was_visible=$(selector).is(':visible');
-		var label = $(this).closest('.engineValueContainer').find('.engineValueLabel');
-		$(selector).toggle();
-		if ( was_visible ) {
-			$(this).html('change');
-			$(label).show();
-		} else {
-			$(this).html('cancel');
-			$(label).hide();
-		}
-	});
-
-});
-
-
-
-$(function() {
 	$(document).on('click','.objectPickerSubmit', function(event) {
 		event.preventDefault();
+		// Find method on page
 		var method =$(event.target).closest('div').find("[name=objectPickerMethod]").val();
 		if (!method) {
+			// Or, coming from a search row result
 			method = $(event.target.row).find("[name=objectPickerMethod]").val();
 		}
 		if ( method=='Search') {
 			var parentDiv = $(event.target).closest('div').parent().closest('div');
 			if (parentDiv.hasClass('objectPickerToForm')) {
 				var target = $(this).closest('.engineValueContainer').find('input.engineValue');
+				//var target = $(this).closest('.engineValueContainer');
 				if (target.id) {
 					var id = target.id;
 				} else {
@@ -147,13 +139,29 @@ $(function() {
 		var selected = process_selector_event( event,method,id );
 		if (selected !== undefined) {
 			if (selected.target) {
-				$('#'+selected.target).val( selected.id ).parent().find('.engineValueLabel').remove();
-				$('#'+selected.target).after( $('<p/>').addClass('engineValueLabel').html(selected.label) );
-				$('#'+selected.target).closest('.engineValueContainer').find('.objectPickerToForm').hide();
-				$('#'+selected.target).closest('.engineValueContainer').find('.objectPickerToggleLink').html('change').show();
-				$('#'+selected.target).closest('.engineValueContainer').find('.engineValueUnsetLink').show();
-				//$(this).closest('div.ajObjectSearchResult').dialog('close').hide();
-				$(this).closest('div.ajObjectSearchResult').dialog('close').empty();
+				var dupe=false;
+				$('#'+selected.target).closest('.engineValueContainer').find('.engineValueGrouping input').each( function() {
+					if (selected.id==$(this).val()) {
+						dupe=true;
+					}
+				});
+				if (dupe) {
+					return;
+				}
+				var max_select=get_max_select($('#'+selected.target));
+				var cur_select=get_cur_select($('#'+selected.target));
+				var close_button=$('<img></img>').attr('src','images/close_button.png').addClass('selectorRemoveItem');
+				var new_label=$('<p/>').addClass('engineValueLabel').html(selected.label).append(close_button); 
+				var new_value=$('#'+selected.target).clone().val( selected.id ).removeClass('engineValueTemplate');
+				var new_group= $('<span></span').addClass('engineValueGrouping').append(new_value).append(close_button).append(new_label);
+				if (cur_select<max_select) {
+					$('#'+selected.target).after( new_group );
+				}
+				if (cur_select+1>=max_select) {
+					$('#'+selected.target).closest('.engineValueContainer').find('.objectPickerToForm').hide();
+					$(this).closest('div.ajObjectSearchResult').dialog('close').hide();
+					
+				}					
 				$('#'+selected.target).change();
 			} else {
 				addSelectedObject( selected );
@@ -257,12 +265,25 @@ $(function() {
 
 
 	/* On submit, add references to form */
+	/* Also, remove all template values */
 	$("form").submit( function(event) {
 		var form=this;
 		$(".selectedObject").each( function() {
 			var data='<input type="hidden" name="selectedObject[]" value = "'+encodeURIComponent(JSON.stringify($(this).data('selectedObject')))+'">';
 		$(form).append(data);
 		});
+		$('.engineValueTemplate').remove();
+	});
+
+	/* Remove selector items on close button */
+	$(document).on('click','.selectorRemoveItem', function(e) {
+		e.preventDefault();
+		var max_select=get_max_select($(this));
+		var cur_select=get_cur_select($(this));
+		if (cur_select-1<max_select) {
+			$(this).closest('.engineValueContainer').find('.objectPickerToForm').show();
+		}
+		$(this).closest('.engineValueGrouping').remove();
 	});
 
 });
@@ -274,4 +295,4 @@ function addPreSelectedObjects() {
 	});
 };
 
-	
+

@@ -238,6 +238,23 @@ function process_quick_search($stop="Y",$allow_other=true,$use_old=false,$return
 	}
 }
 
+function client_links( $idnum, $name="lookup", $url="" , $options=null,$sep=NULL) {
+	$sep=orr($sep,oline());
+	if (be_null($idnum)) {
+			return false;
+	}
+	if (!is_array($idnum)) {
+		if (preg_match('/^\{.*\}$/',$idnum)) {
+			$idnum=sql_to_php_array($idnum);
+		}
+	}
+	foreach ($idnum as $id) {
+		$out[]=client_link($id,$name,$url,$options);
+	}
+	return implode($sep,$out);
+}
+
+
 function client_link( $idnum, $name="lookup", $url="" , $options=null)
 {     // Doesn't Validate or Match id with name
 	// If number passed for $name, will be max length of name
