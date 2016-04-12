@@ -1245,8 +1245,10 @@ function view_service($rec,$def,$action,$control='',$control_array_variable='con
 			: $value;
 	}
 
+	$sc_field='service_codes';
+
 	$summary = row(cell(value_generic($rec['service_date'],$def,'service_date',$action)) 
-			    . cell(value_generic($rec['service_code'],$def,'service_code',$action))
+			    . cell(value_generic($rec[$sc_field],$def,$sc_field,$action))
 			    . cell(value_generic($rec['service_minutes'],$def,'service_minutes',$action))
 			    . cell(value_generic($rec['contact_type_code'],$def,'contact_type_code',$action)) 
 			    );
@@ -1283,7 +1285,7 @@ function view_service($rec,$def,$action,$control='',$control_array_variable='con
 
 	$summary = row(topcell($other_stuff,'style="white-space: nowrap; border-right: solid 1px black;" rowspan="'.$total_rows.'"')
 			   .centercell(bold(label_generic('service_date',$def,$action)))
-			   .centercell(bold(label_generic('service_code',$def,$action)))
+			   .centercell(bold(label_generic($sc_field,$def,$action)))
 			   .centercell(bold(label_generic('service_minutes',$def,$action)))
 			   .centercell(bold(label_generic('contact_type_code',$def,$action)))
 			   ) . $summary;
