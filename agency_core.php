@@ -44,6 +44,7 @@ function is_enabled( $feature ) {
 		case 'some_disabled_feature' :
 		case 'bar' :
 		case 'residence_own' :
+		case 'elevated_concern' :
 		case 'entry' :
 		case 'entry_visitor' :
 		case 'charge_and_payment' :

@@ -46,8 +46,9 @@ function client_show( $id )
 
 	$deceased_f = client_death_f($id,$deceased_date);
 
-	$elevated_concern = client_elevated_concern_short_f($id);
-	
+	if (is_enabled('elevated_concern') ) {
+		$elevated_concern = client_elevated_concern_short_f($id);
+	}
 	if ($_REQUEST['display_all_photos'] && (!$protected) )
 	{
 		$photo_list = client_photo($id,1,true);
