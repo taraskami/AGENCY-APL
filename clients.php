@@ -1213,7 +1213,7 @@ function generate_list_long_service($result,$fields,$max,$position,$total,$contr
 	$reverse = $control['list']['reverse'];
 
       while ( $x<$mx and $pos<$total ) {
-		$a = sql_fetch_assoc($result,$pos);
+		$a = sql_to_php_generic(sql_fetch_assoc($result,$pos),$def);
 
 		if (!be_null($a['progress_note'])) {
 			$out .= div(view_service($a,$def,'list',$control),'',' style="margin: 15px 0px;"'); 
