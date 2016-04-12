@@ -344,7 +344,7 @@ function sql_field_comment($table,$field)
 		outline('No field_comment function for MySQL');
 		return null;
 	case 'pg':
-		if (!$cached_comments) {
+		if (!isset($cached_comments)) {
 			$c_sql = ' 
 SELECT c.relname AS table,a.attname AS column,pg_catalog.col_description(a.attrelid, a.attnum) AS comment
 FROM pg_catalog.pg_attribute a, pg_class c
@@ -354,6 +354,9 @@ AND pg_catalog.col_description(a.attrelid, a.attnum) IS NOT NULL;
 			$comments=agency_query($c_sql);
 			while ($c = sql_fetch_assoc($comments)) {
 				$cached_comments[$c['table']][$c['column']]=$c['comment'];
+			}
+			if (!isset($cached_comments)) {
+				$cached_comments=array();
 			}
 		}
 
