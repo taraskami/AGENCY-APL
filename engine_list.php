@@ -80,7 +80,7 @@ function list_generic($control,$def,$control_array_variable='',&$REC_NUM)
 
 		foreach($order as $field=>$value) {
 
-			if ($def['fields'][$field]['virtual_field']) {
+			if ($def['fields'][$field]['virtual_field'] and (!$def['fields'][$field]['view_field_only'])) {
 
 				/*
 				 * CAN'T ORDER BY FIELDS NOT IN TABLE
@@ -488,7 +488,7 @@ function show_query($fields,$result,$control,$def,$total,$control_array_variable
 				 * On the first set of labels, so they are re-order links
 				 */
 
-				if ($def['fields'][$field]['virtual_field']) {
+				if ($def['fields'][$field]['virtual_field'] and (!$def['fields'][$field]['view_field_only'])) {
 
 					/*
 					 * Virtual fields can't be ordered on, so the labels are simple text
