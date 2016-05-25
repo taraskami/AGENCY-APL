@@ -2493,13 +2493,14 @@ function syntaxify( $string, $lang ) {
 function generic_f( $object, $label_exec, $filter, $limit=NULL,$order='',$sep='',$pre='',$post='') {
 	$sep=orr($sep,oline());
 	$def=get_def($object);
+	$label_exec=orr($label_exec,'object_label($object,$rec["'.$def['id_field'].'"])');
 	$res=get_generic($filter,$order,$limit,$def);
 	if (count($res)==0) {
 		return false;
 	}
 	while ($rec=array_shift($res)) {
 		$label = eval('return ' .$label_exec.';');
-		$result[]=$pre . link_engine(array('object'=>$object,'id'=>$rec[$def['id_field']]),eval( 'return ' . $label_exec.';' ));
+		$result[]=$pre . link_engine(array('object'=>$object,'id'=>$rec[$def['id_field']]),$label);
 	}
 	return implode($result,$sep) . $post;
 }	
