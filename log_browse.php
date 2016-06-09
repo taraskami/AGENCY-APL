@@ -298,9 +298,12 @@ switch ($mode) {
 		$commands = $multi ? array() : array(log_view_navbar($id));
 		$out .= log_show( $a, $DISPLAY['photos'] );
 
+		$mo_def=get_def(AG_MAIN_OBJECT_DB);
+		$mo_noun=$mo_def['singular'];
+
 		$client_select = formto()
 			. hiddenvar('id',$id)
-			. client_selector('N','Search to add '.AG_MAIN_OBJECT.':','N')
+			. client_selector('N','Search to add '.$mo_noun.':','N')
 			. formend();
 				
 		$staff_select = formto()

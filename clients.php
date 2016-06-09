@@ -39,7 +39,8 @@ function client_show( $id )
 	$def = get_def(AG_MAIN_OBJECT_DB);
 	$ID_FIELD=$def['id_field'];
 	$client = sql_fetch_assoc(client_get($id));
-	$id = $client[AG_MAIN_OBJECT_DB.'_id'];
+	$id = $client[$ID_FIELD];
+	$noun = $def['singular'];
 	
 	$protected = sql_true($client['is_protected_id']);
 	$protected_f = $protected && has_perm('read_all') ? oline(center(smaller(red('--------> Protected ID <--------')))) : '';
@@ -64,9 +65,9 @@ function client_show( $id )
 				$p_row .= rowend() . rowstart();
 			}
 		}
-		$photos = oline(table(row(cell(bigger(bold("Showing all ".AG_MAIN_OBJECT." photos...")))) . $p_row,"","bgcolor=\"{$colors['blank']}\" border=\"1\""));
+		$photos = oline(table(row(cell(bigger(bold("Showing all $noun photos...")))) . $p_row,"","bgcolor=\"{$colors['blank']}\" border=\"1\""));
 	}
-	$ids = oline(bold(smaller("AGENCY ".ucfirst(AG_MAIN_OBJECT)." ID # " . blue($id))));
+	$ids = oline(bold(smaller("AGENCY ".ucfirst($noun)." ID # " . blue($id))));
 	if ($client["clinical_id"])
 	{
 		$ids .= oline(smaller("Clinical ID (Case ID) # " . $client["clinical_id"]));
@@ -101,7 +102,7 @@ function client_show( $id )
 	$staff_assigns=row(rightcell(smaller('Staff & Case Manager Assignments'
 							 .html_no_print(oline().link_engine(array('object'=>'staff_assign',
 														'action'=>'add',
-														'rec_init'=>array(AG_MAIN_OBJECT_DB.'_id'=>$id))
+														'rec_init'=>client_filter($id))
 													,smaller('Add new staff assignment'))))
 )
 				 .leftcell(client_staff_assignments_f($id)),'class="clientQuickLook"');
@@ -214,7 +215,7 @@ function client_show( $id )
 	// Income
 	$inc = income_f($id,$has_inc);
 	$jump_add = !$has_inc ? 
-		smaller(link_engine(array('object'=>'income','action'=>'add','rec_init'=>array(AG_MAIN_OBJECT_DB.'_id'=>$id)),smaller('Add an income record')))
+		smaller(link_engine(array('object'=>'income','action'=>'add','rec_init'=>client_filter($id)),smaller('Add an income record')))
  		: smaller(jump_to_object_link('income'));
 	$out .= row(rightcell('Monthly Income'. html_no_print(oline().$jump_add)). leftcell($inc));
 	// Balances
@@ -237,7 +238,7 @@ function client_show( $id )
 					. blue($GLOBALS['AG_DEMO_MODE'] ? '999-99-9999' : $client["ssn"]) . green("  |  ") 
 					. blue(value_generic($client['veteran_status_code'],$def,'veteran_status_code','list'))) );
 	//ids
-	$out .= row(rightcell(ucfirst(AG_MAIN_OBJECT).' ID #\'s').leftcell($ids));
+	$out .= row(rightcell(ucfirst($noun).' ID #\'s').leftcell($ids));
 
 	$out .=row(cell(smaller(system_fields_f($client,$def,array('action'=>'view'))),'colspan="2" class="systemField"'));
 
@@ -250,7 +251,7 @@ function client_show( $id )
  	$out .= div(html_image($GLOBALS['AG_IMAGES']['page_loading_animation']) . ' loading '.$def['singular'].' records...','page_loading',' style="border: solid 1px black; padding: 5px; width: 17em; white-space: nowrap; background-color: #efefef; position: fixed; bottom: 2px; right: 2px; display: none;"');
  	$out .= Java_Engine::get_js('document.getElementById(\'page_loading\').style.display="block";');
 
-	out(span($summary_hide_button. '&nbsp;'.section_title(ucfirst(AG_MAIN_OBJECT).' Summary'),' class="childListTitle"') );
+	out(span($summary_hide_button. '&nbsp;'.section_title(ucfirst($noun).' Summary'),' class="childListTitle"') );
 	out(Java_Engine::hide_show_content($out,'ClientSummary',false));
 
 	// elevated concern detail
@@ -676,7 +677,7 @@ function sex_offender_reg_f( $id )
 	if (sql_num_rows($res) < 1 ) {
 		$control = array('object'=>'sex_offender_reg',
 				     'action'=>'add',
-				     'rec_init'=>array(AG_MAIN_OBJECT_DB.'_id'=>$id));
+				     'rec_init'=>client_filter($id));
 		$out = smaller('Not on File');
 	} else {
 		$rec = sql_fetch_assoc($res);
@@ -848,7 +849,7 @@ function client_note_f ($id)
 				foreach ($flag_entries as $location) {
 					$flag_title[] = sql_lookup_description($location,'l_entry_location');
 				}
-				$c_def=get_def(AG_MAIN_OBJECT);
+				$c_def=get_def(AG_MAIN_OBJECT_ID);
 				$c_sing=$c_def['singular'];
 				$flag_title = 'this note is shown when '.$c_sing. 'enters at '.implode(' &amp; ',$flag_title)
 						.  $a['flag_entry_until'] ? ' until ' . dateof($a['flag_entry_until']) : '';
@@ -1035,7 +1036,8 @@ function assignments_f($staff_id, $my=false) {
 	$def = get_def('staff_assign');
 	$sing = $def['singular'];
 	$plural = $def['plural'];
-
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
 	//these settings are stored across sessions
 	$hide = $AG_USER_OPTION->show_hide('assignments_f');
 	$show_hide_link = $AG_USER_OPTION->link_show_hide('assignments_f');
@@ -1120,7 +1122,7 @@ function assignments_f($staff_id, $my=false) {
 		
 	$width = $hide ? ' boxHeaderEmpty' : '';
 	$title=row(cell(($my
-			     ? 'My ' . ucwords(AG_MAIN_OBJECT) . ' List ('.orr($cnt,'0').')'
+			     ? 'My ' . ucwords($mo_noun) . ' List ('.orr($cnt,'0').')'
 			     : $plural . ' ('.orr($cnt,'0').') for ' . staff_link($staff_id)).$show_hide_link
 			    ,' style="color: red; " class="staff boxHeader'.$width.'"'));
 	$out = table($title . $out,null,' bgcolor="" cellspacing="0" cellpadding="0" style=" border: 1px solid black;"');
@@ -1561,7 +1563,7 @@ function elevated_concern_additional_team_members($rec)
 	}
 
 	//additional assignments
-	$staff_assigns = client_staff_assignments($rec[AG_MAIN_OBJECT.'_id']);
+	$staff_assigns = client_staff_assignments($rec[AG_MAIN_OBJECT_DB.'_id']);
 	
 	while ($a = sql_fetch_assoc($staff_assigns)) {
 

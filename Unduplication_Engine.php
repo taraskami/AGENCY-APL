@@ -310,6 +310,9 @@ class Unduplication_Engine {
 	{
 		global $engine, $UID;
 		
+		$mo_def=get_def(AG_MAIN_OBJECT_DB);
+		$mo_noun=$mo_def['singular'];
+
 		$newid=$this->IDs['keep'];
 		$oldid=$this->IDs['unduplicate'];
 		
@@ -332,8 +335,8 @@ class Unduplication_Engine {
 			
 // 			$photo_res=client_photo_transfer( $newid, $oldid , $use_old_photo);
  			outline($photo_res 
- 				  ? "Transfered all photos for ".AG_MAIN_OBJECT." $oldid to ".AG_MAIN_OBJECT." $newid"
- 				  : "Failed to transfer photos for ".AG_MAIN_OBJECT." $oldid to ".AG_MAIN_OBJECT." $newid");
+ 				  ? "Transfered all photos for ".$mo_noun." $oldid to ".$mo_noun." $newid"
+ 				  : "Failed to transfer photos for ".$mo_noun." $oldid to ".$mo_noun." $newid");
 		} else {
 			$use_old_photo = ($_REQUEST['undup_photo']==$oldid);
 			$photo_res=$this->staff_photo_transfer($newid,$oldid,$use_old_photo);
@@ -407,8 +410,10 @@ class Unduplication_Engine {
 
 		global $UID;
 		$record=array();
+		$mo_def=get_def(AG_MAIN_OBJECT_DB);
+		$mo_noun=$mo_def['singular'];
 		switch($this->object) {
-		case AG_MAIN_CLIENT_DB:
+		case AG_MAIN_OBJECT_DB:
 			$record['approved'] = 'false';
 		case 'staff':
 			$record['approved'] = 'true';
@@ -424,7 +429,7 @@ class Unduplication_Engine {
 		if (!$res) {
 			array_push($this->errors,'Failed to insert a record in the unduplication table ('.$table.').');
 		} elseif ($this->object==AG_MAIN_OBJECT_DB) {
-			array_push($this->mesg,AG_MAIN_OBJECT.' '.$this->IDs['unduplicate'].' flagged for unduplication');
+			array_push($this->mesg,$mo_noun.' '.$this->IDs['unduplicate'].' flagged for unduplication');
 		}
 	}
 

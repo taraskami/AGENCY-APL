@@ -37,14 +37,16 @@ should be included in this distribution.
   //$query_display="Y";
 $quiet = true;
 include 'includes.php';
-$title = ucwords(AG_MAIN_OBJECT).' Unduplication';
+$mo_def=get_def(AG_MAIN_OBJECT_DB);
+$mo_noun=$mo_def['singular'];
+$title = ucwords($mo_noun).' Unduplication';
 agency_top_header();
 
 foreach(array('step','dup_id','val_id','newer_ok','approved','comment') as $x) {
       $$x=$_REQUEST[$x];
 }
 
-$undup_link_text='Unduplicate '.ucwords(AG_MAIN_OBJECT).'s From Database';
+$undup_link_text='Unduplicate '.ucwords($mo_noun).'s From Database';
 $undup_db_perms=can_undup_db();  //permissions to unduplicate
 $undup_perms=can_undup();
 $clientid_lbl = AG_MAIN_OBJECT_DB.'_id';
@@ -84,7 +86,7 @@ if ($step=="process_undup") {
 		}
 
 		if (!$undup_tabs && $approved) {
-			outline(red('There was a '.AG_MAIN_OBJECT.' record to unduplicate, but undup_db() failed to unduplicate.'));
+			outline(red('There was a '.$mo_noun.' record to unduplicate, but undup_db() failed to unduplicate.'));
 		} else {
 			$filter=array(
 					  $newid_lbl=>$val_id,
@@ -97,20 +99,20 @@ if ($step=="process_undup") {
 
 			if ($approved) {
 				outline("Unduplication successfull:");
-				outline("\tAll data for ".AG_MAIN_OBJECT." $dup_id has been merged into ".AG_MAIN_OBJECT." $val_id.");
+				outline("\tAll data for ".$mo_noun." $dup_id has been merged into ".$mo_noun." $val_id.");
 			} else { 
 				outline(red("Duplicate record has been marked as false in the $undups_table table."));
 			}
 			$step ="undup"; //continue to next undup.
 		}
 	} else {
-		$mesg .= oline(bigger('You don\'t have permission to unduplicate '.AG_MAIN_OBJECT.'s in the database'));
+		$mesg .= oline(bigger('You don\'t have permission to unduplicate '.$mo_noun.'s in the database'));
       }	
       
 }
 
 if ($step=="undup") {
-      $title = 'Unduplicating '.ucwords(AG_MAIN_OBJECT).'s From AGENCY Database';
+      $title = 'Unduplicating '.ucwords($mo_noun).'s From AGENCY Database';
       if ($undup_db_perms) {
 		$result = agency_query($undup_sql);
 		if (!sql_num_rows($result)) {
@@ -118,7 +120,7 @@ if ($step=="undup") {
 		}
 
 		if ($nomore) {
-			$out .= oline(bigger(red("All ".AG_MAIN_OBJECT."s in table $undups_table have been unduplicated.")));
+			$out .= oline(bigger(red("All ".$mo_noun."s in table $undups_table have been unduplicated.")));
 		} else {
 			$undup_rec = sql_fetch_assoc($result);
 			$dup_id = $undup_rec[$oldid_lbl];
@@ -138,7 +140,7 @@ if ($step=="undup") {
 			$out .= confirm_undup_db($dup_id,$val_id,"process_undup");
 		}
 	} else {
-		$mesg .= oline(bigger('You don\'t have permission to unduplicate '.AG_MAIN_OBJECT.'s in the database'));
+		$mesg .= oline(bigger('You don\'t have permission to unduplicate '.$mo_noun.'s in the database'));
       }	
 } elseif ($step=="process") {
       if($undup_perms) {
@@ -154,19 +156,19 @@ if ($step=="undup") {
 				 'changed_by'=>$UID);
 		
 		if (undup($rec)) {
-			$out .= oline(ucwords(AG_MAIN_OBJECT)." $dup_id has been marked a duplicate of ".ucwords(AG_MAIN_OBJECT)." $val_id in the duplication table");
-			$out .= oline() . oline(bigger("Unduplicate Another ".ucwords(AG_MAIN_OBJECT)));
+			$out .= oline(ucwords($mo_noun)." $dup_id has been marked a duplicate of ".ucwords($mo_noun)." $val_id in the duplication table");
+			$out .= oline() . oline(bigger("Unduplicate Another ".ucwords($mo_noun)));
 			$out .= undup_form();
 			$dups_in_db++;
 			$out .= oline()
-			      . oline(ucwords(AG_MAIN_OBJECT)."s marked for duplication, but not unduplicated from DB: " . red($dups_in_db))  
+			      . oline(ucwords($mo_noun)."s marked for duplication, but not unduplicated from DB: " . red($dups_in_db))  
 			      . oline(link_unduplication($undup_link_text,"undup"));
 
 		} else {
 			$mesg .= oline("Unduplication failed.");
 		}
       } else {
-		$mesg.=oline('You don\'t have permission to unduplicate '.AG_MAIN_OBJECT.'s.');
+		$mesg.=oline('You don\'t have permission to unduplicate '.$mo_noun.'s.');
       }
 } elseif($step=="confirm") {
       if($undup_perms) {
@@ -179,22 +181,22 @@ if ($step=="undup") {
 		    $out .=  newer_older_form($dup_id,$val_id);
 	    } else {
 		    $title = "Confirm unduplication";
-		    $out .= oline('Below are all the fields that differ between the selected '.AG_MAIN_OBJECT.'s.')
+		    $out .= oline('Below are all the fields that differ between the selected '.$mo_noun.'s.')
 			    . oline("Please review these and then confirm at the bottom.");
 		    $out .= confirm_undup($dup_id,$val_id,"process");
 	    }
       } else {
-		$mesg.=oline('You don\'t have permission to unduplicate '.AG_MAIN_OBJECT.'s.');
+		$mesg.=oline('You don\'t have permission to unduplicate '.$mo_noun.'s.');
       }
 } elseif(!$step) {
       //unduplication entry form
       if ($undup_perms) {
 		$out .= undup_form($dup_id,$val_id);
 		$out .= oline()
-			. oline(gray(ucwords(AG_MAIN_OBJECT)."s marked for duplication, but not unduplicated from DB: " . $dups_in_db))  
+			. oline(gray(ucwords($mo_noun)."s marked for duplication, but not unduplicated from DB: " . $dups_in_db))  
 			. oline(link_unduplication($undup_link_text,"undup"));
 	} else {
-		$mesg.=oline('You don\'t have permission to unduplicate '.AG_MAIN_OBJECT.'s.');
+		$mesg.=oline('You don\'t have permission to unduplicate '.$mo_noun.'s.');
 	}
 }
 

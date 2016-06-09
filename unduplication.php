@@ -40,10 +40,13 @@ function undup_form($dup_id="",$val_id="")
       $cancel_text = "Cancel";
       $cancel_button = cancel_button($cancel_url,$cancel_text);
 
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
+
       $form = tablestart("","border=1 cellpadding=3")
 	    . formto()
-		. rowrlcell('Duplicate '.ucwords(AG_MAIN_OBJECT).' ID:',formvartext("dup_id",$dup_id))
-		. rowrlcell('Valid '.ucwords(AG_MAIN_OBJECT).' ID:',formvartext("val_id",$val_id))
+		. rowrlcell('Duplicate '.ucwords($mo_noun).' ID:',formvartext("dup_id",$dup_id))
+		. rowrlcell('Valid '.ucwords($mo_noun).' ID:',formvartext("val_id",$val_id))
 	    . hiddenvar("step","confirm")
 	    . row(cell(button("Submit"))
 		  . formend()
@@ -79,6 +82,8 @@ function newer_older_form($dup_id,$val_id,$stepto="confirm",$steptofalse="")
 function valid_ids($dup_id,$val_id)
 {
       global $undups_table, $newid_lbl, $oldid_lbl, $mesg;
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
       $valid=true;
       // a few validity checks
       $ids=array(
@@ -94,12 +99,12 @@ function valid_ids($dup_id,$val_id)
 	    elseif (!is_numeric($id) || (intval($id)<>$id) )
 	    {
 		  $valid=false;
-		  $mesg.=oline("$id is not a ".AG_MAIN_OBJECT." ID");
+		  $mesg.=oline("$id is not a $mo_noun ID");
 	    }
 	    elseif (!is_client($id)) 
 	    {
 		  $valid=false;
-		  $mesg.=oline("Couldn't find ".AG_MAIN_OBJECT." $id in the database.");
+		  $mesg.=oline("Couldn't find $mo_noun $id in the database.");
 	    }
       }
       if ($dup_id==$val_id)
@@ -129,7 +134,7 @@ function valid_ids($dup_id,$val_id)
 			$unduplicated=$rec["approved"];
 			$newid=$filter[$newid_lbl];
 			$oldid=$filter[$oldid_lbl];
-			$mesg.=oline(ucwords(AG_MAIN_OBJECT)." $oldid has already been marked a duplicate of ".ucwords(AG_MAIN_OBJECT)." $newid by $staff.");
+			$mesg.=oline(ucwords($mo_noun)." $oldid has already been marked a duplicate of ".ucwords($mo_noun)." $newid by $staff.");
 			$mesg.= oline( $unduplicated ? "The records were merged in the database on "
 				       . dateof($rec["approved_at"]) . " by " . staff_link($rec["approved_by"])
 				       : "The records have not been merged in the database.");
@@ -235,6 +240,9 @@ function undup_db($undup_rec,$merged_record,$photo_to_keep_id)
       global $clientid_lbl,$newid_lbl,
 	    $oldid_lbl,$script,$tdate, $out, $mesg, 
 	    $UID,$client_table_post, $engine;
+
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
       
       $newid=$undup_rec[$newid_lbl];
       $oldid=$undup_rec[$oldid_lbl];
@@ -265,8 +273,8 @@ function undup_db($undup_rec,$merged_record,$photo_to_keep_id)
 			  $use_old_photo=($photo_to_keep_id==$oldid);
 			  $photo_res = client_photo_transfer( $newid, $oldid , $use_old_photo);
 			  outline($photo_res 
-				    ? "Transfered all photos for ".AG_MAIN_OBJECT." $oldid to ".AG_MAIN_OBJECT." $newid"
-				    : "Failed to transfer photos for ".AG_MAIN_OBJECT." $oldid to ".AG_MAIN_OBJECT." $newid");
+				    ? "Transfered all photos for $mo_noun $oldid to $mo_noun $newid"
+				    : "Failed to transfer photos for $mo_noun $oldid to $mo_noun $newid");
 		  }
 
 		  //remove old client from the $client_table_post (mark deleted)
@@ -274,24 +282,24 @@ function undup_db($undup_rec,$merged_record,$photo_to_keep_id)
 		  $filter=array($clientid_lbl => $oldid);
 		  $result = agency_query(sql_delete($client_table_post,$filter,"MARK"));
 		  outline($result 
-			    ? ucwords(AG_MAIN_OBJECT)." ID $oldid succesfully marked as deleted in $client_table_post."
-				 : "Failed to mark ".AG_MAIN_OBJECT." $oldid as deleted in $client_table_post.");
-		  $sys_log_mesg = ucwords(AG_MAIN_OBJECT)." is a duplicate of ".AG_MAIN_OBJECT." $newid --- $tdate, by staff ID: $UID\n"; 
+			    ? ucwords($mo_noun)." ID $oldid succesfully marked as deleted in $client_table_post."
+				 : "Failed to mark $mo_noun $oldid as deleted in $client_table_post.");
+		  $sys_log_mesg = ucwords($mo_noun)." is a duplicate of ".$mo_noun." $newid --- $tdate, by staff ID: $UID\n"; 
 		  $sys = sql_query("UPDATE $client_table_post 
                                        SET sys_log = COALESCE(sys_log,'') || '$sys_log_mesg',
-                                           deleted_comment='deleted for unduplication of ".AG_MAIN_OBJECT." $newid\n'
+                                           deleted_comment='deleted for unduplication of $mo_noun $newid\n'
                                        WHERE ".AG_MAIN_OBJECT_DB."_id = $oldid");
-		  $sys_log_mesg = "Data for a duplicate ".AG_MAIN_OBJECT." ($oldid) was merged into this record --- $tdate, by staff ID: $UID\n"; 
+		  $sys_log_mesg = "Data for a duplicate $mo_noun ($oldid) was merged into this record --- $tdate, by staff ID: $UID\n"; 
 		  $sys = sql_query("UPDATE $client_table_post 
                                        SET sys_log = COALESCE(sys_log,'') || '$sys_log_mesg'
                                        WHERE ".AG_MAIN_OBJECT_DB."_id = $newid");
 		  if (!$sys)
 		  {
-			outline("Failed to update sys_log for ".AG_MAIN_OBJECT." $newid");
+			outline("Failed to update sys_log for $mo_noun $newid");
 		  }
 		  $result = agency_query(sql_update($client_table_post,$merged_record,array($clientid_lbl=>$newid)));
-		  outline($result ? "Merged records for ".AG_MAIN_OBJECT." ($oldid) and ".AG_MAIN_OBJECT." ($newid) into ".AG_MAIN_OBJECT." $newid"
-			  : "Failed to merge records for ".AG_MAIN_OBJECT." ($oldid) and ".AG_MAIN_OBJECT." ($newid) into ".AG_MAIN_OBJECT." $newid");
+		  outline($result ? "Merged records for $mo_noun ($oldid) and $mo_noun ($newid) into $mo_noun $newid"
+			  : "Failed to merge records for $mo_noun ($oldid) and $mo_noun ($newid) into $mo_noun $newid");
 	    }
       else
 	    {
@@ -314,6 +322,8 @@ function undup_overlooked()
       global $unduplication_table_list, $client_table_post,$mesg, 
 	    $undups_table, $clientid_lbl, $newid_lbl, $oldid_lbl, $engine;
       $tables = $unduplication_table_list;
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
 	foreach($engine as $tab=>$def) {
 		if (isset($def['fields'][$clientid_lbl]) && is_table($def['table_post']) && $def['allow_edit'] && ($tab !== AG_MAIN_OBJECT_DB)) {
 			$tables[$def['table_post']]='';
@@ -328,7 +338,7 @@ function undup_overlooked()
 	    $val_id=$rec[$newid_lbl];
 	    $dup_id=$rec[$oldid_lbl];
 	    $silent=true;
-	    outline("Checking tables for old ".AG_MAIN_OBJECT." ($dup_id) to replace with new ".AG_MAIN_OBJECT." $val_id");
+	    outline("Checking tables for old $mo_noun ($dup_id) to replace with new $mo_noun $val_id");
 	    foreach($tables as $table=>$field)
 	    {
 		  undup_table($table, ($field ? $field : $clientid_lbl),$val_id,$dup_id,$silent);
@@ -344,7 +354,7 @@ function undup_overlooked()
       }
       if (!$result)
       {
-	    $mesg.=oline("No ".AG_MAIN_OBJECT."s have been overlooked, and no unduplication has taken place.");
+	    $mesg.=oline("No ".$mo_noun."s have been overlooked, and no unduplication has taken place.");
 	    return false;
       }
       $endtime=getmicrotime();
@@ -353,9 +363,11 @@ function undup_overlooked()
 
 function two_client_diff_display($cid1,$cid2)
 {
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
       if ($cid1==$cid2)
 	    {
-		  return oline("This is the same ".AG_MAIN_OBJECT.".") && false;
+		  return oline("This is the same ".$mo_noun.".") && false;
 	    }
       if (is_client($cid1))
 	    {
@@ -363,7 +375,7 @@ function two_client_diff_display($cid1,$cid2)
 	    }
       else 
 	    {
-		    $badmesg .= oline(ucwords(AG_MAIN_OBJECT)." $cid1 cannot be found.");
+		    $badmesg .= oline(ucwords($mo_noun)." $cid1 cannot be found.");
 	    }
       if (is_client($cid2))
 	    {
@@ -371,7 +383,7 @@ function two_client_diff_display($cid1,$cid2)
 	    }
       else 
 	    {
-		    $badmesg .= oline(ucwords(AG_MAIN_OBJECT)." $cid2 cannot be found.");
+		    $badmesg .= oline(ucwords($mo_noun)." $cid2 cannot be found.");
 	    }
       if ($badmesg) return $badmesg && false;
       $twoclients = tablestart("","border=1 cellpadding=3");
@@ -400,6 +412,8 @@ function two_client_diff_display($cid1,$cid2)
 function confirm_undup($dup_id,$val_id,$stepto)
 {
       global $comment,$mesg;
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
       if ( (!is_client($dup_id)) || (!is_client($val_id)) )
       {
 	    $mesg .= oline("Bad ".AG_MAIN_OBJECT_DB."_id information in table for $val_id & $dup_id.");
@@ -412,7 +426,7 @@ function confirm_undup($dup_id,$val_id,$stepto)
 		  . formend();
 	    return $out;
       }
-      $out .= oline(bold("The ".AG_MAIN_OBJECT." on the left will be unduplicated into valid ".AG_MAIN_OBJECT." on the right."));
+      $out .= oline(bold("The $mo_noun on the left will be unduplicated into valid $mo_noun on the right."));
       $out .= two_client_diff_display($dup_id,$val_id);
       $out .= tablestart_blank() 
 	    . formto()
@@ -434,6 +448,8 @@ function confirm_undup($dup_id,$val_id,$stepto)
 function confirm_undup_db($dup_id,$val_id,$stepto)
 {
       global $comment,$mesg;
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
       if ( (!is_client($dup_id)) || (!is_client($val_id)) )
       {
 	    $mesg .= oline("Bad ".AG_MAIN_OBJECT_DB."_id information in table for $val_id & $dup_id.");
@@ -446,7 +462,7 @@ function confirm_undup_db($dup_id,$val_id,$stepto)
 		  . formend();
 	    return $out;
       }
-      $out .= oline(bold("The two ".AG_MAIN_OBJECT." records will be merged as follows."))
+      $out .= oline(bold("The two $mo_noun records will be merged as follows."))
 	    . para("To change the merge, simply check the box next to the field you wish to keep, the other will be discarded");
       $out .= formto() . merge_two_records($dup_id,$val_id);
       $out .= tablestart_blank() 
@@ -513,10 +529,12 @@ function merge_two_records($oldid,$newid)
 
 function photo_merge($cid1,$cid2)
 {
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
       $photo_2 = has_photo($cid2) ? formradio("photo",$cid2,true) : ""; 
       $check_photo_1 = $photo_2 ? false : true;
       $photo_1 = has_photo($cid1) ? formradio("photo",$cid1,$check_photo_1) : ""; 
-      $out=row(cell(bold((AG_MAIN_OBJECT)) . cell() . cell(client_link($cid1)) . cell() . cell(client_link($cid2))))
+      $out=row(cell(bold(($mo_noun)) . cell() . cell(client_link($cid1)) . cell() . cell(client_link($cid2))))
 	    . row(cell() . cell($photo_1) . cell(client_photo($cid1)) . cell($photo_2) . cell(client_photo($cid2)));
       return $out;
 }

@@ -314,9 +314,9 @@ function attachment_label($a_attachment_rec, $a_attachment_id, $extension, $date
 		return $att_rec['filename_original'];
 	}
 
-	if ($parent_rec and array_key_exists(AG_MAIN_OBJECT.'_id', $parent_rec)) {
+	if ($parent_rec and array_key_exists(AG_MAIN_OBJECT_DB.'_id', $parent_rec)) {
 		// check if there is a client id.
-		$prefix = 'cl'.$parent_rec[AG_MAIN_OBJECT.'_id'].'_';
+		$prefix = 'cl'.$parent_rec[AG_MAIN_OBJECT_DB.'_id'].'_';
 	} elseif ($parent_rec and array_key_exists('staff_id', $parent_rec)) {
 		// check if there is a staff id.
 		$prefix = 'st'.$parent_rec['staff_id'].'_';

@@ -997,6 +997,8 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 	$enmeta  = array();
 
       $system_fields = $engine['system_fields'];
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
 
 	/*
 	 * some global options will be set for specific actions, and the associated
@@ -1033,7 +1035,7 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 	    /*
 	     * set labels
 	     */
-	    $tmp_lab = preg_replace('/'.AG_MAIN_OBJECT_DB.'/',AG_MAIN_OBJECT,$field);
+	    $tmp_lab = preg_replace('/'.AG_MAIN_OBJECT_DB.'/',$mo_noun,$field);
 	    $tmp_lab = preg_replace('/^agency_/','',$tmp_lab); //  (remove noise from labels)
 	    $tmp_lab = preg_replace('/^org_/','',$tmp_lab); 
 		//I don't think the space->&nbsp; is necessary or appropriate here
@@ -1085,7 +1087,7 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 		     */
 
 		  $new['data_type']=AG_MAIN_OBJECT_DB;
-		  $new['label']=ucwords(AG_MAIN_OBJECT);
+		  $new['label']=ucwords($mo_noun);
 		  $new['order_by_instead']=AG_MAIN_OBJECT_DB.'_name('.$field.')';
 
 	    } elseif ( strstr($field,'attachment') and ($object != 'attachment_link') and ($object != 'attachment')) {
@@ -1277,6 +1279,8 @@ function set_engine_defaults($object,$table='')
 
       global $engine;
 
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
       $table = orr($table,$object);
 
       //set defaults that must be set at runtime
@@ -1301,7 +1305,7 @@ function set_engine_defaults($object,$table='')
 				: orr( $primary, $fields[0]) 
 		  );
       $singular=orr($engine[$object]['singular'],ucwords(preg_replace("/_/",' ',preg_replace('/^l_/i','',$object))));
-	  $singular=preg_replace("/".AG_MAIN_OBJECT_DB."/i",ucwords(AG_MAIN_OBJECT),$singular);
+	  $singular=preg_replace("/".AG_MAIN_OBJECT_DB."/i",ucwords($mo_noun),$singular);
       $DEFAULTS['global_default']['singular'] = $singular;
       $DEFAULTS['global_default']['plural'] = (strtolower(substr($singular,-1))=='y') 
 	    ? substr($singular,0,strlen($singular)-1) . 'ies'
@@ -3301,6 +3305,8 @@ function sub_title_generic( $action, $rec, $def ) {
 
 function title_generic($action,$rec,$def)
 {
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
       $a=orr($def['title_' . $action],$def['title']);
       $object=$def['object'];
       $b=orr($def['title_format_'.$action],$def['title_format']);
@@ -3310,7 +3316,7 @@ function title_generic($action,$rec,$def)
 	    : ucwords($action). 'ing ' . $def['singular'] 
 	    . ($rec[$def['id_field']] ? " #{$rec[$def['id_field']]}": '');
 	if (array_key_exists(AG_MAIN_OBJECT_DB.'_id',$rec) && !strstr($x,' for ')
-	    && !stristr($x,'Adding a new '.AG_MAIN_OBJECT.' record.')) {
+	    && !stristr($x,'Adding a new '.$mo_noun.' record.')) {
 		$x .= ' for '.client_link($rec[AG_MAIN_OBJECT_DB.'_id']);
 	}
       // then determine format

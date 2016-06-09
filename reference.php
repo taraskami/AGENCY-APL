@@ -237,7 +237,7 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 {
 	$def=get_def($object);
 	$object_label = $def['singular'];
-	$main_def=get_def(AG_MAIN_OBJECT);
+	$main_def=get_def(AG_MAIN_OBJECT_DB);
 	$main_id_field=$main_def['id_field'];
 	$obj_opt='object="'.$object.'"';
 	$Uobj = ucfirst($object);
@@ -249,13 +249,13 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 	/* Get label */
 	switch ($object) {
 		// Objects with object_name() function in db:
-		case AG_MAIN_OBJECT :
+		case AG_MAIN_OBJECT_DB :
 		case 'guest' :
 			if ($GLOBALS['AG_DEMO_MODE']) {
 				$label_field='TEXT('.enquote1('XXXXXX, XXX').')';
 				break;
 			} // else fall through...
-//		case AG_MAIN_OBJECT :
+//		case AG_MAIN_OBJECT_DB :
 		case 'staff' :
 		case 'guest' :
 			$label_field= $object . '_name(' . $id_field . ')';

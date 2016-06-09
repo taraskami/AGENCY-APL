@@ -125,7 +125,9 @@ function link_admin( $label="AGENCY Administration", $type="Link")
 function link_unduplication($label='',$step="")
 {
       global $undups_url;
-	$label = orr($label,'Unduplicate '.ucwords(AG_MAIN_OBJECT).'s');
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
+	$label = orr($label,'Unduplicate '.ucwords($mo_noun).'s');
       $undups_url .= $step ? "?step=$step" : "";
       $can_undup = ($step=="undup" || $step=="undup_overlooked") ? can_undup_db() : can_undup();
       return hlink_if($undups_url,$label,$can_undup);

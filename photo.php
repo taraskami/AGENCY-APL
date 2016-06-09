@@ -65,7 +65,7 @@ function object_photo_filename( $id, $object, $scale, $all_in_array=false ) {
 	return $p;
 }
 
-function photo_dialog_box( $id,$object=AG_MAIN_OBJECT) {
+function photo_dialog_box( $id,$object=AG_MAIN_OBJECT_DB) {
 //function button( $label="Submit", $type='', $name='',$value='', $onClick='' , $options=null )
 	return
 		formto('get_photo.php',"file_form",'class="photoUploadButton" enctype=multipart/form-data')

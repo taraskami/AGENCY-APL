@@ -33,7 +33,7 @@ should be included in this distribution.
 
 /*
  *  This file is home for all functions that are common between varying
- *  main object types (eg, client and donor) as specified in the AG_MAIN_OBJECT
+ *  main object types (eg, client and donor) as specified in the AG_MAIN_OBJECT_DB
  *  variable.
  *
  */
@@ -67,7 +67,10 @@ function client_selector($show_selected="Y",$text="",$form="N")
 		$client_remove, $CLIENTS, $STAFF;
 	$client_remove = orr($client_remove,$_REQUEST['client_remove']);
 	$client_select = orr($client_select,$_REQUEST['client_select']);
-	$text=orr($text,'Enter search text to add a '.ucfirst(AG_MAIN_OBJECT));
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
+
+	$text=orr($text,'Enter search text to add a '.ucfirst($mo_noun));
 	if (isset($client_select) )
 	{
 		add_id( $client_select, $CLIENTS); 
@@ -91,7 +94,7 @@ function client_selector($show_selected="Y",$text="",$form="N")
 			    bottomcell(
 					   ( $form=="Y" ? formto($_SERVER['PHP_SELF']) : "")
 					   .  (   ($show_selected=="Y") ?
-						    oline(bigger(bold(ucfirst(AG_MAIN_OBJECT).'s Referenced:')))
+						    oline(bigger(bold(ucfirst($mo_noun).'s Referenced:')))
 						    . oline( show_selected_clients($CLIENTS,"removeok") )
 						    : "" )
 					   . client_quick_search($text,"NoForm")
@@ -105,9 +108,11 @@ function client_selector($show_selected="Y",$text="",$form="N")
 
 function show_selected_clients( $clients, $removeok="" )
 {
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
 	$count=count($clients);
 	$otmp= ($count==0) ? "No" : "The Following";
-	$output =oline($otmp .' '.ucfirst(AG_MAIN_OBJECT).'s are Selected:');
+	$output =oline($otmp .' '.ucfirst($mo_noun).'s are Selected:');
 	foreach ($clients as $x)
 	{
    		$output .= oline(
@@ -429,12 +434,14 @@ function client_photo_transfer( $new_client, $old_client , $use_old=false)
 	// Then might need other function to choose which is the default (symlinked) photo
 
       global $AG_CLIENT_PHOTO_BY_FILE,$AG_CLIENT_PHOTO_BY_URL;
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
 
       $success = true;
 
       if (!has_photo($old_client)) {
 		//nothing to do
-		outline('No photos for '.AG_MAIN_OBJECT.' '.$old_client.' to transfer.');
+		outline('No photos for '.$mo_noun.' '.$old_client.' to transfer.');
 		return false;
       }
       
@@ -690,8 +697,10 @@ function generic_home_sidebar_left()
 
 function agency_home_links()
 {
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
 	///* setup home links */
-	$add_object_link = hlink("object_reg.php?object=" . AG_MAIN_OBJECT_DB,'Add '.ucfirst(AG_MAIN_OBJECT));
+	$add_object_link = hlink("object_reg.php?object=" . AG_MAIN_OBJECT_DB,'Add '.ucfirst($mo_noun));
 	$home_links_1 = array(add_link('feedback'),
 				    link_admin(), //AGENCY admin
 				    $add_object_link

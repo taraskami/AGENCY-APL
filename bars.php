@@ -102,7 +102,7 @@ function bar_status_f( $id,$format='',&$is_provisional)
 	// with either guest_id or client_id
 	$format = orr($format,'short');
 	// return a formatted string describing bar status
-	$c_def=get_def(AG_MAIN_OBJECT);
+	$c_def=get_def(AG_MAIN_OBJECT_DB);
 	$g_def=get_def('guest');
 	$c_field=$c_def['id_field'];
 	$g_field=$g_def['id_field'];

@@ -37,10 +37,14 @@ include 'mail.php';
 $action = $_REQUEST['action'];
 $ID     = $_SESSION['CLIENT_ID'] = orr($_REQUEST['id'],$_REQUEST['control']['id'],$_SESSION['CLIENT_ID']);
 
+$mo_def=get_def(AG_MAIN_OBJECT_DB);
+$mo_id_label=$mo_def['fields'][$mo_def['id_field']]['label_view'];
+$mo_noun=$mo_def['singular'];
+
 if (!$ID or ($ID > AG_POSTGRESQL_MAX_INT) or (!is_numeric($ID))) {
 
 	agency_top_header();
-	out(alert_mark($ID ? AG_MAIN_OBJECT.' ID ('.$ID.') out of range. Stopping' : 'No ID passed to '.AG_MAIN_OBJECT_DB.'_display.  Stopping'));
+	out(alert_mark($ID ? $mo_id_label . ' ('.$ID.') out of range. Stopping' : 'No ID passed to '.$_SERVER['PHP_SELF'] . '.  Stopping'));
 	page_close();
 	exit;
 
@@ -50,7 +54,7 @@ $client = client_get($ID);
 
 if (sql_num_rows($client) == 0 ) {
 
-	$title="No " .AG_MAIN_OBJECT. " with ID $ID.";
+	$title="No $mo_noun with ID $ID.";
 	$not_found_message=alert_mark($title);
 	$client_not_found=true;
 

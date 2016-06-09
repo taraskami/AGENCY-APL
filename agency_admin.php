@@ -177,9 +177,12 @@ function agency_menu_admin()
 	}		
 	
 	// Client Unduplication
-	$menu[ucwords(AG_MAIN_OBJECT).' Unduplication'] = html_list(
-											html_list_item(link_unduplication('Unduplicate '.ucwords(AG_MAIN_OBJECT)))
-											. html_list_item('This link will unduplicate '.AG_MAIN_OBJECT.'s who have already been processed and confirmed as duplicates, in case they were in tables which have only recently been added, or were not unduplicated from the DB for another reason: '.link_unduplication('Check for/unduplicate confirmed duplicate '.AG_MAIN_OBJECT.'s from tables','undup_overlooked')));
+	
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
+	$menu[$mo_noun.' Unduplication'] = html_list(
+											html_list_item(link_unduplication('Unduplicate '.$mo_noun))
+											. html_list_item('This link will unduplicate '.$mo_noun.'s who have already been processed and confirmed as duplicates, in case they were in tables which have only recently been added, or were not unduplicated from the DB for another reason: '.link_unduplication('Check for/unduplicate confirmed duplicate '.$mo_noun.'s from tables','undup_overlooked')));
 
 	// Set cookies for machine ID
 	$menu['Set Cookie ID for this Machine']=set_machine_id_cookie();

@@ -359,6 +359,9 @@ function client_search($allow_other="N",$auto_forward=true,$use_old=false)
 	$QuickSearch = trim(orr($QuickSearch,$_REQUEST['QuickSearch']));
 	$fields=$client_search_fields;
 
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
+
 	// First, check to see if this is a "quick search"
 	// If so, check if we have text or a number
 	// text searches on name, number on clientID
@@ -471,7 +474,7 @@ function client_search($allow_other="N",$auto_forward=true,$use_old=false)
 		} else {
 			$dt = 'No results in ';
 		}
-		$dt = html_heading_4($dt . ucwords(AG_MAIN_OBJECT));
+		$dt = html_heading_4($dt . ucwords($mo_noun));
 		
 		$filter_a = array(array(
 						'ILIKE:address_names'=>'%'.$QuickSearch.'%',
@@ -557,6 +560,8 @@ function client_name($idnum,$max_length=0,$text_only=false)
 function donor_reg_search()
 {
       global $def,$rec,$main_object_reg_search_fields,$engine; 
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
       foreach ($main_object_reg_search_fields as $x)
 	{
 		    $$x=$rec[$x];
@@ -590,9 +595,9 @@ function donor_reg_search()
 		page_close();
   		exit;
 	} else {
-    	$title = 'Review existing '.AG_MAIN_OBJECT.'s for a match';
-		$proceed_link = 'If the '.AG_MAIN_OBJECT.' is not already registered, proceed here';
-    	$out.=oline() . oline(red('Review the following '.AG_MAIN_OBJECT.'s to make sure '.AG_MAIN_OBJECT.' is not already registered'));
+    	$title = 'Review existing '.$mo_noun.'s for a match';
+		$proceed_link = 'If the '.$mo_noun.' is not already registered, proceed here';
+    	$out.=oline() . oline(red('Review the following '.$mo_noun.'s to make sure '.$mo_noun.' is not already registered'));
 		$control=array('object'=>AG_MAIN_OBJECT_DB,
 			   'action'=>'list',
 			   'list'=>array('filter'=>$filter,
@@ -620,6 +625,8 @@ function assignments_f($staff_id, $my=false) {
 	global $colors, $UID, $AG_USER_OPTION;
 
 	$def = get_def('staff_assign');
+	$mo_def=get_def(AG_MAIN_OBJECT_DB);
+	$mo_noun=$mo_def['singular'];
 
 	//these settings are stored across sessions
 	$hide = $AG_USER_OPTION->show_hide('assignments_f');
@@ -685,7 +692,7 @@ function assignments_f($staff_id, $my=false) {
 
 	$width = $hide ? ' boxHeaderEmpty' : '';
 	$title=row(cell(($my
-			     ? 'My ' . ucwords(AG_MAIN_OBJECT) . ' List ('.orr($cnt,'0').')'
+			     ? 'My ' . ucwords($mo_noun) . ' List ('.orr($cnt,'0').')'
 			     : 'Assignments ('.orr($cnt,'0').') for ' . staff_link($staff_id)).$show_hide_link
 			    ,' style="color: red; " class="staff boxHeader'.$width.'"'));
 	$out = table($title . $out,null,' bgcolor="" cellspacing="0" cellpadding="0" style=" border: 1px solid black;"');
