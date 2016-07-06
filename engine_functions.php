@@ -2306,7 +2306,11 @@ function form_generic($rec,$def,$control)
       foreach ($rec as $key=>$value) {
 
 		if ($fields[$key]['never_to_form']) { continue; }
-		$disp = $fields[$key]["display_$action"];
+		if ( !be_null(($q=$fields[$key]["display_eval_$action"])) ) {
+			$disp = eval( 'return ' . $q . ';' );
+		} else {
+	    	$disp = $fields[$key]["display_$action"];
+		}
 		if ($disp=='edit') { unset($disp); }
 		if ($fields[$key]['system_field']) {
 			// Put sys fields on form

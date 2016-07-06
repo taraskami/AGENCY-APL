@@ -579,6 +579,7 @@ $engine['action_specific_vars']=array(
 						      ),
 				      'fields'=>array(
 						      'display'=>'regular',
+							  'display_eval'=>NULL,
 						      'comment_show'=>true,
 						      'post'=>true,
 						      'value'=>'$x',
