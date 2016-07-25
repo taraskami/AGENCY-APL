@@ -364,7 +364,7 @@ function read_filter( $filter, $bool="AND", $lang="SQL")
 			}
 			if (($op=="IN") || ($op=="NOT IN")) {
 				$sql .= "$field_safe $op (" . implode(',',$value_safe) . ") \n$bool ";
-			} elseif ($op == 'ARRAY_EQUALS' or $op == 'ARRAY_CONTAINS') {
+			} elseif ( ($op == 'ARRAY_EQUALS')  or ($op == 'ARRAY_CONTAINS') ) {
 				// I think for ARRAY_CONTAINS, this should be OR
 				$tmp_bool= $op=='ARRAY_CONTAINS' ? 'OR' : 'AND';
 				$t_sql = array();
