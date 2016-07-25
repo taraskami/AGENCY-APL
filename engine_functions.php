@@ -1156,7 +1156,7 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 		     * below, 21=length(&nbsp;code&nbsp;other)
 		     */
 		    if (preg_match('/^(.*)([- _]?other)$/i',$new['label'],$m_tmp) ) {
-		    	$new['label'] = $m_tmp[1];
+		    	$new['label'] = "Other " . $m_tmp[1];
 		}
 		    //$new['label'] = ucwords(substr($new['label'],0,strlen($new['label'])-21)).' (please specify if Other)';
 		    $new['comment'] ='(please specify if Other)';
