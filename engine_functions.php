@@ -2059,7 +2059,7 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 		} else {
 			$query = build_lookup_query($pr,$action);
 			/* Adding bad (expensive, extra query) hack to force default if only 1 option */
-			if (be_null($value) and ($pr['null_ok']==false) and sql_num_rows(($junk=agency_query($query)))==1) {
+			if (be_null($value) and ($pr['null_ok']==false) and (sql_num_rows(($junk=agency_query($query)))==1) ) {
 				$junk=sql_fetch_assoc($junk);
 				$value=$junk['value'];
 			}
@@ -2087,9 +2087,9 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 	case 'lookup_multi':
 		$query = build_lookup_query($pr,$action);
 		/* Adding bad (expensive, extra query) hack to force default if only 1 option */
-		if (be_null($value) and ($pr['null_ok']==false) and sql_num_rows(($junk=agency_query($query)))==1) {
+		if (be_null($value) and ($pr['null_ok']==false) and (sql_num_rows(($junk=agency_query($query)))==1) ) {
 			$junk=sql_fetch_assoc($junk);
-			$value=$junk['value'];
+			$value=array($junk['value']);
 		}
 		switch ($pr['lookup_format']) {
 		case 'checkbox_v':
