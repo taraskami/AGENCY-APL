@@ -161,7 +161,7 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 			if (is_array($value)) {
 				foreach ($value as $v) {
 					$v=htmlentities(urlencode($v));
-					$init_str .='&'.$control_array_variable.'[rec_init]['.$key.']='.$v;
+					$init_str .='&'.$control_array_variable.'[rec_init]['.$key.'][]='.$v;
 				}
 			} else {
 
