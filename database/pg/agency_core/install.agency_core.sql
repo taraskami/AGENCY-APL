@@ -196,6 +196,9 @@ INSERT INTO tbl_system_log (event_type,message,added_at,added_by,changed_at,chan
 \i create.l_news_priority.sql
 \i create.tbl_news.sql
 
+/* email config */
+\i create.tbl_config_email.sql
+
 /* Enable alert notifications on objects */
 select
 	alert_notify_enable('tbl_staff'),
