@@ -1,5 +1,5 @@
 CREATE TABLE tbl_l_export_organization (
-	export_organization_code	VARCHAR(10) PRIMARY KEY,
+	export_organization_code	VARCHAR(20) PRIMARY KEY,
 	description				VARCHAR(60) NOT NULL UNIQUE,
     --system fields
     added_by                        INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
