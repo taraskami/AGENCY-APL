@@ -127,8 +127,10 @@ define('AG_PASSWORD_RESET_URL','reset_password.php');
 /*
  * Email Sender
  * This will be the 'From:' line in any emails sent
+ *
+ * n.b., Leave this line alone.  It is now set in the config_email table.
  */
-$AG_EMAIL_SENDER='AGENCY Notifier <noreply@'.$_SERVER['SERVER_NAME'].'>';
+$AG_EMAIL_SENDER=sql_assign('SELECT email_sender FROM config_email');
 
 /*
  * authorization and password configuration
@@ -192,8 +194,8 @@ array(
 	'TABLE_VERT' => $off.'images/table_vert.png',
 	'AGENCY_LOGO_SMALL' => $off.'images/agency_logo_small.png',
 	'AGENCY_LOGO_MEDIUM' => $off.'images/agency_logo_medium.png',
-	'ORGANIZATION_LOGO_MEDIUM' => $off.'images/organization_logo_medium.png',
-	'ORGANIZATION_LOGO_SMALL' => $off.'images/organization_logo_small.png',
+	'ORGANIZATION_LOGO_MEDIUM' => $off.'images/lead_logo_medium.png',
+	'ORGANIZATION_LOGO_SMALL' => $off.'images/lead_logo_small.png',
 	'NO_PHOTO' => $off.'images/no_photo.jpg',
 	'DEMO_PHOTO' => $off.'images/demo_photo.jpg',
 	'RECORD_VOIDED' => $off.'images/record_voided.png',
