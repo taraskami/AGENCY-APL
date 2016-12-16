@@ -176,6 +176,7 @@ INSERT INTO tbl_system_log (event_type,message,added_at,added_by,changed_at,chan
 \i functions/create.rank_client_search_results.sql
 \i functions/create.functions_changed_at_trigger.sql
 \i functions/create.functions_db_list.sql
+\i functions/create.functions.link_engine.sql
 
 /* staff functions */
 \i functions/create.functions_staff.sql
