@@ -1849,6 +1849,9 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 					   . tableend();
 			}
 		}
+		if (!$def['show_blank_rows']) {
+			$out =oline(hlink('#','show/hide empty rows',NULL,'class="engineRowBlankToggle"')) . $out;
+		}
       return $out;
 }
 
@@ -1898,10 +1901,15 @@ function view_generic_row($key,$value,$def,$action,$rec)
 	default:
 		$value_cell = cell($value,$v_opts);
 	}
+	if (!$def['show_empty_rows']) {
+		$row_class='EngineValueRow';
+		if ( (!$value) or ($value=='&nbsp;') or ($value==' ') )  { $row_class .= ' engineValueRowBlank'; }
+		$row_class = 'class="' . $row_class . '"';
+	}
 	$pre = orr($pr['row_before_view'],$pr['row_before']);
 	$post = orr($pr['row_after_view'],$pr['row_after']);
 	return ($pre ? row(cell(eval('return ' . $pre.';'),'colspan=2')) : '' )
-	. row($label_cell.$value_cell)
+	. row($label_cell.$value_cell,$row_class)
 	. ($post ? row(cell(eval('return ' . $post.';'),'colspan=2')) : '');
 
 }

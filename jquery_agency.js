@@ -369,3 +369,16 @@ $(function() {
     $('table.multiForm').floatThead();
 });
 
+/* Togglle blank rows on engine forms */
+$(function() {
+
+		if ( $('tr.engineValueRowBlank').length > 0 ) {
+			$('a.engineRowBlankToggle').click( function() {
+				$('tr.engineValueRowBlank').toggle();
+			});
+		} else {
+			$('a.engineRowBlankToggle').hide();	
+		}
+	
+});
+

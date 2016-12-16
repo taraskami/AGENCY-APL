@@ -536,3 +536,11 @@ table.reportUserOptionSelect {
 	border-radius: 5px;
 }
 
+tr.engineValueRowBlank {
+	display: none;
+}
+
+a.engineRowBlankToggle {
+	font-size: 70%;
+}
+
