@@ -998,8 +998,7 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 
       $system_fields = $engine['system_fields'];
 	$mo_def=get_def(AG_MAIN_OBJECT_DB);
-	$mo_noun=$mo_def['singular'];
-
+	$mo_noun=orr($mo_def['singular'],AG_MAIN_OBJECT);
 	/*
 	 * some global options will be set for specific actions, and the associated
 	 * system fields
@@ -1280,7 +1279,7 @@ function set_engine_defaults($object,$table='')
       global $engine;
 
 	$mo_def=get_def(AG_MAIN_OBJECT_DB);
-	$mo_noun=$mo_def['singular'];
+	$mo_noun=orr($mo_def['singular'],AG_MAIN_OBJECT); // FIXME:  Why needed?
       $table = orr($table,$object);
 
       //set defaults that must be set at runtime
