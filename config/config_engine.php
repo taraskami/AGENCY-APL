@@ -134,6 +134,7 @@ $engine['global_default'] = array(
 				  //client_refs added below
 				  'child_records' => null,
 				  'duplicate_posting_window' => 1, // Time, in hours, for which to check for duplicate records
+				  'fields_pattern' => array(), // Wildcard (preg) matches on fields
 				  'hide_no_perm_records' => null,
 				  'id_field' => null,
 				  //'list_fields' => null,

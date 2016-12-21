@@ -625,10 +625,27 @@ function config_object($object)
       $fields_config_file = is_array($config_object['fields'])
 		? $config_object['fields'] : array();
 
+      $FIELDS = array_keys(array_merge($fields_view,$fields_table,$fields_config_file));
+
+	  // FIELD WILDCARDS
+	  // These _should_ work exactly as if you'd specified them by hand, but be overwritten by specific fields in the config file
+
+	  if (!be_null($config_object['fields_pattern'])) {
+	  foreach ($FIELDS as $field) {
+	    $p_def_merged=array();
+	  	foreach ($config_object['fields_pattern'] as $pattern=>$p_def) {
+			if (preg_match($pattern,$field)) {
+				$p_def_merged=array_replace_recursive($p_def_merged,$p_def);
+			}
+		}
+		if ($p_def_merged!=array()) {
+			$config_object['fields'][$field]=array_replace_recursive($p_def_merged,orr($config_object['fields'][$field],array()));
+		}
+      } // End field loop
+	  } // End field_pattern null test
+
       $engine_object_virtual = array_merge(engine_metadata(array_keys($fields_view),array(),$object,$sql_table),
 							 engine_metadata(array_keys($fields_config_file),array(),$object,$sql_table));
-
-      $FIELDS = array_keys(array_merge($fields_view,$fields_table,$fields_config_file));
 
       $engine_object = engine_metadata($FIELDS,$sql_object,$object,$sql_table); //ENGINE METADATA
 
