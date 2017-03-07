@@ -329,6 +329,13 @@ function report_generate($report,&$msg)
 			$sq_footer[] = $block_sql_footer[] = html_list_item(webify_sql($sql3)); // all queries, for overall report footer
 		}
 		$report[$rb][$s][$rbs] = $sqls;
+		// sql_pre, execution required (e.g., temp tables) for spreadsheet export on multi-block report pages
+		if ($sql_pre) {
+			$report[$rb][$s]['sql_pre']=$sql_pre;
+		}
+		if (sql_true($report[$rb][$s]['execution_required'])) {
+			$sql_pre[]=$sqls;
+		}
 		$report[$rb][$s]['block_sql_footer']=$block_sql_footer;
 		foreach( array('footer','header','title','comment') as $f) {
 				$report[$rb][$s][$rb.'_'.$f]=str_replace($pattern_h,$replace_h,$sql[$rb.'_'.$f]);
@@ -395,6 +402,7 @@ function report_generate($report,&$msg)
 			    break;
 			  case 'TABLE' :
 			  default:
+		      $control['sql_pre']= $sql['sql_pre'];
 			    foreach ($sql[$rbs] as $s ) {
 			      $control['sql']= $s;
 			      if (!($out['results'][] = call_engine($control,$control_array_variable='control',$NO_TITLE=true,$NO_MESSAGES=true,$TOTAL_RECORDS,$PERM))) {
@@ -532,11 +540,18 @@ function report_generate_from_posted(&$mesg)
 	$report = array();
 	//FIXME:
 	$report = get_report_from_db('AD-HOC_QUERY');
-	$report['report_block'][0]['report_block_sql'][0] = detokenize($_REQUEST['sql1'],'generic_sql');
+	$pre_sql=orr(detokenize($_REQUEST['sql_pre'],'generic_sql'),array());
+	$saved_block=array_shift($report['report_block']);
+	foreach ($pre_sql as $pre ) {
+		$report['report_block'][]=array('report_block_sql'=>$pre,'execution_required'=>sql_true(),'suppress_output_codes'=>array('O_TEMPLATE'));
+	}
+	$saved_block['report_block_sql']=array(detokenize($_REQUEST['sql1'],'generic_sql'));
+	$report['report_block'][]=$saved_block;
 	$report['report_header'] = detokenize($_REQUEST["report_header"],'generic_sql');
 
 	//fixme: this still relies on sql being acquired from the browser. even though it is checked
-	//       it is still a dangerous idea.
+	//       it is still a dangerous idea.  
+	//		 The SQL is now tokenized, so it shoud be safe(r?)
 	//note: requested sql is tested in report_generate_openoffice() or report_generate_export()
 
 	$template = detokenize($_REQUEST[AG_REPORTS_VARIABLE_PREFIX.'template'],'generic_sql');

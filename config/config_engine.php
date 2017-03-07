@@ -80,6 +80,7 @@ $engine['control_array_elements'] = array(
 					  'rec_init'=>'',
 					  'step'=>'',
 					  'sql'=>'',
+					  'sql_pre'=>array(),
 					  'sql_security_override' //fixme: this isn't implemented yet
 					  );
 

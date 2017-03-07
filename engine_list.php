@@ -1169,6 +1169,7 @@ function open_office_button($control,$def,$header='',$options='')
 
 
       $sql = list_query_string($def,$control);
+	  $sql_pre = $control['sql_pre'];
 	if ($templates = $control['oo_templates'] and is_array($templates)) {
 		//must be passed as array of the form array(template_name=>label)
 		if (array_key_exists('spreadsheet',$templates)
@@ -1197,6 +1198,7 @@ function open_office_button($control,$def,$header='',$options='')
       $header=orr($header,$control['export_header'],$sql);
       $form = formto(AG_OPENOFFICE_GEN_PAGE)
 		. hiddenvar('sql1',tokenize($sql,'generic_sql'))
+		. ($sql_pre ? hiddenvar('sql_pre',tokenize($sql_pre,'generic_sql')) : '' )
 		. hiddenvar('report_header',tokenize($header,'generic_sql'))
 		. hiddenvar('sql_count','1')
 		. $template_list

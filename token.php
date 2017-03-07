@@ -187,6 +187,9 @@ function new_password_form($email,$token) {
 function tokenize( $val, $context='*' ) {
 	// FIXME: duplicated
 	$t_var='AG_TOKENIZED_VALS';
+	if (($is_array=is_array($val))) {
+		$val=serialize($val);
+	}
 	if (array_key_exists($val,$_SESSION[$t_var])) {
 		$token=array_shift(array_keys($_SESSION[$t_var][$val]));
 		if ( (!in_array($context,$_SESSION[$t_var][$val][$token])) ) {
@@ -200,7 +203,12 @@ function tokenize( $val, $context='*' ) {
 	while (in_array(($token=rand(1,1000000)),$tokens)) {
 		//
 	}
-	$_SESSION[$t_var][$val]=array($token=>array($context));
+	$t_array=array();
+	$t_array[$token]=array($context);
+	if ($is_array) {
+		$t_array[$token][]='is_array';
+	}
+	$_SESSION[$t_var][$val]=$t_array;
 	return $token;
 }
 
@@ -208,9 +216,9 @@ function detokenize( $token, $context='*' ) {
 	// FIXME: duplicated
 	$t_var='AG_TOKENIZED_VALS';
 	foreach ($_SESSION[$t_var] as $k=>$v) {
-			if ($token==array_shift(array_keys($v))) {
+		if ($token==array_shift(array_keys($v))) {
 			if (in_array($context,$v[$token])) {
-				return $k;
+				return in_array('is_array',$v[$token]) ? unserialize($k) : $k;
 			}
 		}
 	}
