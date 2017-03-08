@@ -971,6 +971,9 @@ function track_report_usage($report)
 
 function list_report($control,$def,$control_array_variable='',&$REC_NUM)
 {
+		if ( ($recent=my_recent_reports()) ) {
+			$lists['My Recent Reports']=$recent;
+		}
 		/* Custom formatting for report list */
 		$order="COALESCE(report_category_code,'GENERAL'),report_title";
 		$result = list_query($def,array(),$order,$control);
@@ -1018,5 +1021,19 @@ function post_report($rec,$def,&$mesg,$filter='',$control=array()) {
 	}
 
 }
+
+function my_recent_reports( $uid ) {
+	// This returns an array, not a string as you might expect
+	$uid=orr($uid,$GLOBALS['UID']);
+	$def=get_def('report');
+	$limit=$def['custom']['my_recent_reports_max'];
+	if (!$limit) { return ''; }
+	$reps=sql_to_php_array(sql_assign(sprintf('SELECT array( (SELECT report_code FROM (SELECT DISTINCT ON (report_code) report_code,generated_at FROM report_usage WHERE generated_by=%d ORDER BY report_code,generated_at DESC) foo ORDER BY generated_at DESC LIMIT %d)) boo',$uid,$limit)));
+	foreach($reps as $r) {
+		$out[]=html_list_item(link_report($r));
+	}
+	return $out;
+}
+
 
 ?>

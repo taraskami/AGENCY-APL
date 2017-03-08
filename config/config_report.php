@@ -39,6 +39,9 @@ $engine['report'] = array(
 //					'title_format_edit' =>'bigger(bold($x)) . " " . smaller(link_wiki_public("Reports","Help with writing reports"))',
 					'subtitle_html'=>smaller(link_wiki_public('Reports','Report Help')),
 					'child_records'=>array('report_block'),
+					'custom'=>array(
+						'my_recent_reports_max'=>10,
+					),
 					'fields' => array(
 						'quick_sql' => array ('display_add'=>true, 'data_type'=>'text','comment'=>'SQL entered here will be posted as a Report Block'),
 						'report_code' => array(
