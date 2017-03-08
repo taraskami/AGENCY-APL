@@ -880,12 +880,12 @@ function link_report($report_code,$label='',$init=array(),$action='',$template=n
 	 */
 
 	$redirect=in_array($action,array('view','edit','delete','clone'));
-	$label=orr($label,$report_code);
 	if (!($rep=get_report_from_db($report_code))) {
 		out(div("warning: link_report couldn't find report $report_code",'','class="warning"'));
 		return false; 
 	}
 	$r_def=get_def('report');
+	$label=orr($label,$rep['report_title']);
 	$key=$r_def['id_field'];
 	$url = $GLOBALS['off']
 			. ($redirect
