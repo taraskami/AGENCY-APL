@@ -379,7 +379,7 @@ function report_generate($report,&$msg)
 				     'action' => 'list',
 				     'list'   => array('fields'=>array(),'filter'=>array(),'order'=>array(),'show_totals'=>true,
 							     'max' => orr($report['rows_per_page'],'-1')),
-				     'sql_security_override' => $report['override_sql_security'],
+				     'sql_security_override' => sql_true($report['override_sql_security']),
 				     'export_header' => $report['report_header']); // ???
 
 		$oo_templates = report_output_select($report);
