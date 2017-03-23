@@ -198,8 +198,8 @@ INSERT INTO tbl_system_log (event_type,message,added_at,added_by,changed_at,chan
 \i create.tbl_news.sql
 
 /* email config */
-\i functions/create.functions.email.sql
 \i create.tbl_config_email.sql
+\i functions/create.functions.email.sql
 
 /* Enable alert notifications on objects */
 select
