@@ -6,7 +6,7 @@
 
 This file is part of AGENCY.
 
-AGENCY is Copyright (c) 2003-2012 by Ken Tanzer and Downtown Emergency
+AGENCY is Copyright (c) 2003-2017 by Ken Tanzer and Downtown Emergency
 Service Center (DESC).
 
 All rights reserved.
