@@ -155,6 +155,20 @@ $(function() {
 	$(".hiddenDetailShow").show();
 });
 
+/* Toggle-able content.  This is like hiddenDetail, but without the annoying styling */
+$(function() {
+	$(".toggleContent").each( function() {
+		var lab = $(this).children("[name=toggleLabel]");
+		if (lab.val()==undefined) {
+			var text = 'Show/Hide';
+		} else {
+			var text = lab.val();
+		}
+		$(this).hide().before('<a href="#" class="toggleLink fancyLink">'+text+'</a>');
+	});
+	$(".toggleContentShow").show();
+});
+
 /*
  * Log text, show as row in table
    Should be genericized to hiddenEngineText

@@ -82,6 +82,7 @@ a.toggleLink { font-size: 65%; }
 }
 div.engineMessageResultDetail { font-size: 80%; border: solid 1px black; }
 div.hiddenDetail { font-size: 70%; background-color: #FFDDDD; display: none; }
+div.toggleContent { display: none; }
 
 .warning, .error { color: #f00; } /* same for now */
 .message { color: #18782f; }
