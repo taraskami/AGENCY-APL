@@ -35,6 +35,7 @@ $quiet='Y';
 include 'includes.php';
 $qs=$_REQUEST['QuickSearch'];
 $my=$_REQUEST['MyClients'];
+//$my_caselist=$_REQUEST['MyCaselist'];
 $obj=orr($_REQUEST['QuickSearchObject'],AG_MAIN_OBJECT_DB);
 
 if ( ($def = get_def($obj))
@@ -45,11 +46,18 @@ if ( ($def = get_def($obj))
 	return false;
 }
 
-if ($my == 'true') {
-	$filt['IN:' . $def['id_field'] ] = staff_client_assignments_ids($UID);
+/*
+if ($my_caselist == 'true') {
+//	$filt['IN:' . $def['id_field'] ] = staff_client_assignments_ids($UID);
+	$filt=array('IN:' . $def['id_field'] => staff_client_assignments_ids($UID));
 }
+*/
 
 $control=array('action' => 'list', 'list' => array( 'filter' => $filt));
+if ( ($my == 'true') and ($my_caselist!='true') ) {
+	$control['list']['order']=array(read_filter(array('IN:'.$def['id_field']=>staff_client_assignments_ids($UID)))=>true);
+}
+
 $recs = list_generic($control,$def,'',$dummy);
 out( $recs );
 

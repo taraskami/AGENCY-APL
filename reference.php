@@ -272,14 +272,17 @@ function object_selector_generic( $object='', &$div_id='',$filter=array(), $max_
 	}
 	$op .= hiddenvar('objectPickerMethod',$method);
 	if ($method=='Search') {
-		$my_control=(in_array($main_id_field,array_keys($def['fields'])) and count(staff_client_assignments_ids($GLOBALS['UID'])) > 0) ? (formcheck('objectPickerMyClients',true) . ' My clients only') : '';
+		$my_control=(in_array($main_id_field,array_keys($def['fields'])) and count(staff_client_assignments_ids($GLOBALS['UID'])) > 0) ? (formcheck('objectPickerMyClients',true) . ' My clients first') : '';
+//		$my_caselist_control=(in_array($main_id_field,array_keys($def['fields'])) and count(staff_client_assignments_ids($GLOBALS['UID'])) > 0) ? (formcheck('objectPickerMyCaselist',false) . ' My full caselist') : '';
 		// FIXME, hack for guest, which has a client_id field in it
 		if ($object=='guest') {
 			$my_control='';
+			$my_caselist_control='';
 		}
 		$op .= form_field('text','objectPickerSearchText')
 			. hiddenvar('objectPickerMaxSelect',$max_count) // FIXME: this will break with multiple selectors on one form
 			. $my_control
+//			. $my_caselist_control
 			. button('Search','','','','','class="objectPickerSubmit"');
 	} elseif ($method=='Pick') {
 		$op .= selectto('objectPickerPickList',$obj_opt )
