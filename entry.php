@@ -50,21 +50,23 @@ function last_entry_f($clientid, $java=false) {
 	return 'Last Entry' . $location . $link;
 }
 
-function show_pick_entry($locations,$prefs)
+function show_pick_entry($locations,$default)
 {
 	$entry_locations = array();
 	foreach ($locations as $key => $label) {
-		$default = !be_null($prefs['entry_location'][$key]);
-		$entry_locations[] = span(formcheck('entry_location['.$key.']',$default) . ' ' . $label
-						  ,'class="checkBoxSet"');
+//		$default = !be_null($prefs['entry_location'][$key]);
+//		$entry_locations[] = span(formcheck('entry_location['.$key.']',$default) . ' ' . $label
+//						  ,'class="checkBoxSet"');
+		$entry_locations[] = span(formradio('entry_location',$key,($key==$default)) . ' ' . $label
+						  ,'class="radioButtonSet"');
 	}
 	$output =
-		oline(bold('Select Entry Location(s)'))
+		oline(bold('Select Entry Location'))
 		. formto($_SERVER['PHP_SELF'])
 		. span(implode(oline(),$entry_locations),'class="checkBoxGroup"')
 		. hiddenvar('action','change_locations')
 		. oline()
-		. button('View','SUBMIT') 
+		. button('Select','SUBMIT') 
 		. formend();
 	return $output;
 }

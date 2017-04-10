@@ -41,13 +41,6 @@ $def=get_def('entry');
 $ev_def=get_def('entry_visitor');
 $ef_def=get_def(AG_MAIN_OBJECT_DB);
 
-// If one entry location exists, this will pick it up
-// FIXME: if multiple locations, no way to determine which one
-// or needs to be set via local data
-
-$temp=$def['fields']['entry_location_code']['lookup'];
-$this_entry_location=sql_assign('SELECT ' . $temp['value_field'] . ' FROM ' . $temp['table'] . ' WHERE is_current LIMIT 1');
-
 $c_req=$_REQUEST['control'];
 if (!is_array($c_req)) {
     $c_req = unserialize_control($c_req);
@@ -74,7 +67,12 @@ foreach (array_keys($AG_ENTRY_LOCATIONS) as $tmp_key) {
 $USER_PREFS = $AG_USER_OPTION->get_option('ENTRY_DISPLAY_OPTIONS'); //get entry prefs
 $USER_PREFS['entry_location'] = orr($_REQUEST['entry_location'],$USER_PREFS['entry_location'],$tmp_entry_defaults);
 $AG_USER_OPTION->set_option('ENTRY_DISPLAY_OPTIONS',$USER_PREFS); //set entry prefs - if changed
-
+$this_entry_location=$USER_PREFS['entry_location'];
+if (!$this_entry_location) {
+	$temp=$def['fields']['entry_location_code']['lookup'];
+	$this_entry_location=sql_assign('SELECT ' . $temp['value_field'] . ' FROM ' . $temp['table'] . ' WHERE is_current LIMIT 1');
+}
+$this_entry_location_label=$AG_ENTRY_LOCATIONS[$this_entry_location];
 if (isset($_REQUEST['enterClientUndo'])) {
 	// Delete most recent post
 	$d_c=$_REQUEST['enterClientUndo'];
@@ -247,8 +245,8 @@ if (is_enabled('entry_visitor')) {
 $entries=call_engine($control,'',true,false,$DUMMY,&$PERMISSION);
 //$title = 'Viewing ' . ucfirst($def['plural']) . ' for ' . implode(', ',array_keys($USER_PREFS['entry_location']));
 //$title = 'Viewing Front Door ' . ucfirst($def['plural']);
-$title = 'Welcome to ' . org_name();
-$commands=array(cell(show_pick_entry($AG_ENTRY_LOCATIONS,$USER_PREFS),'class="pick"'));
+$title = 'Welcome to ' . org_name() . ' ('.$this_entry_location_label.')';
+$commands=array(cell(show_pick_entry($AG_ENTRY_LOCATIONS,$USER_PREFS['entry_location']),'class="pick"'));
 agency_top_header($commands);	
 $out .= html_heading_1($title)
 	. ($post_result ? div($post_result,'','id="postClientResult"') : '')
