@@ -509,6 +509,12 @@ function housing_project_from_unit($unit) {
 
 }
 
+function client_id_from_unit($unit) {
+
+	return array_fetch_column(get_generic(array('housing_unit_code'=>$unit),NULL,NULL,'residence_own_current'),'client_id');
+
+}
+
 function client_housing_unit($cid) {
 
 	return call_sql_function('last_residence_own_unit',$cid);
