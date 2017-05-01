@@ -32,6 +32,7 @@
 \i functions/create.multi_occupancy_functions.sql
 \i housing/create.tbl_residence_own.sql
 \i housing/create.view.residence_own.sql
+\i housing/create.view.residence_own_current.sql
 
 /* joint view combining both residence tables */
 \i housing/create.view.housing_history.sql
