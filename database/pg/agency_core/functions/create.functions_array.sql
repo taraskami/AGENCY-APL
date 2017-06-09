@@ -73,3 +73,7 @@ CREATE OR REPLACE FUNCTION lookup_value(text,text) RETURNS text AS '
 
 	return $description
 ' LANGUAGE pltcl STABLE;
+
+CREATE OR REPLACE FUNCTION array_sort(anyarray) RETURNS anyarray AS $$
+  SELECT ARRAY(SELECT unnest($1) ORDER BY 1)
+$$ LANGUAGE sql IMMUTABLE;
