@@ -1041,7 +1041,10 @@ function engine($control='',$control_array_variable='control')
 			$act_record[$k]=dewebify($v);
 		}
 		if ($step=='confirm_pass' || ($step==($action.'_confirmed'))) { //foil fakers trying to bypass password
-			if ($passed_password && (valid_generic($act_record,$def,$message,$action))) {
+			//For void/delete, I don't think there's any need to validate the record
+			// And this was causing problems, so I'm commenting it out
+			//if ($passed_password && (valid_generic($act_record,$def,$message,$action))) {
+			if ($passed_password) {
 				$step=$action.'_confirmed';
 			} else {
 				$message .= (!$passed_password ? oline(red('Incorrect password for ' . staff_link($GLOBALS['UID']) ) ) : '');
