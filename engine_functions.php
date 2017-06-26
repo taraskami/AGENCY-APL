@@ -2667,12 +2667,14 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 	    if ($val = $fields[$key]['valid']) {
 		    $x=$value;  
 		    $ox = $rec_last[$key];
+			$x_f = value_generic($x,$def,$key,$action,true,$rec);
+			$ox_f = value_generic($ox,$def,$key,$action,true,$rec_last);
 		    // field can have multiple tests and multiple messages to display
 		    foreach ($val as $test => $msg) {
 			    if (!eval( "return $test;" )) {
 				    $mesg .= empty($msg) 
 					    ? oline("Field $label has an invalid value.")
-					    : oline(str_replace(array('{$Y}','{$x}'),array($label,$x),$msg));
+					    : oline(str_replace(array('{$Y}','{$x}','{$ox}','{$x_f}','${ox_f}'),array($label,$x,$ox,$x_f,$ox_f),$msg));
 				    $valid=false;
 			    }
 		    }
@@ -2681,12 +2683,14 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 	    if ($val = $fields[$key]['invalid']) {
 		    $x=$value;  
 		    $ox = $rec_last[$key];
+			$x_f = value_generic($x,$def,$key,$action,true,$rec);
+			$ox_f = value_generic($ox,$def,$key,$action,true,$rec_last);
 		    // field can have multiple tests and multiple messages to display
 		    foreach ($val as $test => $msg) {
 			    if (eval( "return $test;" )) {
 				    $mesg .= empty($msg) 
 					    ? oline("Field $label has an invalid value.")
-					    : oline(str_replace(array('{$Y}','{$x}'),array($label,$x),$msg));
+					    : oline(str_replace(array('{$Y}','{$x}','{$ox}','{$x_f}','${ox_f}'),array($label,$x,$ox,$x_f,$ox_f),$msg));
 				    $valid=false;
 			    }
 		    }
