@@ -47,8 +47,12 @@ define('AG_POSTGRESQL_MAX_INT',2147483647);
 function sql_query($query,$params=array())
 {
 	global $query_display,$WHICH_DB;
+	static $query_count = 0;
+	static $query_count_logged = 0;
+	$query_count++;
 	if ($query_display) {
-		$string="Querying ($WHICH_DB) with $query";
+		$query_count_logged++;
+		$string="Querying ($WHICH_DB) with $query. $query_count queries, $query_count_logged displayed.";
 		out( ($GLOBALS['MODE']=='TEXT')
 			? $string
 			: div(webify($string),'',' class="sqlCode"'));
