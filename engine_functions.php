@@ -2232,7 +2232,18 @@ function form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec,$formvar
 {
 
 	$field = form_field_generic($key,$value,$def,$control,$Java_Engine,$formvar);
-
+	// Hack, test for skip codes and combine into one row
+	preg_match('/^(.*)(_codes?)?$/',$key,$skip_key);
+	$skip_key=$skip_key[1].'_skip_code';
+	if (array_key_exists($skip_key,$def['fields'])) {
+		$skip_field=form_field_generic($skip_key,$rec[$skip_key],$def,$control,$Java_Engine,$formvar);
+		$field=table_blank(row(cell($field).cell("OR") . cell($skip_field)),NULL,'class="embeddedTable"');
+	} elseif (preg_match('/^(.*)(_skip_code)$/',$key,$skip_key)) {
+		$skip_keys=array($skip_key[1],$skip_key[1].'_code',$skip_key[1].'_codes');
+		if (count(array_intersect($skip_keys,array_keys($def['fields']))) > 0) {
+		return '';
+		}
+	}
       //FORMAT LABEL
 	$action = $control['action'];
       $pr=$def['fields'][$key];
@@ -2614,7 +2625,14 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 			   and !sql_lookup_value_exists($value,$pr['lookup']['table'],$pr['lookup']['value_field']) and !be_null($value)) {
 		    $mesg .= oline("Field $label has an unknown value");
 		    $valid = false;
-	    } 
+	    } elseif ( (($skip_test=NULL) or true) and be_null($value) and preg_match('/^(.*)(_codes?)?$/',$key,$skip_test) and ( array_key_exists($skip_test[1].'_skip_code',$rec)) and be_null($rec[$skip_test[1].'_skip_code'])) {
+			$mesg .= oline("Must choose $label or enter a skip code");
+			$valid = false;
+//if ($GLOBALS['UID']==2) { $mesg .= blue(oline(dump_array($rec))); }
+	    } elseif ( (($skip_test=NULL) or true) and (!be_null($value)) and preg_match('/^(.*)(_codes?)?$/',$key,$skip_test) and ( array_key_exists($skip_test[1].'_skip_code',$rec)) and (!be_null($rec[$skip_test[1].'_skip_code']))) {
+			$mesg .= oline("Cannot enter both $label and a skip code");
+			$valid = false;
+		}
 
 	    //maximum length
 	    if (!is_array($value) and strlen($value) > AG_MAXIMUM_STRING_LENGTH) {
