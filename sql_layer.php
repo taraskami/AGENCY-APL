@@ -215,6 +215,9 @@ function sql_metadata($table)
 				$b['data_type'] = 'time'.$matches[1]; //time or timestamp
 				$b['timezone']  = $matches[3] !== 'out';
 
+			} elseif (in_array($type,array('json','jsonb'))) {
+				// FIXME: handling json/b as TEXT for now.  Is this good enough?
+				$b['data_type'] = 'text';
 			} elseif (false) { 
 
 				//for reltime, abstime
