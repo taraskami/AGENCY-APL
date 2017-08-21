@@ -48,9 +48,15 @@ $a = array_keys($c_def['fields']);
 $table = $f_def['lookup']['table'];
 $lookup_field = $f_def['lookup']['value_field'];
 $order=is_array($multi['other_codes']) ? implode($multi['other_codes'],"','") : '';			
+$order="$lookup_field IN ('$order'), description";
+$order=orr($multi['sel_order'],$order);
+$order = ($order and ($order!='TABLE_ORDER')) ? "ORDER BY $order" : '';
 $sql=orr($multi['sel_sql'],"SELECT * FROM $table");
-$codes=agency_query("$sql ORDER BY $lookup_field IN ('$order'), description"); 
-//$template_rec=blank_generic($c_def,array(),$dummy_control);
+$codes=agency_query("$sql $order");
+$template_rec=blank_generic($c_def,array(),$dummy_control);
+// This is a hack to this crap, and the way the checkboxes are being munged into this weird multi_field
+$template_rec[$multi_fields]=NULL;
+
 while ($item=sql_fetch_assoc($codes)) {
 	$code=$item[$lookup_field];
 	$fake_field = "multi_{$child_object}_multi_$code";
@@ -100,6 +106,7 @@ function add_generics_fields($def,$child_object)
 							"multi_field"=>$multi_fields,
 							"multi_type"=>'boolean',
 							'multi_format'=>$format,
+							'default'=>$f_def['default'],
 							'null_ok'=>sql_true($f_def['null_ok']));
 	}
 	if ($multi['confirm_none']) {
@@ -123,24 +130,48 @@ function valid_generics($action,$big_rec,&$def,&$mesg,&$valid,$child_object)
 	foreach($big_rec as $key=>$rec) {
 		if (!($def['fields'][$key]['data_type']=='array') and is_array($rec) && $key !== "multi_{$child_object}_multi_no_multi_records") {
 			$any_subs = $any_subs ? true : sql_true($rec[$multi_fields]);
-			foreach($rec as $skey=>$value) {
-				if ( ($val=$subdef['fields'][$skey]['valid']) && sql_true($rec[$multi_fields])) {
-					$x=$value;  
-					// field can have multiple tests and multiple messages to display
-					foreach ($val as $test => $msg)  
-					{
-						if (!eval( "return $test;" ))
-						{
-							$mesg .= empty($msg) 
-								? oline("Field $label has an invalid value.")
-								: oline(str_replace('{$Y}',$label,$msg));
-							$valid=false;
-							$def['fields'][$key]['not_valid_flag']=true;
-						}
+			if (sql_true($rec[$multi_fields])) {
+				// FIXME: this came up for validating service_activity records, which need field (service_by) from parent service_reach
+				// which wasn't available of course in $rec.
+				// I tried this $tmp_rec=array_replace_recursive($big_rec,$rec);
+				// But it then complained about required fields being missing.
+				// We could tweak that away by adding null_oks in the $subdef
+
+				// Another option is to have some kind of 'inherits' option in the config file
+				// which would add certain fields to the rec.  You'd probably still need to tweak the $subdef
+
+				// For now I just munged it in by passing through $rec_last
+
+				// This will be a problem if the validity also relied on $rec_last
+				// Although for adds there will never be one.
+				// But the validity might still want it for edits.
+
+				$tmp_rec=$rec;
+				foreach ($tmp_rec as $skey=>$value) {
+					$subdef['fields'][$skey]['not_valid_flag']=false;
+				// this terrible bit of code is borrowed from post_generics
+				// Need to fill in certain fields for validity checking
+				// that are absent until posting
+				// It will fail for that awful info_additional stuff
+					if ($skey==$multi_fields and stristr($skey,'_date')) {
+						$tmp_rec[$skey]=dateof('now','SQL');
+					}
+				}
+				if (array_key_exists($def['id_field'],$subdef['fields'])) {
+					//if (be_null($rec[$def['id_field']])) {
+					if (sql_true(orr($rec[$def['id_field']],sql_true()))) {
+						$subdef['fields'][$def['id_field']]['null_ok']=true;
+					} else {
+						$tmp_rec[$def['id_field']]=$big_rec[$def['id_field']];
+					}
+				}
+				$valid=valid_generic($tmp_rec,$subdef,$mesg,$action,$big_rec); // Munging pass $big_rec as $rec_last
+				foreach ($tmp_rec as $skey=>$value) {
+					if ($subdef['fields'][$skey]['not_valid_flag']) {
+						$def['fields'][$key]['not_valid_flag']=true;
 					}
 				}
 			}
-			//if ( (be_null($rec[$multi_fields]) or (
 			if ( ( ($def['fields'][$key]['multi_format']=='radio' and be_null($rec[$multi_fields]))
 				or ($def['fields'][$key]['multi_format']=='checkbox' and ~!sql_true($rec[$multi_fields])))
 				and (!$subdef['fields'][$key]['null_ok']===true)) {
@@ -186,18 +217,32 @@ function form_generics_row_header($key,$rec,$def) {
 		}
 	}
 	foreach ($sub_rec as $k=>$v) {
-		if (in_array($k,$fields)) {
-			$labels[]=label_generic($k,$child_def,'add');
+		if ($k=='service_site_manual_other') {
+			$skip=true;
+		} else {
+			$skip=false;
+		}
+		if ($skip) {
+			continue;
+		}
+		if (in_array($k,$fields) or ($k==$c_def['field'])) {
+			$labels[]=label_generic($k,$child_def,'add') . (($q=$child_def['fields'][$k]['comment']) ? oline() . span(smaller(italic($q))) : '');
 		}
 	}
-	array_unshift($labels,''); // Blank header for multi_field
+	//array_unshift($labels,''); // Blank header for multi_field
 	array_unshift($labels,''); // Blank header for checkbox
 	return header_row($labels);
 }
 
 function form_generics_row($key,$rec,$def,$child_object)
 {
+	static $group_last;
+	static $object_last;
 
+	if ($object_last!=$child_object) {
+		$object_last=$child_object;
+		$group_last='';
+	}
 	$c_def = get_def($child_object);
 	$multi=$def['multi'][$child_object];    
 	$multi_fields=$multi['multi_fields'];
@@ -209,8 +254,28 @@ function form_generics_row($key,$rec,$def,$child_object)
 		$label = span($label,'class="engineFormError"');
 	}
 	$comment_field=$c_def['fields'][$user_field]['require_comment_field'];
+	if (($group_field=$c_def['fields'][$user_field]['lookup_group'])) {
+		$group_lookup=$c_def['fields'][$user_field]['lookup'];
+		$group_table=$group_lookup['table'];
+		$group_value_field=$group_lookup['value_field'];
+		$group=sql_assign("SELECT $group_field FROM $group_table",array($user_field=>$sub));
+		if ($group_last!=$group) {
+			$group_content=bold($group);
+			$group_last=$group;
+		}
+	}
+	$col_count=0;
 	foreach($rec as $key=>$value) {
-		if (in_array($key,array($multi_fields,$comment_field))) {
+//		if (in_array($key,array($multi_fields,$comment_field))) {
+		if (in_array($key,array($multi_fields))) {
+			continue;
+		}
+		if ($key=='service_site_manual_other') {
+			$is_other_field=true;
+		} else {
+			$is_other_field=false;
+		}
+		if ($is_other_field) { 
 			continue;
 		}
 		if (in_array($value,$c_def['fields'][$user_field]['require_comment_codes'])) {
@@ -221,7 +286,17 @@ function form_generics_row($key,$rec,$def,$child_object)
 		}
 		$label.=$comment;
 		if (in_array($key,$multi['visible_fields'])) {
-			$additional[]=cell(form_field_generic($key,$rec[$key],$c_def,$control,$Java_Engine,"rec[$sub2]").$comment); // FIXME: control?
+			if (($key=='service_site_manual_code') and in_array('service_site_manual_other',$multi['visible_fields'])) {
+				$other='service_site_manual_other';
+				$other_f=form_field_generic($other,$rec[$other],$c_def,$control,$Java_Engine,"rec[$sub2]");
+				$other_f = oline() . $other_f;
+			} else {
+				$other_f='';
+			}
+			$class = ($key=='minutes') ? 'class="summableMinutes"' : '';
+			$additional[]=cell(form_field_generic($key,$rec[$key],$c_def,$control,$Java_Engine,"rec[$sub2]").$comment . $other_f,$class); // FIXME: control?
+			$col_count++;
+
 		} elseif ($key==$multi_fields) {
 			switch ($def['fields'][$sub2]['multi_format']) {
 				case 'radio' :
@@ -230,9 +305,11 @@ function form_generics_row($key,$rec,$def,$child_object)
 						$wipeout = formradio_wipeout("rec[$sub2][$key]");
 					}
 					$additional[] = rightcell($wipeout . yes_no_radio("rec[$sub2][$key]",'',$formval)).leftcell($label);
+					$col_count++;
 					break;
 				default :
 					$additional[] .= rightcell(formcheck("rec[$sub2][$key]",sql_true($value))).leftcell($label);
+					$col_count++;
 			}
 		} elseif (in_array($key,$multi['visible_fields_conditional'][$sub])) {
 			//$extra[]=rightcell($key).leftcell(form_field_generic($key,$rec[$key],$c_def,$control,$Java_Engine,"rec[$sub2]"));
@@ -252,6 +329,7 @@ function form_generics_row($key,$rec,$def,$child_object)
 		$span=count($multi['visible_fields']);
 		$out.=row(topcell(italic(bold('Additional Information for '.$label)),'colspan="2"').cell(table(implode('',$extra)),'colspan="'.$span.'"'),'class="AdditionalInformation"');
 	}
+	$out = $group_content ? row(cell($group_content,'colspan='.$col_count)) . $out : $out;
 	return $out;
 }
 

@@ -1838,7 +1838,20 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 		  //this stuff is so far removed from engine now, it is becoming a pain to keep it in sync w/ functionality
 		  //thus I am de-genericizing it:
 		  preg_match('/^multi_(.*)_multi_(.*)$/',$key,$matches);
-          $multi_out[$matches[1]] .= be_null($sub_value) ? '' : rowrlcell($fields[$key]['label_add'],$sub_value);
+		  
+          if (!be_null($sub_value)) {
+			//$multi_out[$matches[1]] .= rightcell($fields[$key]['label_add'],$sub_value);
+			//$multi_view_rec=array($fields[$key]['label_add']);
+			$mul_def=get_def($matches[1]);
+			$mul_fields=$def['multi'][$matches[1]]['visible_fields'];
+			$multi_view_rec[$matches[1]]=$matches[2];
+			foreach($mul_fields as $x) {
+		  		$sub_value = $value[$x];
+				$multi_view_rec[$x]=value_generic($sub_value,$mul_def,$x,'add',false);
+			}
+			$multi_out[$matches[1]][]=$multi_view_rec;
+			$multi_view_rec=array();
+		}
 	    } else {
 		  // EVALUATE $value
 		  $x=$value;
@@ -1885,9 +1898,12 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 			foreach($multi_out as $k=>$v) {
 	    		$out .= oline() . bigger(bold(oline(orr($def['multi'][$k]['sub_title'],''))))
 						. $def['multi'][$k]['sub_sub_title']
+						. array_to_table($v,'class="engineForm"');
+/*
 						. tablestart('','class="engineForm"')
 					   . $v
 					   . tableend();
+*/
 			}
 		}
 		if (!$def['show_blank_rows']) {
@@ -2386,8 +2402,13 @@ function form_generic($rec,$def,$control)
 			$value = eval('return '. $fields[$key]['value_'.$action].';');
 			$out .= $def['fn']['view_row']($key,$value,$def,$action,$rec);
 		} elseif ($disp=='multi_disp') {
-			preg_match('/^multi_(.*?)_multi_(.*)$/',$key,$matches);
-			$multi_out[$matches[1]] .= $def['multi'][$matches[1]]['form_row_fn']($key,$value,$def,$matches[1]);
+			// hack for REACH services
+			if ( ($def['object']!='service_reach')) {
+				preg_match('/^multi_(.*?)_multi_(.*)$/',$key,$matches);
+				$m_code=$matches[2];
+				$m_obj=$matches[1];
+				$multi_out[$m_obj] .= $def['multi'][$m_obj]['form_row_fn']($key,$value,$def,$matches[1]);
+			}
 		} else {
 			$out .= $def['fn']['form_row']($key,$value,$def,$control,$Java_Engine,$rec);
 		}
@@ -2398,15 +2419,17 @@ function form_generic($rec,$def,$control)
 	  $out .= tableend();
 		if ($multi_out) {
 			foreach($multi_out as $key=>$multi) {
-				$out .= oline() . bigger(bold(oline(orr($def['multi'][$key]['sub_title'],'')))) . $def['multi'][$key]['sub_sub_title']
+				$m_out = oline() . bigger(bold(oline(orr($def['multi'][$key]['sub_title'],'')))) . $def['multi'][$key]['sub_sub_title']
 		     . tablestart('','class="engineForm multiForm"')
 		     . '<thead>'.$def['multi'][$key]['form_row_header_fn']($key,$rec,$def).'</thead>'
 		     . $multi
 		     . tableend();
+			$out.=div($m_out,'','class="multiFormDiv multiFormDiv' . $key . '"');
 			}
 		}
 		$GLOBALS['AG_HEAD_TAG'].=$Java_Engine->get_javascript();
 		return $out;
+//		return div($out,'','class="multiFormDiv"');
 }
 function system_fields_f($rec,$def,$control,&$important_header='',&$JAVA_ENGINE=NULL,$skip_view_links=false) {
 
