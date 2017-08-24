@@ -643,6 +643,20 @@ function config_object($object)
 		}
       } // End field loop
 	  } // End field_pattern null test
+		if ( ($sql_temp=$config_object['lookup_labels']) ) {
+			// Read any (unset) labels from the database
+			$s_temp=agency_query($sql_temp);
+			while ($f_temp=sql_fetch_assoc($s_temp)) {
+					$fx=$f_temp['field_name'];
+					//if ( array_key_exists($fx,$fields_config_file) and be_null($fields_config_file[$fx]['label']) and (!be_null($f_temp['label']))) {
+					if ( be_null($fields_config_file[$fx]['label']) and (!be_null($f_temp['label']))) {
+						if (!is_array($config_object['fields'][$fx])) {
+							$config_object['fields'][$fx]=array();
+						}
+						$config_object['fields'][$fx]['label']=array_key_exists('wrap_width',$f_temp) ? wordwrap($f_temp['label'],$f_temp['wrap_width'],'<br/>') : $f_temp['label'];
+					}
+			}
+		}
 
       $engine_object_virtual = array_merge(engine_metadata(array_keys($fields_view),array(),$object,$sql_table),
 							 engine_metadata(array_keys($fields_config_file),array(),$object,$sql_table));

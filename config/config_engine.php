@@ -149,6 +149,7 @@ $engine['global_default'] = array(
 				  'list_reverse' => false,
 				  'list_show_totals'=>null,
 				  'list_control_openoffice_button'=>null,
+				  'lookup_labels'=>'engine_label', // Hack.  An SQL expression to look up labels from a table.  ("SELECT field_name,label FROM engine_label WHERE table_name='tbl_membership_info'")
 				  'object_union' => null, //define tables/objects (as an array) on which current object is built
 				  //perm added_below
 				  'parent_js_show'=>null,         //default to loading into page, but hidden via js
