@@ -123,6 +123,10 @@ if ($action == 'set_password') {
 			$msg = alert_mark($msg);
 			$action = 'change_password';
 
+		} elseif (password_check($pass_new,$hash_method,$id,true)) {
+			$msg = alert_mark('You have already used that password.  Pick a different one.');
+			$action = 'change_password';
+
 		} else {
 
 			$msg .= alert_mark( 

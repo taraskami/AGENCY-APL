@@ -71,7 +71,9 @@ function can_change_password( $staff_id,$user_id="" )
 
 }
 
-function password_check($password,$type="",$id="")
+//function password_check($password,$type="",$id="")
+// FIXME: from PHG git update.  Why was $check all and $all_in_array removed upstream, but left in code???
+function password_check($password,$type="",$id="",$check_all=false)
 {
 // Check the supplied password against a user (defaults to current user)
 // Type is the type of the supplied password. Currently MD5 is the only option
@@ -83,12 +85,15 @@ function password_check($password,$type="",$id="")
 
 	$type=orr($type,$AG_AUTH_DEFINITION['DEFAULT_METHOD']);
 	$id=orr($id,$UID);
-	$prec=get_password($id,$type);
+	$prec=get_password($id,$type,$check_all);
 	//outline(webify("Found: $prec.  Supplied $password"));
-	return $prec==$password;
+	return $check_all ? in_array($password,$prec) : ($prec==$password);
 }
 
-function get_password($id = '', $type='')
+
+//function get_password($id = '', $type='')
+// FIXME: from PHG git update.  Why was $check all and $all_in_array removed upstream, but left in code???
+function get_password($id = '', $type='',$all_in_array=false)
 {
 	// FIXME: for now, this will remain it's own function since it works in methods other than md5
 	// Auth::get_user_password() only returns md5'ed values (fairly easy fix though)
@@ -99,11 +104,16 @@ function get_password($id = '', $type='')
 
 	$def =& $AG_AUTH_DEFINITION;
 
-	$password_table = $def['VIEW']; //don't need to access tbl here
+	$password_table = $all_in_array ? 'staff_password' : 'staff_password_current';
 	$password_field = $def['USE_MD5'] ? $def['PASSWORD_MD5_FIELD'] : $def['PASSWORD_FIELD'];
-
 	$rec=agency_query("SELECT $password_field FROM $password_table",
 					array("staff_id"=>$id));
+	if ($all_in_array) {
+		while ($x=sql_fetch_assoc($rec)) {
+			$passes[]=$x[$password_field];
+		}
+		return $passes;
+	}
 	if (sql_num_rows($rec) <> 1)
 	{
 		return false;
@@ -161,46 +171,23 @@ function password_set($new_pass,$type,$id)
 
 	}
 
-	$filter=array('staff_id'   => $id,
-			  'is_deleted' => sql_false());
-
 	$new_vals = array($password_field    => $new_pass, 
+				'staff_id'		   => $id,
 				'changed_by'       => $UID,
 				'added_by'         => $UID,
 				'FIELD:changed_at' => 'CURRENT_TIMESTAMP');
 
 	$count=sql_num_rows(agency_query("SELECT $password_field FROM $password_table",$filter));
 
-	if ($count > 1) {
-
-		log_error("Found $count password records for $id");
-		return false;
-
+	$max=sql_assign('SELECT password_retention_count FROM config_staff_password_current');
+	if ($count > $max) {
+		//log_error("Found $count password records for $id");
+		alert_mark("Warning: Found $count password records for $id");
+		//return false;
 	}
 
-	$staff_password_def = get_def('staff_password');
-
-	if ($count==0) {
-
-		/*
-		 * Brand new password
-		 */
-
-		$new_vals['staff_id'] = $id;
-		$result = agency_query(sql_insert($password_table,$new_vals));
-
-	} else {
-
-		/*
-		 * Changing password
-		 */
-
-		unset($new_vals['added_by']);
-		$result = agency_query(sql_update($password_table,$new_vals,$filter));
-
-	}
-
-	return $result;
+	$new_vals['staff_id'] = $id;
+	return agency_query(sql_insert($password_table,$new_vals));
 }
 
 function is_secure_password($password,$username=false,&$mesg)
@@ -342,6 +329,34 @@ function http_authenticate()
     {
          return $UID;
     }
+}
+
+function get_password_expires_info( $id ) {
+	$filter=array('staff_id'=>orr($id,$GLOBALS['UID']));
+	return sql_fetch_assoc(agency_query('SELECT staff_password_date_end,expiration_warn_on FROM staff_password_current',$filter));
+}
+
+function password_expires_on( $id ) {
+	$info=get_password_expires_info($id);
+	return dateof($info['staff_password_date_end'],'SQL');
+}
+
+function password_expires_on_f( $id, $format_warning=false ) {
+	$info = get_password_expires_info( $id );
+	$exp=$info['staff_password_date_end'];
+	$warn=$info['expiration_warn_on'];
+	$msg = $exp
+			? 'Expires on ' . dateof($exp)
+			: 'Does not expire'
+			;
+	if (!$format_warning) {
+		return $msg;
+	}
+	if ($exp and $warn and ( dateof($warn,'SQL') <= dateof('now','SQL') ) ) {
+		$msg = 'Your Password ' . $msg . ' (' . link_password_change($id,'Change now') . ')';
+		return $msg;
+	}
+	return ''; 
 }
 
 ?>

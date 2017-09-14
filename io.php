@@ -2344,6 +2344,15 @@ function show_top_nav( $firstcell="",$cells="",$auth='')
 	if (db_read_only_mode()) {
 		$AG_AGENCY_ADVISORY = oline('Database is in <em>read-only</em> mode for maintenance. Adding or Changing Data will not work.') . $AG_AGENCY_ADVISORY;
 	}
+
+	/*
+	 * Password Expiration Warning
+	 */
+	$pc=password_expires_on_f($GLOBALS['UID'],true);
+	if ($pc) {
+		$AG_AGENCY_ADVISORY = oline($pc) . $AG_AGENCY_ADVISORY;
+	}
+
     if (!be_null($AG_AGENCY_ADVISORY)) {
          $cell_count = $cell_count+3;
          $style = orr($AG_AGENCY_ADVISORY_STYLE,'background-color: #faa; border: solid 1px #333; margin-top: 2px;');

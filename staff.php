@@ -254,7 +254,7 @@ function view_staff( $staff,$def='',$action='',$control='',$control_array_variab
 			  .    ($supervisees ? rowrlcell('Supervises:',$supervisees) : '')
 			  .    (($tmp_sl = staff_language_f($staff['staff_id'])) ? rowrlcell('Language(s):',$tmp_sl) : '')
 			  // Password and options
-			  .	 rowrlcell('Password:',link_password_change($id))
+			  .	 rowrlcell('Password:',password_expires_on_f() . oline() . link_password_change($id))
 			  // Remote access password strength
 			  . ($remote_access 
 			     ? rowrlcell('Remote Access:', $remote_access)

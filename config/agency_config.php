@@ -150,7 +150,7 @@ array(
       'EXPIRE' => 60, //authorization expires after 60 minutes of inactivity
 
       'TABLE' => 'tbl_staff_password',
-      'VIEW' => 'staff_password',
+      'VIEW' => 'staff_password_current',
       'USERNAME_FIELD' => 'username',
       'PASSWORD_FIELD' => 'staff_password',
 	'PASSWORD_MD5_FIELD' => 'staff_password_md5',
