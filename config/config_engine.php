@@ -163,7 +163,7 @@ $engine['global_default'] = array(
 				  'require_delete_reason' => true,   // only if delete_reason_code exists in table
 				  'require_void_comment' => true,    //will force a comment to be entered when voiding a record
 				  'require_void_reason' => true,   // only if void_reason_code exists in table
-				  'require_password' => true,
+				  'require_password' => false,
 				  'sel_sql' => null,
 
 				  'single_active_record' => null, //"only one open" functionality (income, residence_own etc)
@@ -189,7 +189,7 @@ $engine['global_default'] = array(
 				  'allow_list' => true,
 				  'allow_view' => true,
 				  'allow_download' => true,
-				  'allow_skip_confirm' => false, // If add/edit record has no confirmation warnings, post directly without review
+				  'allow_skip_confirm' => true, // If add/edit record has no confirmation warnings, post directly without review
 				  //'label_format' => '$x',
 				  //'value_format' => 'bold($x)', redundant!!
 				  //title added below
@@ -387,7 +387,6 @@ $engine['system_fields'] = array(
 						       'display_view' => 'hide',
 						       'display_list' => 'hide',
 						       'null_ok' => true,
-						       'default' => '$GLOBALS["UID"]',
 						       'post_add' => false,
 						       'post_edit' => false,
 						       'post_delete' => true,
