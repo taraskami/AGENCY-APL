@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION process_staff_password() RETURNS TRIGGER AS $$
 			RAISE NOTICE 'End date for new record: %',NEW.staff_password_date_end;
 		END IF;
 		-- Delete old passwords
-		DELETE FROM tbl_staff_password tsp WHERE staff_password_id != NEW.staff_password_id AND staff_id=NEW.staff_id AND (NOT staff_password_id IN (SELECT staff_password_id FROM tbl_staff_password tsp2 WHERE tsp.staff_id=tsp2.staff_id ORDER BY staff_password_date DESC,added_at DESC LIMIT (pass_config.password_retention_count-CASE WHEN TG_OP='INSERT' THEN 1 ELSE 0 END)));
+		DELETE FROM tbl_staff_password tsp WHERE staff_password_id != NEW.staff_password_id AND staff_id=NEW.staff_id AND (NOT staff_password_id IN (SELECT staff_password_id FROM tbl_staff_password tsp2 WHERE tsp.staff_id=tsp2.staff_id ORDER BY staff_password_date DESC,added_at DESC LIMIT int4larger(0,(pass_config.password_retention_count-CASE WHEN TG_OP='INSERT' THEN 1 ELSE 0 END))));
 		-- Adjust end date of old record, if necessary
 		IF (overlap.staff_password_id IS NOT NULL) THEN
 			RAISE NOTICE 'new end date: %',date_larger(NEW.staff_password_date-1,overlap.staff_password_date);
