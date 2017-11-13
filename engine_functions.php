@@ -2973,10 +2973,15 @@ function post_generic($rec,$def,&$mesg,$filter='',$control=array())
 	    if (!$fields[$key]['post_'.$action]) {
 		  unset($rec[$key]);
 	    }
-	    if ($fields[$key]['append_only'] && !be_null($control['rec_last'][$key])) {
-
-		    $rec[$key] = trim($control['rec_last'][$key]) . "\n" . $rec[$key];
-
+	    if ($fields[$key]['append_only']) {
+			if ( ($action=='add')) {
+				if (!be_null($control['rec_last'][$key])) {
+		    		$rec[$key] = trim($control['rec_last'][$key]) . "\n" . $rec[$key];
+				}
+			} else {
+				unset($rec[$key]);
+				$rec["FIELD:$key"]="COALESCE($key||E'\n','')||".sql_escape_literal($value);
+			}
 	    }
 
 	    
