@@ -400,6 +400,17 @@ function report_generate($report,&$msg)
 			  case 'CHART' :
 			     //FIXME: implement
 			    break;
+			  case 'PIVOT' :
+			    foreach ($sql[$rbs] as $s ) {
+					if (!($result=sql_query($s)) ) {
+						$out['results'][]=$report['message_if_error'];
+					} elseif (sql_num_rows($result)==0) {
+						 $out['results'][]=$report['message_if_empty'];
+			      } else {
+						$out['results'][]=pivot_encode($result);
+				  }	
+			    }
+			    break;
 			  case 'TABLE' :
 			  default:
 		      $control['sql_pre']= $sql['sql_pre'];
@@ -415,6 +426,7 @@ function report_generate($report,&$msg)
 			}
 			// Supress at end, so any queries are still run
 //outline(dump_array($sql));
+			$out[$rb.'_type_code']=$sql[$rb.'_type_code'];
 			if (!in_array('O_SCREEN',$sql['suppress_output_codes'])) {
 				$outs[]=$out;
 			}
@@ -423,7 +435,7 @@ function report_generate($report,&$msg)
 		$out=array();
 		$c='reportOutput';
 		foreach ($outs as $o) {
-			$css_class = ' ' . $report['css_class'];
+			$css_class = ' ' . $report['css_class'] . ' ' . $c.ucfirst(strtolower($o['report_block_type_code'])).' ';
 			$css_id = $report['css_id'];
 			$out[]= div(
 					($o[$rb.'_title'] ? div($o[$rb.'_title'],'','class="' .$c.'Title"') : '')

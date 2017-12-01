@@ -16,6 +16,7 @@ CREATE TABLE tbl_l_report_block_type (
 );
 
 INSERT INTO tbl_l_report_block_type VALUES ('TABLE','Table',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_report_block_type VALUES ('PIVOT','Dynamic Pivot/Crosstab/Chart',sys_user(),current_timestamp,sys_user(),current_timestamp);
 
 CREATE VIEW l_report_block_type AS (SELECT * FROM tbl_l_report_block_type WHERE NOT is_deleted);
 

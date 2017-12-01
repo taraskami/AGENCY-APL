@@ -290,6 +290,7 @@ a.calTodayLink,a.calNowLink { font-size: 65%; vertical-align: bottom; }
 /* reports */
 .reportHeader, .reportFooter { background-color: #afefaf; }
 .reportOutput { background-color: #DEEEFF; padding-bottom: 10px; margin-bottom: 20px; }
+.reportOutputPivot { background-color: #FFBBEE; }
 .reportOutputTitle { font-size: 120%; font-weight: bold; padding: 10px; padding-bottom: 2px; }
 .reportOutputHeader { font-size: 100%; padding: 16px; padding-top: 2px;}
 .reportOutputFooter { font-size: 90%; padding: 8px;}

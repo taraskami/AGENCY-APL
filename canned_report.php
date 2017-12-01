@@ -32,6 +32,9 @@ should be included in this distribution.
 
 $quiet = true;
 include 'includes.php';
+// FIXME: pivot include may need to move elsewhere to support
+// pivots being generated somewhere other than through the report mechanism
+require_once('pivot.php');
 $action = $_REQUEST['action'];
 
 if ($report_id = orr($_REQUEST['report_code'],$_REQUEST['id'],$_REQUEST['report_id'])) {
