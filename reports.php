@@ -344,8 +344,8 @@ function report_generate($report,&$msg)
 	
 	$report['report_title'] = str_replace($pattern_h,$replace_h,$report['report_title']);
 	$report['report_header'] = str_replace($pattern_h,$replace_h,$report['report_header']);
-	$report['report_footer'] = str_replace($pattern_h,$replace_,$report['report_footer']);
-	$report['report_comment'] = str_replace($pattern_h,$replace_,$report['report_comment']);
+	$report['report_footer'] = str_replace($pattern_h,$replace_h,$report['report_footer']);
+	$report['report_comment'] = str_replace($pattern_h,$replace_h,$report['report_comment']);
 
 	$template = orr(report_get_user_var('template',$report['report_code'],'PICK'),'screen');
 	// FIXME: drop this line
