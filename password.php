@@ -333,7 +333,13 @@ function http_authenticate()
 
 function get_password_expires_info( $id ) {
 	$filter=array('staff_id'=>orr($id,$GLOBALS['UID']));
-	return sql_fetch_assoc(agency_query('SELECT staff_password_date_end,expiration_warn_on FROM staff_password_current',$filter));
+	//return sql_fetch_assoc(agency_query('SELECT staff_password_date_end,expiration_warn_on FROM staff_password_current',$filter));
+	if (!($x=sql_fetch_assoc(agency_query('SELECT staff_password_date_end,expiration_warn_on,CASE WHEN COALESCE(staff_password_date_end,current_date)>=current_date THEN \'CURRENT\' ELSE \'EXPIRED\' END AS password_status FROM staff_password',$filter,'staff_password_date DESC',1)))) {
+		return array('has_password'=>false);
+	} else {
+		$x['has_password']=true;
+	}
+	return $x;
 }
 
 function password_expires_on( $id ) {
@@ -345,9 +351,12 @@ function password_expires_on_f( $id, $format_warning=false ) {
 	$info = get_password_expires_info( $id );
 	$exp=$info['staff_password_date_end'];
 	$warn=$info['expiration_warn_on'];
-	$msg = $exp
-			? 'Expires on ' . dateof($exp)
-			: 'Does not expire'
+	$status=$info['password_status']=='CURRENT' ? 'Expires' : 'Expired';
+	$msg = (!$info['has_password']) ? 'No password set'
+			:
+			($exp
+			? "$status on " . dateof($exp)
+			: 'Does not expire')
 			;
 	if (!$format_warning) {
 		return $msg;
