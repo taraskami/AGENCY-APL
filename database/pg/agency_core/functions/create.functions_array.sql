@@ -18,10 +18,19 @@ DECLARE
 	a alias for $1;
 	na alias for $0;
 	count INTEGER;
+	null_flag BOOLEAN;
 BEGIN
+	null_flag := false;
 	count := array_count(a);
 	IF (count > 0) THEN
 		FOR i IN 1..count LOOP
+			IF( a[i] IS NULL) THEN
+				IF NOT null_flag THEN
+					na:=COALESCE(array_append(na,a[i]),ARRAY[a[i]]);
+					null_flag=true;
+				END IF;
+				continue;
+			END IF;
 			na := CASE WHEN na IS NOT NULL AND a[i]=ANY (na) THEN na
 					ELSE COALESCE(array_append(na,a[i]),ARRAY[a[i]]) END;
 		END LOOP;
