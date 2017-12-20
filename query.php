@@ -329,8 +329,15 @@ function object_qs_filter($qs_text,$object=AG_MAIN_OBJECT_DB)
 					$qs_text=sql_escape_string($qs_text);
 					foreach ($qdef['match_fields_custom'] as $mc_k=>$mc_v) {
 						// $x in custom field string will be replaced with qs_text
-						if (preg_match($mc_k,$qs_text)) {
-							$filter[]=array(str_replace('$x',$qs_text,key($mc_v))=>str_replace('$x',$qs_text,$mc_v[key($mc_v)]));
+						if (preg_match($mc_k,$qs_text,$matches)) {
+							$search=array('$x','$UID');
+							$replace=array($qs_text,$GLOBALS['UID']);
+							for( $x=0; $x<count($matches); $x++) {								
+								$search[]='$m'.$x;
+								$replace[]=$matches[$x];
+
+							}
+							$filter[]=array(str_replace($search,$replace,key($mc_v))=>str_replace($search,$replace,$mc_v[key($mc_v)]));
 							break;
 						}
 					}
