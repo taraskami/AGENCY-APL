@@ -969,13 +969,17 @@ function staff_supervisor_transfer_form($sid)
 	global $AG_AUTH, $UID;
 
 	$action         = $_REQUEST['sstrans'];
-	$new_supervisor = $_REQUEST['sstrans_new_id'];
+	$new_supervisor = (int) $_REQUEST['sstrans_new_id'];
+	$perm = 'admin';
 
 	$anchor = 'supervisees';
 
 	switch ($action) {
 
 	case 'post' :
+		if (!has_perm($perm)) {
+			return red('No permission for transferring supervisees');
+		}
 
 		if ($AG_AUTH->reconfirm_password() && is_staff($new_supervisor)) {
 
@@ -1008,6 +1012,9 @@ function staff_supervisor_transfer_form($sid)
 		$message = oline(red('Incorrect password for '.staff_link($UID)));
 
 	case 'confirm' :
+		if (!has_perm($perm)) {
+			return red('No permission for transferring supervisees');
+		}
 
 		if (is_staff($new_supervisor)) {
 
@@ -1027,6 +1034,9 @@ function staff_supervisor_transfer_form($sid)
 		/*
 		 * Return a form
 		 */
+		if (!has_perm($perm)) {
+			return red('No permission for transferring supervisees');
+		}
 
 		return formto(AG_STAFF_PAGE.'#'.$anchor)
 			. hiddenvar('sstrans','confirm')
@@ -1036,7 +1046,7 @@ function staff_supervisor_transfer_form($sid)
 			. formend();
 	default :
 
-		return hlink(AG_STAFF_PAGE.'?id='.$sid.'&sstrans=ini#'.$anchor,'Transfer supervisees');
+		return hlink_if(AG_STAFF_PAGE.'?id='.$sid.'&sstrans=ini#'.$anchor,'Transfer supervisees',has_perm($perm));
 
 	}
 
