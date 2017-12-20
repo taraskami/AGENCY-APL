@@ -10,6 +10,7 @@ preg_match('/^[a-z_]*$/i',$type) or die("Bad type passed");
 preg_match('/^[a-z_ ,0-9()]*$/i',$type) or die("Bad term passed");
 
 $def=get_def($type);
+$order=list_query_order(orr($def['quick_search']['list_order'],$def['list_order']));
 
 if (has_perm($def['perm_view'])) {
 	$alias = (($type==AG_MAIN_OBJECT_DB) and array_key_exists(AG_MAIN_OBJECT_DB,$def['fields']))
@@ -20,7 +21,7 @@ if (has_perm($def['perm_view'])) {
 		? "'XXXXXX'"
 		: $type . '_name('.$type.'_id)';
 	$query='SELECT ' . $def['id_field'] . ' FROM ' . $def['table'];
-	$recs=agency_query($query,$filter,NULL,100);
+	$recs=agency_query($query,$filter,$order,100);
 	while ($x=sql_fetch_assoc($recs)) {
 		$id=$x[$def['id_field']];
 		$results[]=strip_tags(object_label($type,$id) . ' (' . $id. ')');

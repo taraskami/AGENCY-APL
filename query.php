@@ -261,11 +261,14 @@ function object_quick_search($object, $query_string='')
 	// Then do the object-specific search:
 
 	$def=get_def($object);
-	$qdef=$def['quick_search'];
 	$filter=object_qs_filter($query_string,$object);
+	$order=orr($def['quick_search']['list_order'],$def['list_order']);
 	$control = array_merge(array( 'object'=> $object,
 						'action'=>'list',
-						'list'=>array('filter'=>$filter),
+						'list'=>array(
+							'filter'=>$filter,
+							'order'=>$order,
+						),
 						'page'=>'display.php'
 						),
 				     orr($_REQUEST['control'],array()));
