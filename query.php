@@ -242,23 +242,7 @@ function object_quick_search($object, $query_string='')
 {
 	$query_string = strip_tags(orr($query_string,$_REQUEST['QuickSearch']));
 
-	// First do any global QS functions/shortcuts:
-
-	if (preg_match('/^([a-z_]{3,}):([0-9]*)$/i',$query_string,$m)) {
-
-		/*
-		 * Engine Object search of the form {obj}:xxxx
-		 * where {obj} is the name of the object (or the
-		 * first 3 or more characters of the name)
-		 */
-
-		if ($found = search_engine_object($m[1],$m[2])) {
-			return $found;
-		}
-
-	}
-
-	// Then do the object-specific search:
+	// First do the object-specific search:
 
 	$def=get_def($object);
 	$filter=object_qs_filter($query_string,$object);
@@ -289,6 +273,23 @@ function object_quick_search($object, $query_string='')
 			header('Location: '.$jump_url);
 			page_close($silent=true);
 			exit;
+	} elseif (($TOTAL==0) and preg_match('/^([a-z_]{3,}):([0-9]*)$/i',$query_string,$m)) {
+
+		/*
+		 * No records found, so try
+		 * any global QS functions/shortcuts:
+		 *
+		 * Engine Object search of the form {obj}:xxxx
+		 * where {obj} is the name of the object (or the
+		 * first 3 or more characters of the name)
+		 *
+		 * (This was moved from being tried first so it wouldn't
+		 * interfere with custom quick searches)
+		 */
+
+		if ($found = search_engine_object($m[1],$m[2])) {
+			return $found;
+		}
 	}
 
 	$sub = oline($TOTAL.' ' . $def['plural'] . ' matched your search for '.bold(webify($query_string)),2);
