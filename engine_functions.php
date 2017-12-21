@@ -136,8 +136,17 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 	    }
 
 	    $def = get_def($object);
-	    $allow = $def['allow_'.($action=='clone' ? 'add' : $action)];
+		if ($def['object_union'] and ($def['FIXME']!='dont_redirect_link_option')) {
+			$identifier = $def['fields'][$def['id_field']]['table_switch']['identifier'];
+			$tmp = explode($identifier,$id);
+			if (count($tmp)==2) {
+				$control_array['object']=$tmp[1];
+				$control_array['id']=$tmp[0];
+				return link_engine($control_array,$label,$control_array_variable,$link_options);
+			}
+		}
 
+	    $allow = $def['allow_'.($action=='clone' ? 'add' : $action)];
       } else {
 	    return $url_only ? false : dead_link('LINK_ENGINE() REQUIRES AN ARRAY',$link_options);
       }
@@ -206,8 +215,9 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 			  . $control_array_variable.'[format]='.$format.'&'
 			  . $control_array_variable."[id]={$id}{$init_str}{$control_str}"
 			  . ($anchor ? '#'.$anchor : '');
-      $will_allow = ($perm && $allow)||engine_perm('super_user'); //super user
-
+      $will_allow = ($allow && $perm) || engine_perm('super_user'); //super user
+//      $will_allow = $allow and ($perm or engine_perm('super_user')); //super user
+//	  $will_allow = ($will_allow && $allow);
       switch ($link_options) {
 		case 'url_only' :
 			return $will_allow 
@@ -1883,6 +1893,14 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 			$out =oline(hlink('#','show/hide empty rows',NULL,'class="engineRowBlankToggle"')) . $out;
 		}
       return $out;
+}
+
+function view_generic_record($object,$id) {
+	// Convenience function
+    $def=get_def($object);
+    $filter=array($def['id_field']=>$id);
+    $rec=sql_to_php_generic(array_shift(get_generic($filter,$NULL,$NULL,$object)),$def);
+    return view_generic($rec,$def,'view');
 }
 
 function view_generic_row($key,$value,$def,$action,$rec)
@@ -3972,7 +3990,8 @@ function build_lookup_query($field_def,$action)
 	}
 	$filt = $look['filter'];
 	if ($look_order and $other_last) {
-		$look_order = "lower($look_order)='other',$look_order";
+		//$look_order = "lower($look_order)='other',$look_order";
+		$look_order = "(lower($look_order) ILIKE 'other%') OR (lower($look_order) ILIKE 'unknown%'),$look_order";
 	}
 	if ($group=$field_def['lookup_group']) {
 		$g1=','.$group . ' AS grouping';
