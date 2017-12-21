@@ -327,12 +327,20 @@ function object_qs_filter($qs_text,$object=AG_MAIN_OBJECT_DB)
 					$filter[]=array($m=>ssn_of($qs_text));
 				}
 			} elseif ((!$filter) and (!be_null($qdef['match_fields_custom']))) {
-					$qs_text=sql_escape_string($qs_text);
+					//Escaping of qs_text needs to be conditional, see below.
+					//Otherwise, things can get double-escaped 
+	//				$qs_text=sql_escape_string($qs_text);
 					foreach ($qdef['match_fields_custom'] as $mc_k=>$mc_v) {
 						// $x in custom field string will be replaced with qs_text
+
 						if (preg_match($mc_k,$qs_text,$matches)) {
+							// If custom match starts with field, the value will not be escaped by read_filter
+							// So we have to do it ourselves here, to avoid SQL injection
+							// If not, read_filter will take care of it.
+							$qs_temp=preg_match('/^[!]?FIELD/i',key($mc_v)) ? sql_escape_string($qs_text) : $qs_text;
+
 							$search=array('$x','$UID');
-							$replace=array($qs_text,$GLOBALS['UID']);
+							$replace=array($qs_temp,$GLOBALS['UID']);
 							for( $x=0; $x<count($matches); $x++) {								
 								$search[]='$m'.$x;
 								$replace[]=$matches[$x];

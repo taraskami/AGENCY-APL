@@ -4,7 +4,7 @@
 $quiet='Y';
 include 'includes.php';
 
-$term=$_REQUEST['term'];
+$term=strip_tags(urldecode($_REQUEST['term']));
 $type=$_REQUEST['type'];
 preg_match('/^[a-z_]*$/i',$type) or die("Bad type passed");
 preg_match('/^[a-z_ ,0-9()]*$/i',$type) or die("Bad term passed");
