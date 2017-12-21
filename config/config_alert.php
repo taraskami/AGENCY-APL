@@ -57,8 +57,13 @@ $engine['alert'] = array(
 					   'alert_link' => array(
 									 'is_html'=>true,
 								 'value' => 'link_engine_alerts($rec["ref_table"],$rec["ref_id"])'
-								 )
-					   )
+								 ),
+						'view_record'=>array(
+							'value_format'=>'view_generic_record($rec["ref_table"],$rec["ref_id"])',
+							'is_html'=>true,
+						),
+			   ),
+
 			 );
 
 ?>
