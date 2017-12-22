@@ -929,14 +929,19 @@ function link_report($report_code,$label='',$init=array(),$action='',$template=n
 		$url .= $action ?  '&'.AG_REPORTS_VARIABLE_PREFIX.'action='. $action : '';
 	}
 	$perm = $rep['permission_type_codes'];
-	return hlink_if($url,$label,(be_null($perm) || ($perm==array()) || has_perm($perm)));
+	//return hlink_if($url,$label,(be_null($perm) || ($perm==array()) || has_perm($perm)));
+	return alt(hlink_if($url,$label,(be_null($perm) || ($perm==array()) || has_perm($perm))),$rep['report_title'].': '.$rep['report_comment']);
 }
 
 function track_report_usage($report)
 {
 	global $UID;
 	$IP = $_SERVER['REMOTE_ADDR'];
-	$output=report_get_user_var('template',$report['report_code'],'PICK');
+	// FIXME: This defaults to screen, just as it does in the generate code
+	// Really, that should be done once before both actions
+	// The problem is that when a session times out, the token for output code
+	// is sometimes no longer valid, leading to a null value and then a DB error on this insert
+	$output=orr(report_get_user_var('template',$report['report_code'],'PICK'),'screen');
 	$record = array('generated_by' => $UID,
 			    'report_id' => $report['report_id'],
 			    'report_code' => $report['report_code'],
