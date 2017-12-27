@@ -3,6 +3,7 @@ CREATE TABLE tbl_client_export_id (
 	client_id				INTEGER NOT NULL REFERENCES tbl_client ( client_id ),
 	export_organization_code	VARCHAR(20) NOT NULL REFERENCES tbl_l_export_organization ( export_organization_code ),
 	export_id				VARCHAR(20) NOT NULL,
+	attachment_id		INTEGER REFERENCES tbl_attachment (attachment_id),
 	--system fields
 	added_by			INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
 	added_at			TIMESTAMP(0)     NOT NULL DEFAULT CURRENT_TIMESTAMP,
