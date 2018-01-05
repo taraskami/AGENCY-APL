@@ -94,9 +94,9 @@ function report_parse_var_text( $text, $get_defaults=true ) {
 	$var_types=array('PICK','PICK_MULTI','DATE','TIME','TIMESTAMP','TEXT','TEXT_AREA','VALUE');
 	$pick_types=array('PICK','PICK_MULTI');
 	$endpick_types=array('ENDPICK','ENDPICK_MULTI');
-	$lines = preg_split('/\n/m',$text);
+	$lines = preg_split('/(\n|\r|\r\n)/m',$text,NULL,PREG_SPLIT_NO_EMPTY);
 	while ($line = array_shift($lines)) {
-		if (preg_match('/^\s$/',$line)) {
+		if (preg_match('/^\s*$/',$line)) {
 			continue; //skip blank lines
 		}
 		$var=array();
@@ -417,9 +417,9 @@ function report_generate($report,&$msg)
 			    foreach ($sql[$rbs] as $s ) {
 			      $control['sql']= $s;
 			      if (!($out['results'][] = call_engine($control,$control_array_variable='control',$NO_TITLE=true,$NO_MESSAGES=true,$TOTAL_RECORDS,$PERM))) {
-				$out['results'][]=$report['message_if_error'];
+				$out['results'][]=oline(orr($sql['message_if_error'],'There was an error processing this section'));
 			      } elseif ($TOTAL_RECORDS===0) {
-				 $out['results'][]=$report['message_if_empty'];
+				 $out['results'][]=oline(orr($sql['message_if_empty'],'No records to show in this section'));
 			      }
 			    }
 			    break;
