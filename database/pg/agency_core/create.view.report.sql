@@ -1,4 +1,4 @@
-CREATE VIEW report AS (
+CREATE OR REPLACE VIEW report AS (
 SELECT 
 	r.report_id,
 	r.report_code,
@@ -33,7 +33,7 @@ SELECT
 	u.generated_by AS last_generated_by,
 	u.generated_at AS last_generated_at
     FROM tbl_report r
-        LEFT JOIN (SELECT DISTINCT ON (report_code) report_id,report_code,generated_at,generated_by FROM report_usage) u USING (report_code)
+        LEFT JOIN (SELECT DISTINCT ON (report_code) report_id,report_code,generated_at,generated_by FROM report_usage ORDER BY report_code,generated_at DESC) u USING (report_code)
 		LEFT JOIN (SELECT report_code,count(*) AS blocks FROM report_block GROUP BY 1) rb USING (report_code)
     WHERE NOT is_deleted
 );
