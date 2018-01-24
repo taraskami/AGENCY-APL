@@ -4053,7 +4053,7 @@ function build_lookup_query($field_def,$action)
 	$filt = $look['filter'];
 	if ($look_order and $other_last) {
 		//$look_order = "lower($look_order)='other',$look_order";
-		$look_order = "(lower($look_order) ILIKE 'other%') OR (lower($look_order) ILIKE 'unknown%'),$look_order";
+		$look_order = "(lower($look_order::text) ILIKE 'other%') OR (lower($look_order::text) ILIKE 'unknown%'),$look_order";
 	}
 	if ($group=$field_def['lookup_group']) {
 		$g1=','.$group . ' AS grouping';
