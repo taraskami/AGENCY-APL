@@ -299,6 +299,7 @@ function object_quick_search($object, $query_string='')
 
 function object_qs_filter($qs_text,$object=AG_MAIN_OBJECT_DB)
 {
+	$qs_text=trim($qs_text);
 	if (!$qs_text) {
 		return false;
 	}
