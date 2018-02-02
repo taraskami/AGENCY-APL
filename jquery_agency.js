@@ -413,3 +413,29 @@ $(function() {
 	
 });
 
+$(function() {
+	function shadeItem( i ) {
+		var threshhold = 128;
+		var adjust = 12;
+ 		var color=$(i).css( "background-color" );
+		var colors=color.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+		var red = (+colors[1]==0) ? 0 : ((+colors[1] < +threshhold) ? +colors[1] + +adjust : +colors[1] - +adjust);
+		var green = (+colors[2]==0) ? 0 : ((+colors[2] < +threshhold) ? +colors[2] + +adjust : +colors[2] - +adjust);
+		var blue = (+colors[3]==0) ? 0 : ((+colors[3] < +threshhold) ? +colors[3] + +adjust : +colors[3] - +adjust);
+		if (+red + +green + +blue > 0) {
+			$(i).css("background-color",'rgb('+red+','+green+','+blue+')');
+		}
+	}
+
+	//$("table.engineForm  tr:visible:odd td ").each( function() {
+	$("table.clientQuickLook  tr:visible:odd td ").each( function() {
+		shadeItem($(this));
+	});
+	$("table.engineForm  tr:visible:odd td ").each( function() {
+		shadeItem($(this));
+	});
+	$("#ClientSummary table.generalTable  tr:visible:odd td ").each( function() {
+		shadeItem($(this));
+	});
+});
+
