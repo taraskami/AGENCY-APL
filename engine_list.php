@@ -118,8 +118,7 @@ function list_generic($control,$def,$control_array_variable='',&$REC_NUM)
 		 *
 		 *
 		 */
-
-		if ($control['sql_security_override'] || is_safe_sql($sql,$message,true)) {
+		if ($control['sql_security_override'] || is_safe_sql($sql,$message,false)) {
 
 			/* 
 			 * good sql
