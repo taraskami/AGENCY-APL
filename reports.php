@@ -379,7 +379,6 @@ function report_generate($report,&$msg)
 				     'action' => 'list',
 				     'list'   => array('fields'=>array(),'filter'=>array(),'order'=>array(),'show_totals'=>true,
 							     'max' => orr($report['rows_per_page'],'-1')),
-				     'sql_security_override' => sql_true($report['override_sql_security']),
 				     'export_header' => $report['report_header']); // ???
 
 		$oo_templates = report_output_select($report);
@@ -387,6 +386,7 @@ function report_generate($report,&$msg)
 			$control['oo_templates'] = $oo_templates;
 		}
 		foreach ($report[$rb] as $sql) {
+ 	     	$control['sql_security_override'] = (sql_true($report['override_sql_security']) or sql_true($sql['override_sql_security']));
 			$out=array();
 			if ( !( ($sql['permission_type_codes']==array()) or has_perm($sql['permission_type_codes'])) ) {
 				// FIXME:  perm failed.  Log or notice?
@@ -491,7 +491,7 @@ function report_generate_export_template($report,$template,&$msg)
 		exit;
 	}
 	// security
-	if (!$report['override_sql_security'] && !is_safe_sql($report['report_block'],$errors,$non_select = true)) {
+	if (!$report['override_sql_security'] && !is_safe_sql($report['report_block'],$errors,$non_select = false)) {
 		$msg .= div($errors);
 		return false;
 	}
@@ -768,7 +768,7 @@ function report_generate_export_sql($sql,$format,&$mesg)
 	 *	case 'sql_dump_copy':
 	 *	case 'sql_dump_inserts':
 	 */
-	if (!is_safe_sql($sql,$errors,$non_select = true)) {
+	if (!is_safe_sql($sql,$errors,$non_select = false)) {
 		$message .= $errors;
 		return false;
 	}
