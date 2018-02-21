@@ -94,9 +94,9 @@ function report_parse_var_text( $text, $get_defaults=true ) {
 	$var_types=array('PICK','PICK_MULTI','DATE','TIME','TIMESTAMP','TEXT','TEXT_AREA','VALUE');
 	$pick_types=array('PICK','PICK_MULTI');
 	$endpick_types=array('ENDPICK','ENDPICK_MULTI');
-	$lines = preg_split('/(\n|\r|\r\n)/m',$text,NULL,PREG_SPLIT_NO_EMPTY);
+	$lines = preg_split('/(\n)/m',$text);
 	while ($line = array_shift($lines)) {
-		if (preg_match('/^\s*$/',$line)) {
+		if (preg_match('/^\s$/',$line)) {
 			continue; //skip blank lines
 		}
 		$var=array();
