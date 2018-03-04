@@ -432,8 +432,9 @@ function object_reference_form( $objs, &$show_link, $target_div='') {
 		$object_refs .= object_selector_generic($obj,$div_id);
 		$tab_links .= html_list_item(hlink("#$div_id",$t_def['plural']));
 	}
+	$label = 'Refer to ' . ((count($objs)==1) ? $t_def['plural'] : 'other records') . '...';
 	$tabs = html_list($tab_links,'class="'.$obj.'"');	
-	$show_link = hlink('','Refer to other records...',NULL,'class="fancyLink objectSelectorShowLink"');
+	$show_link = hlink('',$label,NULL,'class="fancyLink objectSelectorShowLink"');
 	$object_refs = div($tabs . $object_refs,'objectSelectorForm','class=objectSelectorForm');
 	return $object_refs;
 }
