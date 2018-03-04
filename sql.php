@@ -518,7 +518,7 @@ function do_radio_sql($query,$var,$add_null=false,$default='',$spacer='')
 	return $out;
 }
 
-function do_checkbox_sql($query,$var,$default='',$spacer='')
+function do_checkbox_sql($query,$var,$default='',$spacer='',$skip_control=false)
 {
 	$result = agency_query($query);
 
@@ -526,9 +526,10 @@ function do_checkbox_sql($query,$var,$default='',$spacer='')
 
 	while ($a = sql_fetch_assoc($result)) {
 		$out .= span(formcheck($var.'['.$a['value'].']', (in_array($a['value'],$default) ? 'checked="checked"' : ''))
-				 . '&nbsp;'.$a['label'],' class="radioButtonSet"') . $spacer;
+				 . '&nbsp;'.$a['label'],' class="checkBoxSet"') . $spacer;
 	}
-	return $out;
+	$skip_class=$skip_control ? ' skipSelectorControl' : '';
+	return span($out,'class="checkBoxGroup' . $skip_class . '"');
 }
 
 function do_pick_sql( $query, $default_value="",$add_null=false, $format='',$form_pre="" ,$opts='')
@@ -573,7 +574,8 @@ function do_pick_sql( $query, $default_value="",$add_null=false, $format='',$for
 			$g_out[] = html_optgroup($out,$g);
 	}
 
-	return $null . ($group ? implode('',$g_out) : $out);
+	$result =  $null . ($group ? implode('',$g_out) : $out);
+	return ($format=='checkbox') ? span($result,'class="checkBoxGroup"') : $result;
 }
 
 function sql_assign( $select,$filter='', $order='',$limit='', $offset='' )

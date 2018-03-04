@@ -56,12 +56,12 @@ function show_pick_entry($locations,$prefs)
 	foreach ($locations as $key => $label) {
 		$default = !be_null($prefs['entry_location'][$key]);
 		$entry_locations[] = span(formcheck('entry_location['.$key.']',$default) . ' ' . $label
-						  ,'class="radioButtonSet"');
+						  ,'class="checkBoxSet"');
 	}
 	$output =
 		oline(bold('Select Entry Location(s)'))
 		. formto($_SERVER['PHP_SELF'])
-		. implode(oline(),$entry_locations)
+		. span(implode(oline(),$entry_locations),'class="checkBoxGroup"')
 		. hiddenvar('action','change_locations')
 		. oline()
 		. button('View','SUBMIT') 

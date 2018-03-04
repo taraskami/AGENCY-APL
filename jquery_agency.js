@@ -439,3 +439,61 @@ $(function() {
 	});
 });
 
+/* All, None, Invert for checkbox selections */
+$(function() {
+	var min_count = 4;
+	var all = $('<a href="#"/>').html('All').addClass('checkboxSelectAll');
+	var none = $('<a href="#"/>').html('None').addClass('checkboxSelectNone');
+	var invert = $('<a href="#"/>').html('Invert').addClass('checkboxSelectInvert');
+	var links = $('<span />').addClass('checkboxSelector').prepend( all,',',none,',',invert);
+	$('span.checkBoxGroup:not(".skipSelectorControl")').each( function() {
+		if ( $(this).find('span.checkBoxSet').length >= min_count ) {
+			$(this).prepend( $(links).clone() );
+		}
+	});
+
+	$('a.checkboxSelectAll').click(function( e ) {
+		e.preventDefault();
+		var checks=$(this).closest('.checkBoxGroup').find('input[type=checkbox]');
+		var all_opt=$(checks).filter('.checkBoxAllOption');
+		if ($(all_opt).length==1) {
+			$(checks).prop('checked',false);
+			$(all_opt).prop('checked',true);
+		} else {
+			$(checks).prop('checked',true);
+		}
+	});
+
+	$('a.checkboxSelectNone').click(function( e ) {
+		e.preventDefault();
+		$(this).closest('.checkBoxGroup').find('input[type=checkbox]').prop('checked',false);
+	});
+
+	$('a.checkboxSelectInvert').click(function( e ) {
+		e.preventDefault();
+		var checks=$(this).closest('.checkBoxGroup').find('input[type=checkbox]');
+		var all_opt=$(checks).filter('.checkBoxAllOption');
+		var checks_not_all=$(checks).filter(':not(".checkBoxAllOption")');
+	
+		if ($(all_opt).length==1) {
+			if ( (!$(all_opt).is(':checked')) && ($(checks_not_all).filter(':checked').length == 0) ) {
+				$(all_opt).prop('checked',true);
+			}  else {
+				if ( ($(all_opt).is(':checked')) && ($(checks_not_all).filter(':checked').length == 0) ) {
+					$(all_opt).prop('checked',false);
+				} else {
+					$(all_opt).prop('checked',false);
+					$(checks_not_all).each( function() {
+						$(this).prop('checked', !$(this).prop('checked'));
+					});
+				}
+			}
+		} else {
+			$(checks).each( function() {
+				$(this).prop('checked', !$(this).prop('checked'));
+			});
+		}
+	});
+
+});
+	

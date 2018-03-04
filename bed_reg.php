@@ -248,7 +248,7 @@ foreach ($bed_groups as $bed_group ) {
 	}
 
 	$checks[] = span(formcheck($formvar,$$bed_group->view)
-			     . ' ' . $$bed_group->code,'',' class="radioButtonSet"' ). $break . "\n";
+			     . ' ' . $$bed_group->code,'',' class="checkBoxSet"' ). $break . "\n";
 
 
 	/*
@@ -391,7 +391,7 @@ function show_grp_select($boxes)
 	$output .= 'Choose bed groups to view:&nbsp;';
 	
 	// set up checkboxes for each group
-	$output .= implode("\n",$boxes);
+	$output .= span(implode("\n",$boxes),'class="checkBoxGroup"');
 
 	$output .= hiddenvar('pick_bed_reg', '1');
 	$output .= button('View','SUBMIT', 'action');

@@ -2146,7 +2146,7 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 				$def['fields'][$key]['comment'] = '(select all that apply)';
 			}
 			$tmp_spacer = $pr['lookup_format'] == 'checkbox_v' ? oline() : '';
-			$tmp_field = do_checkbox_sql($query,$formvar.'['.$key.']',$value,$tmp_spacer);
+			$tmp_field = do_checkbox_sql($query,$formvar.'['.$key.']',$value,$tmp_spacer,$pr['skip_selector_control']);
 			break;
 		case 'droplist':
 		case 'select':

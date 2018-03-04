@@ -67,6 +67,15 @@ input.qsForm[type=text] { width: 200px; }
 .pick { padding: 4px;}
 
 .radioButtonSet { white-space: nowrap; margin-right: 12px; }
+.checkBoxSet { white-space: nowrap; margin-right: 12px; }
+
+span.checkboxSelector {
+	font-size:70%;
+	display: block;
+	padding: 5px;
+	padding-left: 25px;
+	padding-bottom: 10px;
+}
 
 .indent {margin-left: 15px; font-size: 85%;}
 /* Client Notes */

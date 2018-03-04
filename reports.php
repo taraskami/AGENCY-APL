@@ -609,6 +609,7 @@ function report_user_options_form($report)
 		switch ($p['type']) {
 		case 'PICK_MULTI' :
 			$multi=true;
+			$is_first=true;
 			// no break, continue
 		case 'PICK' :
 			$label =($userprompt ? bigger(bold($userprompt)) : '' ).  ($comment ? " $comment" : '');
@@ -622,12 +623,26 @@ function report_user_options_form($report)
 					// or, b) no default is passed, but default is configured to current option
 					or ( (!$default) and ($li==$p['default']) ));
 
+				// all_option for pick_multi, detect if first option is "all-ish" and should be used to select all
+				// FIXME: this should work for most existing reports, but a better method would be to indicate it in the report variables
+				// section.  If you assumed an all would always be first, then it could go something like PICK_MULTI_WITH_ALL, or
+				// PICK_MULTI(ALL).  Second syntax would be better for supporting multiple options going forward.
+
+				$all_option= ($multi and $is_first and in_array(trim(strtoupper($li)),array('ALL','ANY','-1')) and preg_match('/^(all|any)/i',$lab));
+				$all_class=$all_option ? ' class="checkBoxAllOption"' : '';
+
 				$cell .= ($multi)
-					? span(formcheck($varname .'['.tokenize($li,report_token_context($p['name'],$report['report_code'])).']', ($defaulti ? 'checked="checked"' : ''))
-				 		. '&nbsp;'.$lab,' class="radioButtonSet"') . oline()
+					? span(formcheck($varname .'['.tokenize($li,report_token_context($p['name'],$report['report_code'])).']', ($defaulti ? 'checked="checked"' : ''),$all_class)
+				 		. '&nbsp;'.$lab,' class="checkBoxSet"') . oline()
 					: selectitem( tokenize($li,report_token_context($p['name'],$report['report_code'])),$lab,$defaulti);
+				$is_first=false;
 			}
-			$var_opt[]=array($label,$cell. (!$multi ? selectend() : ''));
+			if ($multi) {
+				$cell=span($cell,'class="checkBoxGroup"');
+			} else {
+				$cell .= selectend();
+			}
+			$var_opt[]=array($label,$cell);
 			break;
 		case 'DATE' :
 				 $var_opt[] = array($userprompt,formdate($varname,orr($default,$p['default'],dateof('now'))));

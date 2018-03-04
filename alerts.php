@@ -113,6 +113,10 @@ function show_alerts($UID, $limit='')
 
 		$AG_HEAD_TAG .= style('tr.staffDataSelected {background-color: #f7ffb2; }');
 
+
+		// FIXME:  All this JS stuff should go.
+		// The alert checkboxes can use the checkBoxGroup functionality
+
 		/* Javascript Functions */
 		$AG_HEAD_TAG .= java_engine::get_js(<<<EOF
      function checkRow(obj,e,rowNum) {
