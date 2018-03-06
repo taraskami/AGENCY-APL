@@ -339,35 +339,33 @@ function engine_perm($control,$access_type='')
 		$perm=explode(',',$perm);
       }
       foreach($perm as $permission) {
-		if ($permission=='self') {
-			global $UID;
-			//must fetch record to determine if self
-			if ( (count(get_generic(build_self_filter($control),'','',$def)) > 0) 
-			     || ($action=='list' && in_array($UID,$control['list']['filter'])) ) {
-				$tPERM = true;
-				//$tPERM = is_self($control['id']); //is this person editing or accessing their own record?
-			} else {
-				$tPERM=false;
-			}
-		} elseif(preg_match('/^my_/',$permission)) {
-			// check to see if client_id from record,filter or rec-init is related to user 
-			$tPERM = staff_client_relation_generic($control,$permission);
-
-		} elseif(false) {
-			// OTHER FUNCTIONALITY CAN BE BUILT HERE.
-		} elseif (($permission=='any') || !$permission ) {
+		if (($permission=='any') || !$permission ) {
 			//default to granting access if perm_type hasn't been specified
 			//this only generates a link, it doesn't by-pass engine's permission checks.
 			/*
 			 * This condition is what returns true when building the link
 			 * for fields of type attachment (assuming we don't set perm_download.)
 			 */
-			$tPERM=true;
-		} else {
+			 return true;
+		} elseif ($tPERM=has_perm($permission,$access_type)) {
 			// STANDARD PERMISSION PROCESSING
-			$tPERM=has_perm($permission,$access_type);
+			return true;
+		} elseif ($permission=='self') {
+			global $UID;
+			//must fetch record to determine if self
+			if ( (count(get_generic(build_self_filter($control),'','',$def)) > 0) 
+			     || ($action=='list' && in_array($UID,$control['list']['filter'])) ) {
+				return true;
+				//$tPERM = is_self($control['id']); //is this person editing or accessing their own record?
+			}
+		} elseif(preg_match('/^my_/',$permission)) {
+			// check to see if client_id from record,filter or rec-init is related to user 
+			if (staff_client_relation_generic($control,$permission)) {
+				return true;
+			}
+		} elseif(false) {
+			// OTHER FUNCTIONALITY CAN BE BUILT HERE.
 		}
-		$PERM = $tPERM ? $tPERM : $PERM;
       }
 	//per-record perm checking - after general check
 	if ($action=='add') {
