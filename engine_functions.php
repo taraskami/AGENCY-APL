@@ -2574,6 +2574,33 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 			$opts['valid_fn']($action,$rec,$def,$mesg,$VALID,$c_obj);  
 		}
 	}
+
+	if (is_array($unique=$def['unique_constraints'])) {
+		foreach ($unique as $u) {
+			$filter=array();
+			foreach ($u as $f) {
+				if (be_null($rec[$f])) {
+					$filter['NULL:'.$f]='Dummy';
+				} else {
+					$filter[$f]=$rec[$f];
+				}
+			}
+			if ($rec[$def['id_field']]) {
+				$filter['!'.$def['id_field']] = $rec[$def['id_field']];
+			}
+			$test=get_generic($filter,NULL,NULL,$def);
+			if (count($test) > 0) {
+				$t=$test[0];
+				$t_f=array();
+				foreach ($u as $f) {
+					$t_f[$f]=$fields[$f]['label_'.$action] . ' (' . underline(orr(value_generic($t[$f],$def,$f,'view',false),smaller(italic(' (none) ')))). ')';
+				}
+				$mesg .= oline('There is already ' . aan($def['singular']) . ' ' . $def['singular'] .' ('.elink_value($def['object'],$t[$def['id_field']]) . ') with this ' . implode(', ',$t_f));
+				$VALID=false;
+			}
+		}
+	}
+
 	foreach ($rec as $key=>$value) {
 	    $type=$fields[$key]['data_type'];
 	    $label=$fields[$key]['label_'.$action];

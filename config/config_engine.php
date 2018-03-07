@@ -181,6 +181,7 @@ $engine['global_default'] = array(
 				  'valid_record'=>null, //a record-wide validity check (has access to $rec and $rec_last)
 				  'invalid_record'=>null, //a record-wide in-validity check (has access to $rec and $rec_last)
 				  'verify_on_post'=>true, //re-verify record prior to posting
+				  'unique_constraints'=>null, // an array (of arrays) specifying which sets of fields a record must be unique on
 				  'widget'=>null, //hook for widget functionality -> see widget.php for more details
 				  'allow_add' => true,
 				  'allow_delete' => true,
