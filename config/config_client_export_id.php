@@ -34,9 +34,12 @@ should be included in this distribution.
 
 $engine['client_export_id'] = array(
 	'singular'=>'ID Number',
-	'perm' => 'reach',
 	'require_password'=>false,
     'list_fields' => array('export_organization_code', 'export_id'),
+	'unique_constraints'=>array(
+		array('client_id','export_organization_code'),
+		array('export_id','export_organization_code'),
+	),
     'fields'=> array(
 		'export_id'=>array('label'=>'ID Number'),
 		'export_organization_code' => array(
