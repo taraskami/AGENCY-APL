@@ -60,7 +60,9 @@ function add_link($object,$label='',$options=null,$rec_init=NULL)
 	if (is_array($rec_init)) {
 		$control['rec_init']=$rec_init;
 	}
-	return link_engine($control,orr($label,'Add ' . aan($sing) . ' ' . $sing),'',$options);
+	// FIXME:  add link text should be handled in link_engine.
+	// There are also theoretically eval options
+	return link_engine($control,orr($label,$def['add_link_label'],'Add ' . aan($sing) . ' ' . $sing),'',$options);
 }
 
 function list_link($object,$label='',$filter='',$order='',$options=null)
