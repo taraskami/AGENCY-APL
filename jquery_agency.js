@@ -442,6 +442,7 @@ $(function() {
 /* All, None, Invert for checkbox selections */
 $(function() {
 	var min_count = 4;
+	// Create and add the controls
 	var all = $('<a href="#"/>').html('All').addClass('checkboxSelectAll');
 	var none = $('<a href="#"/>').html('None').addClass('checkboxSelectNone');
 	var invert = $('<a href="#"/>').html('Invert').addClass('checkboxSelectInvert');
@@ -494,6 +495,30 @@ $(function() {
 			});
 		}
 	});
+
+	$('span.checkBoxGroup input[type=checkbox]').click( function() {
+	// This is for if actual boxes (not the selector controls) get clicked
+		var group = $(this).closest('.checkBoxGroup');
+		var all = $(group).find('.checkBoxAllOption');
+		if ( $(all).length==1) {
+			var checks_all = $(group).find('input[type=checkbox]:not(".checkBoxAllOption")');
+			var checks_checked = $(checks_all).filter(':checked');
+			if ( (this==$(all).get(0)) ) {
+			// If an "all" checkbox gets checked, uncheck everything else
+				if ($(this).is(":checked") ) {
+					$(checks_checked).prop('checked',false);
+				}
+			} else if ( ($(checks_all).length == $(checks_checked).length) ) {
+			// If all boxes are checked, uncheck them, and check all option
+				$(all).prop('checked',true);
+				$(checks_all).prop('checked',false);
+			} else if ($(all).is(":checked")) {
+				// If not all checked, uncheck the all option
+				$(all).prop('checked',false);
+			}
+		}
+	});
+
 
 });
 	
