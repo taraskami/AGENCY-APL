@@ -54,7 +54,9 @@ function get_def_array($filter) {
 	/* copied from get_config_object, see comments there */
 	$object=array_pop($filter);
 	if ($def = get_def($object) ) {
-		return array(array('object'=>$object,'def_array_text'=>dump_array($def)));
+		$table=$def['table'];
+		$meta=array_to_table(sql_metadata($table));
+		return array(array('object'=>$object,'def_array_text'=>dump_array($def),'table_info'=>$meta));
 	} else {
 		return false;
 	}
