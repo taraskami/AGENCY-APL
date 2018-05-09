@@ -137,6 +137,43 @@ function header_row($fields)
         return row( $row );
 }
 
+function table_row($fields,$options='')
+{
+		if (is_array($fields))
+		{
+			while( $fields )
+			{
+				$row .= cell(array_shift($fields));
+			}
+		}
+		else
+		{
+	        $arg_count = func_num_args();
+    	    for ($x=0;$x<$arg_count;$x++)
+        	{
+            	    $row .= cell( func_get_arg($x));
+	        }
+		}
+        return row( $row,$options );
+}
+
+function array_to_table($arr,$options='') {
+	// Takes assoc array, or query
+	if (!is_array($arr)) {
+		while ( ($a=sql_fetch_assoc($arr)) ) {
+			$b[]=$a;
+		}
+		$arr=$b;
+	}
+	foreach ($arr as $a) {
+		$body[]=table_row($a);
+	}
+	return table(
+		header_row(array_keys($arr[0]))
+		. implode('',$body)
+	,$options);
+}
+
 function file_append( $file, $text )
 {
 // This is being put in place for log_error, but could be used for
