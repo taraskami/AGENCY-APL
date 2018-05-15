@@ -279,7 +279,22 @@ $engine["client"] = array(
 				'clinical_id'=>array('display'=>'hide'),
 				'king_cty_id'=>array('display'=>'hide'),
 				'spc_id'=>array('display'=>'hide'),
-				'sexual_minority_status_code'=>array('display'=>'hide')
+				'sexual_minority_status_code'=>array('display'=>'hide'),
+				'pronoun_subject'=>array(
+					'comment'=>'Leave blank if he or she ',
+				),
+				'pronoun_object'=>array(
+					'comment'=>'Leave blank if him or her',
+				),
+				'pronoun_possessive'=>array(
+					'comment'=>'Leave blank if his or her',
+				),
+				'pronoun_possessive_pronoun'=>array(
+					'comment'=>'Leave blank if his or hers',
+				),
+				'pronoun_reflexive'=>array(
+					'comment'=>'Leave blank if himself or herself',
+				),
 					 //clinical
 /* Commenting out example of fancy ID handling.
 					 'clinical_id' => array('label'=>'Clinical ID',
