@@ -111,7 +111,6 @@ $engine['global_default'] = array(
 				  'add_link_always'=>null, //used to display add links for objects configured on-the-fly
 				  'confirm_record'=>null,
 				  'cancel_add_url'=>null,
-				  'confirm_record'=>null,
 				  'custom'=>array(), // Custom data for object
 				  'custom_css'=>null, //passed to <head> tag
 				  'display_client_refs'=>null,
@@ -221,6 +220,7 @@ $engine['field_default'] = array(
 				'comment' => null,
 				//comment_show set below
 				'confirm' => null,
+				'confirm_invalid' => null,
 				'data_type' => null,
 				//display set below
 				'default' => null,

@@ -2635,7 +2635,7 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 	    if ($type=='multi_rec') { //do nothing, but capture
 		    continue;
 	    } elseif ( (be_null(trim(is_array($value) ? implode('',$value) : $value))) && (!$fields[$key]['null_ok']) ) {	
-		    $mesg .= oline('"Field ' . orr($label,$key) . ' cannot be blank.');
+		    $mesg .= oline(orr($label,$key) . ' cannot be blank.');
 		    $valid=false;
 	    } elseif ( ($type == 'attachment') && is_array($value)) {
 		    if ($value['uploaded'] == false)  { 
@@ -2648,62 +2648,62 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 			    $valid = false;
 		    }
 	    } elseif ( ($type=='ssn') && (!ssn_of($value))  && (!be_null($value)) ) {
-		  $mesg .= oline("Field $label has an invalid SSN.");
+		  $mesg .= oline("$label has an invalid SSN.");
 		  $valid=false;
 	    } elseif ( ($type=='time' || substr($type,0,5)=='time_') && (!timeof($value)) && (!be_null($value)) ) {
-		  $mesg .= oline("Field $label has an invalid time.");
+		  $mesg .= oline("$label has an invalid time.");
 		  $valid=false;
 	    } elseif ( ($type=='time_past') && (timeof($value,'SQL') > timeof('now','SQL'))  && (!be_null($value)) ) {
-		  $mesg .= oline("Field $label cannot be in the future.");
+		  $mesg .= oline("$label cannot be in the future.");
 		  $valid=false;
 	    } elseif ( ($type=='time_future') && (timeof($value,'SQL') < timeof('now','SQL'))  && (!be_null($value)) ) {
-		  $mesg .= oline("Field $label cannot be in the past.");
+		  $mesg .= oline("$label cannot be in the past.");
 		  $valid=false;
 	    } elseif ((substr($type,0,4)=='date') && (!dateof($value))  && (!be_null($value))) {
-		  $mesg .= oline("Field $label has an invalid date.");
+		  $mesg .= oline("$label has an invalid date.");
 		  $valid=false;
 	    } elseif ( ($type=='date_past') && (dateof($value,'SQL') > dateof('now','SQL'))  && (!be_null($value)) ) {
-		  $mesg .= oline("Field $label cannot be in the future.");
+		  $mesg .= oline("$label cannot be in the future.");
 		  $valid=false;
 	    } elseif ( ($type=='date_future') && (dateof($value,'SQL') < dateof('now','SQL'))  && (!be_null($value)) ) {
-		  $mesg .= oline("Field $label cannot be in the past.");
+		  $mesg .= oline("$label cannot be in the past.");
 		  $valid=false;
 	    } elseif ( (substr($type,0,9)=='timestamp') && (!is_timestamp($value,'SQL')) 
 			   && !($pr['timestamp_allow_date'] && dateof($value)) //if defined, date-only values are valid
 			   && (!be_null($value)) ) {
-		    $mesg .= oline("Field $label has an invalid timestamp.");
+		    $mesg .= oline("$label has an invalid timestamp.");
 		    $valid=false;
 	    } elseif ( ($type=='timestamp_past') && (datetimeof(datetotimestamp($value),'SQL') > datetimeof('now','SQL'))  && (!be_null($value)) ) {
-		  $mesg .= oline("Field $label cannot be in the future.");
+		  $mesg .= oline("$label cannot be in the future.");
 		  $valid=false;
 	    } elseif ( ($type=='timestamp_future') && (datetimeof(datetotimestamp($value),'SQL') < datetimeof('now','SQL'))  && (!be_null($value)) ) {
-		  $mesg .= oline("Field $label cannot be in the past.");
+		  $mesg .= oline("$label cannot be in the past.");
 		  $valid=false;
 	    }	elseif ( ($type=='currency') && (!currency_of($value)) && (!be_null($value)) ) {
-		  $mesg .= oline("Field $label must be a dollar amount.");
+		  $mesg .= oline("$label must be a dollar amount.");
 		  $valid=false;
 	    } elseif ( ($type=='phone') && (!phone_of($value)) && (!be_null($value)) ) {
-		    $mesg .= oline("Field $label contains an invalid phone number.")
+		    $mesg .= oline("$label contains an invalid phone number.")
 			    . oline(indent(smaller('A valid phone number is of the form: ('.AG_DEFAULT_PHONE_AREA_CODE.') 123-4567')));
 		    $valid=false;
 	    } elseif ( ($type=='float') && (!is_numeric($value)) && (!be_null($value)) ) {
-		  $mesg .= oline("Field $label must be a number.");
+		  $mesg .= oline("$label must be a number.");
 		  $valid=false;
 	    } elseif ( ($type=='integer')
 			   and (!is_integer_all($value))
 			   and (!be_null($value))) {
 		  $mesg .= ($value > AG_POSTGRESQL_MAX_INT)
-			  ? oline("Field $label is out of range for integers (max: ".AG_POSTGRESQL_MAX_INT.")")
-			  : oline("Field $label must be a whole number.");
+			  ? oline("$label is out of range for integers (max: ".AG_POSTGRESQL_MAX_INT.")")
+			  : oline("$label must be a whole number.");
 		  $valid=false;
 	    } elseif ( ($type=='interval')
 			   and !is_interval($value) and !be_null($value)) {
-		    $mesg .= oline("Field $label must be of the form x [years,months,weeks,days,hours,minutes, or seconds]");
+		    $mesg .= oline("$label must be of the form x [years,months,weeks,days,hours,minutes, or seconds]");
 		    $valid=false;
 	    } elseif ( $type == 'array'
 			   and count($value) > $pr['array_max_elements'] ) {
 
-		    $mesg .= oline("Field $label has ".count($value)." elements while the maximum allowable values is ".$pr['array_max_elements'].".");
+		    $mesg .= oline("$label has ".count($value)." elements while the maximum allowable values is ".$pr['array_max_elements'].".");
 		    $valid = false;
 
 	    } elseif ( $type == 'lookup_multi'
@@ -2722,7 +2722,7 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 	    //maximum length
 	    if (!is_array($value) and strlen($value) > AG_MAXIMUM_STRING_LENGTH) {
 		    $valid = false;
-		    $mesg .= oline('Field '.$label.' has exceeded the maximum length ('.AG_MAXIMUM_STRING_LENGTH
+		    $mesg .= oline($label.' has exceeded the maximum length ('.AG_MAXIMUM_STRING_LENGTH
 					 .'). Contact your system administrator if this is valid data.');
 	    }
 
@@ -2744,8 +2744,8 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 		    foreach ($val as $test => $msg) {
 			    if (!eval( "return $test;" )) {
 				    $mesg .= empty($msg) 
-					    ? oline("Field $label has an invalid value.")
-					    : oline(str_replace(array('{$Y}','{$x}','{$ox}','{$x_f}','${ox_f}'),array($label,$x,$ox,$x_f,$ox_f),$msg));
+					    ? oline("$label has an invalid value.")
+					    : oline(str_replace(array('{$Y}','{$x}','{$ox}','{$x_f}','{$ox_f}'),array($label,$x,$ox,$x_f,$ox_f),$msg));
 				    $valid=false;
 			    }
 		    }
@@ -2760,8 +2760,8 @@ function valid_generic($rec,&$def,&$mesg,$action,$rec_last=array())
 		    foreach ($val as $test => $msg) {
 			    if (eval( "return $test;" )) {
 				    $mesg .= empty($msg) 
-					    ? oline("Field $label has an invalid value.")
-					    : oline(str_replace(array('{$Y}','{$x}','{$ox}','{$x_f}','${ox_f}'),array($label,$x,$ox,$x_f,$ox_f),$msg));
+					    ? oline("$label has an invalid value.")
+					    : oline(str_replace(array('{$Y}','{$x}','{$ox}','{$x_f}','{$ox_f}'),array($label,$x,$ox,$x_f,$ox_f),$msg));
 				    $valid=false;
 			    }
 		    }
@@ -2776,6 +2776,10 @@ function confirm_generic($rec,$def,&$mesg,$action,$rec_last)
 {
       $confirmed = true;
       $fields=$def['fields'];
+	// FIXME: should add a confirm_invalid_record?
+	// Or eliminate option, as it can be done within field tests
+	// and/or, just shorten to confirm (instead of confirm_record),
+	// since they will be distinguished by being on the gloal or field level
 	if ($conf = $def['confirm_record']) {
 		foreach ($conf as $test => $msg) {
 			if (!eval( "return $test;" )) {
@@ -2787,16 +2791,37 @@ function confirm_generic($rec,$def,&$mesg,$action,$rec_last)
 		}
 	}
       foreach ($rec as $key=>$value) {
+		$x = $value;
+		$ox = $rec_last[$key];
+		$x_f=$ox_f=NULL;
 		if($confirm = $fields[$key]['confirm']) {  // just like valid
 			$label = $fields[$key]['label_'.$action];
-			$x = $value;
-			$ox = $rec_last[$key];
+			if (!($x_f or $ox_f)) {
+				$x_f = value_generic($x,$def,$key,$action,true,$rec);
+				$ox_f = value_generic($ox,$def,$key,$action,true,$rec_last);
+			}
 			foreach($confirm as $test => $msg) {
 				if(!eval("return $test;")) {
 					$confirmed = false;
 					$mesg .= empty($msg) 
-						? oline("Please review field $label.")
-						: oline(str_replace(array('{$Y}','{$x}'),array($label,$x),$msg));                
+						? oline("Please review $label.")
+					    : oline(str_replace(array('{$Y}','{$x}','{$ox}','{$x_f}','{$ox_f}'),array($label,$x,$ox,$x_f,$ox_f),$msg));
+				}
+			}
+		}
+		// FIXME: same code as above, just reversing the test
+		if($confirm = $fields[$key]['confirm_invalid']) {  // just like invalid
+			$label = $fields[$key]['label_'.$action];
+			if (!($x_f or $ox_f)) {
+				$x_f = value_generic($x,$def,$key,$action,true,$rec);
+				$ox_f = value_generic($ox,$def,$key,$action,true,$rec_last);
+			}
+			foreach($confirm as $test => $msg) {
+				if(eval("return $test;")) {
+					$confirmed = false;
+					$mesg .= empty($msg) 
+						? oline("Please review $label.")
+					    : oline(str_replace(array('{$Y}','{$x}','{$ox}','{$x_f}','{$ox_f}'),array($label,$x,$ox,$x_f,$ox_f),$msg));
 				}
 			}
 		}
