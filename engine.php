@@ -152,7 +152,7 @@ function engine($control='',$control_array_variable='control')
 	 * Multi-records
 	 */
 
-      if ( ($def['multi_records']) and ($action=='add') ) {
+      if ( ($def['multi_records']) and (in_array($action,array('add','clone')) )) {
 		foreach( $def['multi'] as $m=>$opts ) {
 			$def=$opts["add_fields_fn"]($def,$m);
 		}
@@ -246,7 +246,6 @@ function engine($control='',$control_array_variable='control')
 	$rec = $_REQUEST['rec'];
 	$def['fn']['process']($REC,$rec,$def);
 	$_SESSION['REC'.$session_identifier] = $REC;
-
     /*
 	 * Process quicksearch
 	 */
@@ -673,14 +672,15 @@ function engine($control='',$control_array_variable='control')
 							$REC[$k]=NULL;
 						}
 						$REC['sys_log']=$sys_log_tmp;
+						$REC=$def['fn']['blank']($def,$REC,$control);
 						$REC_INIT=$control['rec_init']=$REC;
 						$control['action']=$action='add';
-						$REC=$def['fn']['blank']($def,$REC_INIT,$control);
 					    unset($REC_LAST);
 					    $_SESSION['REC_LAST'.$session_identifier]=null;
+					} else {
+					    $control['rec_last'] = $REC_LAST = $_SESSION['REC_LAST'.$session_identifier] = $REC;
 					}
-				    $control['rec_last'] = $REC_LAST = $_SESSION['REC_LAST'.$session_identifier] = $REC;
- 				    $REC = grab_append_only_fields($REC,$def);
+				    $REC = grab_append_only_fields($REC,$def);
 				    $step='continued';	
 
 			    } elseif ($cnt == 0) {
