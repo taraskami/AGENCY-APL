@@ -547,6 +547,7 @@ $AG_ENGINE_TABLES_CORE=array(
     'user_option',
     //---Weird or Hacky Objects---//
     'config_file',
+	'file_exchange',
     'def_array',
 	'db_agency_functions',
     'generic_sql_query' // a pseudo object for handling generic SQL
