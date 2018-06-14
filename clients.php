@@ -1129,7 +1129,7 @@ function assignments_f($staff_id, $my=false) {
 	return $out;
 }
 
-function staff_links()
+function my_staff_links()
 {
 	global $UID;
 

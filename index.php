@@ -63,7 +63,10 @@ $def=get_def(AG_MAIN_OBJECT_DB);
 $all_clients = hlink('display.php?control[action]=list&control[object]=' . AG_MAIN_OBJECT_DB . '&control[id]=list','Show all ' . $def['plural']);
 
 // Show a "My Clients" box
-$my_links = oline($all_clients,2) . staff_links();
+$my_links =
+	oline($all_clients)
+	. oline()
+	. my_staff_links();
 	
 $table = show_alerts($UID,25);
 
