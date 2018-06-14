@@ -338,6 +338,14 @@ function link_staff_other($name)
 	return link_engine($control,$label).smaller(' (non-'.$GLOBALS['AG_TEXT']['ORGANIZATION_SHORT'].')',2);;
 }
 
+function staff_links( $idnum, $sep=NULL ) {
+	$sep=orr($sep,oline());
+	foreach ($idnum as $id) {
+		$out[]=staff_link($id);
+	}
+	return implode($sep,$out);
+}
+
 function staff_link( $idnum, $name="lookup" )
 {
 	/*

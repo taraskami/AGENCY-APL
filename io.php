@@ -2553,5 +2553,21 @@ function generic_f( $object, $label_exec, $filter, $limit=NULL,$order='',$sep=''
 	return implode($result,$sep) . $post;
 }	
 
+function array_links( $ids, $eval_label,$sep=NULL ) {
+	$sep=orr($sep,oline());
+	foreach ($ids as $x) {
+		$out[]=eval('return ' . $x . ';');
+	}
+	return implode($sep,$out);
+}
+
+function object_links( $ids, $object,$sep=NULL ) {
+	$sep=orr($sep,oline());
+	foreach ($ids as $x) {
+		$out[]=elink_value($object,$x);
+	}
+	return implode($sep,$out);
+}
+
 
 ?>
