@@ -523,4 +523,21 @@ $(function() {
 
 
 });
+
+$(function() {
+	// "Pick myself" option for staff dropdowns
+	var pick_link = $('<a href="#">Pick Myself<a/>').addClass('pickMyselfLink');
+	$('span.pickStaffList').append( $(pick_link) );
+	$('a.pickMyselfLink').click( function(e) {
+		e.preventDefault();
+		var plist=$(this).closest('span.pickStaffList');
+		var myid=$(plist).find('span.serverData').html();
+console.log("ID: " + myid);
+		if ($(plist).find('option[value='+myid+']').length==1) {
+			$(plist).find('select').val(myid);
+		} else {
+			$(this).remove();
+		}
+	});
+});
 	

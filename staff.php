@@ -535,11 +535,15 @@ function pick_staff_to( $varname, $active_only="Yes", $default=-1 ,$subset=false
 		$inactive_items = html_optgroup(do_pick_sql( $query_inactive, $default,'','','',' class="inactive"' ),'Inactive staff:');
 	}
 
-	return selectto($varname,$options)
+	return span( 
+	selectto($varname,$options)
 	. selectitem("-1","(choose from list)")
 		. $active_items
 		. $inactive_items
-	. selectend();
+	. selectend()
+	. span($GLOBALS['UID'],'class="serverData"')
+	,'class="pickStaffList"')
+	;
 }
 
 function staff_selector($show_selected="Y",$form="N")
