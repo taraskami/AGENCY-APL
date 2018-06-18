@@ -502,6 +502,21 @@ $engine['system_fields'] = array(
 							    'null_ok' => true,
 							    'label' => 'Void Comment'
 							    ),
+				 'void_reason_code' => array(
+							    'system_field' => true,
+							    'data_type' => 'text',
+							    'display_add' => 'hide',
+							    'display_edit' => 'hide',
+							    'display_delete' => 'regular',
+							    'display_view' => 'hide',
+							    'display_list' => 'hide',
+							    'post_add' => false,
+							    'post_edit' => false,
+							    'post_delete' => false,
+							    'post_void' => false,
+							    'null_ok' => true,
+							    'label' => 'Void Comment'
+							    ),
 				 'added_at' => array(
 						     'system_field' => true,
 						     'data_type' => 'timestamp',
