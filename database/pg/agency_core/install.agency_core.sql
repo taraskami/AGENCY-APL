@@ -23,6 +23,8 @@
 
 \i create.tbl_staff.sql
 \i create.tbl_staff_password.sql
+\i create.tbl_config_staff_password.sql
+\i create.view.staff_password.sql
 \i create.tbl_user_option.sql
 \i add.initial_user.sql
 

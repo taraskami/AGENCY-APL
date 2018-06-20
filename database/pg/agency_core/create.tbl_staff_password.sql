@@ -17,7 +17,7 @@ CREATE TABLE tbl_staff_password (
 	deleted_at			TIMESTAMP(0),
 	deleted_by			INTEGER REFERENCES tbl_staff(staff_id),
 	deleted_comment		TEXT,
-	sys_log			TEXT
+	sys_log			TEXT,
 	-- No overlapping records
 	EXCLUDE USING gist (daterange(staff_password_date,staff_password_date_end,'()') WITH &&,  
 	staff_id WITH =)
