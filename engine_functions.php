@@ -1091,17 +1091,13 @@ function engine_metadata($fields,$meta=array(),$object='',$table_post='')
 
 		  $new['data_type']='timestamp';
 
-	    } elseif (  (strtolower(substr($field,0,3))=='is_') ) {
-
-		  $new['data_type']='boolean';
-		  // 8 characters to take off 3 because of "&nbsp;"  Not sure why we're doing this.
-		  //$new['label'] = substr($new['label'],8) . '?';
-		  $new['label'] = substr($new['label'],3) . '?';
-
-		} elseif ( (strtolower(substr($field,0,4))=='has_') ||
-			    (strtolower(substr($field,0,4))=='was_')  ) {
-
-		  $new['data_type']='boolean';
+	    } elseif (  (!(strtolower(substr($field,-5))=='_code')) and in_array( ($bool_pre=strtolower(substr($field,0,3))),array('is_','was_','has_')) ) {
+			// take is_ off the label, but leave has_ or was_
+			if ($bool_pre=='is_') {
+			  	$new['label'] = substr($new['label'],3);
+			}
+		  	$new['data_type']='boolean';
+			$new['label'] .= '?';
 
 	    } elseif ((strtolower(substr($field,-3))=='_by')
 			  || ($field == 'staff_id')) {
