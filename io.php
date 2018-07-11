@@ -2548,7 +2548,7 @@ function generic_f( $object, $label_exec, $filter, $limit=NULL,$order='',$sep=''
 	}
 	while ($rec=array_shift($res)) {
 		$label = eval('return ' .$label_exec.';');
-		$result[]=$pre . link_engine(array('object'=>$object,'id'=>$rec[$def['id_field']]),$label);
+		$result[]=$pre . link_engine(array('object'=>$object,'id'=>$rec[$def['id_field']]),$label,$dummy_control,'class="'.$object.'Link"');
 	}
 	return implode($result,$sep) . $post;
 }	
