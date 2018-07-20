@@ -71,7 +71,7 @@ $engine['report'] = array(
 			'label_format_add'=>'oline($x) . smaller(add_link("permission","Add a new Permission type","target=\"_blank\""))',
 			'label_format_edit'=>'oline($x) . smaller(add_link("permission","Add a new Permission type","target=\"_blank\""))',
 			'label'=>'Permission',
-			'comment'=>'Any one of these permissions is sufficient'),
+			'comment'=>'Any one of these permissions is sufficient',
 						'variables' => array(
 								'comment' => 'Specify: Type, name, prompt, default (Example: VALUE min_gift "Specify minimum gift amount" 50)'),
 								'report_comment' => array( 
@@ -81,5 +81,12 @@ $engine['report'] = array(
 								// FIXME:  is_html_list should be an option
 								// list_in_click_box would also be a nice option to have
 								)
-					)
+		),
+		'last_generated_by'=>array(
+			'value_format'=>'oline($x) .
+				smaller(link_engine_list_filter("report_usage",array("report_code"=>$rec["report_code"]),
+                 "Show all usage for this report",\'class="fancyLink" target="_blank"\'))',
+			'is_html'=>true,
+		),
+	)
 );
