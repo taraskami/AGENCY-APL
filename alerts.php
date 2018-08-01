@@ -366,5 +366,22 @@ function staff_alerts_f($object,$id,$sep='') {
 			: implode($sep,$out);
 	}
 }
-		
+
+function post_alerts($alert_rec,$notify_list,&$msg) {		
+	$al_def=get_def('alert');
+	foreach( $notify_list as $n) {
+		if (be_null($n)) { continue; } // Not sure why this would happen, but rather than debug, just skip!
+		$alert_rec['staff_id']=$n;
+		// At least for now, since this might not work,
+		// Skipping any error checking and just letting it
+		// continue if the alerts fail.
+		if (!post_generic($alert_rec,$al_def,$mesg,NULL,$dummy_control)) {
+			$any_fail=true;
+			$msg.=oline($mesg);
+			$mesg='';
+		}
+	}
+	return !$any_fail;
+}
+
 ?>
