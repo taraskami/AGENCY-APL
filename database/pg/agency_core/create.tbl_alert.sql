@@ -3,8 +3,10 @@ CREATE TABLE tbl_alert (
 	staff_id     	INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
 	ref_table     	VARCHAR(100),
 	ref_id    	INTEGER,
-	alert_subject	VARCHAR(90),	
+	alert_subject	VARCHAR,	
 	alert_text	TEXT,
+	alert_subject_public	VARCHAR,
+	alert_text_public	TEXT,
 	has_read     	BOOLEAN NOT NULL DEFAULT FALSE,
 	read_at     	TIMESTAMP(0),
 	--system fields
@@ -28,3 +30,4 @@ CREATE TRIGGER alert_insert
     EXECUTE PROCEDURE alert_notify();
 
 CREATE INDEX index_tbl_alert_staff_id_ref_table_ref_id ON tbl_alert ( staff_id,ref_table,ref_id );
+

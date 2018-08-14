@@ -22,6 +22,8 @@ BEGIN
           alert_url := url_base || E'display.php?control\%5baction\%5d=view&control\%5bobject\%5d=alert&control%5bformat%5d=&control\%5bid\%5d=' || NEW.alert_id;
           textLabel := INITCAP(NEW.ref_table) || ' Record ' || NEW.ref_id;
           textSubject := get_db_name()||' Alert: ' || textLabel;
+  	       textLabel := COALESCE(NEW.alert_text_public,INITCAP(NEW.ref_table) || ' Record ' || NEW.ref_id);
+          textSubject := get_db_name()||' Alert: ' || COALESCE(NEW.alert_subject_public,textLabel);
           textMessage := replace(replace(replace(
 							email_template,'$alert_url',alert_url),
                      		'$settings_url',settings_url),
