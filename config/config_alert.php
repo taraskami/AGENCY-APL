@@ -32,6 +32,7 @@ should be included in this distribution.
 
 $engine['alert'] = array(
 				 'enable_staff_alerts'=>false,
+			'title_view'=>'ucwords($action) . "ing Alert (" . elink_value($rec["ref_table"],$rec["ref_id"]) . ")"',
 			 'list_fields' => array('alert_link','alert_subject','ref_table','ref_id','added_at','has_read'),
 			 'list_order' => array('added_at'=>true), //initial descending order sort
 			 'list_hide_view_links' => true,
