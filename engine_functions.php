@@ -4047,6 +4047,12 @@ function build_lookup_query($field_def,$action)
 	default:
 	}
 	$filt = $look['filter'];
+	if ($field_def['allowed_values'] and ($field_def['allowed_values']!=array())) {
+		$filt['IN:'.$look_code]=$field_def['allowed_values'];
+	}
+	if (($action=='add') and (!array_key_exists('is_current',$filt)) and is_field($look_table,'is_current')) {
+		$filt['is_current']=sql_true();
+	}
 	if ($look_order and $other_last) {
 		//$look_order = "lower($look_order)='other',$look_order";
 		$look_order = "(lower($look_order::text) ILIKE 'other%') OR (lower($look_order::text) ILIKE 'unknown%'),$look_order";
