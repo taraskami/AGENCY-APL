@@ -247,11 +247,12 @@ function httpimage( $url, $width=NULL, $height=NULL, $border=0, $options="" )
 	.  ' />';
 }
 
-function link_style_sheet($file,$media='screen',$opts='')
+function link_style_sheet($file,$media='screen',$opts='',$abs=false)
 {
 	global $AG_HEAD_TAG,$agency_style_directory;
 
-	$link = '<link rel="stylesheet" href="'.$agency_style_directory.'/'.$file.'" type="text/css" media="'.$media.'"'.$opts.'/>'."\n";
+	$offset=$abs ? '' : $agency_style_directory . '/';
+	$link = '<link rel="stylesheet" href="'.$offset .$file.'" type="text/css" media="'.$media.'"'.$opts.'/>'."\n";
 	if (!strstr($link,$AG_HEAD_TAG)) {
 		$AG_HEAD_TAG .= $link;
 	}
