@@ -153,19 +153,21 @@ class Java_Engine {
 
 						$populate_array=$this->generate_populate_select_array($table,$from_field,$pop_field,$label_field);
 						$this->add_javascript('var arrPop=new Array()'."\n".'arrPop = '.$populate_array); 
-						if (!be_null($this->rec[$populate_field])) {
+
+						if (!be_null($this->rec[$field])) {
+							$this->add_javascript_body(
+											   $this->on_event('onLoad',
+														 'populateSelect('.$this->element_to_object($this->current_element)
+														 .','.$this->element_to_object($populate_element).',\''
+														 . $this->rec[$populate_field] . '\',\''
+														 .$this->rec[$field].'\')'));
+
+						} elseif (!be_null($this->rec[$populate_field])) {
 							$this->add_javascript_body(
 											   $this->on_event('onLoad',
 														 'populateSelect('.$this->element_to_object($this->current_element)
 														 .','.$this->element_to_object($populate_element).',\''
 														 .$this->rec[$populate_field].'\')'));
-						} elseif (!be_null($this->rec[$field])) {
-							$this->add_javascript_body(
-											   $this->on_event('onLoad',
-														 'populateSelect('.$this->element_to_object($this->current_element)
-														 .','.$this->element_to_object($populate_element).',\'\',\''
-														 .$this->rec[$field].'\')'));
-
 						}
 						break;
 					default :

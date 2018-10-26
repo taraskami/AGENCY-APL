@@ -136,6 +136,20 @@ function getDaysInMonth(month,year)
 function populateSelect( fFrom, fPop, intStart, fFromStart ) {
 		var a = arrPop;
 		var b, c, d, intItem, intType;
+
+	// intStart=Starting value of field being populated
+	// fFromStart= Starting value of field doing the populating
+	// fFrom=object doing the populating
+	// fPop=object being populated
+	//
+	// arrPop is an array (populated by server) with:
+	// 0 - grouping (matches with fFrom value
+	// 1 - select value
+	// 2 - select label
+	//
+	// FIXME: this could all be simplified and cleaned up tremendously
+	//        that could probably be said of everything in this file!
+
 	// Note this function was hastily hacked to work with non-select lists
 	// (e.g., for selectors).  It appears to work, but may have problems
 	if ( (fFrom===undefined) || (fPop===undefined) ) {
@@ -159,23 +173,21 @@ function populateSelect( fFrom, fPop, intStart, fFromStart ) {
 		}
 
 	} else {
-		intType =  fFrom.value;
+		intType =  $(fFrom).val();
 	}
 
-		//if ( fFromStart !== null ) { //a method to start with a blank list
-		if ( (fFromStart !== null) && (fFromStart !== undefined) ) { //a method to start with a blank list
-			intType=fFromStart;
-		}
+	if ( (fFromStart !== null) && (fFromStart !== undefined) ) { //a method to start with a blank list
+		intType=fFromStart;
+	}
 
-		if (fPop.options.length !== undefined) {
-			fPop.options.length = 0;
-		}
-		for ( d = 0; d < a.length; d++ ) {
-			if ( a[d][0] == intType ) {
-				fPop.options[ fPop.options.length ] = new Option( a[d][2], a[d][1] );
-			}
-			if ( a[d][1] == intStart && intStart !== "") {
-				fPop.selectedIndex = fPop.options.length - 1;
+	var opt;
+	$(fPop).find('option').remove();
+	for ( d = 0; d < a.length; d++ ) {
+		if ( a[d][0] == intType ) {
+			if ( $(fPop).find('option').filter("[value='"+a[d][1]+"']").length == 0 ) {
+				opt = $("<option></option>").html(a[d][2]).attr("value",a[d][1]).attr('selected',( a[d][1] == intStart && intStart !== ""));
+				$(fPop).append( opt );
 			}
 		}
+	}
 }
