@@ -1,6 +1,7 @@
 CREATE TABLE tbl_l_log_type (
     log_type_code     VARCHAR(10) PRIMARY KEY,
     description VARCHAR NOT NULL UNIQUE,
+	is_current BOOLEAN NOT NULL DEFAULT true,
     --system fields
     added_by                        INTEGER NOT NULL REFERENCES tbl_staff (staff_id),
     added_at                        TIMESTAMP(0)     NOT NULL DEFAULT CURRENT_TIMESTAMP,
