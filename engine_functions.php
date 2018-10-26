@@ -2068,8 +2068,8 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 			$v_arr = is_array($value) ? $value : array($value);
 			foreach ($v_arr as $val) {
 				$v_temp= formvartext($v_name,$val,'class="engineValue hidden" ' .$element_options);
-				$close_button=$allowed ? html_image('images/close_button.png','class="selectorRemoveItem"') : '';
-				$v_label= para(elink_value($object,$val) . $close_button,'class="engineValueLabel"');
+				$close_button=$allowed ? html_image('images/close_button.png','title="Click to Remove" class="selectorRemoveItem"') : '';
+				$v_label= para($close_button . elink_value($object,$val),'class="engineValueLabel"');
 				$f_temp .= div($v_temp.$v_label,'','class="engineValueGrouping"');
 			}
 		}

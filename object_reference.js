@@ -150,7 +150,7 @@ $(function() {
 				}
 				var max_select=get_max_select($('#'+selected.target));
 				var cur_select=get_cur_select($('#'+selected.target));
-				var close_button=$('<img></img>').attr('src','images/close_button.png').addClass('selectorRemoveItem');
+				var close_button=$('<img></img>').attr('src','images/close_button.png').attr('title','Click to Remove').addClass('selectorRemoveItem');
 				var new_label=$('<p/>').addClass('engineValueLabel').html(selected.label).append(close_button); 
 				var new_value=$('#'+selected.target).clone().val( selected.id ).removeClass('engineValueTemplate');
 				var new_group= $('<span></span').addClass('engineValueGrouping').append(new_value).append(close_button).append(new_label);
