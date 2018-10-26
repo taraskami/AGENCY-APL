@@ -641,14 +641,21 @@ function show_query_row_generic($fields,$position,$rec,$control,$def,$control_ar
 				? eval('return '.$def['fields'][$key]['value_list'].';')
 				: $x;
 			$v_f=value_generic($value,$def,$key,'list',true,$rec);
-			if (preg_match('/^(.*)link_engine\((.*)[|]{2}(.*)[|]{2}(.*)[|]{2}(.*)\)(.*)$/',$v_f,$matches)) {
+			while (preg_match('/^(.*?)link_engine\((.*?)[|]{2}(.*?)[|]{2}(.*?)[|]{2}(.*?)([|]{2}(.*?))?\)(.*)$/',$v_f,$matches)) {
+				$l_rec_init=array();
 				$l_obj=$matches[2];
 				$l_id=$matches[3];
-				$l_label=($matches[4]=='NULL') ? '' : $matches[4];
+				$l_label=($matches[4]=='NULL') ? '' : webify($matches[4]);
 				$l_action=$matches[5];
-				$l_con = array('action'=>$l_action,'object'=>$l_obj,'id'=>$l_id);
+				if ($matches[7]) {
+					$l_tmp=explode(',',$matches[7]);
+					for ($x=0;$x<count($l_tmp);$x=$x+2) {
+						$l_rec_init[$l_tmp[$x]]=$l_tmp[$x+1];
+					}
+				}
+				$l_con = array('action'=>$l_action,'object'=>$l_obj,'id'=>$l_id,'rec_init'=>$l_rec_init);
 				$l_link = link_engine($l_con,$l_label,'','target="_blank"');
-				$v_f = $matches[1] . $l_link . $matches[6];
+				$v_f = $matches[1] . $l_link . $matches[8];
 			}
 
 			$out .= cell($v_f,'class="generalData1"');
