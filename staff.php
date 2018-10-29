@@ -896,9 +896,12 @@ function agency_menu_staff()
 function staff_id_from_username($uname)
 {
 
+	global $AG_AUTH;
 	foreach (array('username','username_unix') as $x)
 	{
-		$res = get_generic(array($x => $uname),' is_active = true DESC',1,'staff');
+		$res = $GLOBALS['AG_AUTH_DEFINITION']['CASE_SENSITIVE_USERNAME']
+			? get_generic(array($x => $uname),' is_active = true DESC',1,'staff')
+			: get_generic(array("FIELD:LOWER($x)" => sql_escape_literal(strtolower($uname))),' is_active = true DESC',1,'staff');
 		if (count($res) == 1) {
 			$rec = array_fetch_column($res,'staff_id');
 			return $rec[0];
