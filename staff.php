@@ -910,7 +910,7 @@ function staff_id_from_username($uname)
 
 function staff_id_from_email($email)
 {
-	$res = get_generic(array('staff_email' => $email),' is_active = true DESC',1,'staff');
+	$res = get_generic(array('FIELD:LOWER(staff_email)' => sql_escape_literal(strtolower($email))),' is_active = true DESC',1,'staff');
 	if (count($res) == 1) {
 		$rec = array_fetch_column($res,'staff_id');
 		return $rec[0];

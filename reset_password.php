@@ -79,7 +79,8 @@ if ($password1 or $password2) {
 if (!$token) {
 	if ($email) {
 		if ( $username and (issue_token( $email,$msg,$username )) ) {
-			$out .= "An email has been sent to $email for resetting your password";
+			$email_canonical = sql_assign('SELECT staff_email FROM staff',staff_filter(staff_id_from_username($username)));
+			$out .= "An email has been sent to $email_canonical for resetting your password";
 		} else {
 			$out .= oline('There was a problem, and we were unable to process your request') .  oline("($msg)",2);
 			$out .= request_token_form();
