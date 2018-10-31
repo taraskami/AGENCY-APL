@@ -10,5 +10,5 @@
 \i create.tcl_language.sql
 \i create.fuzzystrmatch_functions.sql
 \i create.table_log_functions.sql
-CREATE EXTENSION btree_gist;
+CREATE EXTENSION IF NOT EXISTS btree_gist;
 

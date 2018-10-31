@@ -28,5 +28,5 @@
  */
 
 \i create.user_and_db.sql
-\i install2.db.sql
+\i install.pg_super_user_stuff.sql
 

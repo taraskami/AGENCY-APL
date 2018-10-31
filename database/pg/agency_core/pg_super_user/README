@@ -1,1 +1,31 @@
-The scripts in this directory need to be run by the Postgres super user.
+The scripts in this directory need to be run by the Postgres super user. (*)
+
+
+There are two steps involved:
+
+1) Create a user(**) and a database.
+
+Sample using Postgres scripts:
+(Run these from the command line, not within Postgres)
+
+createuser -P my_user
+
+createdb -O my_user my_database
+
+2) Run the "install.pg_super_user_stuff.sql" script
+
+It might look something like this:
+
+su postgres
+psql my_database
+\i install.pg_super_user_stuff.sql
+
+
+------
+
+NOTE: systems can vary, and your setup might be different.
+
+(*) The superuser is probably "postgres"
+
+(**) You may have an exsiting database user, in which case skip the createuser part
+
