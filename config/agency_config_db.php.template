@@ -14,11 +14,11 @@
  */
 
 //Postgres:
-$db_server["pg"]    = '$PG_SERVER';
-$db_user_name["pg"] = '$PG_USER';
-$db_password["pg"]  = '$PG_PASS';
-$database["pg"]     = '$PG_DB';
-$db_port['pg']      = '$PG_PORT';
+$db_server["pg"]    = 'localhost';
+$db_user_name["pg"] = ''; // Fill these in with your values
+$db_password["pg"]  = ''; // Fill these in with your values
+$database["pg"]     = ''; // Fill these in with your values
+$db_port['pg']      = '5432';
 
 /*
  * You probably don't need to edit anything below here.
