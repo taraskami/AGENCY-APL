@@ -1,0 +1,24 @@
+This file tries to boil down installing AGENCY for a simple installation.
+It assumes you've got your webserver and database stuff set up,
+and have a database user and a blank database.
+
+1) Run the install.pg_super_user_stuff.sql script
+(as Postgres super_user, see the README in database/pg/agency_core/pg_super_user)
+
+2) Run the install.client_database.sql script
+
+3) In the config directory, copy agency_config_db.template to agency_config_db.php.
+	Edit this file to have your database name, user & password
+
+4) Still in the config directory, copy agency_config_local.sample.client to agency_config_local.php
+   
+THIS SHOULD BE ALL YOU NEED TO GET A BASIC INSTALLATION OF AGENCY UP AND RUNNING.
+YOU SHOULD NOW BE ABLE TO BROWSE TO YOUR AGENCY INSTALLATION, FOR EXAMPLE:
+
+   https://localhost/agency
+
+You will now be able to log in with an account named "super_user," and a password of PASSWORD.  You will want to change your password!
+
+More information about AGENCY is available at agency-software.org.
+Now would also be a good time to sign up for one or more of the AGENCY mailing lists,
+or to make a donation to support this project!
