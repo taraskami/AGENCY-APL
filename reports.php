@@ -1028,7 +1028,7 @@ function my_recent_reports( $uid ) {
 	$def=get_def('report');
 	$limit=$def['custom']['my_recent_reports_max'];
 	if (!$limit) { return ''; }
-	$reps=sql_to_php_array(sql_assign(sprintf('SELECT array( (SELECT report_code FROM (SELECT DISTINCT ON (report_code) report_code,generated_at FROM report_usage WHERE generated_by=%d ORDER BY report_code,generated_at DESC) foo ORDER BY generated_at DESC LIMIT %d)) boo',$uid,$limit)));
+	$reps=sql_to_php_array(sql_assign(sprintf('SELECT array( (SELECT report_code FROM (SELECT DISTINCT ON (report_code) report_code,generated_at FROM report_usage WHERE generated_by=%d AND report_code IS NOT NULL ORDER BY report_code,generated_at DESC) foo ORDER BY generated_at DESC LIMIT %d)) boo',$uid,$limit)));
 	foreach($reps as $r) {
 		$out[]=html_list_item(link_report($r));
 	}
