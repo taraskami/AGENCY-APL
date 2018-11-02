@@ -402,9 +402,21 @@ function info_additional_label($id) {
 	return $l;
 }
 
-function object_label($object,$id) {
+function object_label($object,$id,$recs=NULL,$format='default') {
 	$def = get_def($object);
 	if ($def['object_label']) {
+		if (is_array($def['object_label'])) {
+			// $label is really eval'able code
+			if (array_key_exists($format,$def['object_label'])) {
+				$label=$def['object_label'][$format];
+			} elseif (array_key_exists('default',$def['object_label'])) {
+				$label=$def['object_label']['default'];
+			} else {
+				$label=$def['object_label'][0];
+			}
+		} else {
+			$label = $def['object_label'];
+		}
 		if (preg_match('/^\{.*\}$/',$id)) {
 			$id=sql_to_php_array($id);
 		}
