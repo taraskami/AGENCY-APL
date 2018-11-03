@@ -404,6 +404,9 @@ function info_additional_label($id) {
 
 function object_label($object,$id,$recs=NULL,$format='default') {
 	$def = get_def($object);
+	if (! ($id and $def)) {
+		return false;
+	}
 	if ($def['object_label']) {
 		if (is_array($def['object_label'])) {
 			// $label is really eval'able code
@@ -412,7 +415,7 @@ function object_label($object,$id,$recs=NULL,$format='default') {
 			} elseif (array_key_exists('default',$def['object_label'])) {
 				$label=$def['object_label']['default'];
 			} else {
-				$label=$def['object_label'][0];
+				$label=array_shift($def['object_label']);
 			}
 		} else {
 			$label = $def['object_label'];
@@ -428,7 +431,7 @@ function object_label($object,$id,$recs=NULL,$format='default') {
 		}
 		$recs = get_generic($filter,'','',$def);
 		foreach ($recs as $rec) {
-			$out[]= eval('return ' . $def['object_label'] . ';');
+			$out[]= eval('return ' . $label . ';');
 		}
 		$l=implode($sep,$out);
 	} else {
