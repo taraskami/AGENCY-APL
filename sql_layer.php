@@ -879,6 +879,8 @@ function sql_field_names($res)
 
 function sql_to_php_array($dbarr) {
 
+	if ( !preg_match('/^\{.*\}$/',$dbarr)) { return false; }
+
 	// Copied from http://php.net/manual/en/ref.pgsql.php, posted by ChrisKL
 
     /**
