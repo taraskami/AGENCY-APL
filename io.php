@@ -2561,10 +2561,10 @@ function array_links( $ids, $eval_label,$sep=NULL ) {
 	return implode($sep,$out);
 }
 
-function object_links( $ids, $object,$sep=NULL ) {
+function object_links( $ids, $object,$sep=NULL,$action='view',$object_label_format=NULL ) {
 	$sep=orr($sep,oline());
 	foreach ($ids as $x) {
-		$out[]=elink_value($object,$x);
+		$out[]=link_engine(array('object'=>$object,'id'=>$x,'action'=>$action),object_label($object,$x,NULL,$object_label_format));
 	}
 	return implode($sep,$out);
 }
