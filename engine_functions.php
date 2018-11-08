@@ -909,7 +909,9 @@ function config_generic_sql($def,$res)
 	$engine_meta = engine_metadata($fields,$sql_meta,$object);
 
 	foreach($fields as $field) {
-
+		$f_def=$f_default;
+		$new_f_def	 = array();
+		$new_field_name = NULL;
 
 		/*
 		 * Fields starting with "_" are hidden by default
@@ -920,11 +922,21 @@ function config_generic_sql($def,$res)
 
 		}
 
-		$defaults['fields'][$field] = $f_default;
-		$def['fields'][$field] = array_merge($f_default,$sql_meta[$field],$engine_meta['fields'][$field],orr($def['fields'][$field],array()));
+		$def['fields'][$field] = array_merge($f_default,$sql_meta[$field],$engine_meta['fields'][$field],orr($def['fields'][$field],array()),$new_f_def);
 
+		// If ends in _link, turn them into links
+		if (preg_match('/^(.+)_id(s?)(_link(_(edit|view|delete|clone))?(_label_(.*))?)?$/',$field,$m)) {
+			$object=$m[1];
+			$action=orr($m[5],'view');
+			$plural=$m[2] ? 'plural' : 'singular';
+			if ($t_def=get_def($object)) {
+				$def['fields'][$field]['label_list']=orr(ucwords(str_replace('_',' ',$m[7])),$t_def[$plural]);
+				$def['fields'][$field]['value_format_list']='(!$x_raw) ? "" :
+					object_links(orr(sql_to_php_array($x_raw),array($x_raw)),"' . $object . '",", ","'.$action.'","generic_sql")';
+				$def['fields'][$field]['is_html']=true; 
+			}			
+		}
 	}
-
 	$def['list_fields'] = $list_fields;
 
 	return $def;
