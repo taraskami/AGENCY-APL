@@ -192,8 +192,8 @@ input.listControl[type=submit] { background-color: #efefef; border: solid 1px bl
 .listSubHeader { background-color: #ffffee; }
 tr.generalData1 {  background-color: #ffffee; }
 tr.generalData2 {  background-color: #e6e6cd; }
-/* uncomment line below for row-highlighting on mouseover */
-/* tr.generalData1:hover,tr.generalData2:hover { background-color: #999988; color:#fff; } */
+/* row-highlighting on hover */
+tr.generalData1:hover,tr.generalData2:hover { background-color: #83fb08; color:#fff; }
 tr.generalDataError,td.generalDataError {  color: #fff; background-color: #f00; }
 tr.listTotals {background-color :#9a9bc0; color:#fff; }
 
