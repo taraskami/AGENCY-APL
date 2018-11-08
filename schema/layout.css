@@ -105,6 +105,7 @@ td.generalDataHeader,td.generalData1,td.generalData2, td.generalDataError,tr.lis
 tr.listTotals { font-weight: bold; font-size:85%;}
 
 table.engineForm { border: solid 4px #e6e6e6; margin: 10px; border-radius: 10px; width: 50%; }
+div.toggleContent table.engineForm { width: 90%; }
 #table.engineForm td, table.engineForm th { border:inset 1px #e6e6e6; padding: 3px;}
 table.engineForm td { background-color #eeeeee; margin: 4px; padding: 4px; border-radius: 14px; }
 table.engineForm th { font-weight: bold; text-align: center; }
