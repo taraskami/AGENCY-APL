@@ -2041,7 +2041,7 @@ function view_generic_links($control,$def,$control_array_variable='control')
       return $place . $prev_link.' '.$next_link.' '.$list_link;
 }
 
-function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='rec')
+function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='rec',$rec=array())
 {
 	$action = $control['action'];
       $pr     = $def['fields'][$key];
@@ -2140,7 +2140,7 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 			$field = selectto($formvar.'['.$key.']').selectend();
 			//the lookup fields will be populated dynamically
 		} else {
-			$query = build_lookup_query($pr,$action);
+			$query = build_lookup_query($pr,$action,$rec);
 			/* Adding bad (expensive, extra query) hack to force default if only 1 option */
 			if (be_null($value) and ($pr['null_ok']==false) and (sql_num_rows(($junk=agency_query($query)))==1) ) {
 				$junk=sql_fetch_assoc($junk);
@@ -2168,7 +2168,7 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 		}
 		break;
 	case 'lookup_multi':
-		$query = build_lookup_query($pr,$action);
+		$query = build_lookup_query($pr,$action,$rec);
 		/* Adding bad (expensive, extra query) hack to force default if only 1 option */
 		if (be_null($value) and ($pr['null_ok']==false) and (sql_num_rows(($junk=agency_query($query)))==1) ) {
 			$junk=sql_fetch_assoc($junk);
@@ -2298,12 +2298,12 @@ function form_field_generic($key,$value,&$def,$control,&$Java_Engine,$formvar='r
 function form_generic_row($key,$value,&$def,$control,&$Java_Engine,$rec,$formvar='rec')
 {
 
-	$field = form_field_generic($key,$value,$def,$control,$Java_Engine,$formvar);
+	$field = form_field_generic($key,$value,$def,$control,$Java_Engine,$formvar,$rec);
 	// Hack, test for skip codes and combine into one row
 	preg_match('/^(.*)(_codes?)$/',$key,$skip_key);
 	$skip_key=orr($skip_key[1],$key).'_skip_code';
 	if (array_key_exists($skip_key,$def['fields'])) {
-		$skip_field=form_field_generic($skip_key,$rec[$skip_key],$def,$control,$Java_Engine,$formvar);
+		$skip_field=form_field_generic($skip_key,$rec[$skip_key],$def,$control,$Java_Engine,$formvar,$rec);
 		$field=table_blank(row(cell($field).cell("OR") . cell($skip_field)),NULL,'class="embeddedTable"');
 	} elseif (preg_match('/^(.*)(_skip_code)$/',$key,$skip_key)) {
 		$skip_keys=array($skip_key[1],$skip_key[1].'_code',$skip_key[1].'_codes');
@@ -2481,7 +2481,7 @@ function system_fields_f($rec,$def,$control,&$important_header='',&$JAVA_ENGINE=
 		if ($control['step']=='submit') {
 			$field=value_generic($rec['sys_log'],$def,'sys_log',$action);
 		} else {
-			$field=form_field_generic('sys_log',$rec['sys_log'],$def,array('action'=>$action),$Java_Engine);
+			$field=form_field_generic('sys_log',$rec['sys_log'],$def,array('action'=>$action),$Java_Engine,NULL,$rec);
 		}
 		$sys_log= div(smaller($field)
 				. toggle_label('Append to system log...'),'','class="hiddenDetail' .$ex_class .'"');
@@ -4034,7 +4034,7 @@ function cancel_url_generic($rec,$def,$action,$control_array_variable)
 	return $cancel_url;
 }
 
-function build_lookup_query($field_def,$action)
+function build_lookup_query($field_def,$action,$rec=array())
 {
 	$look=$field_def['lookup'];
 	$look_table=$look['table'];
@@ -4087,7 +4087,14 @@ function build_lookup_query($field_def,$action)
 	case 'DESCRIPTION':
 	default:
 	}
-	$filt = $look['filter'];
+	if ($look['filter_sql']) {
+		$filt_sql=eval('return ' . $look['filter_sql'] . ';');
+		return $filt_sql;
+	} elseif ($look['filter_eval']) {
+		$filt=eval('return ' . $look['filter_eval'] . ';');
+	} else {
+		$filt = $look['filter'];
+	}
 	if ($field_def['allowed_values'] and ($field_def['allowed_values']!=array())) {
 		$filt['IN:'.$look_code]=$field_def['allowed_values'];
 	}
