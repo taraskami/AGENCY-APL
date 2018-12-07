@@ -653,9 +653,13 @@ function config_object($object)
 		}
       } // End field loop
 	  } // End field_pattern null test
-		if ( ($sql_temp=$config_object['lookup_labels']) ) {
+		if ( ($sql_temp=orr($config_object['lookup_labels'],$engine['global_default']['lookup_labels'])) ) {
 			// Read any (unset) labels from the database
-			$s_temp=agency_query($sql_temp);
+			if ($sql_temp=='engine_label') {
+				$sql_temp='SELECT *,40 AS wrap_width FROM engine_label'; // FIXME
+			}
+			$filter_temp=array('table_name'=>$object);
+			$s_temp=agency_query($sql_temp,$filter_temp);
 			while ($f_temp=sql_fetch_assoc($s_temp)) {
 					$fx=$f_temp['field_name'];
 					//if ( array_key_exists($fx,$fields_config_file) and be_null($fields_config_file[$fx]['label']) and (!be_null($f_temp['label']))) {
