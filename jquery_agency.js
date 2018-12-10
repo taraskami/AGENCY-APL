@@ -48,7 +48,9 @@ $(function() {
 	$('.field_date').datepick( {
 			showOnFocus: false, 
     		showTrigger: '<img src="images/calendar.png" alt="Popup" class="calButton"/>',
-			monthsToShow: 2,
+			monthsToShow: 4,
+			monthsOffset: 3,
+			monthsToStep: 4,
 			firstDay: 1,
 			yearRange: '-100:+10'
 	});
