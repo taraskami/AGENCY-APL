@@ -812,7 +812,14 @@ function has_perm($perm_list=null,$mode="R",$staff_id="")
 			 * If the perm-type is the same as the staff project, they are approved
 			 */
 
-			$passed=true;
+			// FIXME: Admin staff people automatically getting admin perms, which is probably not desired
+			// For now excluding admin from project match
+			// It might be better to just ditch this project match stuff, since a single
+			// perm record could accomplish this for any projects you explicitly wanted to match
+
+			if (strtolower($proj)!='admin') {
+				$passed=true;
+			}
 			break;
 
 		case 'generic_oo_export':
