@@ -262,6 +262,7 @@ $engine['field_default'] = array(
 				'timestamp_allow_date' => null, //for timestamp fields, allow a null value in time field - defaults in db to 00:00:00
 				'timestamp_format' => null, //set to "drop_list" for an html select list
 				'total_value_list' => null, //an evaluated expression to modify record value for list totals - has access to $x and $rec
+				'trim_whitespace' => true,
 				'valid' => null,
 				'invalid' => null,
 				//'value' => '$x',

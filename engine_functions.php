@@ -3423,6 +3423,9 @@ function process_generic(&$sess,&$form,$def)
 			$sess[$form_key] = dewebify_array(array_filter(orr($form_value,array())));
 		} else {
 
+			if ($def['fields'][$form_key]['trim_whitespace']!==false) {
+				$form_value=trim($form_value);
+			}
 			$sess[$form_key] = $form_value;
 
 		}
