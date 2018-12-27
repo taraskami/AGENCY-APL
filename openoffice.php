@@ -534,7 +534,7 @@ function template_merge( $data_sets, $template='',$extra_vars=array())
 		die(AG_OPEN_OFFICE_DISABLED_MESSAGE);
 	}
 	require_once($off . 'bundled/tbs/tbs_class.php');
-	require_once($off . 'bundled/tbs/tbs_plugin_opentbs.php');
+	require_once($off . 'bundled/tbs/plugins/tbs_plugin_opentbs.php');
 
 	if ($template=='spreadsheet') {
 		$template=AG_OPEN_OFFICE_CALC_TEMPLATE;
