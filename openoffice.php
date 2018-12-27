@@ -608,33 +608,135 @@ function template_merge( $data_sets, $template='',$extra_vars=array())
 				$doc->MergeBlock("values$x-$y",$block_vals[$y-1]);
 			}
 		} else {
-	       $values=$blocks[0]['values'][0];
-			// outline(dump_array($values));
-	       $doc->MergeBlock('data',$values);
+//<<<<<<< Updated upstream
+//	       $values=$blocks[0]['values'][0];
+//			// outline(dump_array($values));
+//	       $doc->MergeBlock('data',$values);
+//=======
+			$block_name=orr($block['block_merge_name'],$default_block_merge,'b'.$x-1);
+			// Only merge if the block exists
+			// FIXME:  Using GetBlockSource is hack, since I don't know how to get a block list or test for existence more directly
+//outline("Block = $block_name");
+			if ($sub_sheets) {
+				foreach($sub_sheets as $ss) {
+					$doc->PlugIn(OPENTBS_SELECT_SHEET, $ss);
+					if ($doc->GetBlockSource($block_name)) {
+						$doc->MergeBlock($block_name,$block_vals[0]);
+					}
+				}
+			} else {
+				if ($doc->GetBlockSource($block_name)) {
+					$doc->MergeBlock($block_name,$block_vals[0]);
+					$debug && outline("Found block $block_name");
+				} else {
+					$debug && outline("NOT Found block $block_name");
+				}	
+			}	
+//>>>>>>> Stashed changes
 		}
 	}
-	$doc->Show(OPENTBS_DOWNLOAD);
-	page_close();
+	if ($debug) {
+outline("Load String = $load_string");
+outline();
+		$doc->PlugIn(OPENTBS_DEBUG_INFO,false);
+outline();
+outline();
+		$doc->PlugIn(OPENTBS_DEBUG_XML_CURRENT);
+
+	}
+	office_mime_header(basename($template));
+//	$doc->Show(OPENTBS_DOWNLOAD);
+	$doc->Show(OPENTBS_NOHEADER + OPENTBS_DOWNLOAD );
+	page_close($silent=true);
 	exit;
 	
 }
-
 function office_mime_header($filename)
 {
+// 7/21/14 update fleshing out various MS Office Mimetypes based on list from: http://filext.com/faq/office_mime_types.php
 	preg_match('/^(.*)\.([a-z]{3,5})$/i',$filename,$matches);
 	$ext=strtolower($matches[2]);
 	$name=orr($matches[1],'agency_report');
 	$filename=$name. '.' . $ext;
 	switch ($ext) {
+	// PDF Format:
 		case 'pdf' :
 			$type='application/pdf';
 			break;
+
+	// MS Excel Formats:
 		case 'xls' :
+		case 'xlt' :
+		case 'xla' :
 			$type='application/vnd.ms-excel';
 			break;
+		case 'xlsx' :
+			$type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+			break;
+		case 'xltx' :
+			$type='application/vnd.openxmlformats-officedocument.spreadsheetml.template';
+			break;
+		case 'xlsm' :
+			$type='application/vnd.ms-excel.sheet.macroEnabled.12';
+			break;
+		case 'xltm' :
+			$type='application/vnd.ms-excel.template.macroEnabled.12';
+			break;
+		case 'xlam' :
+			$type='application/vnd.ms-excel.addin.macroEnabled.12';
+			break;
+		case 'xlsb' :
+			$type='application/vnd.ms-excel.sheet.binary.macroEnabled.12';
+			break;
+
+	// MS Word Formats:
 		case 'doc' :
+		case 'dot' :
 			$type='application/msword';
 			break;
+		case 'docx' :
+			$type='application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+			break;
+		case 'dotx' :
+			$type='application/vnd.openxmlformats-officedocument.wordprocessingml.template';
+			break;
+		case 'docm' :
+			$type='application/vnd.ms-word.document.macroEnabled.12';
+			break;
+		case 'dotm' :
+			$type='application/vnd.ms-word.template.macroEnabled.12';
+			break;
+
+	// MS PowerPoint Formats:
+		case 'ppt' :
+		case 'pps' :
+		case 'ppa' :
+		case 'pot' :
+			$type='application/vnd.ms-powerpoint';
+			break;
+		case 'pptx' :
+			$type='application/vnd.openxmlformats-officedocument.presentationml.presentation';
+			break;
+		case 'potx' :
+			$type='application/vnd.openxmlformats-officedocument.presentationml.template';
+			break;
+		case 'ppsx' :
+			$type='application/vnd.openxmlformats-officedocument.presentationml.slideshow';
+			break;
+		case 'ppam' :
+			$type='application/vnd.ms-powerpoint.addin.macroEnabled.12';
+			break;
+		case 'pptm' :
+			$type='application/vnd.ms-powerpoint.presentation.macroEnabled.12';
+			break;
+		case 'potm' :
+			$type='application/vnd.ms-powerpoint.template.macroEnabled.12';
+			break;
+		case 'ppsm' :
+			$type='application/vnd.ms-powerpoint.slideshow.macroEnabled.12';
+			break;
+
+	// LibreOffice/OpenOffice Formats:
 		case 'odt' :
 		case 'sxw' :
 			$type='application/vnd.sun.xml.writer';
@@ -643,12 +745,15 @@ function office_mime_header($filename)
 		case 'sxc' :
 			$type='application/vnd.sun.xml.calc';
 			break;
+
+	// Default:
 		default :
 			$type='application/octet-stream';
 	}
+
 	header ( 'Content-type: ' . $type);
 	header ( 'Content-Disposition: attachment; filename=' . $filename );
-	header ( 'Content-Description: AGENCY Generated Open Office Data' );
+	header ( 'Content-Description: AGENCY Generated Office Data' );
 	return;
 }
 
