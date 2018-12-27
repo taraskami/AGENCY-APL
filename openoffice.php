@@ -529,7 +529,7 @@ function oowriter_merge( $data_recs, $template, $data_eval="",$file_replace="",$
 
 function template_merge( $data_sets, $template='',$extra_vars=array())
 {
-//outline(dump_array($data_sets));
+if ($debug) { outline(blue("data sets: " . dump_array($data_sets))); }
 	if (!AG_OPEN_OFFICE_ENABLE_EXPORT) {
 		die(AG_OPEN_OFFICE_DISABLED_MESSAGE);
 	}
@@ -541,6 +541,7 @@ function template_merge( $data_sets, $template='',$extra_vars=array())
 	}	
 	$template = orr($template,AG_OPEN_OFFICE_CALC_TEMPLATE);
 	$default_template = preg_match('/'. AG_OPEN_OFFICE_CALC_TEMPLATE.'/',$template);
+
 	//FIXME: sloppy handling of temp directory?
     $template=preg_match('/\/tmp\//s',$template)
         ? $template
@@ -551,68 +552,152 @@ function template_merge( $data_sets, $template='',$extra_vars=array())
 	$blocks=$data_sets['report_block'];
 	unset($data_sets['report_block']);
 	$doc = new clsTinyButStrong;
-	$doc->Plugin(TBS_INSTALL, OPENTBS_PLUGIN);
-	$doc->LoadTemplate($template);
+	$doc->PlugIn(TBS_INSTALL, OPENTBS_PLUGIN);
+	if ($default_template) {
+		$load_string=$template;
+	} elseif (preg_match('/new_monthly.*xls(x|m)/',$template)) {
+		// FIXME: This is specific to a particular SPC Excel template
+		//FIXME: Which files to load, and how to know?
+		$load_string=$template;
+		$sub_sheets=array(1,2,3,4);
+//		$debug=true;
+	} else {
+		$load_string=$template;
+		$default_block_merge='data'; // Temporary placeholder to keep compatibility with SPC templates
+	}
+	$doc->LoadTemplate($load_string);
+
 	//$doc->SetOption('noerr','true');
 	// Global blocks
 //outline("Global vars = " . dump_array($global_vars));
 //outline("Report vars = " . dump_array($global_vars));
-	$doc->MergeField('global',$global_vars);
-	$doc->MergeField('report',$data_sets);
+
+/*
+	// Process (Word) headers/footers
+	$head_and_foot=$doc->Plugin(OPENTBS_GET_HEADERS_FOOTERS);
+if ($debug ) {
+	outline("Headers and footers: " . dump_array($head_and_foot));
+}
+*/
+
+	if ($sub_sheets) {
+		foreach($sub_sheets as $ss) {
+			$doc->PlugIn(OPENTBS_SELECT_SHEET, $ss);
+			$doc->MergeField('global',$global_vars);
+			$doc->MergeField('report',$data_sets);
+		}
+	} else {
+		$files=$doc->Plugin(OPENTBS_GET_OPENED_FILES);
+		foreach ($files as $f) {
+if ($debug) {
+	outline("Doing $f");
+}
+			if ($doc->PlugIn(OPENTBS_SELECT_FILE, $f) ) {
+				$doc->MergeField('global',$global_vars);
+				$doc->MergeField('report',$data_sets);
+			} else {
+				if ($debug) {
+					outline("Failed to select $f");
+				}
+			}
+		}
+		$doc->PlugIn(OPENTBS_SELECT_MAIN);
+	}
+
 	for ($x=0;$x<count($blocks);$x++) {
-		while (in_array('O_TEMPLATE',$blocks[$x]['suppress_output_codes'])) {
+		while (in_array('O_TEMPLATE',$blocks[$x]['suppress_output_codes']) or (!sql_true($blocks[$x]['is_enabled'])) or ($blocks[$x]['report_block_type_code']=='PIVOT')) {
 			unset($blocks[$x]);
 			$blocks=array_values($blocks);
 			//$x--;
 		}
 	}
 
+	if ($sub_sheets) {
+		foreach($sub_sheets as $ss) {
+			$doc->PlugIn(OPENTBS_SELECT_SHEET, $ss);
+			if ($doc->GetBlockSource('sections')) {
+				$doc->MergeBlock('sections',range(1,count($blocks)));
+			}
+		}
+	} else {
+			$doc->PlugIn(OPENTBS_SELECT_MAIN);
+			if ($doc->GetBlockSource('sections')) {
+				$doc->MergeBlock('sections',range(1,count($blocks)));
+			}
+	}
+
 	$doc->MergeBlock('sections',range(1,count($blocks)));
 	// FIXME: move me to a config file or something
+	// This is now array(datatype(ope),format string)
 	$type_conversions=array(
-		'float'=>'num',
-		'integer'=>'num',
-		AG_MAIN_OBJECT_DB => 'num',
-		'date'=>'date',
-		'time'=>'time',
-		'timestamp'=>'date',
-		'datetime'=>'date'
+		//'float'=>array('num','0.00'),
+		'float'=>array('num',NULL),
+		'integer'=>array('num','0.'),
+		AG_MAIN_OBJECT_DB =>array( 'num','0.'),
+		'date'=>array('date','mm/dd/yy'),
+		'time'=>array('time','rr:nn ampm'),
+		'timestamp'=>array('date','mm/dd/yy rr:nn ampm'),
+		'datetime'=>array('date','mm/dd/yy rr:nn ampm'),
 	);
 
 	// Report blocks
 	for ($x=1;$x<=count($blocks);$x++) {
 		// Template numbering starts at 1, arrays at 0
 		$block=$blocks[$x-1];
-		$block_vals=$block['values'];
+		//$block_vals=$block['values'];
+		// Do office doc-needed conversions, eg for line breaks
+		// Fixme:  need to determine office doc type first, as conversion will vary
+if ($debug) {outline('Block values: ' . dump_array($block['values']));}
+		for($a=0;$a<count($block['values']);$a++) {
+			$new_vals=array();
+			for($b=0;$b<count($block['values'][$a]);$b++) {
+				//$new_vals[$b]=str_replace("\n",'</text:p><text:p>',$block['values'][$a][$b]);
+				$new_vals[$b]=$block['values'][$a][$b];
+			}
+if ($debug) {outline('New vals: ' . dump_array($new_vals));}
+			// FIXME, hack for empty data coming through as single element null array
+			if ( (count($new_vals[0])==1) and (!$new_vals[0][0])) {
+				$new_vals=array();
+			}
+
+			$block_vals[$a]=$new_vals;
+		}
+
+
+
 		unset($block['values']);
+if ($debug) {
+	outline("Block values: " . dump_array($block_vals));
+}
+
 		if ($default_template) {
 			// Block vars
 			$doc->MergeBlock('section'.$x,array($block));
 			// Block values
 			$doc->MergeBlock("data$x",range(1,count($block_vals)));
 			for ($y=1;$y<=count($block_vals);$y++) {
-				$headers=array_keys($block_vals[$y-1][0]);
-/*
 				$headers=array();
-				foreach($block['data_types'] as $k=>$v) {
-					$headers[]=array('val'=>$k,'type'=>$type_conversions[$v]);
-
-				}
-*/
-/*
 				$header_keys=array_keys($block_vals[$y-1][0]);
+				//$headers=array_keys($block_vals[$y-1][0]);
+				$header_keys_with_ope=array();
 				foreach ($header_keys as $h) {
-					$headers=array('val'=>$h
-*/
-				$doc->MergeBlock("headers$x-$y,headers{$x}-{$y}a",$headers);
+					$headers[]=ucwords(str_replace('_',"\n",$h));
+					$data_type=$block['data_types'][$h];
+//					$ope_type=$type_conversions[$data_type][0];
+					$ope_format=$type_conversions[$data_type][1];
+					if ( !$ope_format) {
+						$ope_type=$type_conversions[$data_type][0];
+					}	
+					$header_keys_with_ope[]=$h. ($ope_type ? ';ope=tbs:' . $ope_type : '') . ($ope_format ? ';frm='.enquote1($ope_format):'');
+					//is_ken() and ($header_keys=$header_keys_with_ope);
+				}	
+
+				//$doc->MergeBlock("headers$x-$y,headers{$x}-{$y}a",$headers);
+				$doc->MergeBlock("headers{$x}-{$y}a",$header_keys_with_ope);
+		 		$doc->MergeBlock("headers$x-$y",$headers);
 				$doc->MergeBlock("values$x-$y",$block_vals[$y-1]);
 			}
 		} else {
-//<<<<<<< Updated upstream
-//	       $values=$blocks[0]['values'][0];
-//			// outline(dump_array($values));
-//	       $doc->MergeBlock('data',$values);
-//=======
 			$block_name=orr($block['block_merge_name'],$default_block_merge,'b'.$x-1);
 			// Only merge if the block exists
 			// FIXME:  Using GetBlockSource is hack, since I don't know how to get a block list or test for existence more directly
@@ -625,6 +710,7 @@ function template_merge( $data_sets, $template='',$extra_vars=array())
 					}
 				}
 			} else {
+				$doc->PlugIn(OPENTBS_SELECT_MAIN);
 				if ($doc->GetBlockSource($block_name)) {
 					$doc->MergeBlock($block_name,$block_vals[0]);
 					$debug && outline("Found block $block_name");
@@ -632,20 +718,17 @@ function template_merge( $data_sets, $template='',$extra_vars=array())
 					$debug && outline("NOT Found block $block_name");
 				}	
 			}	
-//>>>>>>> Stashed changes
 		}
 	}
-	if ($debug) {
-outline("Load String = $load_string");
-outline();
-		$doc->PlugIn(OPENTBS_DEBUG_INFO,false);
-outline();
-outline();
-		$doc->PlugIn(OPENTBS_DEBUG_XML_CURRENT);
-
-	}
+if ($debug) {
+	outline("Load String = $load_string");
+	outline();
+	$doc->PlugIn(OPENTBS_DEBUG_INFO,false);
+	outline();
+	outline();
+	$doc->PlugIn(OPENTBS_DEBUG_XML_CURRENT);
+}
 	office_mime_header(basename($template));
-//	$doc->Show(OPENTBS_DOWNLOAD);
 	$doc->Show(OPENTBS_NOHEADER + OPENTBS_DOWNLOAD );
 	page_close($silent=true);
 	exit;
