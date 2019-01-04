@@ -282,43 +282,21 @@ $(function() {
 		event.preventDefault();
 		$("#enterVisitorForm").toggle("slow");
 	});
+});
 
 $( function() {
   // Webcam stuff here
+	const myVideo = document.querySelector('video.videoStream');
 
-  $('.photoDialogSelectorLink').click( function(e) {
+	$('.photoDialogSelectorLink').click( function(e) {
 		e.preventDefault();
-		var title = $('.photoDialog').find('.photoDialogTitle').html();
+		var title = $('.photoDialog').find('.photoDialogTitle').text();
 		$('.photoDialog').dialog( {title: title, width: 'auto',height: 'auto', position: { my: "center top", at: "center top", of: window }}).show();
-//		$('.photoDialog').show();
-		var onFailSoHard = function(e) {
-			console.log('Reeeejected!', e);
-		};
-
-		navigator.getMedia = ( navigator.getUserMedia ||
-                       navigator.webkitGetUserMedia ||
-                       navigator.mozGetUserMedia ||
-                       navigator.msGetUserMedia);
-
-//navigator.getMedia (constraints, success, error);
-
-  // Not showing vendor prefixes.
-	//navigator.getUserMedia({video: true, audio: true}, function(localMediaStream) {
-	navigator.getMedia({video: true, audio: false}, function(localMediaStream) {
-		var myVideo = document.querySelector('video.videoStream');
-		myVideo.src = window.URL.createObjectURL(localMediaStream);
-  
-  	// Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
-  	// See crbug.com/110938.
-		myVideo.onloadedmetadata = function(e) {
-			// Ready to go. Do some stuff.
-		};
-	}, onFailSoHard);
+		navigator.mediaDevices.getUserMedia({video: true, audio: false}).then((stream) => {myVideo.srcObject = stream});
 	});
 
-	$('video.videoStream').click( function(e) {
+	$(myVideo).click( function(e) {
 		e.preventDefault();
-		var myVideo = document.querySelector('video.videoStream');
 		var canvas = document.querySelector('canvas.imageCapture');
 		var context = canvas.getContext('2d');
 		$(this).closest('.photoDialog').find('.imageSendContainer').show();
@@ -348,9 +326,8 @@ $( function() {
 		e.preventDefault();
 		$(this).closest('div').find('.imageCaptureUpload').click();
 	});
-  });
-
 });
+
 
 $( function() {
 	$(".formWipeoutLink").click( function (e) {
