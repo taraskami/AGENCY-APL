@@ -437,7 +437,8 @@ define('AG_REPORTS_REGEX_TEMPLATES','/^(.*)[|](.*)([|](.*))?$/U');
 
 define('AG_OPEN_OFFICE_ENABLE_EXPORT',true);
 define('AG_OPEN_OFFICE_DISABLED_MESSAGE','Open Office exports not enabled for this AGENCY installation');
-define('AG_OPEN_OFFICE_CALC_TEMPLATE','generic_spreadsheet.ods');
+//define('AG_OPEN_OFFICE_CALC_TEMPLATE','generic_spreadsheet.ods');
+define('AG_OPEN_OFFICE_CALC_TEMPLATE','generic_spreadsheet.xlsx');
 define('AG_CLIENT_CARD_TEMPLATE','client_id.sxw');
 define('AG_STAFF_CARD_TEMPLATE','staff_id.sxw');
 
