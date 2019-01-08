@@ -39,8 +39,7 @@ INSERT INTO tbl_db_revision_history
 
 ALTER TABLE tbl_l_log_type ADD COLUMN is_current BOOLEAN NOT NULL DEFAULT true;
 ALTER TABLE tbl_l_log_type_log ADD COLUMN is_current BOOLEAN;
-DROP VIEW l_log_type;
-CREATE VIEW l_log_type AS SELECT * FROM tbl_l_log_type WHERE NOT is_deleted;
+CREATE OR REPLACE VIEW l_log_type AS SELECT * FROM tbl_l_log_type WHERE NOT is_deleted;
 
 COMMIT;
 
