@@ -481,13 +481,14 @@ function engine($control='',$control_array_variable='control')
 			  if (!$post_failed && $alerts = $control['staff_alerts']) {
 				  $posted_alerts = true;
 				  $adef = get_def('alert');
+				  $obj_id=$a[$def['id_field']];
 				  foreach ($alerts as $alert_staff_id) {
 					  $n_alert = array();
-					  $n_alert['alert_subject'] = $def['singular'] .' (id '.$control['id'].') has been added';
-					  $n_alert['alert_text'] = staff_name(orr($a['written_by'],$a['added_by'])) . ' has added '.aan($def['singular']).' '.$def['singular'].' (id '.$control['id'] . ') for your attention';
+					  $n_alert['alert_subject'] = $def['singular'] .' (id '.$obj_id.') has been added';
+					  $n_alert['alert_text'] = staff_name(orr($a['written_by'],$a['added_by'])) . ' has added '.aan($def['singular']).' '.$def['singular'].' (id '.$obj_id . ') for your attention';
 					  $n_alert['staff_id']   = $alert_staff_id;
 					  $n_alert['ref_table']  = $def['object'];
-					  $n_alert['ref_id']     = $a[$def['id_field']];
+					  $n_alert['ref_id']     = $obj_id;
 					  $n_alert['added_by']   = $a['added_by'];
 					  $n_alert['changed_by'] = $a['changed_by'];
 					  if (!$n_alert = $adef['fn']['post']($n_alert,$adef,$message)) {
