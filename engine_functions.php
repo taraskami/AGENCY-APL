@@ -1772,8 +1772,12 @@ function label_generic($key,$def,$action,$do_formatting=true)
 
       $label=$field['label_'.$action];
 //	if ($do_formatting) { $label=str_replace(' ',oline(),$label); }
-	$display = $field['display_'.$action];
-	if (($type=='timestamp') and in_array($action,array('add','edit')) and !in_array($display,array('regular','display'))) {
+	if ( !be_null(($q=$field["display_eval_$action"])) ) {
+		$disp = eval( 'return ' . $q . ';' );
+	} else {
+    	$disp = $field["display_$action"];
+	}
+	if (($type=='timestamp') and in_array($action,array('add','edit')) and !in_array($disp,array('regular','display'))) {
 		if (!$field['null_ok']) {
 			$req = red(' *');
 		}
@@ -1843,7 +1847,11 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 			? row(cell(div($data_dict . toggle_label("Data dictionary for $object"),'','class="hiddenDetail"'),'colspan=2'))
 			: '';
 		foreach ($rec as $key=>$value) {
-	    $disp = $fields[$key]["display_{$action}"];
+		if ( !be_null(($q=$fields[$key]["display_eval_$action"])) ) {
+			$disp = eval( 'return ' . $q . ';' );
+		} else {
+	    	$disp = $fields[$key]["display_$action"];
+		}
 	    if ($disp=='multi_disp') { // THIS STUFF ALL NEEDS TO GO SOON!!
 		  $sub_value = $value[$fields[$key]['multi_field']];
 		  //$multi_out .= view_generic_row($key,$sub_value,$def,$action); //SAVE FOR THE END
@@ -1892,7 +1900,11 @@ function view_generic($rec,$def,$action,$control='',$control_array_variable='con
 	    foreach($fields as $key => $field) {
 		  // CAPTURE VIRTUAL FIELDS
 		  if (!array_key_exists($key,$rec)) {
-			$disp = $fields[$key]['display_'.$action];
+			if ( !be_null(($q=$fields[$key]["display_eval_$action"])) ) {
+				$disp = eval( 'return ' . $q . ';' );
+			} else {
+		    	$disp = $fields[$key]["display_$action"];
+			}
 			if ($disp=='hide') {
 			      //nothing
 			} else {

@@ -913,6 +913,7 @@ function list_control($control,$def,$control_array_variable='control',$format='S
       $anchor = $control['anchor'] ? '#'.$control['anchor'] : '';
       $object=$control['object'];
       $list_control_elements=$engine['list_control_elements'];
+	  $action='list';
 
       foreach($list_control_elements as $key) {
 
@@ -927,7 +928,12 @@ function list_control($control,$def,$control_array_variable='control',$format='S
 	$x=0;
 	$all_fields = $def['fields'];
 	foreach ($all_fields as $fname=>$fconfig) {
-		if ( (!has_perm('super_user')) && ($fconfig['never_to_form'] || ($fconfig['display_list']=='hide')) ) {
+		if ( !be_null(($q=$fconfig["display_eval_$action"])) ) {
+			$disp = eval( 'return ' . $q . ';' );
+		} else {
+	    	$disp = $fconfig["display_$action"];
+		}
+		if ( (!has_perm('super_user')) && ($fconfig['never_to_form'] || ($disp=='hide')) ) {
 			continue;
 		}
 		$x++;
@@ -1470,7 +1476,12 @@ function form_list_header_generic($def,$control,&$row_count)
 
 	foreach ($fields as $field) {
 		$f_def = $def['fields'][$field];
-		if ($f_def['display_'.$action]=='hide') {
+		if ( !be_null(($q=$f_def["display_eval_$action"])) ) {
+			$disp = eval( 'return ' . $q . ';' );
+		} else {
+	    	$disp = $f_def["display_$action"];
+		}
+		if ($disp=='hide') {
 			continue;
 		}
 		$row_count ++;
@@ -1491,7 +1502,12 @@ function form_list_row_generic($number,$rec,$def,$control)
 	$i = 0;
 	foreach ($fields as $field) {
 		$f_def = $def['fields'][$field];
-		if ($f_def['display_'.$action]=='hide') {
+		if ( !be_null(($q=$f_def["display_eval_$action"])) ) {
+			$display = eval( 'return ' . $q . ';' );
+		} else {
+	    	$display = $f_def["display_$action"];
+		}
+		if ($display=='hide') {
 			if (in_array($field,$def['multi_add']['common_fields'])) {
 				//nothing
 			} else {
@@ -1568,7 +1584,12 @@ function multi_record_passed_generic($rec,$rec_init,$def)
 	}
 	//now, add any fields that are still required
 	foreach (array_keys($def['fields']) as $field) {
-		if (!in_array($field,$rec_init_fields) && !in_array($field,$missing) && ($def['fields'][$field]['display_add'] != 'hide')) {
+		if ( !be_null(($q=$def['fields'][$field]["display_eval_$action"])) ) {
+			$disp = eval( 'return ' . $q . ';' );
+		} else {
+	    	$disp = $def['fields'][$field]["display_$action"];
+		}
+		if (!in_array($field,$rec_init_fields) && !in_array($field,$missing) && ($disp != 'hide')) {
 			$missing[] = $field;
 		}
 	}
@@ -1745,7 +1766,12 @@ function view_list_row_generic($number,$rec,$def,$control)
 			$def[$field]['null_ok']=false;
 		}
 		$f_def = $def['fields'][$field];
-		if ($f_def['display_'.$action]=='hide') {
+		if ( !be_null(($q=$f_def["display_eval_$action"])) ) {
+			$disp = eval( 'return ' . $q . ';' );
+		} else {
+	    	$disp = $f_def["display_$action"];
+		}
+		if ($disp=='hide') {
 			continue;
 		}
 		$cell = value_generic($rec[$field],$def,$field,'view');
@@ -1767,11 +1793,16 @@ function multi_add_blank_generic($def,$rec_init)
 	/*
 	 * Wrapper function for blank_generic to gather a set of blank records
 	 */
-
+	$action='add';
 	// First, wipe out default values for visible fields
 	$n_def=$def;
 	foreach($def['fields'] as $f=>$d) {
-		if (($d['display_add']<>'hide')) {
+		if ( !be_null(($q=$d["display_eval_$action"])) ) {
+			$disp = eval( 'return ' . $q . ';' );
+		} else {
+	    	$disp = $d["display_$action"];
+		}
+		if (($disp<>'hide')) {
 			$n_def['fields'][$f]['default']=NULL;
 		}
 	}
