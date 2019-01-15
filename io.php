@@ -409,7 +409,7 @@ function tabify( $string )
 function webify( $string )
 {
 //    make it web safe
-	return nl2br( tabify( htmlspecialchars($string, ENT_QUOTES, "UTF-8",false) ));
+	return nl2br( tabify( htmlspecialchars($string, ENT_QUOTES, "UTF-8") ));
 }
 
 function dewebify( $string )
