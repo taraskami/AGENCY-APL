@@ -32,14 +32,15 @@ should be included in this distribution.
 
 $quiet = 'Y';
 include 'includes.php';
-$qs_type = $_REQUEST['QSType'];
+$qs_type = strip_tags($_REQUEST['QSType']);
+$qs_text = strip_tags($_REQUEST['QuickSearch']);
 
 $tmp_searches = array_keys($AG_QUICK_SEARCHES);
 array_push($tmp_searches,'news');
 
 if (!in_array($qs_type,$tmp_searches)) {
 	agency_top_header();
-	out(alert_mark('Unknown Quick Search Type: '.$qs_type));
+	out(alert_mark(webify('Unknown Quick Search Type: '.$qs_type)));
 	page_close();
 	exit;
 }
@@ -51,7 +52,7 @@ switch ($qs_type) {
 	if (function_exists($func)) {
 		$out = $func();
 	} else {
-		$out = object_quick_search($qs_type,$_REQUEST['QuickSearch']);
+		$out = object_quick_search($qs_type,$qs_text);
 	}
 }
 
