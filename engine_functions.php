@@ -3339,10 +3339,6 @@ function process_generic(&$sess,&$form,$def)
 		$fields = $def['fields'][$form_key];
 		$type = $def['fields'][$form_key]['data_type'];
 		
-		if (!$def['fields'][$form_key]['allow_smart_chars']) { //no smart quotes
-			$form_value=smart_char_destroy($form_value);
-		}
-
 		//FORCE_CASE IF SPECIFIED IN CONFIG FILE
 		if ($fcase = $def['fields'][$form_key]['force_case']) {
 			$form_value = force_case($form_value,$fcase);

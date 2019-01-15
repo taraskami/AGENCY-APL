@@ -216,7 +216,6 @@ $engine['field_default'] = array(
 				'edit_main_objects'=>null, //will display a client selector to change client_id (USE CAREFULLY)
 				'add_query_modify_condition'=>null,
 				'edit_query_modify_condition'=>null, //changes ENGINE query on edited or added records accordingly ENGINE_UNSET_FIELD doesn't use field in query (this has been superseded by RETURNING in PostgreSQL)
-				'allow_smart_chars'=>null, //on the off-chance that one wants smart quotes
 				'comment' => null,
 				//comment_show set below
 				'confirm' => null,

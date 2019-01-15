@@ -409,7 +409,7 @@ function tabify( $string )
 function webify( $string )
 {
 //    make it web safe
-	return nl2br( tabify( htmlentities( $string ) ) );
+	return nl2br( tabify( htmlspecialchars($string, ENT_QUOTES, "UTF-8",false) ));
 }
 
 function dewebify( $string )
@@ -1861,7 +1861,7 @@ function html_start($title='')
 { //these were written to capture rather than send the text...
 	//uncomment this when we are good and ready to be displayed in standards compliance mode
 
-	html_meta('Content-Type','text/html; charset=iso-8859-1'); //fall-back character encoding
+	html_meta('Content-Type','text/html; charset=UTF-8'); //fall-back character encoding
       return ''//'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n"
 		. "<html>\n<head>\n"
   		//. '<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />'
@@ -1888,7 +1888,7 @@ function html_header($title, $refresh=0)
 //  	out('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n");
 	out("<html>\n<head>");
 	out(title($title));
-	html_meta('Content-Type','text/html; charset=iso-8859-1'); //fall-back character encoding
+	html_meta('Content-Type','text/html; charset=UTF-8'); //fall-back character encoding
 	//out('<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />'."\n");
 	out('<link rel="shortcut icon" href="images/agency_logo_small.png" type="image/png" />'."\n");
 	out($GLOBALS['AG_HEAD_TAG']);
@@ -2223,25 +2223,6 @@ function update_session_variable($sess_name,$a)
 {
       global $$sess_name;
 	$_SESSION[$sess_name]=$$sess_name=array_merge(orr($_SESSION[$sess_name],array()),orr($a,array()));
-}
-
-function smart_char_destroy($string)
-{
-	$smarties=array(
-				chr(133)=>'...', //Ellipsis
-				chr(145)=>'\'', //left single '
-			    chr(146)=>'\'', //right single '
-			    chr(147)=>'"', //left double "
-			    chr(148)=>'"', //right double "
-				chr(149)=>'*', // Bullet
-			    chr(150)=>'-', //medium dash
-			    chr(151)=>'--',  // &mdash, good enough for now (we don't want to store HTML '&mdash;' or '&#151;').
-				chr(169)=>'(c)',
-				chr(188)=>'1/4',
-				chr(189)=>'1/2',
-				chr(190)=>'3/4'
-			    );
-	return str_replace(array_keys($smarties),array_values($smarties),$string);
 }
 
 function be_null( $val )
