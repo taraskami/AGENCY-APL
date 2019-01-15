@@ -175,10 +175,7 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 					$init_str .='&'.$control_array_variable.'[rec_init]['.$key.'][]='.$v;
 				}
 			} else {
-
-			    if (!get_magic_quotes_gpc()) {
-				    $value = addslashes($value);
-			    }
+				$value = addslashes($value);
 		    	$init_str .= '&'.$control_array_variable."[step]=new&{$control_array_variable}[rec_init][$key]=" . $value;
 			}
 	    }
@@ -189,9 +186,7 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 			$sql = array($sql);
 		}
 		foreach ($sql as $key => $link_sql) {
-			if (!get_magic_quotes_gpc()) {
-				$link_sql = addslashes($link_sql);
-			}
+			$link_sql = addslashes($link_sql);
 			$init_str .='&'.$control_array_variable.'[sql]['.$key.']='.$link_sql;
 		}
 	}
@@ -201,9 +196,7 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 			if ($value==array()) {
 				continue;
 			}
-			if (!get_magic_quotes_gpc()) {
-				$value = addslashes($value);
-			}
+			$value = addslashes($value);
 			$control_str .= '&'.$control_array_variable."[$key]=" . $value;
 		}
       }
@@ -3359,7 +3352,7 @@ function process_generic(&$sess,&$form,$def)
 
 			// -1 = no staff on form, set to null for data record
 			$form_value = ($form_value=='-1') ? '' : $form_value;
-			$sess[$form_key] = get_magic_quotes_gpc() ? stripslashes($form_value) : $form_value;
+			$sess[$form_key] = $form_value;
 
 		} elseif ( substr($type,0,9)=='timestamp' ) {
 
@@ -3420,7 +3413,7 @@ function process_generic(&$sess,&$form,$def)
 					$l_field=$sub_def['fields'][$sub_key]['lookup']['value_field'];
 					$sess[$form_key][$sub_key]=sql_fetch_column(sql_query('SELECT ' . $l_field . ' FROM ' . $l_table . ' WHERE ' . read_filter(array('IN:'.$l_field=>$found_options))),$l_field);
 				} else {
-					$sess[$form_key][$sub_key] = get_magic_quotes_gpc() ? stripslashes($sub_value) : $sub_value;
+					$sess[$form_key][$sub_key] = $sub_value;
 				}
 			}
 		} elseif (in_array($type,array('lookup_multi','array','staff_list'))) {
@@ -3434,7 +3427,7 @@ function process_generic(&$sess,&$form,$def)
 			$sess[$form_key] = dewebify_array(array_filter(orr($form_value,array())));
 		} else {
 
-			$sess[$form_key] = get_magic_quotes_gpc() ? stripslashes($form_value) : $form_value;
+			$sess[$form_key] = $form_value;
 
 		}
       }

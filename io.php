@@ -2111,17 +2111,13 @@ function form_encode($a,$MAIN)
       //$MAIN IS THE TOP-LEVEL VARIABLE NAME
       //MAKES RECURSIVE CALLS TO ITSELF IN THE EVENT OF A RECURSIVE ARRAY
       if (!is_array($a)) {
-		if (!get_magic_quotes_gpc()) {
-			$a = addslashes($a);
-		}
+		$a = addslashes($a);
 		return hiddenvar($MAIN,$a);
       }
 
       foreach($a as $formvar => $val) {
 		if (!is_array($val) and !is_object($val)) {
-			if (!get_magic_quotes_gpc()) {
-				$val = addslashes($val);
-			}
+			$val = addslashes($val);
 			$encoded .= hiddenvar(be_null($MAIN) ? $formvar :"{$MAIN}[{$formvar}]",htmlentities($val));
 		} else {
 			$encoded .= form_encode($val,be_null($MAIN) ? $formvar : "{$MAIN}[{$formvar}]");

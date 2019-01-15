@@ -64,9 +64,6 @@ function quick_searches_all()
 	}
 	global $off;
 	$default = $_REQUEST['QuickSearch'];
-	if (get_magic_quotes_gpc()) {
-		$default = stripslashes($default);
-	}
 	$form = formto($off.'search.php','','class="QuickSearchForm"')
 		. formvartext('QuickSearch',orr($default,AG_DEFAULT_QUICKSEARCH_TEXT),
 				  'id ="QuickSearchText" onclick="this.value = (this.value==\''.AG_DEFAULT_QUICKSEARCH_TEXT.'\') ? \'\' : this.value"')
