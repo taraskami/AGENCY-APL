@@ -605,7 +605,8 @@ if ($debug) {
 	}
 
 	for ($x=0;$x<count($blocks);$x++) {
-		while (in_array('O_TEMPLATE',$blocks[$x]['suppress_output_codes']) or (!sql_true($blocks[$x]['is_enabled'])) or ($blocks[$x]['report_block_type_code']=='PIVOT')) {
+		$blocks[$x]['suppress_output_codes']=orr($blocks[$x]['suppress_output_codes'],array());  // FIXME!
+		if (in_array('O_TEMPLATE',$blocks[$x]['suppress_output_codes']) or (!sql_true($blocks[$x]['is_enabled'])) or ($blocks[$x]['report_block_type_code']=='PIVOT')) {
 			unset($blocks[$x]);
 			$blocks=array_values($blocks);
 			//$x--;
