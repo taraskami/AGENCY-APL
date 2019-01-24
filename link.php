@@ -337,10 +337,10 @@ function doc_link($filename,$label='') {
 // Quick & Dirty add to allow links to documents (for onscreen help)
 // FIXME: move to table with attachment handling
 
-	global $AG_HELP_DOC_LOCATION;
+//	global $AG_HELP_DOC_LOCATION;
 
 	// FIXME:  is it worth testing first to see if file exists?
-	return hlink($AG_HELP_DOC_LOCATION . '/' . basename($filename),orr($label,$filename),NULL,'target="_blank"');
+	return hlink(AG_HELP_DOC_LOCATION . '/' . basename($filename),orr($label,$filename),NULL,'target="_blank"');
 }
 
 
