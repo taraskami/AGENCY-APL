@@ -332,4 +332,16 @@ function organization_logo_medium($options='')
     return link_organization_home(html_image($AG_IMAGES['ORGANIZATION_LOGO_MEDIUM'],$options));
 }
 
+function doc_link($filename,$label='') {
+
+// Quick & Dirty add to allow links to documents (for onscreen help)
+// FIXME: move to table with attachment handling
+
+	global $AG_HELP_DOC_LOCATION;
+
+	// FIXME:  is it worth testing first to see if file exists?
+	return hlink($AG_HELP_DOC_LOCATION . '/' . basename($filename),orr($label,$filename),NULL,'target="_blank"');
+}
+
+
 ?>

@@ -509,6 +509,12 @@ define('AG_ERROR_LOG_BACKTRACE',false);
 define('AG_ATTACHMENT_LOCATION',$AG_HOME_BY_FILE . '/attachments/');
 
 /*
+* Define directory for document links.
+*/
+
+define('AG_HELP_DOC_LOCATION',$AG_HOME_BY_URL . '/help_docs/');
+
+/*
  * Core tables for AGENCY
  * Additional tables defined in flavors
  * (e.g., client_config.php)
