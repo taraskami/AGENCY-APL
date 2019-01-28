@@ -114,6 +114,10 @@ function report_parse_var_text( $text, $get_defaults=true ) {
 		if (preg_match('/^EVAL:(.*)$/i',$var['default'],$matches)) {
 			$var['default'] = eval( 'return ' . $matches[1] . ';');	
 		}
+		// Allow array defaults to be specified as in Postgres {first item, second, third}
+		if ( ($tmp=sql_to_php_array($ex[3])) ) {
+			$var['default']=$tmp;
+		}
 	}
 		if (in_array($var['type'],$pick_types)) {
 			while ($tmp_line = array_shift($lines))	{
@@ -604,7 +608,7 @@ function report_user_options_form($report)
 				? detokenize($form_val,report_token_context($p['name'],$report['report_code']))
 				: $form_val;
 		$default = $_SESSION['report_options_'.$report['report_code'].'_'.$varname] = 
-			orr($form_val,$_SESSION['report_options_'.$report['report_code'].'_'.$varname]);
+			orr($form_val,$_SESSION['report_options_'.$report['report_code'].'_'.$varname],$p['default']);
 		
 		switch ($p['type']) {
 		case 'PICK_MULTI' :
