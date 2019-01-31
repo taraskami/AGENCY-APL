@@ -196,8 +196,16 @@ function link_engine($control_array,$label='',$control_array_variable='',$link_o
 			if ($value==array()) {
 				continue;
 			}
-			$value = addslashes($value);
-			$control_str .= '&'.$control_array_variable."[$key]=" . $value;
+			// FIXME: make url variable encoding a common function
+			if (is_array($value)) {
+				foreach ($value as $v) {
+					$v=htmlentities(urlencode($v));
+					$control_str .='&'.$control_array_variable.'['.$key.'][]='.$v;
+				}
+			} else {
+				$value = addslashes($value);
+				$control_str .= '&'.$control_array_variable."[$key]=" . $value;
+			}
 		}
       }
       if ($list) {
