@@ -110,12 +110,14 @@ function process_object_reference_generic($def,$rec,&$control)
 			$removed[$ref_hash]=$ref;
 		}
 	}
+	if (isset($control['object_references']['pending'])) {
 	foreach ($control['object_references']['pending'] as $hash=>$ref) {
 		$in_request = array_key_exists($hash,$obj_ref_req);
 		$in_removed = array_key_exists($hash,$removed);
 		if ( (!$in_request) and (!$in_removed)) {
 			$obj_ref_req[$hash]=$ref;
 		}
+	}
 	}
 //	$refs = array_merge(orr($obj_ref_req,array()),orr($control['object_references']['pending'],array()));
 	$refs = $obj_ref_req;
