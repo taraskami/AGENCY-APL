@@ -4116,7 +4116,7 @@ function build_lookup_query($field_def,$action,$rec=array())
 	if ($field_def['allowed_values'] and ($field_def['allowed_values']!=array())) {
 		$filt['IN:'.$look_code]=$field_def['allowed_values'];
 	}
-	if (($action=='add') and (!array_key_exists('is_current',$filt)) and is_field($look_table,'is_current')) {
+	if (($action=='add') and (!array_key_exists('is_current',orr($filt,array())) and is_field($look_table,'is_current'))) {
 		$filt['is_current']=sql_true();
 	}
 	if ($look_order and $other_last) {
