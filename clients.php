@@ -1032,6 +1032,7 @@ function chronic_homeless_status_f($id)
 function assignments_f($staff_id, $my=false) {
 	
 	global $colors, $UID, $AG_USER_OPTION;
+	$assigns=array();
 
 	$def = get_def('staff_assign');
 	$sing = $def['singular'];
