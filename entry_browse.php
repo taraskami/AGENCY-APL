@@ -153,7 +153,7 @@ if (isset($_REQUEST['enterClient'])) {
 			$_SESSION['ENTRY_BROWSE_UNDO_RECORD']=$_SESSION['ENTRY_BROWSE_LAST_RECORD']=$rec;
 			$_SESSION['ENTRY_BROWSE_UNDO_FIELD']=$id_field;
 			$undo_link=hlink($_SERVER['PHP_SELF'].'?enterClientUndo='.$e_c,smaller(' (Undo)'));
-			$rec=sql_fetch_assoc(get_generic(client_filter($e_c),'','',$ef_def));
+			$rec=array_shift(get_generic(client_filter($e_c),'','',$ef_def));
 			$post_result=oline('Posted ' . $def['singular'] .' for ' . client_link($e_c) . ' ' . $undo_link,2)
 						. bigger("Welcome " . $rec['name_first'].'!!');
 		} elseif (!$skip) {
@@ -189,7 +189,7 @@ if (is_enabled('entry_visitor') and isset($_REQUEST['rec'])) {
 			$_SESSION['ENTRY_VISITOR_BROWSE_UNDO_RECORD']=$_SESSION['ENTRY_VISITOR_BROWSE_LAST_RECORD']=$ev_rec;
 			$_SESSION['ENTRY_VISITOR_BROWSE_UNDO_FIELD']=$ev_id_field;
 			$ev_undo_link=hlink($_SERVER['PHP_SELF'].'?enterVisitorUndo='.$e_v,smaller(' (Undo)'));
-			$rec=sql_fetch_assoc(get_generic(array('entry_visitor_id'=>$e_v),'','','entry_visitor'));
+			$rec=array_shift(get_generic(array('entry_visitor_id'=>$e_v),'','','entry_visitor'));
 			$ev_post_result=oline('Posted ' . $def['singular'] .' for ' . $ev_rec['visitor_name'] . ' ' . $ev_undo_link,2)
 						. bigger("Welcome " . $ev_rec['visitor_name'].'!!');
 		} else {
