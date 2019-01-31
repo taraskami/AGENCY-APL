@@ -2548,6 +2548,7 @@ function array_links( $ids, $eval_label,$sep=NULL ) {
 
 function object_links( $ids, $object,$sep=NULL,$action='view',$object_label_format=NULL ) {
 	$sep=orr($sep,oline());
+	if (!is_array($ids)) { return false; }
 	foreach ($ids as $x) {
 		$out[]=link_engine(array('object'=>$object,'id'=>$x,'action'=>$action),object_label($object,$x,NULL,$object_label_format));
 	}
