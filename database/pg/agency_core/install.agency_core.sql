@@ -219,3 +219,7 @@ select
 
 /* auth tokens, for resetting passwords */
 \i create.tbl_auth_token.sql
+
+/* engine labels */
+\i create.tbl_engine_label.sql
+
