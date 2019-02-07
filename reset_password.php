@@ -52,6 +52,7 @@ $out .= html_heading_1($title);
 
 if (!AG_PASSWORD_RESET_ENABLE) {
 	$out .=oline('This password reset page has been disabled.');
+	$out .= oline() . div('Note to administrators: you can enable email password resets by changing AG_PASSWORD_RESET_ENABLE in agency_config.php');
 	out(div($out.$footer,$div2));
 	page_close();
 	exit;
