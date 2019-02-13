@@ -108,6 +108,7 @@ if (!$control['object'] or !$control['action'] or (!$control['id'] and (!in_arra
 } else {
 	$stuff=engine($control);
 	$formatted_title = $stuff['title'];
+	$sub_title   = $stuff['sub_title'];
 	$commands   = $stuff['commands'];
 	$message    = $stuff['message'];
 	$help       = $stuff['help'];
@@ -128,7 +129,7 @@ if ($message) {
 	$message = div($message,'','class="engineMessage"');
 }
 
-out(div($formatted_title . $message . $help . $output,'engineMain'));
+out(div($formatted_title . $sub_title . $message . $help . $output,'engineMain'));
 
 page_close();
 
