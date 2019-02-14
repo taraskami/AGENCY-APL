@@ -17,6 +17,7 @@ DROP SEQUENCE IF EXISTS tbl_work_order_log_id;
 \i create.l_work_order_status.sql
 \i create.tbl_work_order.sql
 \i create.tbl_work_order_comment.sql
+\i create.view.work_order.sql
 
 SELECT enable_table_logging('tbl_work_order','');
 SELECT enable_table_logging('tbl_work_order_comment','');

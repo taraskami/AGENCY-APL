@@ -127,6 +127,7 @@ include $off . 'guest.php';
 include $off . 'kiosk.php'; // Technically this isn't needed for command-line, but I think harmless here
 include $off . 'family.php';
 include $off . 'file_exchange.php';
+include $off . 'work_order.php';
 
 /* read configuration */
 include $off . AG_CONFIG_DIR . '/agency_config.php';

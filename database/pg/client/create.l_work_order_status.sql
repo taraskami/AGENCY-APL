@@ -44,6 +44,5 @@ VALUES ('WORKSFORME', 'Works for me',false,sys_user(),current_timestamp,sys_user
 INSERT INTO tbl_l_work_order_status
        (work_order_status_code, description,is_open_status,added_by,added_at,changed_by,changed_at)
 VALUES ('LATER', 'Revisit Later',false,sys_user(),current_timestamp,sys_user(),current_timestamp);
-//VALUES ('', '',false,sys_user(),current_timestamp,sys_user(),current_timestamp);
 
 CREATE VIEW l_work_order_status AS SELECT *,CASE WHEN is_open_status THEN 'Open' ELSE 'Closed' END AS grouping FROM tbl_l_work_order_status WHERE NOT is_deleted;
