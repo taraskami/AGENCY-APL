@@ -15,7 +15,7 @@ CREATE TABLE tbl_l_client_death_location (
     sys_log                 TEXT
 );
 
-INSERT INTO tbl_l_client_death_location VALUES ('RESIDENCE','Client\'s Residence',sys_user(),current_timestamp,sys_user(),current_timestamp);
+INSERT INTO tbl_l_client_death_location VALUES ('RESIDENCE','Client''s Residence',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_client_death_location VALUES ('AGENCY','Agency Facilities',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_client_death_location VALUES ('SHELTER','Emergency Shelter',sys_user(),current_timestamp,sys_user(),current_timestamp);
 INSERT INTO tbl_l_client_death_location VALUES ('HOSPITAL','Hospital/Medical Facility',sys_user(),current_timestamp,sys_user(),current_timestamp);
