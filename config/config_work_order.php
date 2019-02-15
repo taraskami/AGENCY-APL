@@ -12,7 +12,6 @@ $engine['work_order']=array(
 	//'list_order'=>array('work_order_status_code IN (\'PENDING\',\'REOPENED\')'=>true,'priority'=>true,' COALESCE((SELECT max(changed_at) FROM work_order_comment woc WHERE woc.work_order_id=work_order.work_order_id),work_order.changed_at)'=>true),
 	//'list_order'=>array('work_order_status_code IN (\'PENDING\',\'REOPENED\')'=>true,'priority'=>false,'last_touch_at'=>true),
 	'list_order'=>array('is_open'=>true,/*'priority'=>false,*/'last_touch_at'=>true),
-	'subtitle_eval_code'=>'link_work_order_my(NULL," | ")',
 	'add_link_show'=>false,
 	'quick_search'=>array(
 		'match_fields'=>array('title','description'),
@@ -20,6 +19,14 @@ $engine['work_order']=array(
 //		'match_fields_date'=>array('dob'),
 //		'match_fields_custom'=>array('/^[a-z]{1,4}[0-9]{2,5}$/i'=>array('FIELDIN:client_id'=>'(SELECT client_id FROM residence_own WHERE lower(housing_unit_code)=lower(\'$x\') ORDER BY residence_date DESC limit 1)'))
 		),
+
+	'filter_bar'=>array(
+		'Assigned'=>'array("assigned_to"=>$GLOBALS["UID"])',
+		'Filed by me'=>'array("added_by"=>$GLOBALS["UID"])',
+		'I\'m CCd on'=>'array("ARRAY_CONTAINS:cc_list"=>array($GLOBALS["UID"]))',
+		'All my WOs'=>'array("ARRAY_CONTAINS:cc_list||assigned_to||added_by"=>array($GLOBALS["UID"]))',
+	),
+
 	'fields'=>array(
 		'priority'=>array(
 			'invalid'=>array(

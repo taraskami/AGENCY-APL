@@ -30,36 +30,6 @@ should be included in this distribution.
 </LICENSE>
 */
 
-function link_work_order_my( $id=NULL,$sep=NULL ) {
-        $id=orr($id,$GLOBALS['UID']);
-		$sep=orr($sep,oline());
-        if (!is_staff($id)) { return false; }
-        $def=get_def($staff);
-        $assigned_filter=array(
-                'assigned_to'=>$id
-        );
-        $filed_filter=array(
-                'added_by'=>$id
-        );
-        $cc_filter=array(
-                'ARRAY_CONTAINS:cc_list'=>array($id)
-        );
-		$all_filter=array(
-			array_merge($assigned_filter,$filed_filter,$cc_filter)
-		);
-		$assigned_label='Assigned';
-		$filed_label='Filed by me';
-		$cc_label='I\'m CCd on';
-		$all_label='All my WOs';
-        $assigned_link = link_engine_list_filter('work_order',$assigned_filter,$assigned_label,'class="fancyLink"');
-        $filed_link = link_engine_list_filter('work_order',$filed_filter,$filed_label,'class="fancyLink"');
-        $cc_link = link_engine_list_filter('work_order',$cc_filter,$cc_label,'class="fancyLink"');
-        $all_link = link_engine_list_filter('work_order',$all_filter,$all_label,'class="fancyLink"');
-		$new_link = add_link('work_order','New');
-		$links=array($assigned_link,$filed_link,$cc_link,$all_link,$new_link);
-		return implode($sep,$links);
-}
-                    
 function work_order_comments( $id ) {
 	if (!is_valid($id,'integer_db')) {
 		return false;
