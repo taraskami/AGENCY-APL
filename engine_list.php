@@ -1102,6 +1102,18 @@ function engine_java_wrapper($tmp_control,$var_name=null,&$js_hide,$title=null,$
 	  // No $rec--will this barf?
 	$sub_title=sub_title_generic('list',NULL,$def);
 
+	// Note, this code would show a filter bar, e.g. in child records on client pages
+	// I've commented it out, as I'm not sure it makes much sense since it would lose
+	// the client filter.  If filter_bar evolves more, it might make sense to uncomment this code.
+
+/*
+	  // Filter Bar, added after sub_title
+	if (($fb=$def['filter_bar'])) {
+		$f_bar = div('Show ' . list_filter_links($object,$fb),'','class="listFilterBar"');
+		$sub_title .= $f_bar;
+	}
+*/
+
 	// Absolute add link HTML (displays regardless of records or not)
 	$abs_add_link = $engine[$object]['add_link_absolute_html'];
 	if ($tmp_code = $engine[$object]['add_link_absolute_eval']) {
@@ -1992,6 +2004,58 @@ function get_object_display_settings($object)
       update_session_variable('DISPLAY_'.$OBJECT,$display);
 	$AG_USER_OPTION->set_option($OBJECT.'_DISPLAY_OPTIONS',$_SESSION['DISPLAY_'.$OBJECT]);
       return $_SESSION['DISPLAY_'.$OBJECT];
+}
+
+function list_filter_links($object,$links,$options=array()) {
+
+	// Show a bar for filtering list links
+	// Format of $links is array( 'label'=>'EVAL to a filter array', ... )
+	// Options can be passed via options, or as first element of link (label options)
+	// To make it easier to specify this in a config file, with the filter_bar parameter
+
+	// The filters are EVALd to allow runtime parsing, e.g. "My Records"=>'array("added_by"=>$GLOBALS["UID"])
+
+	// Currently this will only really work with an unfiltered list (e.g., quick browse)
+	// It would be ideal though to be able to apply this to a filtered list (e.g., list of one client's records)
+	// You would need a way to preserve/distinguish the different components of the filter, as
+	// simply applying this filter would wipe out the client filter, and if you simply merged the filters,
+	// the multiple clauses would be combined.  Simple filters might actually work with this, as
+	// for example, 'gender_code'=>'MALE' would overwrite 'gender_code'=>'FEMALE' in an array merge.
+
+	// There is also potential to extend this function by specifying something other than an array for the filter.
+	// Something perhaps like 'SELECT:gender_code' might spell out each gender code as a link, or possibly a drop-down.
+
+	// Also, this would be an ideal place to tag on an advanced filter, like a better, more dynamic version of the advanced search page
+	
+	if ((!is_array($links)) or (count($links)<1)) {
+		return false;
+	}
+	if (strtolower(key($links))=='options') {
+		$options=array_merge($links[0],$options);
+		array_unshift($links);
+	}
+	$sep=orr($options['separator'],' | ');
+	$toggle_after=orr($options['toggle_after'],4);
+	$link_options=orr($options['link_options'],'class="fancyLink"');
+	$skip_all_link=$options['skip_all_link'];
+	if (!$skip_all_link) {
+		$links=array('All'=>'array()') + $links;
+	}
+	foreach ($links as $label=>$filter) {
+		$filter = eval( 'return ' . $filter . ';');
+		$link=link_engine_list_filter($object,$filter,$label,$link_options);
+		if ($c<$toggle_after) {
+			$pri[]=$link;
+		} else {
+			$sec[]=$link;
+		}
+		$c++;
+	}
+	if ($sec) {
+		$pri[]=div(implode($sep,$sec).toggle_label("More..."),'','class="toggleContent"');
+	}
+	$res=implode($sep,$pri);
+	return $res;
 }
 
 ?>

@@ -946,6 +946,12 @@ function engine($control='',$control_array_variable='control')
 			$title =  $def['fn']['list_title']($control,$def);
 			$sub_title = sub_title_generic($action,$REC,$def);
 
+	  		// Filter Bar, added after sub_title
+			if (($fb=$def['filter_bar'])) {
+				$f_bar = list_filter_links($object,$fb);
+				$sub_title .= div('Show ' . $f_bar,'','class="listFilterBar"');
+			}
+
 			/*
 			 * Check for available alternate formats
 			 */
@@ -1159,7 +1165,6 @@ function engine($control='',$control_array_variable='control')
 		$message .= oline( ($action ? "Action $action unknown" : 'No action specified')
 					 . '.  I\'m dazed and confused.');
       }
-
       $result=array('title'         => $title,
 			  'sub_title' => $sub_title,
 			  'total_records' => $total_records,

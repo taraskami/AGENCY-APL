@@ -554,3 +554,18 @@ span.pickStaffList {
 	font-size: 80%;
 }
 
+div.listFilterBar {
+	border: solid 1px black;
+	width: fit-content;
+	padding: 10px;
+
+	margin: 5px;
+	margin-left: 15px;
+	background-color: aliceblue;
+	border-radius: 10px;
+}
+
+div.listFilterBar a {
+	font-size: 85%;
+}
+

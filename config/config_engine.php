@@ -122,6 +122,7 @@ $engine['global_default'] = array(
 				  'object_label'=>null, // This is a snippet of code that will be eval'd.  $id, $rec and $def are available.
 // 				  'enable_staff_alerts' => null, //during view //set below
 // 				  'enable_staff_alerts_add' => null, //during add
+				  'filter_bar'=>NULL, // A bar for filtering list boxes. See list_filter_links for some explanation, or config_work_order.php for an example 
 				  'hidden_html_absolute' => null, //for things like hidden <div>s, <style> and <script>, output (for list) independent of existing records or not
 				  'hidden_eval_absolute' => null, 
 				  'singular' => null,
