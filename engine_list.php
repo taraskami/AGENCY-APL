@@ -1076,6 +1076,7 @@ function engine_java_wrapper($tmp_control,$var_name=null,&$js_hide,$title=null,$
       $NO_ENGINE_TITLE=true; //ENGINE TITLES WILL BE SURPRESSED
 
 	$object = $tmp_control['object'];
+	$def=get_def($object);
 	$filter = $tmp_control['list']['filter'];
       $var_name = orr($var_name,'control_'.$object);
 	$id = $tmp_control['id'];
@@ -1097,24 +1098,14 @@ function engine_java_wrapper($tmp_control,$var_name=null,&$js_hide,$title=null,$
 	$add_link_control['page'] = null;
 	$add_link = child_list_add_link($engine[$object],$filter,$add_link_control);
 
-      // OPTIONAL SUBTITLE HTML
-      $sub_title = $engine[$object]['subtitle_html'];
+	  // SUB_TITLE
+	  // No $rec--will this barf?
+	$sub_title=sub_title_generic('list',NULL,$def);
 
 	// Absolute add link HTML (displays regardless of records or not)
 	$abs_add_link = $engine[$object]['add_link_absolute_html'];
 	if ($tmp_code = $engine[$object]['add_link_absolute_eval']) {
 		$abs_add_link .= eval('return '.$tmp_code.';');
-	}
-
-      // OPTIONAL SUBTITLE eval code
-	$sub_eval_code = $engine[$object]['subtitle_eval_code'];
-	if (is_array($sub_eval_code)) {
-		$sub_code_array=null;
-		foreach ($sub_eval_code as $code_bit) {
-			$sub_code_array .= cell(eval('return '.$code_bit.';'));
-		}
-	} else {
-		$sub_code = eval('return '.$sub_eval_code.';');
 	}
 
 	// page footer html
@@ -1148,16 +1139,14 @@ function engine_java_wrapper($tmp_control,$var_name=null,&$js_hide,$title=null,$
 					. preg_replace('/^\s\(\)$/','', //get rid of empty ()
 							   ' ('.($engine[$object]['add_link_show'] ? $add_link : '').
 							   ($abs_add_link ? ' '.$abs_add_link : '').')')
-					.' '.trim($sub_code.$sub_code_array.$sub_title),' class="childListTitle'.($PERMISSION ? 'Null' : 'Deny').'"')
+					.' '.trim($sub_title),' class="childListTitle'.($PERMISSION ? 'Null' : 'Deny').'"')
 				,
 				'',' class="childListNullData" style="display: '.( ($js_hide and AG_LIST_EMPTY_HIDE) ? 'none' : 'block').';"');
       }
 	$hide_button = Java_Engine::hide_show_button($object.'ChildList'.$js_ident,$js_hide,'','','now');
-	$subtitle_stuff = ( $engine[$object]['add_link_show'] ? cell(left(smaller($add_link.($abs_add_link ? '<br />'.$abs_add_link : '')))) : null)
-		. ($sub_code ? cell($sub_code) : null)
-		. ($sub_code_array)
+	$sub_title_stuff = ( $engine[$object]['add_link_show'] ? cell(left(smaller($add_link.($abs_add_link ? '<br />'.$abs_add_link : '')))) : null)
 		. ($sub_title ? cell($sub_title) : null);
-	$subtitle_stuff = is_null($subtitle_stuff) ? null : table(row($subtitle_stuff),'',' class="" cellpadding="3"');
+	$sub_title_stuff = is_null($sub_title_stuff) ? null : table(row($sub_title_stuff),'',' class="" cellpadding="3"');
 	$back_to_top_link = smaller(seclink('TOP','Back to top',' class="fancyLink"'),3);
       return anchor($object)
 		. $hidden_html
@@ -1165,7 +1154,7 @@ function engine_java_wrapper($tmp_control,$var_name=null,&$js_hide,$title=null,$
 		. Java_Engine::hide_show_content(
 							   span($back_to_top_link,' class="childListLeft"')
 							   . div(
-								   $subtitle_stuff
+								   $sub_title_stuff
 								   . oline($OUTPUT),'',' class="childListData childListData' . ucfirst($object) . '"')
 							   ,$object.'ChildList'.$js_ident,$js_hide);
 	
