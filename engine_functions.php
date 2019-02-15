@@ -3463,8 +3463,14 @@ function process_generic(&$sess,&$form,$def)
 
 */
 
-function sub_title_generic( $action, $rec, $def ) {
+function sub_title_generic( $action, $rec, $def, $extra_vars=array() ) {
 	$sep=oline();
+
+	// Hacking this in to allow passing of $id,for when called in list and there is no rec.
+	foreach($extra_vars as $k=>$v) {
+		$$k=$v;
+	}
+
 	// Keeping subtitle_html and subtitle_eval_code
 	// merging them into one
 	// This depends on subtitle being blank by engine default

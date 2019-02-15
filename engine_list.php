@@ -1100,7 +1100,7 @@ function engine_java_wrapper($tmp_control,$var_name=null,&$js_hide,$title=null,$
 
 	  // SUB_TITLE
 	  // No $rec--will this barf?
-	$sub_title=sub_title_generic('list',NULL,$def);
+	$sub_title=sub_title_generic('list',NULL,$def,array('id'=>$id));
 
 	// Note, this code would show a filter bar, e.g. in child records on client pages
 	// I've commented it out, as I'm not sure it makes much sense since it would lose
