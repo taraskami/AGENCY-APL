@@ -2324,9 +2324,17 @@ function show_top_nav( $firstcell="",$cells="",$auth='')
 	$standard = $auth ? 2 : 1;
 	$cell_count=(count($cells)+$standard)*2;
 	$cell_count_hack=$cell_count+1;
-	foreach($AG_MENU_LINKS as $link)
+	foreach($AG_MENU_LINKS as $k=>$link)
 	{
-		$links .=oline(span($link,'class="menuLink"'));
+		if (is_array($link)) {
+			$tmp_link='';
+			foreach ($link as $l) {
+				$tmp_link .= smaller('=>') . oline(span($l,'class="menuLink"'));
+			}
+			$links .= div($tmp_link.toggle_label($k),'','class="toggleContent"');
+		} else {
+			$links .=oline(span($link,'class="menuLink"'));
+		}
 	}
 	//$links = help('MENU',$links,'MENU'); // Uncomment this hack to make your menu collapsible.
 	$bugzilla_link = ($tmp_link = link_bugzilla()) ? ' | '.$tmp_link : '';

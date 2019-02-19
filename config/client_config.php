@@ -441,6 +441,15 @@ if (is_enabled('calendar')) {
 if (is_enabled('entry')) {
 	$AG_MENU_LINKS[]= hlink('entry_browse.php','Entry');
 }
+
+// You can define sub-menus with a label and an array of links
+/*
+$AG_MENU_LINKS['Sub Menu']=array(
+	hlink($some_url,'Option 1'),
+	hlink($some_url,'Option 2')
+);
+*/
+
 $AG_MENU_LINKS[]= hlink(AG_BEDREG_URL,'BedReg');
 $AG_MENU_LINKS[]= hlink(AG_REPORTS_URL,'Reports');
 $AG_MENU_LINKS[]= hlink('menu.php','Menu');
