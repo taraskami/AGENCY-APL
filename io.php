@@ -2329,9 +2329,9 @@ function show_top_nav( $firstcell="",$cells="",$auth='')
 		if (is_array($link)) {
 			$tmp_link='';
 			foreach ($link as $l) {
-				$tmp_link .= smaller('=>') . oline(span($l,'class="menuLink"'));
+				$tmp_link[]= smaller('=>') . span($l,'class="menuLink"');
 			}
-			$links .= div($tmp_link.toggle_label($k),'','class="toggleContent"');
+			$links .= oline(div(implode(oline(),$tmp_link).toggle_label($k),'','class="toggleContent menuLink"'));
 		} else {
 			$links .=oline(span($link,'class="menuLink"'));
 		}
