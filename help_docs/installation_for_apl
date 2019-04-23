@@ -1,0 +1,26 @@
+#### The Definitive Way to Install AGENCY (so far)
+### Purpose of this page
+After spending nearly a semester trying to set up AGENCY on my machine, I want to make sure that those who join the project later on don't face the same issues as I do. So, this is my process:
+
+1. Install and work in Linux. Just do it.
+I've tried installing AGENCY on Windows, but never got any luck. Could be because of the file structure, or the commands necessary. Whatever it is, I still very highly recommend Linux. I am working on a virtual machine running Ubuntu 18.04.
+_Note: Don't try Windows Subsystem for Linux (WSL) either. I ran into problems using Postgres on it, and turns out the problem is pretty universal._
+
+2. Make sure Postgres and Apache are installed in your machine.
+I'll leave that up to the user to set up.
+
+3. Git-clone into your `/var/www/html/` folder.
+* At the moment, nothing on this repo is anything different from the original AGENCY repo hosted on SourceForge, so just git-clone from there. Had I done anything, and it is visible in the commits page, then go ahead and git-clone from here.
+
+4. Read through README.install and README.install.quick_start and follow the instructions.
+Ken has revamped the installation documentation and it has helped a lot. The quick_start document is all that you need but the original installation txt helps as well.
+
+5. Navigate to the folder in which the AGENCY code is held in your browser
+For me, that is `localhost/agency-code`.
+
+6. If something is wrong, the error message will show up when navigating to above link.
+
+## Where this leaves you
+I'm having errors with the mail portion of AGENCY. When I choose to not install this component by commenting out the lines that install it (as advised by one of the numerous txts), AGENCY will still give me errors about the inability to locate some files pertaining to mail. If I choose to install, same effect.
+
+Despite that, I now have access to the login screen. But, the default username and password from the quick setup doesn't work. Go figure!
